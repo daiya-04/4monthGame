@@ -50,6 +50,9 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{951f94c5-20fb-491b-b20e-c5528d356ac4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Loader">
+      <UniqueIdentifier>{2045ef8e-5836-4da6-9a64-5d419d54ce82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -119,9 +122,14 @@
     <ClCompile Include="Engine\3d\SpotLight.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="Engine\2d\PostEffect.cpp">
       <Filter>Engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\2d\Object2d.cpp">
+      <Filter>Engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Loader\LevelLoader.cpp">
+      <Filter>Engine\Loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,9 +223,14 @@
     <ClInclude Include="Engine\3d\SpotLight.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Engine\2d\PostEffect.h">
       <Filter>Engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\2d\Object2d.h">
+      <Filter>Engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Loader\LevelLoader.h">
+      <Filter>Engine\Loader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

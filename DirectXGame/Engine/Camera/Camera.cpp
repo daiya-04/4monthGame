@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "DirectXCommon.h"
+#include "WinApp.h"
 #include <cassert>
 
 void Camera::Init() {
@@ -56,5 +57,6 @@ void Camera::UpdateViewMatrix() {
 }
 
 void Camera::UpdateProjectionMatrix() {
-	matProjection_ = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+	//matProjection_ = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+	matProjection_ = MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight), 0.0f, 100.0f);
 }
