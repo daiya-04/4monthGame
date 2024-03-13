@@ -8,7 +8,7 @@
 #include <string>
 #include <array>
 
-class PostEffect {
+class DualSceneDrawer {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
@@ -24,12 +24,18 @@ public:
 
 public: //メンバ関数
 
-	PostEffect();
+	DualSceneDrawer();
 
 	void Init();
-	void Init(const std::wstring &vertexShaderPath,const std::wstring &pixelShaderPath);
-
-	void Draw(ID3D12GraphicsCommandList* cmdList);
+	
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="cmdList">コマンドリスト</param>
+	/// <param name="prevSceneHandle">前シーンのハンドル</param>
+	/// <param name="nextSceneHandle">次シーンのハンドル</param>
+	/// <param name="weightHandle">weightMapのハンドル</param>
+	void Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE prevSceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE nextSceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE weightHandle);
 
 	void PreDrawScene(ID3D12GraphicsCommandList* cmdList);
 
@@ -44,8 +50,7 @@ private:
 	void TransferVertex();
 
 	void CreateGraphicsPipelineState();
-	void CreateGraphicsPipelineState(const std::wstring &vertexShaderPath,const std::wstring &pixelShaderPath);
-
+	
 	ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
 
 	ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);

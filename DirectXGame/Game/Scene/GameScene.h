@@ -12,14 +12,18 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "LevelLoader.h"
-
-
+#include "PostEffect.h"
+#include "DualSceneDrawer.h"
+#include "Sprite.h"
+#include "WeightCircle/WeightCircle.h"
 class GameScene : public IScene {
 public:
 
 	void Init()override;
 
 	void Update()override;
+
+	void DrawNotSetPipeline()override;//パイプライン未設定(最初に呼び出される)
 
 	void DrawBackGround()override;
 
@@ -37,6 +41,14 @@ public:
 	
 
 private:
+	ID3D12GraphicsCommandList* commandList_;
+	std::unique_ptr<PostEffect> prevScene;
+	std::unique_ptr<PostEffect> nextScene;
+	std::unique_ptr<DualSceneDrawer> dualSceneDrawer_;
 
+	std::unique_ptr<Sprite> sample0;
+	std::unique_ptr<Sprite> sample1;
+
+	std::unique_ptr<WeightCircle> weightCircle_;
 };
 

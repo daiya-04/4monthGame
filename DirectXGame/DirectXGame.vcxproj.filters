@@ -123,6 +123,8 @@
     <ClCompile Include="Engine\2d\PostEffect.cpp">
       <Filter>Engine\2d</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\2d\DualSceneDrawer.cpp" />
+    <ClCompile Include="Game\WeightCircle\WeightCircle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -219,5 +221,7 @@
     <ClInclude Include="Engine\2d\PostEffect.h">
       <Filter>Engine\2d</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\2d\DualSceneDrawer.h" />
+    <ClInclude Include="Game\WeightCircle\WeightCircle.h" />
   </ItemGroup>
 </Project>
