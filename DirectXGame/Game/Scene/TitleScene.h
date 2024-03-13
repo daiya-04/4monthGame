@@ -3,7 +3,6 @@
 #include <memory>
 #include <list>
 #include <vector>
-#include <array>
 
 #include "Sprite.h"
 #include "Object3d.h"
@@ -15,7 +14,7 @@
 #include "LevelLoader.h"
 
 
-class GameScene : public DefaultScene {
+class TitleScene : public DefaultScene {
 public:
 
 	void Init()override;
@@ -34,14 +33,9 @@ public:
 
 	void DebugGUI()override;
 
-	~GameScene()override;
-	
+	~TitleScene()override;
+
 
 private:
 
-	
-
-	
-
 };
-
