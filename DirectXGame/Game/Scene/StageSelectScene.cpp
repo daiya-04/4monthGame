@@ -27,7 +27,7 @@ void StageSelectScene::DrawBackGround() {
 
 }
 
-void StageSelectScene::DrawModel() {
+void StageSelectScene::DrawObject() {
 
 
 

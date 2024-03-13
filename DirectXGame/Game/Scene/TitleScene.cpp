@@ -27,7 +27,7 @@ void TitleScene::DrawBackGround() {
 
 }
 
-void TitleScene::DrawModel() {
+void TitleScene::DrawObject() {
 
 
 

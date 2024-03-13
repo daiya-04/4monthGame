@@ -6,13 +6,12 @@
 #include <array>
 
 #include "Sprite.h"
-#include "Object3d.h"
+#include "Object2d.h"
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
 #include "PointLight.h"
 #include "SpotLight.h"
-#include "LevelLoader.h"
 
 
 class GameScene : public DefaultScene {
@@ -24,7 +23,7 @@ public:
 
 	void DrawBackGround()override;
 
-	void DrawModel()override;
+	void DrawObject()override;
 
 	void DrawParticleModel()override;
 
