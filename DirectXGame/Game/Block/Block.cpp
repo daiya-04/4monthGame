@@ -18,7 +18,9 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 	texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
 	position_ = position;
 
-	sprite_.reset(Sprite::Create(texture_, position_));
+	object_.reset(Object2d::Create(texture_, position_));
+	object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
+	object_->SetTextureArea({0.0f,0.0f}, {2.0f,2.0f});
 
 }
 
@@ -28,8 +30,8 @@ void Block::Update() {
 
 }
 
-void Block::Draw() {
+void Block::Draw(const Camera& camera) {
 
-	sprite_->Draw();
+	object_->Draw(camera);
 
 }

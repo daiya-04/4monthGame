@@ -1,7 +1,10 @@
 #pragma once
 #include "Block/Block.h"
+#include "SaunaStone/SaunaStone.h"
 #include <memory>
+#include <vector>
 #include <array>
+#include "Camera.h"
 
 class Stage
 {
@@ -23,7 +26,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(const Camera& camera);
 
 	/// <summary>
 	/// マップをロードする
@@ -36,10 +39,19 @@ public:
 	//縦の長さ、ブロックの数
 	static const uint32_t kMaxStageHeight_ = 100;
 
+	//プレイヤーをセット
+	void SetPlayer(Player* player) { player_ = player; }
+
 private:
 
+	Player* player_;
+
 	//マップ
-	std::array<std::array<std::unique_ptr<Block>, kMaxStageHeight_>, kMaxStageWidth_> map_;
+	/*std::array<std::array<std::shared_ptr<Block>, kMaxStageHeight_>, kMaxStageWidth_> map_;*/
+	std::vector<std::shared_ptr<Block>> map_;
+
+	//サウナストーン(ステージ毎に数が違っても対応できるようにvector)
+	std::vector<std::shared_ptr<SaunaStone>> stones_;
 
 };
 

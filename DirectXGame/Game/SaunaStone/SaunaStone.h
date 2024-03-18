@@ -1,7 +1,8 @@
 #pragma once
 #include <memory>
-#include "Sprite.h"
+#include "Object2d.h"
 #include "Vec2.h"
+#include "Camera.h"
 
 class SaunaStone
 {
@@ -12,7 +13,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(const Vector2& position);
 
 	/// <summary>
 	/// 更新
@@ -22,11 +23,17 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(const Camera& camera);
+
+	const Vector2& GetPosition() { return position_; }
 
 private:
 
-	std::unique_ptr<Sprite> sprite_;
+	std::unique_ptr<Object2d> object_;
+
+	uint32_t texture_;
+
+	Vector2 position_{};
 
 };
 

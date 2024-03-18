@@ -13,6 +13,8 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 
+#include "Stage/Stage.h"
+#include "Player/Player.h"
 
 class GameScene : public DefaultScene {
 public:
@@ -38,9 +40,11 @@ public:
 
 private:
 
-	
+	std::unique_ptr<Stage> stage_;
 
-	
+	std::shared_ptr<Player> player_;
+
+	std::shared_ptr<Camera> camera_;
 
 };
 

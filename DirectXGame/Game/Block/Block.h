@@ -1,5 +1,6 @@
 #pragma once
-#include "Sprite.h"
+#include "Object2d.h"
+#include "Camera.h"
 #include <memory>
 
 class Player;
@@ -11,12 +12,18 @@ class BaseBlock
 {
 public:
 	
+	static const uint32_t kBlockSize_ = 96;
+
 	enum BlockType : uint32_t {
 
+		//空白ブロック(使わない)
+		kNone,
 		//壊せないブロック
-		kUnbreakable,
+		kUnbreakable = 1,
 		//極寒時のブロック
 		kSnow,
+		//サウナストーンブロック
+		kSaunaBlock,
 		//坂道版ブロック
 		kUnbreakableSlope,
 		//坂道極寒ブロック
@@ -48,7 +55,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	virtual void Draw() = 0;
+	virtual void Draw(const Camera& camera) = 0;
 
 	virtual ~BaseBlock() = default;
 
@@ -61,19 +68,26 @@ public:
 	/// <summary>
 	/// プレイヤーをセット
 	/// </summary>
-	void SetPlayer_(std::shared_ptr<Player> player) { player_ = player; }
+	void SetPlayer(Player* player) { player_ = player; }
+
+	const BlockType& GetType() { return type_; }
+
+	const Vector2& GetPosition() { return position_; }
 
 protected:
 
-	std::shared_ptr<Player> player_;
+	Player* player_;
 
 	BlockType type_ = kUnbreakable;
 
-	std::unique_ptr<Sprite> sprite_;
+	std::unique_ptr<Object2d> object_;
 
 	Vector2 position_{};
 
 	uint32_t texture_;
+
+	//uvの座標
+	uint32_t uvNumber_;
 
 };
 
@@ -88,7 +102,7 @@ public:
 
 	void Update() override;
 
-	void Draw() override;
+	void Draw(const Camera& camera) override;
 
 private:
 

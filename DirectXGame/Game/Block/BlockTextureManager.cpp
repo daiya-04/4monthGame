@@ -12,6 +12,8 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.clear();
 
 	int32_t texture = 0;
+	texture = TextureManager::Load("blocks/blank.png");
+	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/testNormal.png");
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/testRed.png");
