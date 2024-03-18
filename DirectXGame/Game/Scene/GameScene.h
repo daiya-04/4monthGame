@@ -16,6 +16,7 @@
 #include "DualSceneDrawer.h"
 #include "Sprite.h"
 #include "WeightCircle/WeightCircle.h"
+#include "EnvironmentEffects/HeatHaze/HeatHaze.h"
 class GameScene : public IScene {
 public:
 
@@ -44,11 +45,16 @@ private:
 	ID3D12GraphicsCommandList* commandList_;
 	std::unique_ptr<PostEffect> prevScene;
 	std::unique_ptr<PostEffect> nextScene;
+	std::unique_ptr<HeatHaze> HH;
 	std::unique_ptr<DualSceneDrawer> dualSceneDrawer_;
 
 	std::unique_ptr<Sprite> sample0;
 	std::unique_ptr<Sprite> sample1;
 
 	std::unique_ptr<WeightCircle> weightCircle_;
+
+	float offset_;
+	float roop_;
+	float width_;
 };
 

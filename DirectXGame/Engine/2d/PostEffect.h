@@ -9,7 +9,7 @@
 #include <array>
 
 class PostEffect {
-private:
+protected:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 
@@ -26,10 +26,10 @@ public: //メンバ関数
 
 	PostEffect();
 
-	void Init();
+	virtual void Init();
 	void Init(const std::wstring &vertexShaderPath,const std::wstring &pixelShaderPath);
 
-	void Draw(ID3D12GraphicsCommandList* cmdList);
+	virtual void Draw(ID3D12GraphicsCommandList* cmdList);
 
 	void PreDrawScene(ID3D12GraphicsCommandList* cmdList);
 
@@ -39,11 +39,11 @@ public: //メンバ関数
 	/// SRV指定用ハンドル取得
 	/// </summary>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU() { return textureSrvHandleGPU_; };
-private:
+protected:
 
 	void TransferVertex();
 
-	void CreateGraphicsPipelineState();
+	virtual void CreateGraphicsPipelineState();
 	void CreateGraphicsPipelineState(const std::wstring &vertexShaderPath,const std::wstring &pixelShaderPath);
 
 	ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
@@ -54,7 +54,7 @@ private:
 
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
 
-private: //メンバ変数
+protected: //メンバ変数
 
 	static const float clearColor_[4];
 

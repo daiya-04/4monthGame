@@ -26,4 +26,5 @@ private:
 	float radius_=1.0f;
 	Vector2 position_;
 	float weightColor_;
+	bool isStart_;
 };

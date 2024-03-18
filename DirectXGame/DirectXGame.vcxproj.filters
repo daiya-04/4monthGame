@@ -125,6 +125,7 @@
     </ClCompile>
     <ClCompile Include="Engine\2d\DualSceneDrawer.cpp" />
     <ClCompile Include="Game\WeightCircle\WeightCircle.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -223,5 +224,6 @@
     </ClInclude>
     <ClInclude Include="Engine\2d\DualSceneDrawer.h" />
     <ClInclude Include="Game\WeightCircle\WeightCircle.h" />
+    <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.h" />
   </ItemGroup>
 </Project>
