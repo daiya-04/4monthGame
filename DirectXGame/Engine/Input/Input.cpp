@@ -91,6 +91,23 @@ bool Input::GetJoystickState() {
 	return false;
 }
 
+bool Input::TriggerLStick(const std::string& direction) {
+
+	if (direction == "Right") {
+		return IsLStickRight();
+	}
+	if (direction == "Left") {
+		return IsLStickLeft();
+	}
+	if (direction == "Up") {
+		return IsLStickUp();
+	}
+	if (direction == "Down") {
+		return IsLStickDown();
+	}
+	return false;
+}
+
 bool Input::LeftTrigger() const {
 	if (joyState.Gamepad.bLeftTrigger && !preJoyState.Gamepad.bLeftTrigger) {
 		return true;
@@ -100,6 +117,35 @@ bool Input::LeftTrigger() const {
 
 bool Input::RightTrigger() const {
 	if (joyState.Gamepad.bRightTrigger && !preJoyState.Gamepad.bRightTrigger) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLStickRight() const{
+
+	if ((float)(joyState.Gamepad.sThumbLX) > 10000 && (float)(preJoyState.Gamepad.sThumbLX) <= 10000) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLStickLeft() const{
+	if ((float)(joyState.Gamepad.sThumbLX) < -10000 && (float)(preJoyState.Gamepad.sThumbLX) >= -10000) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLStickUp() const{
+	if ((float)(joyState.Gamepad.sThumbLY) > 10000 && (float)(preJoyState.Gamepad.sThumbLY) <= 10000) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLStickDown() const {
+	if ((float)(joyState.Gamepad.sThumbLY) < -10000 && (float)(preJoyState.Gamepad.sThumbLY) >= -10000) {
 		return true;
 	}
 	return false;
