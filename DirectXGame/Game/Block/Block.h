@@ -88,6 +88,9 @@ protected:
 
 	//uvの座標
 	uint32_t uvNumber_;
+	//描画の開始座標を決める数字
+	uint32_t uvPositionX_ = 0;
+	uint32_t uvPositionY_ = 0;
 
 };
 

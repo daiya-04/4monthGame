@@ -3,6 +3,7 @@
 #include "Object2d.h"
 #include "Vec2.h"
 #include "Camera.h"
+#include "Input.h"
 
 class Player
 {
@@ -26,6 +27,8 @@ public:
 	void Draw(const Camera& camera);
 
 private:
+
+	Input* input_;
 
 	std::unique_ptr<Object2d> object_;
 

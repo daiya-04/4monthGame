@@ -11,6 +11,8 @@ Player::~Player()
 
 void Player::Initialize() {
 
+	input_ = Input::GetInstance();
+
 	texture_ = TextureManager::GetInstance()->Load("player/player.png");
 
 	object_.reset(Object2d::Create(texture_, { 200.0f,300.0f }));
@@ -20,7 +22,7 @@ void Player::Initialize() {
 
 void Player::Update() {
 
-
+	
 
 }
 
