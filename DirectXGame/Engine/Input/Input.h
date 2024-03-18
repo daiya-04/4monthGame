@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <wrl.h>
 #include "Vec3.h"
+#include <string>
 
 #include <XInput.h>
 #define DIRECTINPUT_VERSION    0x0800
@@ -38,8 +39,13 @@ public:
 
 	bool GetJoystickState();
 
+	//Lスティックの傾きチェック
+	bool TriggerLStick(const std::string& direction);
+
+	
+
 	Vector3 GetMoveXZ() {
-		return { (float)joyState.Gamepad.sThumbLX, 0.0f, (float)joyState.Gamepad.sThumbLY };
+		return { (float)joyState.Gamepad.sThumbLX / SHRT_MAX, 0.0f, (float)joyState.Gamepad.sThumbLY / SHRT_MAX };
 	}
 
 	Vector3 GetCameraRotate() {
@@ -62,5 +68,13 @@ private:
 	~Input() = default;
 	Input(const Input&) = delete;
 	Input& operator=(const Input&) = delete;
+
+	bool IsLStickRight() const;
+
+	bool IsLStickLeft() const;
+
+	bool IsLStickUp() const;
+
+	bool IsLStickDown() const;
 };
 
