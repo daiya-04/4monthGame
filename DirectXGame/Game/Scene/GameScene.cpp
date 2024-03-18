@@ -20,6 +20,11 @@ void GameScene::Init(){
 	HH.reset(new HeatHaze());
 	HH->Init();
 
+	cameraFrozen_.reset(new CameraFrozenManager());
+	cameraFrozen_->Init();
+	//cameraFrozen_->SetRadius(0.6f);
+	//cameraFrozen_->SetBorder(0.8f);
+
 	dualSceneDrawer_.reset(new DualSceneDrawer());
 	dualSceneDrawer_->Init();
 
@@ -50,14 +55,17 @@ void GameScene::Update(){
 	HH->SetOffset(offset_);
 	HH->SetRoop(roop_);
 	HH->SetWidth(width_);
+	cameraFrozen_->Update();
 }
 
 void GameScene::DrawNotSetPipeline() {
+	cameraFrozen_->DrawInternal(commandList_);
 	prevScene->PreDrawScene(commandList_);
 	//一個目のscene描画
 	Sprite::preDraw(commandList_);
 	sample0->Draw();
 	Sprite::postDraw();
+	cameraFrozen_->Draw(commandList_);
 	prevScene->PostDrawScene(commandList_);
 
 	HH->PreDrawScene(commandList_);

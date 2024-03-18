@@ -126,6 +126,8 @@
     <ClCompile Include="Engine\2d\DualSceneDrawer.cpp" />
     <ClCompile Include="Game\WeightCircle\WeightCircle.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -225,5 +227,7 @@
     <ClInclude Include="Engine\2d\DualSceneDrawer.h" />
     <ClInclude Include="Game\WeightCircle\WeightCircle.h" />
     <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.h" />
+    <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.h" />
+    <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.h" />
   </ItemGroup>
 </Project>

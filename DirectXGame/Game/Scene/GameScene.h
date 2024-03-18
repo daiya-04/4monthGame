@@ -17,6 +17,7 @@
 #include "Sprite.h"
 #include "WeightCircle/WeightCircle.h"
 #include "EnvironmentEffects/HeatHaze/HeatHaze.h"
+#include "EnvironmentEffects/CameraFrozen/CameraFrozenManager.h"
 class GameScene : public IScene {
 public:
 
@@ -46,6 +47,7 @@ private:
 	std::unique_ptr<PostEffect> prevScene;
 	std::unique_ptr<PostEffect> nextScene;
 	std::unique_ptr<HeatHaze> HH;
+	std::unique_ptr<CameraFrozenManager> cameraFrozen_;
 	std::unique_ptr<DualSceneDrawer> dualSceneDrawer_;
 
 	std::unique_ptr<Sprite> sample0;

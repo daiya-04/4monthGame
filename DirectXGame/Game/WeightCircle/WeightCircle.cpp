@@ -34,7 +34,7 @@ void WeightCircle::Update() {
 	ImGui::End();
 #endif // _DEBUG
 	if (isStart_) {
-		radius_ += 33.0f;
+		radius_ += 66.0f;
 	}
 	circle_->SetColor({weightColor_,0.0f,0.0f,1.0f});
 	circle_->SetSize({radius_,radius_ });
