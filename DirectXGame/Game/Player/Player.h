@@ -62,6 +62,9 @@ private:
 	//掴みフラグ
 	bool canCatch_ = true;
 
+	//移動量
+	float speed_ = 3.0f;
+
 	//速度
 	Vector2 velocity_{};
 

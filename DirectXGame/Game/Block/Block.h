@@ -70,6 +70,11 @@ public:
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
 
+	void SetUVPosition(uint32_t xPosition, uint32_t yPosition) { 
+		uvPositionX_ = xPosition;
+		uvPositionY_ = yPosition;
+	}
+
 	const BlockType& GetType() { return type_; }
 
 	const Vector2& GetPosition() { return position_; }
