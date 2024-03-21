@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <wrl.h>
+#include "Vec2.h"
 #include "Vec3.h"
 #include <string>
 
@@ -42,22 +43,28 @@ public:
 	//Lスティックの傾きチェック
 	bool TriggerLStick(const std::string& direction);
 
-	
+	bool TiltLStick(const std::string& directon);
 
-	Vector3 GetMoveXZ() {
+	float GetLX() const { return (float)joyState.Gamepad.sThumbLX / SHRT_MAX; }
+
+	float GetLY() const { return (float)joyState.Gamepad.sThumbLY / SHRT_MAX; }
+
+	Vector2 GetLXY() const { return { GetLX(),GetLY() }; }
+
+	Vector3 GetMoveXZ() const {
 		return { (float)joyState.Gamepad.sThumbLX / SHRT_MAX, 0.0f, (float)joyState.Gamepad.sThumbLY / SHRT_MAX };
 	}
 
-	Vector3 GetCameraRotate() {
+	Vector3 GetCameraRotate() const {
 		return { (float)joyState.Gamepad.sThumbRY / SHRT_MAX,(float)joyState.Gamepad.sThumbRX / SHRT_MAX,0.0f };
 	}
 
-	bool TriggerButton(int button) const {
-		if ((joyState.Gamepad.wButtons & button) && !(preJoyState.Gamepad.wButtons & button)) {
-			return true;
-		}
-		return false;
-	}
+	//パッドボタンのトリガーをチェック
+	bool TriggerButton(int button) const;
+	//パッドボタンの押下をチェック
+	bool PushButton(int button) const;
+	//パッドボタンのリリース(離し)のチェック
+	bool ReleaseButton(int button) const;
 
 	bool LeftTrigger() const;
 
@@ -76,5 +83,13 @@ private:
 	bool IsLStickUp() const;
 
 	bool IsLStickDown() const;
+
+	bool IsTiltRight() const;
+
+	bool IsTiltLeft() const;
+
+	bool IsTiltUp() const;
+
+	bool IsTiltDown() const;
 };
 
