@@ -51,18 +51,22 @@ private:
 	ComPtr<IDirectInputDevice8> keyBoard;
 	BYTE key[256] = {};
 	BYTE preKey[256] = {};
-	XINPUT_STATE joyState;
-	XINPUT_STATE preJoyState;
+	XINPUT_STATE joyState{};
+	XINPUT_STATE preJoyState{};
 	SHORT deadZone_ = 10000;
 
 public:
 
 	static Input* GetInstance();
 
+	///使用禁止
 	//初期化
 	void Initialize();
 	//更新
 	void Update();
+	//パッドの状態の取得
+	bool GetJoystickState();
+	///
 
 	//キーの押下をチェック
 	bool PushKey(BYTE keyNumber) const;
@@ -70,12 +74,14 @@ public:
 	//キーのトリガーをチェック
 	bool TriggerKey(BYTE keyNumber) const;
 
-	bool GetJoystickState();
-
 	//Lスティックの傾きチェック
-	bool TriggerLStick(Stick direction);
+	bool TriggerLStick(Stick direction) const;
+	//Rスティック
+	bool TriggerRStick(Stick derection) const;
 
-	bool TiltLStick(Stick directon);
+	bool TiltLStick(Stick direction) const;
+
+	bool TiltRStick(Stick direction) const;
 
 	float GetLX() const { return (float)joyState.Gamepad.sThumbLX / SHRT_MAX; }
 
@@ -97,11 +103,18 @@ public:
 	bool PushButton(Button button) const;
 	//パッドボタンのリリース(離し)のチェック
 	bool ReleaseButton(Button button) const;
-
+	//RT,LTの押下のチェック
+	bool PushTrigger(Trigger trigger) const;
+	//RT,LTのリリース(離し)のチェック
+	bool ReleaseTrigger(Trigger trigger) const;
+	//LTのトリガーのチェック
 	bool LeftTrigger() const;
-
+	//RTのトリガーのチェック
 	bool RightTrigger() const;
-
+	/// <summary>
+	/// パッドの振動の大きさの設定
+	/// </summary>
+	/// <param name="value">0.0f ~ 1.0f</param>
 	void Vibration(float value);
 
 private:
@@ -118,12 +131,28 @@ private:
 
 	bool IsLStickDown() const;
 
-	bool IsTiltRight() const;
+	bool IsRStickRight() const;
 
-	bool IsTiltLeft() const;
+	bool IsRStickLeft() const;
 
-	bool IsTiltUp() const;
+	bool IsRStickUp() const;
 
-	bool IsTiltDown() const;
+	bool IsRStickDown() const;
+
+	bool IsLTiltRight() const;
+
+	bool IsLTiltLeft() const;
+
+	bool IsLTiltUp() const;
+
+	bool IsLTiltDown() const;
+
+	bool IsRTiltRight() const;
+
+	bool IsRTiltLeft() const;
+
+	bool IsRTiltUp() const;
+
+	bool IsRTiltDown() const;
 };
 
