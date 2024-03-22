@@ -3,6 +3,10 @@
 #include <memory>
 class CameraFrozenManager {
 public:
+	static CameraFrozenManager* GetInstance() {
+		static CameraFrozenManager instance;
+		return &instance;
+	}
 	void Init();
 	void Update();
 	void Draw(ID3D12GraphicsCommandList* cmdList);
@@ -12,6 +16,9 @@ public:
 	/// <param name="cmdList"></param>
 	void DrawInternal(ID3D12GraphicsCommandList* cmdList);
 private:
+	CameraFrozenManager() {
+		Init();
+	}
 	bool isClearRender_;
 	bool isActive_;
 	float radius_;

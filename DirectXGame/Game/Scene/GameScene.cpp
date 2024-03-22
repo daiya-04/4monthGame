@@ -20,10 +20,7 @@ void GameScene::Init(){
 	HH.reset(new HeatHaze());
 	HH->Init();
 
-	cameraFrozen_.reset(new CameraFrozenManager());
-	cameraFrozen_->Init();
-	//cameraFrozen_->SetRadius(0.6f);
-	//cameraFrozen_->SetBorder(0.8f);
+	cameraFrozen_ = CameraFrozenManager::GetInstance();
 
 	dualSceneDrawer_.reset(new DualSceneDrawer());
 	dualSceneDrawer_->Init();
@@ -59,25 +56,9 @@ void GameScene::Update(){
 }
 
 void GameScene::DrawNotSetPipeline() {
-	cameraFrozen_->DrawInternal(commandList_);
-	prevScene->PreDrawScene(commandList_);
-	//一個目のscene描画
-	Sprite::preDraw(commandList_);
-	sample0->Draw();
-	Sprite::postDraw();
-	cameraFrozen_->Draw(commandList_);
-	prevScene->PostDrawScene(commandList_);
-
-	HH->PreDrawScene(commandList_);
-	//二個目のscene描画
-	Sprite::preDraw(commandList_);
-	sample1->Draw();
-	Sprite::postDraw();
-	HH->PostDrawScene(commandList_);
-
-	nextScene->PreDrawScene(commandList_);
-	HH->Draw(commandList_);
-	nextScene->PostDrawScene(commandList_);
+	
+	DrawCold(prevScene.get());
+	DrawHeat(nextScene.get());
 
 	weightCircle_->Draw();
 
@@ -124,4 +105,30 @@ void GameScene::DebugGUI(){
 #endif // _DEBUG
 }
 
+void GameScene::DrawCold(PostEffect* targetScene) {
+	cameraFrozen_->DrawInternal(commandList_);
+	targetScene->PreDrawScene(commandList_);
+	//一個目のscene描画
+	Sprite::preDraw(commandList_);
+	sample0->Draw();
+	Sprite::postDraw();
+	cameraFrozen_->Draw(commandList_);
+	targetScene->PostDrawScene(commandList_);
 
+
+}
+
+void GameScene::DrawHeat(PostEffect* targetScene) {
+
+	HH->PreDrawScene(commandList_);
+	//二個目のscene描画
+	Sprite::preDraw(commandList_);
+	sample1->Draw();
+	Sprite::postDraw();
+	HH->PostDrawScene(commandList_);
+
+	targetScene->PreDrawScene(commandList_);
+	HH->Draw(commandList_);
+	targetScene->PostDrawScene(commandList_);
+
+}

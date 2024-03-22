@@ -41,13 +41,24 @@ public:
 
 	~GameScene()override;
 	
+	/// <summary>
+	/// 灼熱状態のシーン描画
+	/// </summary>
+	/// <param name="targetScene">書き込み先</param>
+	void DrawHeat(PostEffect* targetScene);
+
+	/// <summary>
+	/// 極寒状態のシーン描画
+	/// </summary>
+	/// <param name="targetScene">書き込み先</param>
+	void DrawCold(PostEffect* targetScene);
 
 private:
 	ID3D12GraphicsCommandList* commandList_;
 	std::unique_ptr<PostEffect> prevScene;
 	std::unique_ptr<PostEffect> nextScene;
 	std::unique_ptr<HeatHaze> HH;
-	std::unique_ptr<CameraFrozenManager> cameraFrozen_;
+	CameraFrozenManager* cameraFrozen_;
 	std::unique_ptr<DualSceneDrawer> dualSceneDrawer_;
 
 	std::unique_ptr<Sprite> sample0;
