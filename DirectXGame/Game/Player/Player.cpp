@@ -24,11 +24,11 @@ void Player::Update() {
 
 	velocity_ = { 0.0f,0.0f };
 
-	if (input_->TriggerLStick("Right")) {
+	if (input_->TiltLStick("Right")) {
 		velocity_.x = speed_;
 	}
 
-	else if (input_->TriggerLStick("Left")) {
+	else if (input_->TiltLStick("Left")) {
 		velocity_.x = -speed_;
 	}
 
