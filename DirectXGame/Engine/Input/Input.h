@@ -14,6 +14,37 @@ private:
 
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+public:
+
+	enum class Button {
+		DPAD_UP = 0x0001,
+		DPAD_DOWN = 0x0002,
+		DPAD_LEFT = 0x0004,
+		DPAD_RIGHT = 0x0008,
+		START = 0x0010,
+		BACK = 0x0020,
+		LEFT_THUMB = 0x0040,
+		RIGHT_THUMB = 0x0080,
+		LEFT_SHOULDER = 0x0100,
+		RIGHT_SHOULDER = 0x0200,
+		A = 0x1000,
+		B = 0x2000,
+		X = 0x4000,
+		Y = 0x8000,
+	};
+
+	enum class Trigger {
+		Left,
+		Right,
+	};
+
+	enum class Stick {
+		Left,
+		Right,
+		Up,
+		Down,
+	};
+
 private:
 
 	ComPtr<IDirectInput8> directInput;
@@ -22,6 +53,7 @@ private:
 	BYTE preKey[256] = {};
 	XINPUT_STATE joyState;
 	XINPUT_STATE preJoyState;
+	SHORT deadZone_ = 10000;
 
 public:
 
@@ -41,9 +73,9 @@ public:
 	bool GetJoystickState();
 
 	//Lスティックの傾きチェック
-	bool TriggerLStick(const std::string& direction);
+	bool TriggerLStick(Stick direction);
 
-	bool TiltLStick(const std::string& directon);
+	bool TiltLStick(Stick directon);
 
 	float GetLX() const { return (float)joyState.Gamepad.sThumbLX / SHRT_MAX; }
 
@@ -60,15 +92,17 @@ public:
 	}
 
 	//パッドボタンのトリガーをチェック
-	bool TriggerButton(int button) const;
+	bool TriggerButton(Button button) const;
 	//パッドボタンの押下をチェック
-	bool PushButton(int button) const;
+	bool PushButton(Button button) const;
 	//パッドボタンのリリース(離し)のチェック
-	bool ReleaseButton(int button) const;
+	bool ReleaseButton(Button button) const;
 
 	bool LeftTrigger() const;
 
 	bool RightTrigger() const;
+
+	void Vibration(float value);
 
 private:
 	Input() = default;
