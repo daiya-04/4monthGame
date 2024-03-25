@@ -91,7 +91,7 @@ bool Input::GetJoystickState() {
 	return false;
 }
 
-bool Input::TriggerLStick(Stick direction) {
+bool Input::TriggerLStick(Stick direction) const{
 
 	if (direction == Stick::Right) {
 		return IsLStickRight();
@@ -108,18 +108,52 @@ bool Input::TriggerLStick(Stick direction) {
 	return false;
 }
 
-bool Input::TiltLStick(Stick direction) {
+bool Input::TriggerRStick(Stick direction) const {
+
 	if (direction == Stick::Right) {
-		return IsTiltRight();
+		return IsRStickRight();
 	}
 	if (direction == Stick::Left) {
-		return IsTiltLeft();
+		return IsRStickLeft();
 	}
 	if (direction == Stick::Up) {
-		return IsTiltUp();
+		return IsRStickUp();
 	}
 	if (direction == Stick::Down) {
-		return IsTiltDown();
+		return IsRStickDown();
+	}
+	
+	return false;
+}
+
+bool Input::TiltLStick(Stick direction) const{
+	if (direction == Stick::Right) {
+		return IsLTiltRight();
+	}
+	if (direction == Stick::Left) {
+		return IsLTiltLeft();
+	}
+	if (direction == Stick::Up) {
+		return IsLTiltUp();
+	}
+	if (direction == Stick::Down) {
+		return IsLTiltDown();
+	}
+	return false;
+}
+
+bool Input::TiltRStick(Stick direction) const {
+	if (direction == Stick::Right) {
+		return IsRTiltRight();
+	}
+	if (direction == Stick::Left) {
+		return IsRTiltLeft();
+	}
+	if (direction == Stick::Up) {
+		return IsRTiltUp();
+	}
+	if (direction == Stick::Down) {
+		return IsRTiltDown();
 	}
 	return false;
 }
@@ -142,6 +176,42 @@ bool Input::ReleaseButton(Button button) const {
 	if (!(joyState.Gamepad.wButtons & (WORD)button) && (preJoyState.Gamepad.wButtons & (WORD)button)) {
 		return true;
 	}
+	return false;
+}
+
+bool Input::PushTrigger(Trigger trigger) const {
+
+	switch (trigger) {
+		case Trigger::Left:
+			if (joyState.Gamepad.bLeftTrigger) {
+				return true;
+			}
+			break;
+		case Trigger::Right:
+			if (joyState.Gamepad.bRightTrigger) {
+				return true;
+			}
+			break;
+	}
+
+	return false;
+}
+
+bool Input::ReleaseTrigger(Trigger trigger) const {
+
+	switch (trigger) {
+		case Trigger::Left:
+			if (!joyState.Gamepad.bLeftTrigger && preJoyState.Gamepad.bLeftTrigger) {
+				return true;
+			}
+			break;
+		case Trigger::Right:
+			if (!joyState.Gamepad.bRightTrigger && preJoyState.Gamepad.bRightTrigger) {
+				return true;
+			}
+			break;
+	}
+
 	return false;
 }
 
@@ -202,29 +272,85 @@ bool Input::IsLStickDown() const {
 	return false;
 }
 
-bool Input::IsTiltRight() const {
+bool Input::IsRStickRight() const {
+	if (float(joyState.Gamepad.sThumbRX) > deadZone_ && float(preJoyState.Gamepad.sThumbRX) <= deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRStickLeft() const {
+	if (float(joyState.Gamepad.sThumbRX) < -deadZone_ && float(preJoyState.Gamepad.sThumbRX) >= -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRStickUp() const {
+	if (float(joyState.Gamepad.sThumbRY) > deadZone_ && float(preJoyState.Gamepad.sThumbRY) <= deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRStickDown() const {
+	if (float(joyState.Gamepad.sThumbRY) < -deadZone_ && float(preJoyState.Gamepad.sThumbRY) >= -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsLTiltRight() const {
 	if ((float)(joyState.Gamepad.sThumbLX) > deadZone_) {
 		return true;
 	}
 	return false;
 }
 
-bool Input::IsTiltLeft() const {
+bool Input::IsLTiltLeft() const {
 	if ((float)(joyState.Gamepad.sThumbLX) < -deadZone_) {
 		return true;
 	}
 	return false;
 }
 
-bool Input::IsTiltUp() const {
+bool Input::IsLTiltUp() const {
 	if ((float)(joyState.Gamepad.sThumbLY) > deadZone_) {
 		return true;
 	}
 	return false;
 }
 
-bool Input::IsTiltDown() const {
+bool Input::IsLTiltDown() const {
 	if ((float)(joyState.Gamepad.sThumbLY) < -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRTiltRight() const {
+	if (float(joyState.Gamepad.sThumbRX) > deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRTiltLeft() const {
+	if (float(joyState.Gamepad.sThumbRX) < -deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRTiltUp() const {
+	if (float(joyState.Gamepad.sThumbRY) > deadZone_) {
+		return true;
+	}
+	return false;
+}
+
+bool Input::IsRTiltDown() const {
+	if (float(joyState.Gamepad.sThumbRY) < deadZone_) {
 		return true;
 	}
 	return false;

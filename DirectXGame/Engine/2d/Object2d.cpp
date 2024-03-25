@@ -217,8 +217,8 @@ void Object2d::postDraw() {
 
 Object2d::Object2d(uint32_t textureHandle, Vector2 position, float scale, Vector4 color) {
 
-	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
 	textureHandle_ = textureHandle;
+	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
 	position_ = position;
 	size_ = { (float)resourceDesc_.Width * scale,(float)resourceDesc_.Height * scale };
 	rotate_ = 0.0f;
