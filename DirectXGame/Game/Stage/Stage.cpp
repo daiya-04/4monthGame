@@ -38,7 +38,7 @@ void Stage::Update() {
 	//ブロックの更新
 	for (auto& block : map_) {
 
-
+		SetUV(block.get());
 
 		block->Update();
 
@@ -218,9 +218,69 @@ void Stage::SetUV(Block* block) {
 	uint32_t top = std::clamp(py - 1, 0, int(kMaxStageHeight_));
 	uint32_t bottom = std::clamp(py + 1, 0, int(kMaxStageHeight_));
 	
+	//周囲八マスと現在のブロックの数字
+	int32_t centerNum = blockPositions_[py][px];
+	int32_t leftNum = blockPositions_[py][left];
+	int32_t rightNum = blockPositions_[py][right];
+	int32_t topNum = blockPositions_[top][px];
+	int32_t bottomNum = blockPositions_[bottom][px];
+	int32_t topLeftNum = blockPositions_[top][left];
+	int32_t topRightNum = blockPositions_[top][right];
+	int32_t bottomLeftNum = blockPositions_[bottom][left];
+	int32_t bottomRightNum = blockPositions_[bottom][right];
+
+
+	//周囲八マスに同一ブロックがある場合
+	if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum == topRightNum &&
+		centerNum == bottomLeftNum && centerNum == bottomRightNum) {
+		block->SetUVPosition(0, 5);
+	}
+
 	//周囲四マスに同一ブロックが無い場合
-	if (blockPositions_[py][px] != blockPositions_[py][left] && blockPositions_[py][px] != blockPositions_[py][right] &&
-		blockPositions_[py][px] != blockPositions_[top][px] && blockPositions_[py][px] != blockPositions_[bottom][px]) {
+	else if (centerNum != leftNum && centerNum != rightNum &&
+		centerNum != topNum && centerNum != bottomNum) {
+
+	}
+	//右に1つだけある場合
+	else if (centerNum != leftNum && centerNum == rightNum &&
+		centerNum != topNum && centerNum != bottomNum) {
+
+	}
+	//左に1つだけある場合
+	else if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum != topNum && centerNum != bottomNum) {
+
+	}
+	//上に1つだけある場合
+	else if (centerNum != leftNum && centerNum != rightNum &&
+		centerNum == topNum && centerNum != bottomNum) {
+
+	}
+	//下に一つだけある場合
+	else if (centerNum != leftNum && centerNum != rightNum &&
+		centerNum != topNum && centerNum == bottomNum) {
+
+	}
+	//左右にある場合
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum != topNum && centerNum != bottomNum) {
+
+	}
+	//上下にある場合
+	else if (centerNum != leftNum && centerNum != rightNum &&
+		centerNum == topNum && centerNum == bottomNum) {
+
+	}
+	//左と上にある場合
+	else if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum == topNum && centerNum != bottomNum) {
+
+	}
+	//左と下にある場合
+	if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum != topNum && centerNum == bottomNum) {
 
 	}
 

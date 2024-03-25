@@ -47,7 +47,7 @@ void Player::Update() {
 		//浮いている場合の処理
 		if (isFly_ && velocity_.y < maxFallSpeed_) {
 
-			velocity_.y += 0.50f;
+			velocity_.y += 2.0f;
 
 			//下限値を超えないように調整
 			if (velocity_.y > maxFallSpeed_) {
