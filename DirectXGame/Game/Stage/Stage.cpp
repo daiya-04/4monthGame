@@ -229,59 +229,318 @@ void Stage::SetUV(Block* block) {
 	int32_t bottomLeftNum = blockPositions_[bottom][left];
 	int32_t bottomRightNum = blockPositions_[bottom][right];
 
-
 	//周囲八マスに同一ブロックがある場合
 	if (centerNum == leftNum && centerNum == rightNum &&
 		centerNum == topNum && centerNum == bottomNum &&
 		centerNum == topLeftNum && centerNum == topRightNum &&
 		centerNum == bottomLeftNum && centerNum == bottomRightNum) {
-		block->SetUVPosition(0, 5);
+		block->SetUVPosition(5, 0);
+	}
+
+	//左上以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum != topLeftNum && centerNum == topRightNum &&
+		centerNum == bottomLeftNum && centerNum == bottomRightNum) {
+		block->SetUVPosition(5, 4);
+	}
+
+	//右上以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum != topRightNum &&
+		centerNum == bottomLeftNum && centerNum == bottomRightNum) {
+		block->SetUVPosition(6, 4);
+	}
+
+	//左下以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum == topRightNum &&
+		centerNum != bottomLeftNum && centerNum == bottomRightNum) {
+		block->SetUVPosition(4, 4);
+	}
+
+	//右下以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum == topRightNum &&
+		centerNum == bottomLeftNum && centerNum != bottomRightNum) {
+		block->SetUVPosition(7, 4);
+	}
+
+	//左上、左下以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum != topLeftNum && centerNum == topRightNum &&
+		centerNum != bottomLeftNum && centerNum == bottomRightNum) {
+		block->SetUVPosition(0, 4);
+	}
+
+	//左上、右上以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum != topLeftNum && centerNum != topRightNum &&
+		centerNum == bottomLeftNum && centerNum == bottomRightNum) {
+		block->SetUVPosition(1, 4);
+	}
+
+	//左上、右下以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum != topLeftNum && centerNum == topRightNum &&
+		centerNum == bottomLeftNum && centerNum != bottomRightNum) {
+		block->SetUVPosition(6, 3);
+	}
+
+	//右上、左下以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum != topRightNum &&
+		centerNum != bottomLeftNum && centerNum == bottomRightNum) {
+		block->SetUVPosition(5, 3);
+	}
+
+	//右上、右下以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum != topRightNum &&
+		centerNum == bottomLeftNum && centerNum != bottomRightNum) {
+		block->SetUVPosition(2, 4);
+	}
+
+	//左下、右下以外にブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum == topRightNum &&
+		centerNum != bottomLeftNum && centerNum != bottomRightNum) {
+		block->SetUVPosition(3, 4);
+	}
+
+	//左上のみブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum != topRightNum &&
+		centerNum != bottomLeftNum && centerNum != bottomRightNum) {
+		block->SetUVPosition(3, 3);
+	}
+
+	//右上のみブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum != topLeftNum && centerNum == topRightNum &&
+		centerNum != bottomLeftNum && centerNum != bottomRightNum) {
+		block->SetUVPosition(4, 3);
+	}
+
+	//左下のみブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum != topLeftNum && centerNum != topRightNum &&
+		centerNum == bottomLeftNum && centerNum != bottomRightNum) {
+		block->SetUVPosition(2, 3);
+	}
+
+	//右下のみブロックあり
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum != topLeftNum && centerNum != topRightNum &&
+		centerNum != bottomLeftNum && centerNum == bottomRightNum) {
+		block->SetUVPosition(1, 3);
+	}
+
+	//左以外ブロックあり(角は問わない)
+	else if (centerNum != leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topRightNum && centerNum == bottomRightNum) {
+			block->SetUVPosition(1, 0);
+	}
+
+	//右以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum == bottomLeftNum) {
+			block->SetUVPosition(3, 0);
+	}
+
+	//上以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum != topNum && centerNum == bottomNum &&
+		centerNum == bottomLeftNum && centerNum == bottomRightNum) {
+			block->SetUVPosition(2, 0);
+	}
+
+	//下以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum != bottomNum &&
+		centerNum == topLeftNum && centerNum == topRightNum) {
+			block->SetUVPosition(4, 0);
+	}
+
+	//左と上以外ブロックあり(角は問わない)
+	else if (centerNum != leftNum && centerNum == rightNum &&
+		centerNum != topNum && centerNum == bottomNum &&
+		centerNum == bottomRightNum) {
+			block->SetUVPosition(0, 1);
+	}
+
+	//右と上以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum != topNum && centerNum == bottomNum &&
+		centerNum == bottomLeftNum) {
+			block->SetUVPosition(1, 1);
+	}
+
+	//左と下以外ブロックあり(角は問わない)
+	else if (centerNum != leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum != bottomNum &&
+		centerNum == topRightNum) {
+			block->SetUVPosition(3, 1);
+	}
+
+	//右と下以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum == topNum && centerNum != bottomNum &&
+		centerNum == topLeftNum) {
+			block->SetUVPosition(2, 1);
+	}
+
+	//左と右上以外ブロックあり(角は問わない)
+	else if (centerNum != leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum != topRightNum && centerNum == bottomRightNum) {
+			block->SetUVPosition(0, 6);
+	}
+
+	//左と右下以外ブロックあり(角は問わない)
+	else if (centerNum != leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topRightNum && centerNum != bottomRightNum) {
+			block->SetUVPosition(1, 6);
+	}
+
+	//右と左上以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum != topLeftNum && centerNum == bottomLeftNum) {
+			block->SetUVPosition(4, 6);
+	}
+
+	//右と左下以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum == topNum && centerNum == bottomNum &&
+		centerNum == topLeftNum && centerNum != bottomLeftNum) {
+			block->SetUVPosition(5, 6);
+	}
+
+	//上と左下以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum != topNum && centerNum == bottomNum &&
+		centerNum != bottomLeftNum && centerNum == bottomRightNum) {
+			block->SetUVPosition(2, 6);
+	}
+
+	//上と右下以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum != topNum && centerNum == bottomNum &&
+		centerNum == bottomLeftNum && centerNum != bottomRightNum) {
+			block->SetUVPosition(3, 6);
+	}
+
+	//下と左上以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum != bottomNum &&
+		centerNum != topLeftNum && centerNum == topRightNum) {
+			block->SetUVPosition(6, 6);
+	}
+
+	//下と右上以外ブロックあり(角は問わない)
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum != bottomNum &&
+		centerNum == topLeftNum && centerNum != topRightNum) {
+			block->SetUVPosition(7, 6);
+	}
+
+	//周囲四マスにブロックがある場合
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum) {
+		block->SetUVPosition(0, 3);
 	}
 
 	//周囲四マスに同一ブロックが無い場合
 	else if (centerNum != leftNum && centerNum != rightNum &&
 		centerNum != topNum && centerNum != bottomNum) {
-
+		block->SetUVPosition(0, 0);
 	}
 	//右に1つだけある場合
 	else if (centerNum != leftNum && centerNum == rightNum &&
 		centerNum != topNum && centerNum != bottomNum) {
-
+		block->SetUVPosition(0, 2);
 	}
 	//左に1つだけある場合
 	else if (centerNum == leftNum && centerNum != rightNum &&
 		centerNum != topNum && centerNum != bottomNum) {
-
+		block->SetUVPosition(2, 2);
 	}
 	//上に1つだけある場合
 	else if (centerNum != leftNum && centerNum != rightNum &&
 		centerNum == topNum && centerNum != bottomNum) {
-
+		block->SetUVPosition(3, 2);
 	}
 	//下に一つだけある場合
 	else if (centerNum != leftNum && centerNum != rightNum &&
 		centerNum != topNum && centerNum == bottomNum) {
-
+		block->SetUVPosition(1, 2);
 	}
-	//左右にある場合
-	else if (centerNum == leftNum && centerNum == rightNum &&
-		centerNum != topNum && centerNum != bottomNum) {
-
+	//右と下にある場合
+	else if (centerNum != leftNum && centerNum == rightNum &&
+		centerNum != topNum && centerNum == bottomNum) {
+		block->SetUVPosition(4, 5);
 	}
-	//上下にある場合
-	else if (centerNum != leftNum && centerNum != rightNum &&
-		centerNum == topNum && centerNum == bottomNum) {
-
+	//左と下にある場合
+	else if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum != topNum && centerNum == bottomNum) {
+		block->SetUVPosition(5, 5);
+	}
+	//右と上にある場合
+	else if (centerNum != leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum != bottomNum) {
+		block->SetUVPosition(7, 5);
 	}
 	//左と上にある場合
 	else if (centerNum == leftNum && centerNum != rightNum &&
 		centerNum == topNum && centerNum != bottomNum) {
-
+		block->SetUVPosition(6, 5);
 	}
-	//左と下にある場合
-	if (centerNum == leftNum && centerNum != rightNum &&
+	//左右にある場合
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum != topNum && centerNum != bottomNum) {
+		block->SetUVPosition(5, 1);
+	}
+	//上下にある場合
+	else if (centerNum != leftNum && centerNum != rightNum &&
+		centerNum == topNum && centerNum == bottomNum) {
+		block->SetUVPosition(4, 1);
+	}
+	//右以外にある場合
+	else if (centerNum == leftNum && centerNum != rightNum &&
+		centerNum == topNum && centerNum == bottomNum) {
+		block->SetUVPosition(2, 5);
+	}
+	//左以外にある場合
+	else if (centerNum != leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum == bottomNum) {
+		block->SetUVPosition(0, 5);
+	}
+	//上以外にある場合
+	else if (centerNum == leftNum && centerNum == rightNum &&
 		centerNum != topNum && centerNum == bottomNum) {
-
+		block->SetUVPosition(1, 5);
+	}
+	//下以外にある場合
+	else if (centerNum == leftNum && centerNum == rightNum &&
+		centerNum == topNum && centerNum != bottomNum) {
+		block->SetUVPosition(3, 5);
 	}
 
 }

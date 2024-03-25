@@ -32,60 +32,80 @@ void Player::Initialize() {
 
 void Player::Update() {
 
-	//ジャンプ処理
-	Jump();
-	
-	//壁キック処理
-	WallJump();
-	
-	//移動処理
-	Move();
+	if (isDebug_) {
 
-	//速度加算、オブジェクトに更新した座標を適用
-	{
-
-		//浮いている場合の処理
-		if (isFly_ && velocity_.y < maxFallSpeed_) {
-
-			velocity_.y += 2.0f;
-
-			//下限値を超えないように調整
-			if (velocity_.y > maxFallSpeed_) {
-				velocity_.y = maxFallSpeed_;
-			}
-
-
-
+		if (input_->PushKey(DIK_W)) {
+			position_.y -= 10.0f;
 		}
-
-		//浮いていない場合の処理
-		if (!isFly_) {
-			
+		if (input_->PushKey(DIK_S)) {
+			position_.y += 10.0f;
 		}
-
-		position_ += velocity_;
-
-		object_->position_ = position_;
-
-		//4頂点の座標を更新
-		leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-		rightTop_ = { position_.x + kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-		leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
-		rightBottom_ = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
+		if (input_->PushKey(DIK_A)) {
+			position_.x -= 10.0f;
+		}
+		if (input_->PushKey(DIK_D)) {
+			position_.x += 10.0f;
+		}
 
 	}
+	else {
 
-	//判定処理
-	{
+		//ジャンプ処理
+		Jump();
 
-		if (leftBottom_.y >= 720.0f) {
-			position_.y = 720.0f - kPlayerHalfSize_;
-			parameter_.Jump_.canJump = true;
-			velocity_.y = 0.0f;
-			isFly_ = false;
+		//壁キック処理
+		WallJump();
+
+		//移動処理
+		Move();
+
+		//速度加算、オブジェクトに更新した座標を適用
+		{
+
+			//浮いている場合の処理
+			if (isFly_ && velocity_.y < maxFallSpeed_) {
+
+				velocity_.y += 2.0f;
+
+				//下限値を超えないように調整
+				if (velocity_.y > maxFallSpeed_) {
+					velocity_.y = maxFallSpeed_;
+				}
+
+
+
+			}
+
+			//浮いていない場合の処理
+			if (!isFly_) {
+
+			}
+
+			position_ += velocity_;
+
+			object_->position_ = position_;
+
+			//4頂点の座標を更新
+			leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
+			rightTop_ = { position_.x + kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
+			leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
+			rightBottom_ = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
+
 		}
-		else {
-			isFly_ = true;
+
+		//判定処理
+		{
+
+			if (leftBottom_.y >= 720.0f) {
+				position_.y = 720.0f - kPlayerHalfSize_;
+				parameter_.Jump_.canJump = true;
+				velocity_.y = 0.0f;
+				isFly_ = false;
+			}
+			else {
+				isFly_ = true;
+			}
+
 		}
 
 	}

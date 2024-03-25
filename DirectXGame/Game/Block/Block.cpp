@@ -20,13 +20,13 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 
 	object_.reset(Object2d::Create(texture_, position_));
 	object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
-	object_->SetTextureArea({ 0.0f,0.0f }, { 2.0f,2.0f });
+	object_->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
 
 }
 
 void Block::Update() {
 
-	object_->SetTextureArea({ float(uvPositionX_ * 32.0f),float(uvPositionY_ * 32.0f) }, { 2.0f,2.0f });
+	object_->SetTextureArea({ float(uvPositionX_ * 64.0f),float(uvPositionY_ * 64.0f) }, { 64.0f,64.0f });
 
 }
 
