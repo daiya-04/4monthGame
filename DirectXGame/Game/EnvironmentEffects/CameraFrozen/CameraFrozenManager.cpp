@@ -39,7 +39,7 @@ void CameraFrozenManager::Update() {
 		}
 	}
 	seed_+=0.01f;
-	cameraFrozen_->SetRadius(0.65f);
+	cameraFrozen_->SetRadius(0.75f);
 	cameraFrozen_->SetBorder(border_);
 	cameraFrozen_->SetSeed(seed_);
 }

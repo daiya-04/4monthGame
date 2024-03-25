@@ -11,13 +11,16 @@ EnvironmentEffectsManager::EnvironmentEffectsManager() {
 	weightCircle_.reset(new WeightCircle);
 	weightCircle_->Init(); dualSceneDrawer_->Init();
 	isNowScene_ = false;
+	isChangeComplete_ = false;
 }
 
 void EnvironmentEffectsManager::Update() {
 	weightCircle_->Update();
+	isChangeComplete_ = false;
 	if (weightCircle_->GetIsEnd()) {
 		isNowScene_ = !isNowScene_;
 		weightCircle_->Reset();
+		isChangeComplete_ = true;
 	}
 }
 

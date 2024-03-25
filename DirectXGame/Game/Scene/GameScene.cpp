@@ -25,8 +25,8 @@ void GameScene::Init(){
 	sample1.reset(new Sprite(TextureManager::GetInstance()->Load("hhTest.png"), { 640.0f,360.0f }, 1.0f));
 	sample1->Initialize();
 	offset_ = 0;
-	roop_ = 1.0f;
-	width_ = 0.0f;
+	roop_ = 2.3f;
+	width_ = 0.003f;
 }
 
 void GameScene::Update(){
@@ -44,6 +44,14 @@ void GameScene::Update(){
 	HH->SetOffset(offset_);
 	HH->SetRoop(roop_);
 	HH->SetWidth(width_);
+	if (environmentEffectsManager_->GetIsChangeComplete()) {
+		if (!environmentEffectsManager_->GetIsNowScene()) {
+			cameraFrozen_->Start();
+		}
+		else {
+			cameraFrozen_->Reset();
+		}
+	}
 	cameraFrozen_->Update();
 }
 

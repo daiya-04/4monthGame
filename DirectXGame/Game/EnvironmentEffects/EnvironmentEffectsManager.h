@@ -22,10 +22,12 @@ public:
 	bool GetIsNowScene() { return isNowScene_; };
 	bool GetIsPlaySceneChangeAnimation() { return weightCircle_->GetIsStart(); };
 	void WeightCircleDraw() { weightCircle_->Draw(); };
+	bool GetIsChangeComplete() { return isChangeComplete_; };
 private:
 	std::unique_ptr<PostEffect> prevScene;
 	std::unique_ptr<PostEffect> nextScene;
 	std::unique_ptr<DualSceneDrawer> dualSceneDrawer_;
 	std::unique_ptr<WeightCircle> weightCircle_;
 	bool isNowScene_;//現在シーンがどちらか(極寒:false 灼熱:true)
+	bool isChangeComplete_;//シーン遷移が完了した時にtrue
 };

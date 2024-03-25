@@ -15,6 +15,15 @@ public:
 	/// </summary>
 	/// <param name="cmdList"></param>
 	void DrawInternal(ID3D12GraphicsCommandList* cmdList);
+	//アニメーション開始
+	void Start() {
+		isActive_ = true;
+		radius_ = radiusMax_;
+		isClearRender_ = true;
+	};
+	void Reset() {
+		isClearRender_ = true;
+	}
 private:
 	CameraFrozenManager() {
 		Init();
