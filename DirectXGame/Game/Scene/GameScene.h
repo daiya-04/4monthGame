@@ -15,6 +15,7 @@
 
 #include "Stage/Stage.h"
 #include "Player/Player.h"
+#include "Scroll/Scroll.h"
 
 class GameScene : public DefaultScene {
 public:
@@ -45,6 +46,8 @@ private:
 	std::shared_ptr<Player> player_;
 
 	std::shared_ptr<Camera> camera_;
+
+	std::unique_ptr<Scroll> scroll_;
 
 };
 

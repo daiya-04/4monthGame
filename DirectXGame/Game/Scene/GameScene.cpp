@@ -23,7 +23,12 @@ void GameScene::Init(){
 
 	camera_ = std::make_shared<Camera>();
 	camera_->Init();
-	camera_->translation_ = { -100.0f,-100.0f,0.0f };
+	camera_->translation_ = { 0.0f,0.0f,0.0f };
+
+	scroll_ = std::make_unique<Scroll>();
+	scroll_->Initialize();
+	scroll_->SetTarget(player_->GetPositionPtr());
+	scroll_->SetCamera(camera_.get());
 
 }
 
@@ -35,6 +40,8 @@ void GameScene::Update(){
 	player_->Update();
 
 	camera_->UpdateMatrix();
+
+	scroll_->Update();
 
 }
 
@@ -74,9 +81,11 @@ void GameScene::DebugGUI(){
 #ifdef _DEBUG
 
 	ImGui::Begin("camera");
-	ImGui::DragFloat3("translation", &camera_->translation_.x, 0.1f);
+	ImGui::DragFloat3("translation", &camera_->translation_.x, 1.0f);
 	ImGui::DragFloat3("rotation", &camera_->rotation_.x, 0.01f);
 	ImGui::End();
+
+	player_->Debug();
 
 #endif // _DEBUG
 }

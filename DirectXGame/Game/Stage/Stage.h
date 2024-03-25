@@ -44,7 +44,11 @@ public:
 
 private:
 
+	uint32_t blockPositions_[kMaxStageHeight_][kMaxStageWidth_]{};
+
 	Player* player_;
+
+	void SetUV(Block* block);
 
 	//マップ
 	/*std::array<std::array<std::shared_ptr<Block>, kMaxStageHeight_>, kMaxStageWidth_> map_;*/

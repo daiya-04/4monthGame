@@ -4,12 +4,19 @@
 #include "Vec2.h"
 #include "Camera.h"
 #include "Input.h"
+#include "PlayerParameter.h"
+#include <array>
 
 class Player
 {
 public:
 	Player();
 	~Player();
+
+	//プレイヤーのサイズ
+	static const uint32_t kPlayerSize_ = 96;
+	//プレイヤーサイズの半分
+	static const uint32_t kPlayerHalfSize_ = kPlayerSize_ / 2;
 
 	/// <summary>
 	/// 初期化
@@ -25,6 +32,25 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw(const Camera& camera);
+
+	/// <summary>
+	/// デバッグ描画
+	/// </summary>
+	void Debug();
+
+	void SetPosition(const Vector2& position) { position_ = position; }
+
+	const Vector2& GetPosition() { return position_; }
+
+	Vector2* GetPositionPtr() { return &position_; }
+
+private:
+
+	void Move();
+
+	void Jump();
+
+	void WallJump();
 
 private:
 
@@ -50,20 +76,14 @@ private:
 	//水分量
 	/*uint32_t bodyMoisture_ = 50;*/
 
-	//ジャンプフラグ
-	bool canJump_ = true;
+	//パラメータを纏めたもの
+	PlayerParameter parameter_;
 
-	//壁キックフラグ
-	bool canWallJump_ = false;
+	//空中判定
+	bool isFly_ = false;
 
-	//ヒップドロップ
-	bool canHipDrop_ = false;
-
-	//掴みフラグ
-	bool canCatch_ = true;
-
-	//移動量
-	float speed_ = 3.0f;
+	//落下速度下限
+	const float maxFallSpeed_ = 15.0f;
 
 	//速度
 	Vector2 velocity_{};
@@ -73,6 +93,15 @@ private:
 
 	//位置
 	Vector2 position_{};
+
+	//左上
+	Vector2 leftTop_{};
+	//右上
+	Vector2 rightTop_{};
+	//左下
+	Vector2 leftBottom_{};
+	//右下
+	Vector2 rightBottom_{};
 
 	//プレイヤー画像
 	uint32_t texture_;

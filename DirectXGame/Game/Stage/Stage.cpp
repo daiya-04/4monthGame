@@ -15,6 +15,19 @@ Stage::~Stage()
 
 void Stage::Initialize(uint32_t stageNumber) {
 
+	map_.clear();
+	stones_.clear();
+
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+
+			blockPositions_[y][x] = 0;
+
+		}
+
+	}
+
 	//マップロード
 	Load(stageNumber);
 
@@ -24,7 +37,11 @@ void Stage::Update() {
 
 	//ブロックの更新
 	for (auto& block : map_) {
+
+
+
 		block->Update();
+
 	}
 
 	//サウナストーン更新
@@ -133,7 +150,10 @@ void Stage::Load(uint32_t stageNumber) {
 				std::shared_ptr<Block> block = std::make_shared<Block>();
 				block->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, type);
 				block->SetPlayer(player_);
+				block->SetBlockPosition(x, y);
 				map_.push_back(block);
+
+				blockPositions_[y][x] = num;
 
 				/*map_[y][x] = std::make_shared<Block>();
 				map_[y][x]->Initialize({ x * 32.0f, y * 32.0f }, type);*/
@@ -184,5 +204,24 @@ void Stage::Load(uint32_t stageNumber) {
 
 	}*/ 
 
+
+}
+
+void Stage::SetUV(Block* block) {
+
+	int32_t px = block->GetBlockPositionX();
+	int32_t py = block->GetBlockPositionY();
+
+	//周囲八マスの判定を取るための変数
+	uint32_t left = std::clamp(px - 1, 0, int(kMaxStageWidth_));
+	uint32_t right = std::clamp(px + 1, 0, int(kMaxStageWidth_));
+	uint32_t top = std::clamp(py - 1, 0, int(kMaxStageHeight_));
+	uint32_t bottom = std::clamp(py + 1, 0, int(kMaxStageHeight_));
+	
+	//周囲四マスに同一ブロックが無い場合
+	if (blockPositions_[py][px] != blockPositions_[py][left] && blockPositions_[py][px] != blockPositions_[py][right] &&
+		blockPositions_[py][px] != blockPositions_[top][px] && blockPositions_[py][px] != blockPositions_[bottom][px]) {
+
+	}
 
 }

@@ -75,9 +75,17 @@ public:
 		uvPositionY_ = yPosition;
 	}
 
+	//マップチップでの位置を設定
+	void SetBlockPosition(uint32_t px, uint32_t py) { blockPositionX_ = px; blockPositionY_ = py; }
+
 	const BlockType& GetType() { return type_; }
 
 	const Vector2& GetPosition() { return position_; }
+
+	//ブロックのマップチップでのX位置取得
+	const uint32_t& GetBlockPositionX() { return blockPositionX_; }
+	//ブロックのマップチップでのY位置取得
+	const uint32_t& GetBlockPositionY() { return blockPositionY_; }
 
 protected:
 
@@ -96,6 +104,11 @@ protected:
 	//描画の開始座標を決める数字
 	uint32_t uvPositionX_ = 0;
 	uint32_t uvPositionY_ = 0;
+
+	//マップチップでのX位置
+	uint32_t blockPositionX_ = 0;
+	//マップチップでのY位置
+	uint32_t blockPositionY_ = 0;
 
 };
 
