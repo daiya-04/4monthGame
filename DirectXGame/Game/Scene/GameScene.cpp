@@ -11,22 +11,14 @@ GameScene::~GameScene() {}
 
 void GameScene::Init(){
 	commandList_ = DirectXCommon::GetInstance()->GetCommandList();
-	prevScene.reset( new PostEffect());
-	prevScene->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 	
-	nextScene.reset(new PostEffect());
-	nextScene->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
-
 	HH.reset(new HeatHaze());
 	HH->Init();
-
+	environmentEffectsManager_ = EnvironmentEffectsManager::GetInstance();
 	cameraFrozen_ = CameraFrozenManager::GetInstance();
 
-	dualSceneDrawer_.reset(new DualSceneDrawer());
-	dualSceneDrawer_->Init();
-
-	weightCircle_.reset(new WeightCircle);
-	weightCircle_->Init();
+	//weightCircle_.reset(new WeightCircle);
+	//weightCircle_->Init();
 
 	sample0.reset(new Sprite(TextureManager::GetInstance()->Load("sample0.png"), {640.0f,360.0f},10.0f));
 	sample0->Initialize();
@@ -39,8 +31,8 @@ void GameScene::Init(){
 
 void GameScene::Update(){
 	DebugGUI();
-
-	weightCircle_->Update();
+	environmentEffectsManager_->Update();
+	//weightCircle_->Update();
 #ifdef _DEBUG
 	ImGui::Begin("HeatHaze");
 	ImGui::DragFloat("offset", &offset_, 0.01f);
@@ -56,11 +48,26 @@ void GameScene::Update(){
 }
 
 void GameScene::DrawNotSetPipeline() {
+	//極寒状態だったら
+	if (!environmentEffectsManager_->GetIsNowScene()) {
+		DrawCold(environmentEffectsManager_->GetPrevScene());
+		if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
+			DrawHeat(environmentEffectsManager_->GetNextScene());
+		}
+	}
+	else {
+		DrawHeat(environmentEffectsManager_->GetPrevScene());
+		if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
+			DrawCold(environmentEffectsManager_->GetNextScene());
+		}
+	}
 	
-	DrawCold(prevScene.get());
-	DrawHeat(nextScene.get());
+	//DrawHeat(nextScene.get());
 
-	weightCircle_->Draw();
+	if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
+		environmentEffectsManager_->WeightCircleDraw();
+	}
+	//weightCircle_->Draw();
 
 	//DirectXCommon::GetInstance()->preDraw();
 	
@@ -93,8 +100,8 @@ void GameScene::DrawParticle(){
 
 void GameScene::DrawUI(){
 	
-	dualSceneDrawer_->Draw(commandList_, prevScene->GetSrvHandleGPU(), nextScene->GetSrvHandleGPU(), weightCircle_->GetHandle());
-
+	//dualSceneDrawer_->Draw(commandList_, prevScene->GetSrvHandleGPU(), nextScene->GetSrvHandleGPU(), weightCircle_->GetHandle());
+	environmentEffectsManager_->Draw(commandList_);
 }
 
 void GameScene::DebugGUI(){

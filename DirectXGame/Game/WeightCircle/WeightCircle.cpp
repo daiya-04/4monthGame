@@ -29,12 +29,16 @@ void WeightCircle::Update() {
 	if (ImGui::Button("Reset"))
 	{
 		isStart_ = false;
+		isEnd_ = false;
 		radius_ = 0.0f;
 	}
 	ImGui::End();
 #endif // _DEBUG
 	if (isStart_) {
 		radius_ += 66.0f;
+		if (radius_ >=2000.0f){
+			isEnd_ = true;
+		}
 	}
 	circle_->SetColor({weightColor_,0.0f,0.0f,1.0f});
 	circle_->SetSize({radius_,radius_ });

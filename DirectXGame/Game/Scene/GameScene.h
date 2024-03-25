@@ -18,6 +18,7 @@
 #include "WeightCircle/WeightCircle.h"
 #include "EnvironmentEffects/HeatHaze/HeatHaze.h"
 #include "EnvironmentEffects/CameraFrozen/CameraFrozenManager.h"
+#include "EnvironmentEffects/EnvironmentEffectsManager.h"
 class GameScene : public IScene {
 public:
 
@@ -55,16 +56,15 @@ public:
 
 private:
 	ID3D12GraphicsCommandList* commandList_;
-	std::unique_ptr<PostEffect> prevScene;
-	std::unique_ptr<PostEffect> nextScene;
+	
 	std::unique_ptr<HeatHaze> HH;
 	CameraFrozenManager* cameraFrozen_;
-	std::unique_ptr<DualSceneDrawer> dualSceneDrawer_;
+	EnvironmentEffectsManager* environmentEffectsManager_;
 
 	std::unique_ptr<Sprite> sample0;
 	std::unique_ptr<Sprite> sample1;
 
-	std::unique_ptr<WeightCircle> weightCircle_;
+	//std::unique_ptr<WeightCircle> weightCircle_;
 
 	float offset_;
 	float roop_;

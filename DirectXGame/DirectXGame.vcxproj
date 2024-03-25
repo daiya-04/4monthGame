@@ -120,6 +120,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Framework\Framework.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\EnvironmentEffectsManager.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.cpp" />
     <ClCompile Include="Game\Scene\GameScene.cpp" />
     <ClCompile Include="Engine\Collision\Hit.cpp" />
@@ -167,6 +168,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Framework\Framework.h" />
     <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.h" />
     <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.h" />
+    <ClInclude Include="Game\EnvironmentEffects\EnvironmentEffectsManager.h" />
     <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.h" />
     <ClInclude Include="Game\Scene\GameScene.h" />
     <ClInclude Include="Game\MyGame.h" />
