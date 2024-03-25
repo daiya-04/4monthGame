@@ -17,11 +17,17 @@ public:
 
 	void Update();
 	void Draw(ID3D12GraphicsCommandList* cmdList);
+	//前シーンのポインタ取得
 	PostEffect* GetPrevScene() { return prevScene.get(); };
+	//次シーンのポインタ取得
 	PostEffect* GetNextScene() { return nextScene.get(); };
+	//現在シーンがどちらか(極寒:false 灼熱:true)
 	bool GetIsNowScene() { return isNowScene_; };
+	//遷移アニメーション再生中か
 	bool GetIsPlaySceneChangeAnimation() { return weightCircle_->GetIsStart(); };
+	//二重描画用のテクスチャデータ書き込み
 	void WeightCircleDraw() { weightCircle_->Draw(); };
+	//シーン遷移が完了したフレームか
 	bool GetIsChangeComplete() { return isChangeComplete_; };
 private:
 	std::unique_ptr<PostEffect> prevScene;

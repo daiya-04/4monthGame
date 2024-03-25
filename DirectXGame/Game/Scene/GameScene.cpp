@@ -27,6 +27,7 @@ void GameScene::Update(){
 	DebugGUI();
 	environmentEffectsManager_->Update();
 	heatHazeManager_->Update();
+	//遷移完了時に凍結エフェクトをリセットする
 	if (environmentEffectsManager_->GetIsChangeComplete()) {
 		if (!environmentEffectsManager_->GetIsNowScene()) {
 			cameraFrozen_->Start();
@@ -42,6 +43,7 @@ void GameScene::DrawNotSetPipeline() {
 	//極寒状態だったら
 	if (!environmentEffectsManager_->GetIsNowScene()) {
 		DrawCold(environmentEffectsManager_->GetPrevScene());
+		//切り替えアニメーション中は裏に反対の状態を描画する
 		if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
 			DrawHeat(environmentEffectsManager_->GetNextScene());
 		}
@@ -53,15 +55,10 @@ void GameScene::DrawNotSetPipeline() {
 		}
 	}
 	
-	//DrawHeat(nextScene.get());
-
+	//二重描画用のテクスチャデータ書き込み
 	if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
 		environmentEffectsManager_->WeightCircleDraw();
 	}
-	//weightCircle_->Draw();
-
-	//DirectXCommon::GetInstance()->preDraw();
-	
 
 }
 
@@ -104,6 +101,7 @@ void GameScene::DebugGUI(){
 }
 
 void GameScene::DrawCold(PostEffect* targetScene) {
+	//エフェクトの描画
 	cameraFrozen_->DrawInternal(commandList_);
 	//取得したシーンに対して描画
 	targetScene->PreDrawScene(commandList_);

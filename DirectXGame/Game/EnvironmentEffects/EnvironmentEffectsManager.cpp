@@ -26,9 +26,11 @@ void EnvironmentEffectsManager::Update() {
 
 void EnvironmentEffectsManager::Draw(ID3D12GraphicsCommandList* cmdList) {
 	if (weightCircle_->GetIsStart()) {
+		//遷移中の二重描画
 		dualSceneDrawer_->Draw(cmdList, prevScene->GetSrvHandleGPU(), nextScene->GetSrvHandleGPU(), weightCircle_->GetHandle());
 	}
 	else {
+		//通常時の描画
 		prevScene->Draw(cmdList);
 	}
 }

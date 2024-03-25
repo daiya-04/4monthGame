@@ -21,6 +21,7 @@ public:
 		radius_ = radiusMax_;
 		isClearRender_ = true;
 	};
+	//アニメーションリセット(エフェクトクリア)
 	void Reset() {
 		isClearRender_ = true;
 	}
