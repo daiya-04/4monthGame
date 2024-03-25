@@ -12,38 +12,21 @@ GameScene::~GameScene() {}
 void GameScene::Init(){
 	commandList_ = DirectXCommon::GetInstance()->GetCommandList();
 	
-	HH.reset(new HeatHaze());
-	HH->Init();
 	environmentEffectsManager_ = EnvironmentEffectsManager::GetInstance();
 	cameraFrozen_ = CameraFrozenManager::GetInstance();
-
-	//weightCircle_.reset(new WeightCircle);
-	//weightCircle_->Init();
+	heatHazeManager_ = HeatHazeManager::GetInstance();
 
 	sample0.reset(new Sprite(TextureManager::GetInstance()->Load("sample0.png"), {640.0f,360.0f},10.0f));
 	sample0->Initialize();
 	sample1.reset(new Sprite(TextureManager::GetInstance()->Load("hhTest.png"), { 640.0f,360.0f }, 1.0f));
 	sample1->Initialize();
-	offset_ = 0;
-	roop_ = 2.3f;
-	width_ = 0.003f;
+	
 }
 
 void GameScene::Update(){
 	DebugGUI();
 	environmentEffectsManager_->Update();
-	//weightCircle_->Update();
-#ifdef _DEBUG
-	ImGui::Begin("HeatHaze");
-	ImGui::DragFloat("offset", &offset_, 0.01f);
-	ImGui::DragFloat("roop", &roop_, 0.1f);
-	ImGui::DragFloat("width", &width_, 0.0001f);
-	ImGui::End();
-#endif // _DEBUG
-	offset_ += 0.001f;
-	HH->SetOffset(offset_);
-	HH->SetRoop(roop_);
-	HH->SetWidth(width_);
+	heatHazeManager_->Update();
 	if (environmentEffectsManager_->GetIsChangeComplete()) {
 		if (!environmentEffectsManager_->GetIsNowScene()) {
 			cameraFrozen_->Start();
@@ -122,8 +105,8 @@ void GameScene::DebugGUI(){
 
 void GameScene::DrawCold(PostEffect* targetScene) {
 	cameraFrozen_->DrawInternal(commandList_);
+	//取得したシーンに対して描画
 	targetScene->PreDrawScene(commandList_);
-	//一個目のscene描画
 	Sprite::preDraw(commandList_);
 	sample0->Draw();
 	Sprite::postDraw();
@@ -134,16 +117,15 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 }
 
 void GameScene::DrawHeat(PostEffect* targetScene) {
-
-	HH->PreDrawScene(commandList_);
-	//二個目のscene描画
+	heatHazeManager_->PreDraw(commandList_);
 	Sprite::preDraw(commandList_);
 	sample1->Draw();
 	Sprite::postDraw();
-	HH->PostDrawScene(commandList_);
+	heatHazeManager_->PostDraw(commandList_);
 
+	//取得したシーンに対して描画
 	targetScene->PreDrawScene(commandList_);
-	HH->Draw(commandList_);
+	heatHazeManager_->Draw(commandList_);
 	targetScene->PostDrawScene(commandList_);
 
 }

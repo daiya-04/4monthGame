@@ -16,7 +16,7 @@
 #include "DualSceneDrawer.h"
 #include "Sprite.h"
 #include "WeightCircle/WeightCircle.h"
-#include "EnvironmentEffects/HeatHaze/HeatHaze.h"
+#include "EnvironmentEffects/HeatHaze/HeatHazeManager.h"
 #include "EnvironmentEffects/CameraFrozen/CameraFrozenManager.h"
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
 class GameScene : public IScene {
@@ -57,7 +57,7 @@ public:
 private:
 	ID3D12GraphicsCommandList* commandList_;
 	
-	std::unique_ptr<HeatHaze> HH;
+	HeatHazeManager* heatHazeManager_;
 	CameraFrozenManager* cameraFrozen_;
 	EnvironmentEffectsManager* environmentEffectsManager_;
 

@@ -129,6 +129,7 @@
     <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\EnvironmentEffectsManager.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -231,5 +232,6 @@
     <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.h" />
     <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.h" />
     <ClInclude Include="Game\EnvironmentEffects\EnvironmentEffectsManager.h" />
+    <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.h" />
   </ItemGroup>
 </Project>
