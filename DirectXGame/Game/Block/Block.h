@@ -12,7 +12,7 @@ class BaseBlock
 {
 public:
 	
-	static const uint32_t kBlockSize_ = 96;
+	static const uint32_t kBlockSize_ = 32;
 
 	enum BlockType : uint32_t {
 

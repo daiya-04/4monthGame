@@ -106,7 +106,7 @@ private:
 	//プレイヤー画像
 	uint32_t texture_;
 
-	bool isDebug_ = false;
+	bool isDebug_ = true;
 
 };
 
