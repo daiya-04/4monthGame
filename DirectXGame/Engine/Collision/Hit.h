@@ -1,6 +1,7 @@
 #pragma once
 #include "Vec3.h"
 #include "Matrix44.h"
+#include "Vec2.h"
 
 // 線分
 typedef struct {
@@ -41,6 +42,11 @@ typedef struct {
 	Vector3 min;
 	Vector3 max;
 } AABB;
+
+typedef struct {
+	Vector2 min;
+	Vector2 max;
+} AABB2D;
 
 typedef struct {
 	Vector3 center;
@@ -169,3 +175,17 @@ bool IsCollision(const OBB& obb, const Segment& segment);
 /// <param name="obb2"></param>
 /// <returns></returns>
 bool IsCollision(const OBB& obb1, const OBB& obb2);
+/// <summary>
+/// 2DのAABB同士の当たり判定
+/// </summary>
+/// <param name="aabb1"></param>
+/// <param name="aabb2"></param>
+/// <returns></returns>
+bool IsCollision(const AABB2D& aabb1, const AABB2D& aabb2);
+/// <summary>
+/// 2DのAABBと点の当たり判定
+/// </summary>
+/// <param name="aabb"></param>
+/// <param name="point"></param>
+/// <returns></returns>
+bool IsCollision(const AABB2D& aabb, const Vector2& point);

@@ -6,6 +6,8 @@
 #include <array>
 #include "Camera.h"
 
+class Player;
+
 class Stage
 {
 public:
@@ -26,7 +28,7 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw(const Camera& camera);
+	void Draw();
 
 	/// <summary>
 	/// マップをロードする
@@ -42,11 +44,19 @@ public:
 	//プレイヤーをセット
 	void SetPlayer(Player* player) { player_ = player; }
 
+	//カメラセット
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
+	//ブロック取得
+	const std::vector<std::shared_ptr<Block>>& GetBlocks() { return map_; }
+
 private:
 
 	uint32_t blockPositions_[kMaxStageHeight_][kMaxStageWidth_]{};
 
 	Player* player_;
+
+	Camera* camera_;
 
 	void SetUV(Block* block);
 

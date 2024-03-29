@@ -2,6 +2,7 @@
 #include "Object2d.h"
 #include "Camera.h"
 #include <memory>
+#include "Hit.h"
 
 class Player;
 
@@ -13,6 +14,8 @@ class BaseBlock
 public:
 	
 	static const uint32_t kBlockSize_ = 96;
+
+	static const uint32_t kBlockHalfSize_ = kBlockSize_ / 2;
 
 	enum BlockType : uint32_t {
 
@@ -86,6 +89,8 @@ public:
 	const uint32_t& GetBlockPositionX() { return blockPositionX_; }
 	//ブロックのマップチップでのY位置取得
 	const uint32_t& GetBlockPositionY() { return blockPositionY_; }
+	//当たり判定取得
+	const AABB2D& GetCollision() { return collision_; }
 
 protected:
 
@@ -94,6 +99,9 @@ protected:
 	BlockType type_ = kUnbreakable;
 
 	std::unique_ptr<Object2d> object_;
+
+	//当たり判定
+	AABB2D collision_{};
 
 	Vector2 position_{};
 

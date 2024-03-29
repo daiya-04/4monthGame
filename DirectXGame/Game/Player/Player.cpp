@@ -16,7 +16,11 @@ void Player::Initialize() {
 
 	texture_ = TextureManager::GetInstance()->Load("player/player.png");
 
-	position_ = { 200.0f,0.0f };
+	position_ = { 200.0f,200.0f };
+	prePosition_ = position_;
+
+	collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
+	collision_.max = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
 
 	object_.reset(Object2d::Create(texture_, position_));
 	object_->SetSize({ kPlayerSize_, kPlayerSize_ });
@@ -26,13 +30,27 @@ void Player::Initialize() {
 	leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
 	rightBottom_ = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
 
+	preLeftTop_ = { prePosition_.x - kPlayerHalfSize_, prePosition_.y - kPlayerHalfSize_ };
+	preRightTop_ = { prePosition_.x + kPlayerHalfSize_, prePosition_.y - kPlayerHalfSize_ };
+	preLeftBottom_ = { prePosition_.x - kPlayerHalfSize_, prePosition_.y + kPlayerHalfSize_ };
+	preRightBottom_ = { prePosition_.x + kPlayerHalfSize_, prePosition_.y + kPlayerHalfSize_ };
+
 	velocity_ = { 0.0f,0.0f };
 
 }
 
 void Player::Update() {
 
+	prePosition_ = position_;
+
+	preLeftTop_ = { prePosition_.x - kPlayerHalfSize_, prePosition_.y - kPlayerHalfSize_ };
+	preRightTop_ = { prePosition_.x + kPlayerHalfSize_, prePosition_.y - kPlayerHalfSize_ };
+	preLeftBottom_ = { prePosition_.x - kPlayerHalfSize_, prePosition_.y + kPlayerHalfSize_ };
+	preRightBottom_ = { prePosition_.x + kPlayerHalfSize_, prePosition_.y + kPlayerHalfSize_ };
+
 	if (isDebug_) {
+
+		useCollision_ = false;
 
 		if (input_->PushKey(DIK_W)) {
 			position_.y -= 10.0f;
@@ -49,6 +67,8 @@ void Player::Update() {
 
 	}
 	else {
+
+		useCollision_ = true;
 
 		//ジャンプ処理
 		Jump();
@@ -96,7 +116,7 @@ void Player::Update() {
 		//判定処理
 		{
 
-			if (leftBottom_.y >= 720.0f) {
+			/*if (leftBottom_.y >= 720.0f) {
 				position_.y = 720.0f - kPlayerHalfSize_;
 				parameter_.Jump_.canJump = true;
 				velocity_.y = 0.0f;
@@ -104,11 +124,14 @@ void Player::Update() {
 			}
 			else {
 				isFly_ = true;
-			}
+			}*/
 
 		}
-
+		
 	}
+
+	collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
+	collision_.max = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
 
 }
 
@@ -137,8 +160,9 @@ void Player::Jump() {
 
 	//通常ジャンプ
 	if (parameter_.Jump_.canJump && input_->TriggerButton(Input::Button::A)) {
-		velocity_.y -= parameter_.Jump_.jumpVelocity;
+		velocity_.y += parameter_.Jump_.jumpVelocity;
 		parameter_.Jump_.canJump = false;
+		isFly_ = true;
 	}
 
 }

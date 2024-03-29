@@ -17,7 +17,7 @@ public:
 		//ギリジャンの猶予フレーム
 		uint32_t graceTime = 0;
 		//ジャンプ時のy速度
-		float jumpVelocity = 25.0f;
+		float jumpVelocity = -25.0f;
 	};
 
 	//壁キック関連の構造体
