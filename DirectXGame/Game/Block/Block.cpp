@@ -19,7 +19,7 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 	position_ = position;
 
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
-	collision_.max = { position_.x + kBlockHalfSize_, position_.y + kBlockHalfSize_ };
+	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
 
 	object_.reset(Object2d::Create(texture_, position_));
 	object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
@@ -30,6 +30,9 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 void Block::Update() {
 
 	object_->SetTextureArea({ float(uvPositionX_ * 64.0f),float(uvPositionY_ * 64.0f) }, { 64.0f,64.0f });
+
+	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
+	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
 
 }
 

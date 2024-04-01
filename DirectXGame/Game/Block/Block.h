@@ -43,6 +43,25 @@ public:
 
 	};
 
+	//形状
+	enum Shape : uint32_t {
+		//正方形ブロック
+		kBlock,
+		//坂道ブロック
+		kSlope,
+	};
+
+	Shape CheckShape(uint32_t num) {
+
+		//坂道ブロックなら坂道の変数を返す
+		if (num == kUnbreakableSlope || num == kSnowSlope || num == kMagmaSlope) {
+			return kSlope;
+		}
+
+		return kBlock;
+
+	}
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -91,6 +110,11 @@ public:
 	const uint32_t& GetBlockPositionY() { return blockPositionY_; }
 	//当たり判定取得
 	const AABB2D& GetCollision() { return collision_; }
+
+	//デバッグ用変数
+	bool isDebug_ = true;
+
+	void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 protected:
 

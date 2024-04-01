@@ -7,6 +7,8 @@
 #include "PlayerParameter.h"
 #include <array>
 #include "Hit.h"
+#include <vector>
+#include "Stage/Stage.h"
 
 class Player
 {
@@ -26,7 +28,7 @@ public:
 	};
 
 	//プレイヤーのサイズ
-	static const uint32_t kPlayerSize_ = 96;
+	static const uint32_t kPlayerSize_ = 64;
 	//プレイヤーサイズの半分
 	static const uint32_t kPlayerHalfSize_ = kPlayerSize_ / 2;
 
@@ -38,7 +40,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidth_]);
 	
 	/// <summary>
 	/// 描画
@@ -57,6 +59,23 @@ public:
 		rightTop_ = { position_.x + kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
 		leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
 		rightBottom_ = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
+		//当たり判定更新
+		collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
+		collision_.max = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
+
+	}
+
+	void SetTmpPosition(const Vector2& position) {
+		tmpPosition_ = position;
+		//4頂点の座標を更新
+		leftTop_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
+		rightTop_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y - kPlayerHalfSize_ };
+		leftBottom_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+		rightBottom_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+		//当たり判定更新
+		collision_.min = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
+		collision_.max = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+
 	}
 
 	/// <summary>
@@ -131,6 +150,8 @@ public:
 
 	void ResetVelocityY() { velocity_.y = 0.0f; }
 
+	void SetBlocks(std::vector<std::shared_ptr<Block>>* blocks) { blocksPtr_ = blocks; }
+
 private:
 
 	void Move();
@@ -139,11 +160,18 @@ private:
 
 	void WallJump();
 
+	void CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidth_]);
+
+	void UpdateGrid();
+
 private:
 
 	Input* input_;
 
 	std::unique_ptr<Object2d> object_;
+
+	//ブロックのvectorポインタ
+	std::vector<std::shared_ptr<Block>>* blocksPtr_ = nullptr;
 
 	//当たり判定
 	AABB2D collision_{};
@@ -175,6 +203,9 @@ private:
 	//落下速度下限
 	const float maxFallSpeed_ = 15.0f;
 
+	//自然落下速度
+	const float kGravityFallSpeed_ = 2.0f;
+
 	//速度
 	Vector2 velocity_{};
 
@@ -183,6 +214,9 @@ private:
 
 	//位置
 	Vector2 position_{};
+
+	//移動予定の位置
+	Vector2 tmpPosition_{};
 
 	//前フレームの位置
 	Vector2 prePosition_{};
@@ -195,6 +229,15 @@ private:
 	Vector2 leftBottom_{};
 	//右下
 	Vector2 rightBottom_{};
+
+	//左のマップチップでの座標
+	int32_t leftGrid_ = 0;
+	//右のマップチップでの座標
+	int32_t rightGrid_ = 0;
+	//上のマップチップでの座標
+	int32_t topGrid_ = 0;
+	//下のマップチップでの座標
+	int32_t bottomGrid_ = 0;
 
 	//前フレーム左上
 	Vector2 preLeftTop_{};

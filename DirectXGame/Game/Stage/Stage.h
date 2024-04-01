@@ -48,11 +48,11 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	//ブロック取得
-	const std::vector<std::shared_ptr<Block>>& GetBlocks() { return map_; }
-
-private:
+	std::vector<std::shared_ptr<Block>>* GetBlocks() { return &map_; }
 
 	uint32_t blockPositions_[kMaxStageHeight_][kMaxStageWidth_]{};
+
+private:
 
 	Player* player_;
 
