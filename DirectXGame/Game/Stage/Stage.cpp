@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <cassert>
+#include "Game/Player/Player.h"
 
 Stage::Stage()
 {
@@ -59,16 +60,16 @@ void Stage::Update() {
 
 }
 
-void Stage::Draw(const Camera& camera) {
+void Stage::Draw() {
 
 	//サウナストーン描画
 	for (auto& stone : stones_) {
 		
-		if (stone->GetPosition().x >= camera.translation_.x - Block::kBlockSize_ &&
-			stone->GetPosition().x <= camera.translation_.x + 1280 + Block::kBlockSize_ &&
-			stone->GetPosition().y >= camera.translation_.y - Block::kBlockSize_ &&
-			stone->GetPosition().y <= camera.translation_.y + 720 + Block::kBlockSize_) {
-			stone->Draw(camera);
+		if (stone->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
+			stone->GetPosition().x <= camera_->translation_.x + 1280 + Block::kBlockSize_ &&
+			stone->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
+			stone->GetPosition().y <= camera_->translation_.y + 720 + Block::kBlockSize_) {
+			stone->Draw(*camera_);
 		}
 
 	}
@@ -76,11 +77,11 @@ void Stage::Draw(const Camera& camera) {
 	//ブロックの描画
 	for (auto& block : map_) {
 
-		if (block->GetPosition().x >= camera.translation_.x - Block::kBlockSize_ &&
-			block->GetPosition().x <= camera.translation_.x + 1280 + Block::kBlockSize_ &&
-			block->GetPosition().y >= camera.translation_.y - Block::kBlockSize_ &&
-			block->GetPosition().y <= camera.translation_.y + 720 + Block::kBlockSize_) {
-			block->Draw(camera);
+		if (block->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
+			block->GetPosition().x <= camera_->translation_.x + 1280 + Block::kBlockSize_ &&
+			block->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
+			block->GetPosition().y <= camera_->translation_.y + 720 + Block::kBlockSize_) {
+			block->Draw(*camera_);
 		}
 
 	}

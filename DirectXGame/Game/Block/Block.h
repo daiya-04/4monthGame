@@ -2,6 +2,7 @@
 #include "Object2d.h"
 #include "Camera.h"
 #include <memory>
+#include "Hit.h"
 
 class Player;
 
@@ -13,6 +14,8 @@ class BaseBlock
 public:
 	
 	static const uint32_t kBlockSize_ = 32;
+
+	static const uint32_t kBlockHalfSize_ = kBlockSize_ / 2;
 
 	enum BlockType : uint32_t {
 
@@ -39,6 +42,25 @@ public:
 		kMaxBlock
 
 	};
+
+	//形状
+	enum Shape : uint32_t {
+		//正方形ブロック
+		kBlock,
+		//坂道ブロック
+		kSlope,
+	};
+
+	Shape CheckShape(uint32_t num) {
+
+		//坂道ブロックなら坂道の変数を返す
+		if (num == kUnbreakableSlope || num == kSnowSlope || num == kMagmaSlope) {
+			return kSlope;
+		}
+
+		return kBlock;
+
+	}
 
 	/// <summary>
 	/// 初期化
@@ -86,6 +108,13 @@ public:
 	const uint32_t& GetBlockPositionX() { return blockPositionX_; }
 	//ブロックのマップチップでのY位置取得
 	const uint32_t& GetBlockPositionY() { return blockPositionY_; }
+	//当たり判定取得
+	const AABB2D& GetCollision() { return collision_; }
+
+	//デバッグ用変数
+	bool isDebug_ = true;
+
+	void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 protected:
 
@@ -94,6 +123,9 @@ protected:
 	BlockType type_ = kUnbreakable;
 
 	std::unique_ptr<Object2d> object_;
+
+	//当たり判定
+	AABB2D collision_{};
 
 	Vector2 position_{};
 
