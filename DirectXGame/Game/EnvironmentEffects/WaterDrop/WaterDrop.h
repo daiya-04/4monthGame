@@ -26,6 +26,7 @@ private:
 	std::unique_ptr<Sprite> waterDropSprite_[10];//水滴一個
 	std::unique_ptr<PostEffect> sorceTexture_;//オリジナルのテクスチャの書き込み場所
 	static const size_t dropNum_=2;//水滴の数
-	float radius_[dropNum_] = { 1.0f };
+	//float radius_[dropNum_] = { 1.0f };
+	Vector2 radius_[dropNum_] = { Vector2{1.0f,1.0f} };
 	Vector2 position_[dropNum_];
 };

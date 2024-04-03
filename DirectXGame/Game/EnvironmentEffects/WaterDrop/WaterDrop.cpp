@@ -13,7 +13,7 @@ void WaterDrop::Init() {
 		waterDropSprite_[i]->Initialize();
 		waterDropSprite_[i]->SetSize({ 128.0f,128.0f });
 		position_[i] = { 640.0f,360.0f };
-		radius_[i] = 128.0f;
+		radius_[i] = { 128.0f,128.0f };
 	}
 }
 
@@ -24,9 +24,11 @@ void WaterDrop::Update() {
 		char name[32];
 		sprintf_s(name,32,"%dposition",i);
 		ImGui::DragFloat2(name, &position_[i].x, 1.0f);
-		sprintf_s(name, 32, "%dradius", i);
-		ImGui::DragFloat(name, &radius_[i], 1.0f);
-		waterDropSprite_[i]->SetSize({radius_[i],radius_[i]});
+		sprintf_s(name, 32, "%dradiusX", i);
+		ImGui::DragFloat(name, &radius_[i].x, 1.0f);
+		sprintf_s(name, 32, "%dradiusY", i);
+		ImGui::DragFloat(name, &radius_[i].y, 1.0f);
+		waterDropSprite_[i]->SetSize({radius_[i].x,radius_[i].y});
 		waterDropSprite_[i]->SetPosition(position_[i]);
 	}
 	ImGui::End();

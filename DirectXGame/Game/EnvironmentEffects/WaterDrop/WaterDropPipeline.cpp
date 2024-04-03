@@ -110,9 +110,9 @@ void WaterDropPipeline::StaticInitialize(ID3D12Device* device, int windowWidth, 
 
 	//ここをいじるといろいろなブレンドモードを設定できる
 	//ノーマルブレンド
-	//blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	//blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	//blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_BLEND_FACTOR;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_BLEND_FACTOR;
 	//加算
 	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
@@ -126,9 +126,9 @@ void WaterDropPipeline::StaticInitialize(ID3D12Device* device, int windowWidth, 
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;*/
 	//スクリーン
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
 	//
 	//α値のブレンド設定で基本的に使わないからいじらない
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
@@ -248,11 +248,12 @@ void WaterDropPipeline::preDraw(ID3D12GraphicsCommandList* commandList) {
 
 	assert(commandList);
 	commandList_ = commandList;
-
+	const float factor[4] = { 0.5f,0.5f,0.25f,1.0f };
+	commandList_->OMSetBlendFactor(factor);
 	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
 
 	commandList_->SetPipelineState(graphicsPipelineState_.Get());  //PSOを設定
 	//形状を設定。PSOに設定しているものとはまた別。設置物を設定すると考えておけばいい
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+	commandList_->OMSetBlendFactor(factor);
 }
