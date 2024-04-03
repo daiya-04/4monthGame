@@ -133,6 +133,7 @@
     <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropSourceTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -239,6 +240,6 @@
     <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.h" />
     <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.h" />
     <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.h" />
-    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropManager.h" />
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropSourceTexture.h" />
   </ItemGroup>
 </Project>

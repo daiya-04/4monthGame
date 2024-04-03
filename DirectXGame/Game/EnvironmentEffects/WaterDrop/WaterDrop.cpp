@@ -5,8 +5,8 @@
 #include "WaterDropPipeline.h"
 void WaterDrop::Init() {
 
-	sorceTexture_.reset(new PostEffect());
-	sorceTexture_->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+	sorceTexture_.reset(new WaterDropSourceTexture());
+	sorceTexture_->Init();
 
 	for (int i = 0; i < dropNum_;i++) {
 		waterDropSprite_[i].reset(new Sprite(TextureManager::GetInstance()->Load("weightCircle.png"), { 640.0f,360.0f }, 1.0f / 64.0f));

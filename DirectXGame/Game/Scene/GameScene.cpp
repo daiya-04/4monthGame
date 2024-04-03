@@ -19,7 +19,7 @@ void GameScene::Init(){
 
 	sample0.reset(new Sprite(TextureManager::GetInstance()->Load("sample0.png"), {640.0f,360.0f},10.0f));
 	sample0->Initialize();
-	sample1.reset(new Sprite(TextureManager::GetInstance()->Load("uvChecker.png"), { 640.0f,360.0f }, 1.0f));
+	sample1.reset(new Sprite(TextureManager::GetInstance()->Load("hhTest.png"), { 640.0f,360.0f }, 1.0f));
 	sample1->Initialize();
 	
 	WaterDropPipeline::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);

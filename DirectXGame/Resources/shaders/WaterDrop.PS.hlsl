@@ -25,8 +25,8 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	if (textureColor.a < 0.1f) {
 		discard;
 	}
-	//output.color = float32_t4(input.texcoord.x, input.texcoord.y,0.0f,1.0f-length(center));
-	output.color = float32_t4(input.texcoord.x, input.texcoord.y, 0.0f, 1.0f);
+	output.color = float32_t4(input.texcoord.x, input.texcoord.y,0.0f,1.0f-length(center));
+	//output.color = float32_t4(input.texcoord.x, input.texcoord.y, 0.0f, 1.0f);
 
 	return output;
 }

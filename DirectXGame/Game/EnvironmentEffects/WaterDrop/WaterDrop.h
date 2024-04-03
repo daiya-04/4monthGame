@@ -1,6 +1,6 @@
 #pragma once
 #include "Sprite.h"
-#include "PostEffect.h"
+#include "WaterDropSourceTexture.h"
 #include <memory>
 class WaterDrop
 {
@@ -14,7 +14,7 @@ public:
 	/// </summary>
 	void Update();
 	/// <summary>
-	/// 描画(マップに書き込み)
+	/// ソーステクスチャに水滴を書き込み
 	/// </summary>
 	void DrawInternal();
 
@@ -23,10 +23,9 @@ public:
 	/// </summary>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetHandle() { return sorceTexture_->GetSrvHandleGPU(); };
 private:
-	std::unique_ptr<Sprite> waterDropSprite_[10];//水滴一個
-	std::unique_ptr<PostEffect> sorceTexture_;//オリジナルのテクスチャの書き込み場所
-	static const size_t dropNum_=2;//水滴の数
-	//float radius_[dropNum_] = { 1.0f };
+	std::unique_ptr<Sprite> waterDropSprite_[10];//水滴用Sprite
+	std::unique_ptr<WaterDropSourceTexture> sorceTexture_;//オリジナルのテクスチャの書き込み場所
+	static const size_t dropNum_=3;//水滴の数
 	Vector2 radius_[dropNum_] = { Vector2{1.0f,1.0f} };
 	Vector2 position_[dropNum_];
 };

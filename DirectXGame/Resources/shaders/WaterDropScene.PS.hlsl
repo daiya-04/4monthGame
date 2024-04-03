@@ -25,13 +25,16 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	float32_t4 sourceColor = gTextureNextScene.Sample(gSampler, input.texcoord);
 	//sourceColor.x *= 2.0f;
 	//sourceColor.y *= 2.0f;
+	
+	///effect
 	if (sourceColor.a > 0.1f) {
 		float32_t2 offset;
-		//sourceColor.x *= 1.0f - sourceColor.a;
-		//sourceColor.y *= 1.0f - sourceColor.a;
+		//sourceColor.x *= 1.0f * sourceColor.a;
+		//sourceColor.y *= 1.0f * sourceColor.a;
 		offset.x = sourceColor.x * 2.0f - 1.0f;
-		
 		offset.y = sourceColor.y * 2.0f - 1.0f;
+		offset.x *= 1.0f / sourceColor.a;
+		offset.y *= 1.0f / sourceColor.a;
 		//offset.x = offset.x * offset.x * offset.x;
 		//offset.y = offset.y * offset.y * offset.y;
 		float32_t2 normalizedOffset = normalize(offset);
@@ -57,7 +60,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		output.color = gTexturePrevScene.Sample(gSampler, offset);
 	}
 
-	//outline
+	///outline
 	if (gTextureNextScene.Sample(gSampler, input.texcoord).a>0.05f) {
 		float32_t2 transformdR = input.texcoord;
 		float32_t2 transformdL = input.texcoord;
