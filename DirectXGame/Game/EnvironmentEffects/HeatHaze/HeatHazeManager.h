@@ -12,6 +12,10 @@ public:
 	void Draw(ID3D12GraphicsCommandList* cmdList) { heatHaze_->Draw(cmdList); };
 	void PreDraw(ID3D12GraphicsCommandList* cmdList) { heatHaze_->PreDrawScene(cmdList); };
 	void PostDraw(ID3D12GraphicsCommandList* cmdList) { heatHaze_->PostDrawScene(cmdList); };
+	/// <summary>
+	/// SRV指定用ハンドル取得
+	/// </summary>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetHandle() { return heatHaze_->GetSrvHandleGPU(); };
 private:
 	HeatHazeManager() {
 		Init();

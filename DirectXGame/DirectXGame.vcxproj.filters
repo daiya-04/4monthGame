@@ -130,6 +130,9 @@
     <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\EnvironmentEffectsManager.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -233,5 +236,9 @@
     <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.h" />
     <ClInclude Include="Game\EnvironmentEffects\EnvironmentEffectsManager.h" />
     <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.h" />
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.h" />
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.h" />
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.h" />
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropManager.h" />
   </ItemGroup>
 </Project>

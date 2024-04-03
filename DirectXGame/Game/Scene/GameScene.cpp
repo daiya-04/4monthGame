@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "DirectXCommon.h"
+#include "WinApp.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
@@ -21,12 +22,20 @@ void GameScene::Init(){
 	sample1.reset(new Sprite(TextureManager::GetInstance()->Load("hhTest.png"), { 640.0f,360.0f }, 1.0f));
 	sample1->Initialize();
 	
+	WaterDropPipeline::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(),WinApp::kClientWidth,WinApp::kClientHeight);
+
+	waterDrop_.reset(new WaterDrop());
+	waterDrop_->Init();
+
+	waterDropSceneDrawer_.reset(new WaterDropSceneDrawer);
+	waterDropSceneDrawer_->Init();
 }
 
 void GameScene::Update(){
 	DebugGUI();
 	environmentEffectsManager_->Update();
 	heatHazeManager_->Update();
+	waterDrop_->Update();
 	//遷移完了時に凍結エフェクトをリセットする
 	if (environmentEffectsManager_->GetIsChangeComplete()) {
 		if (!environmentEffectsManager_->GetIsNowScene()) {
@@ -40,6 +49,9 @@ void GameScene::Update(){
 }
 
 void GameScene::DrawNotSetPipeline() {
+
+	waterDrop_->DrawInternal();
+
 	//極寒状態だったら
 	if (!environmentEffectsManager_->GetIsNowScene()) {
 		DrawCold(environmentEffectsManager_->GetPrevScene());
@@ -123,7 +135,8 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 
 	//取得したシーンに対して描画
 	targetScene->PreDrawScene(commandList_);
-	heatHazeManager_->Draw(commandList_);
+	//heatHazeManager_->Draw(commandList_);
+	waterDropSceneDrawer_->Draw(commandList_,heatHazeManager_->GetHandle(),waterDrop_->GetHandle());
 	targetScene->PostDrawScene(commandList_);
 
 }

@@ -19,6 +19,9 @@
 #include "EnvironmentEffects/HeatHaze/HeatHazeManager.h"
 #include "EnvironmentEffects/CameraFrozen/CameraFrozenManager.h"
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
+#include "EnvironmentEffects/WaterDrop/WaterDrop.h"
+#include "EnvironmentEffects/WaterDrop/WaterDropPipeline.h"
+#include "EnvironmentEffects/WaterDrop/WaterDropSceneDrawer.h"
 class GameScene : public IScene {
 public:
 
@@ -64,8 +67,8 @@ private:
 	std::unique_ptr<Sprite> sample0;
 	std::unique_ptr<Sprite> sample1;
 
-	//std::unique_ptr<WeightCircle> weightCircle_;
-
+	std::unique_ptr<WaterDrop> waterDrop_;
+	std::unique_ptr<WaterDropSceneDrawer> waterDropSceneDrawer_;
 	float offset_;
 	float roop_;
 	float width_;
