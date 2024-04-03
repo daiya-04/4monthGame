@@ -51,7 +51,7 @@ public:
 		kSlope,
 	};
 
-	Shape CheckShape(uint32_t num) {
+	static Shape CheckShape(uint32_t num) {
 
 		//坂道ブロックなら坂道の変数を返す
 		if (num == kUnbreakableSlope || num == kSnowSlope || num == kMagmaSlope) {
@@ -59,6 +59,18 @@ public:
 		}
 
 		return kBlock;
+
+	}
+
+	//破壊可能ブロックならtrueを返す関数
+	static bool CheckCanBreak(BlockType type) {
+
+		//破壊可能ブロックならtrueを返す
+		if (type == kSnow || type == kMagma || type == kSaunaBlock || type == kSnowSlope || type == kMagmaSlope) {
+			return true;
+		}
+
+		return false;
 
 	}
 
@@ -116,6 +128,11 @@ public:
 
 	void SetColor(const Vector4& color) { object_->SetColor(color); }
 
+	//外的要因(プレイヤーなど)で破壊された時に呼び出される関数
+	void Break() { isBreak_ = true; }
+
+	bool GetIsBreak() { return isBreak_; }
+
 protected:
 
 	Player* player_;
@@ -141,6 +158,9 @@ protected:
 	uint32_t blockPositionX_ = 0;
 	//マップチップでのY位置
 	uint32_t blockPositionY_ = 0;
+
+	//破壊されたかどうか
+	bool isBreak_ = false;
 
 };
 

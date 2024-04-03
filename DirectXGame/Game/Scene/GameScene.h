@@ -49,5 +49,9 @@ private:
 
 	std::unique_ptr<Scroll> scroll_;
 
+	uint32_t bgTexture_;
+
+	std::unique_ptr<Sprite> backGround_;
+
 };
 

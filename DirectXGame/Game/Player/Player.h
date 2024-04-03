@@ -9,6 +9,7 @@
 #include "Hit.h"
 #include <vector>
 #include "Stage/Stage.h"
+#include <list>
 
 class Player
 {
@@ -40,7 +41,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidth_]);
+	void Update();
 	
 	/// <summary>
 	/// 描画
@@ -150,7 +151,7 @@ public:
 
 	void ResetVelocityY() { velocity_.y = 0.0f; }
 
-	void SetBlocks(std::vector<std::shared_ptr<Block>>* blocks) { blocksPtr_ = blocks; }
+	void SetBlocks(std::list<std::shared_ptr<Block>>* blocks) { blocksPtr_ = blocks; }
 
 private:
 
@@ -160,7 +161,11 @@ private:
 
 	void WallJump();
 
-	void CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidth_]);
+	void ChargeJump();
+
+	void Dig();
+
+	void CheckCollision();
 
 	void UpdateGrid();
 
@@ -171,7 +176,7 @@ private:
 	std::unique_ptr<Object2d> object_;
 
 	//ブロックのvectorポインタ
-	std::vector<std::shared_ptr<Block>>* blocksPtr_ = nullptr;
+	std::list<std::shared_ptr<Block>>* blocksPtr_ = nullptr;
 
 	//当たり判定
 	AABB2D collision_{};
@@ -201,7 +206,7 @@ private:
 	bool isFly_ = true;
 
 	//落下速度下限
-	const float kMaxFallSpeed_ = 15.0f;
+	const float kMaxFallSpeed_ = 25.0f;
 
 	//左右移動速度上限
 	const float kMaxMoveSpeed_ = 10.0f;
@@ -211,6 +216,9 @@ private:
 
 	//速度
 	Vector2 velocity_{};
+
+	//壁キックによる速度加算
+	Vector2 wallJumpVelocity_{};
 
 	//加速度
 	Vector2 accel_{};
@@ -253,12 +261,19 @@ private:
 
 	//プレイヤー画像
 	uint32_t texture_;
+	uint32_t textureLeft_;
+	uint32_t textureRight_;
+	uint32_t textureUp_;
+	uint32_t textureDown_;
 
 	//デバッグフラグ
 	bool isDebug_ = false;
 
 	//当たり判定を使うかどうか
 	bool useCollision_ = true;
+
+	//プレイヤーの向き
+	bool isFacingLeft_ = true;
 
 };
 

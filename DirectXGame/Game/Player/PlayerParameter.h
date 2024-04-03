@@ -28,10 +28,8 @@ public:
 		const uint32_t kMaxGraceTime = 6;
 		//ギリ壁キックの猶予フレーム
 		uint32_t graceTime = 0;
-		//壁キックのx移動量
-		float wallJumpVelocityX = 10.0f;
-		//壁キックのy移動量
-		float wallJumpVelocityY = -20.0f;
+		//壁キックの移動量
+		Vector2 wallJumpVelocity = { 10.0f,-30.0f };
 	};
 
 	//ヒップドロップ関連の構造体
@@ -42,11 +40,35 @@ public:
 		const uint32_t kNecessaryTime = 15;
 	};
 
+	//穴掘り関連の処理
+	struct WorkDig {
+		//穴掘りフラグ
+		bool isDig = false;
+		//穴堀りを行うポジション
+		Vector2 digPosition{};
+	};
+
 	//掴み関連の処理
 	struct WorkCatch {
 		//現在掴める状態かどうか
 		bool canCatch = true;
 
+	};
+
+	//溜めジャンプ関連の構造体
+	struct WorkChargeJump {
+		//現在チャージ可能かどうか
+		bool isCharge = false;
+		//チャージにかかる時間
+		const uint32_t kMaxChargeTime = 60;
+		//チャージ時間をカウントする変数
+		uint32_t chargeTimer = 0;
+		//溜めジャンプのy移動量
+		float chargeJumpVelocity = -35.0f;
+		//溜めジャンプによるブロック破壊フラグ
+		bool canBreak = false;
+		//破壊ができなくなる速度
+		float unBreakVelocity = -2.0f;
 	};
 
 	//ジャンプ
@@ -60,6 +82,12 @@ public:
 
 	//掴み
 	WorkCatch catch_;
+
+	//溜めジャンプ
+	WorkChargeJump chargeJump_;
+
+	//穴掘り
+	WorkDig dig_;
 
 	//移動量
 	float speed_ = 1.0f;

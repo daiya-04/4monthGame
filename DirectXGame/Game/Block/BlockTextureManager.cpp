@@ -16,9 +16,9 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/testNormal.png");
 	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/testRed.png");
-	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/testBlue.png");
+	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/testRed.png");
 	blockTextures_.push_back(texture);
 
 }

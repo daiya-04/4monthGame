@@ -5,6 +5,7 @@
 #include <vector>
 #include <array>
 #include "Camera.h"
+#include <list>
 
 class Player;
 
@@ -48,7 +49,7 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	//ブロック取得
-	std::vector<std::shared_ptr<Block>>* GetBlocks() { return &map_; }
+	std::list<std::shared_ptr<Block>>* GetBlocks() { return &map_; }
 
 	uint32_t blockPositions_[kMaxStageHeight_][kMaxStageWidth_]{};
 
@@ -62,7 +63,7 @@ private:
 
 	//マップ
 	/*std::array<std::array<std::shared_ptr<Block>, kMaxStageHeight_>, kMaxStageWidth_> map_;*/
-	std::vector<std::shared_ptr<Block>> map_;
+	std::list<std::shared_ptr<Block>> map_;
 
 	//サウナストーン(ステージ毎に数が違っても対応できるようにvector)
 	std::vector<std::shared_ptr<SaunaStone>> stones_;

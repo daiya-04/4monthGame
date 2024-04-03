@@ -16,6 +16,10 @@ void Player::Initialize() {
 	input_ = Input::GetInstance();
 
 	texture_ = TextureManager::GetInstance()->Load("player/player.png");
+	textureLeft_ = TextureManager::GetInstance()->Load("player/playerLeft.png");
+	textureRight_ = TextureManager::GetInstance()->Load("player/playerRight.png");
+	textureUp_ = TextureManager::GetInstance()->Load("player/playerUp.png");
+	textureDown_ = TextureManager::GetInstance()->Load("player/playerDown.png");
 
 	position_ = { 200.0f,200.0f };
 	tmpPosition_ = position_;
@@ -41,7 +45,7 @@ void Player::Initialize() {
 
 }
 
-void Player::Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidth_]) {
+void Player::Update() {
 
 	prePosition_ = position_;
 
@@ -81,6 +85,9 @@ void Player::Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidt
 		//壁キック処理
 		WallJump();
 
+		//穴掘り処理
+		Dig();
+
 		//速度加算、オブジェクトに更新した座標を適用
 		{
 
@@ -96,6 +103,33 @@ void Player::Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidt
 
 			}
 
+			//壁キックの左右速度調整
+			if (std::fabsf(wallJumpVelocity_.x) > 1.0f) {
+
+				if (wallJumpVelocity_.x > 0.0f) {
+					wallJumpVelocity_.x -= 0.3f;
+				}
+				else {
+					wallJumpVelocity_.x += 0.3f;
+				}
+
+			}
+			else {
+				wallJumpVelocity_.x = 0.0f;
+			}
+
+			//左右移動の合計速度が上限を超えないように制限
+			if (std::fabsf(wallJumpVelocity_.x + velocity_.x) > kMaxMoveSpeed_) {
+
+				if (wallJumpVelocity_.x + velocity_.x > 0.0f) {
+					velocity_.x = kMaxMoveSpeed_ - wallJumpVelocity_.x;
+				}
+				else {
+					velocity_.x = -kMaxMoveSpeed_ - wallJumpVelocity_.x;
+				}
+
+			}
+
 			//落下処理
 			if (velocity_.y < kMaxFallSpeed_) {
 
@@ -106,7 +140,17 @@ void Player::Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidt
 					velocity_.y = kMaxFallSpeed_;
 				}
 
+			}
 
+			//溜めジャンプの破壊フラグが経っている状態で、速度が規定値を超えたらフラグを下す
+			if (parameter_.chargeJump_.canBreak && velocity_.y > parameter_.chargeJump_.unBreakVelocity) {
+				parameter_.chargeJump_.canBreak = false;
+			}
+
+			//壁キック可能時(壁ずりしている時)、下方向の落下速度を減少させる
+			if (parameter_.wallJump_.canWallJump) {
+
+				velocity_.y *= 0.6f;
 
 			}
 
@@ -117,7 +161,7 @@ void Player::Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidt
 
 			tmpPosition_ = position_;
 
-			tmpPosition_ += velocity_;
+			tmpPosition_ += velocity_ + wallJumpVelocity_;
 
 			//4頂点の座標を更新
 			leftTop_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
@@ -129,7 +173,7 @@ void Player::Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidt
 			collision_.min = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
 			collision_.max = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
 
-			CheckCollision(map);
+			CheckCollision();
 
 			position_ = tmpPosition_;
 
@@ -140,21 +184,6 @@ void Player::Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidt
 			rightTop_ = { position_.x + kPlayerHalfSize_ - 1, position_.y - kPlayerHalfSize_ };
 			leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ - 1 };
 			rightBottom_ = { position_.x + kPlayerHalfSize_ - 1, position_.y + kPlayerHalfSize_ - 1 };
-
-		}
-
-		//判定処理
-		{
-
-			/*if (leftBottom_.y >= 720.0f) {
-				position_.y = 720.0f - kPlayerHalfSize_;
-				parameter_.Jump_.canJump = true;
-				velocity_.y = 0.0f;
-				isFly_ = false;
-			}
-			else {
-				isFly_ = true;
-			}*/
 
 		}
 		
@@ -174,24 +203,31 @@ void Player::Draw(const Camera& camera) {
 void Player::Move() {
 
 	//移動
-	if (input_->TiltLStick(Input::Stick::Right)) {
+	if (input_->TiltLStick(Input::Stick::Right) && wallJumpVelocity_.x >= -1.0f) {
 
 		if (velocity_.x < -2.0f) {
 			velocity_.x = 0.0f;
 		}
 
 		velocity_.x += parameter_.speed_;
+
+		isFacingLeft_ = false;
+
 	}
-	else if (input_->TiltLStick(Input::Stick::Left)) {
+	else if (input_->TiltLStick(Input::Stick::Left) && wallJumpVelocity_.x <= 1.0f) {
 
 		if (velocity_.x > 2.0f) {
 			velocity_.x = 0.0f;
 		}
 
 		velocity_.x -= parameter_.speed_;
+
+		isFacingLeft_ = true;
+
 	}
 	else {
 
+		//減速処理
 		if (velocity_.x > 2.5f) {
 			velocity_.x -= 2.0f;
 		}
@@ -204,6 +240,32 @@ void Player::Move() {
 
 	}
 
+	if (parameter_.Jump_.canJump && input_->TiltLStick(Input::Stick::Up)) {
+
+		parameter_.chargeJump_.isCharge = true;
+
+	}
+	else {
+		parameter_.chargeJump_.isCharge = false;
+	}
+
+	//入力方向に応じて画像変更
+	if (input_->TiltLStick(Input::Stick::Right)) {
+		object_->SetTextureHandle(textureRight_);
+	}
+	else if (input_->TiltLStick(Input::Stick::Left)) {
+		object_->SetTextureHandle(textureLeft_);
+	}
+	else if (input_->TiltLStick(Input::Stick::Up)) {
+		object_->SetTextureHandle(textureUp_);
+	}
+	else if (input_->TiltLStick(Input::Stick::Down)) {
+		object_->SetTextureHandle(textureDown_);
+	}
+	else {
+		object_->SetTextureHandle(texture_);
+	}
+
 }
 
 void Player::Jump() {
@@ -214,10 +276,57 @@ void Player::Jump() {
 	}
 
 	//通常ジャンプ
-	if (parameter_.Jump_.canJump && input_->TriggerButton(Input::Button::A)) {
+	if (parameter_.Jump_.canJump && input_->TriggerButton(Input::Button::A) && !parameter_.chargeJump_.isCharge) {
 		velocity_.y += parameter_.Jump_.jumpVelocity;
 		parameter_.Jump_.canJump = false;
 		isFly_ = true;
+	}
+	//溜めジャンプが可能なときに必要な溜めの時間まで行かなかったら通常ジャンプの処理に切り替え
+	else if (parameter_.Jump_.canJump && input_->ReleaseButton(Input::Button::A) && parameter_.chargeJump_.isCharge &&
+		parameter_.chargeJump_.chargeTimer < parameter_.chargeJump_.kMaxChargeTime) {
+		velocity_.y += parameter_.Jump_.jumpVelocity;
+		parameter_.Jump_.canJump = false;
+		isFly_ = true;
+	}
+
+	//溜めジャンプ処理
+	ChargeJump();
+
+}
+
+void Player::ChargeJump() {
+
+	//チャージ完了した状態でボタンを離した時に溜めジャンプ発動
+	if (parameter_.chargeJump_.chargeTimer == parameter_.chargeJump_.kMaxChargeTime &&
+		input_->ReleaseButton(Input::Button::A)) {
+
+		velocity_.y += parameter_.chargeJump_.chargeJumpVelocity;
+		parameter_.chargeJump_.canBreak = true;
+		parameter_.Jump_.canJump = false;
+		isFly_ = true;
+
+	}
+
+	//チャージできたら画像の色変更
+	if (parameter_.chargeJump_.chargeTimer == parameter_.chargeJump_.kMaxChargeTime) {
+		object_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
+	}
+	else {
+		object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+
+	if (parameter_.chargeJump_.isCharge && input_->PushButton(Input::Button::A)) {
+
+		//最大値になるまでカウント
+		if (parameter_.chargeJump_.chargeTimer < parameter_.chargeJump_.kMaxChargeTime) {
+			parameter_.chargeJump_.chargeTimer++;
+		}
+
+	}
+	else {
+
+		parameter_.chargeJump_.chargeTimer = 0;
+
 	}
 
 }
@@ -229,31 +338,59 @@ void Player::WallJump() {
 
 		parameter_.wallJump_.canWallJump = false;
 
+		velocity_.y = parameter_.wallJump_.wallJumpVelocity.y;
 
+		//向きと逆方向に移動する
+		if (isFacingLeft_) {
+			wallJumpVelocity_.x = parameter_.wallJump_.wallJumpVelocity.x;
+		}
+		else {
+			wallJumpVelocity_.x = -parameter_.wallJump_.wallJumpVelocity.x;
+		}
 
 	}
 
 }
 
-void Player::CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidth_]) {
+void Player::Dig() {
+
+	//地面にいる状態なら穴掘り可能
+	if (parameter_.Jump_.canJump && input_->TriggerButton(Input::Button::X)) {
+
+		parameter_.dig_.isDig = true;
+
+		//上下左右どこを掘るか決める(左右優先)
+		if (input_->TiltLStick(Input::Stick::Right)) {
+			parameter_.dig_.digPosition = { position_.x + Block::kBlockSize_, position_.y };
+		}
+		else if (input_->TiltLStick(Input::Stick::Left)) {
+			parameter_.dig_.digPosition = { position_.x - Block::kBlockSize_, position_.y };
+		}
+		else if (input_->TiltLStick(Input::Stick::Up)) {
+			parameter_.dig_.digPosition = { position_.x, position_.y - Block::kBlockSize_ };
+		}
+		else if (input_->TiltLStick(Input::Stick::Down)) {
+			parameter_.dig_.digPosition = { position_.x, position_.y + Block::kBlockSize_ };
+		}
+
+	}
+	else {
+
+		parameter_.dig_.isDig = false;
+
+		parameter_.dig_.digPosition = { -10000.0f,-10000.0f };
+
+	}
+
+}
+
+void Player::CheckCollision() {
 
 	Vector2 tmp = position_;
 
 	UpdateGrid();
 
-	/*for (uint32_t y = 0; y < Stage::kMaxStageHeight_; y++) {
-
-		for (uint32_t x = 0; x < Stage::kMaxStageWidth_; x++) {
-
-			if (map[topGrid_][leftGrid_] != 0) {
-
-			}
-
-
-
-		}
-
-	}*/
+	parameter_.wallJump_.canWallJump = false;
 
 	if (blocksPtr_) {
 
@@ -277,33 +414,41 @@ void Player::CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxS
 					//左上が当たっていた
 					if (IsCollision(block->GetCollision(), leftTop_)) {
 
-						//プレイヤーが左側から侵入したなら右に押し戻し
-						if (preLeftTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
-
-							velocity_.x = 0;
-
-							SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
-
-							//落下に入った時に壁キックを可能にする
-							if (velocity_.y < -0.5f) {
-
-								parameter_.wallJump_.canWallJump = true;
-
-							}
-
+						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+						if (parameter_.chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
+							block->Break();
 						}
 						else {
 
-							if (preLeftTop_.x > block->GetPosition().x + Block::kBlockHalfSize_ - 1) {
+							//プレイヤーが左側から侵入したなら右に押し戻し
+							if (preLeftTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
 
+								velocity_.x = 0;
 
+								SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+								//落下に入った時に壁キックを可能にする
+								if (velocity_.y > 2.5f) {
+
+									parameter_.wallJump_.canWallJump = true;
+
+								}
 
 							}
 							else {
 
-								velocity_.y = 0;
+								if (preLeftTop_.x > block->GetPosition().x + Block::kBlockHalfSize_ - 1) {
 
-								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+
+								}
+								else {
+
+									velocity_.y = 0;
+
+									SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+								}
 
 							}
 
@@ -313,26 +458,41 @@ void Player::CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxS
 					//右上が当たっていた
 					if (IsCollision(block->GetCollision(), rightTop_)) {
 
-						//プレイヤーが右側から侵入したなら左に押し戻し
-						if (preRightTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
-
-							velocity_.x = 0;
-
-							SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
-
+						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+						if (parameter_.chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
+							block->Break();
 						}
 						else {
 
-							if (preRightTop_.x < block->GetPosition().x - Block::kBlockHalfSize_) {
+							//プレイヤーが右側から侵入したなら左に押し戻し
+							if (preRightTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
 
+								velocity_.x = 0;
 
+								SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+								//落下に入った時に壁キックを可能にする
+								if (velocity_.y > 2.5f) {
+
+									parameter_.wallJump_.canWallJump = true;
+
+								}
 
 							}
 							else {
 
-								velocity_.y = 0;
+								if (preRightTop_.x < block->GetPosition().x - Block::kBlockHalfSize_) {
 
-								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+
+								}
+								else {
+
+									velocity_.y = 0;
+
+									SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+								}
 
 							}
 
@@ -343,46 +503,78 @@ void Player::CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxS
 					//左下が当たっていた
 					if (IsCollision(block->GetCollision(), leftBottom_)) {
 
-						//プレイヤーが左側から侵入したなら右に押し戻し
-						if (preLeftBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
-
-							velocity_.x = 0;
-
-							SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+						if (false && Block::CheckCanBreak(block->GetType())) {
 
 						}
 						else {
 
-							velocity_.y = 0;
+							//プレイヤーが左側から侵入したなら右に押し戻し
+							if (preLeftBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
 
-							SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+								velocity_.x = 0;
 
-							SetCanJump(true);
-							SetIsFly(false);
+								SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+								//落下に入った時に壁キックを可能にする
+								if (velocity_.y > 2.5f) {
+
+									parameter_.wallJump_.canWallJump = true;
+
+								}
+
+							}
+							else {
+
+								velocity_.y = 0;
+
+								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+								SetCanJump(true);
+								SetIsFly(false);
+
+							}
 
 						}
+
+						
 
 					}
 
 					//右下が当たっていた
 					if (IsCollision(block->GetCollision(), rightBottom_)) {
 
-						//プレイヤーが右側から侵入したなら左に押し戻し
-						if (preRightBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
-
-							velocity_.x = 0;
-
-							SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+						if (false && Block::CheckCanBreak(block->GetType())) {
 
 						}
 						else {
 
-							velocity_.y = 0;
+							//プレイヤーが右側から侵入したなら左に押し戻し
+							if (preRightBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
 
-							SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+								velocity_.x = 0;
 
-							SetCanJump(true);
-							SetIsFly(false);
+								SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+								//落下に入った時に壁キックを可能にする
+								if (velocity_.y > 2.5f) {
+
+									parameter_.wallJump_.canWallJump = true;
+
+								}
+
+							}
+							else {
+
+								velocity_.y = 0;
+
+								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+								SetCanJump(true);
+								SetIsFly(false);
+
+							}
 
 						}
 
@@ -392,6 +584,15 @@ void Player::CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxS
 				else {
 
 					block->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+				}
+
+				//ここから穴掘りの当たり判定
+				if (parameter_.dig_.isDig && IsCollision(block->GetCollision(), parameter_.dig_.digPosition)) {
+
+					if (Block::CheckCanBreak(block->GetType())) {
+						block->Break();
+					}
 
 				}
 

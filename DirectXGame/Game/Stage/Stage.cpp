@@ -36,6 +36,17 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 void Stage::Update() {
 
+	map_.remove_if([&](auto& block) {
+
+		if (block->GetIsBreak()) {
+			blockPositions_[block->GetBlockPositionY()][block->GetBlockPositionX()] = 0;
+			return true;
+		}
+
+		return false;
+
+	});
+
 	//ブロックの更新
 	for (auto& block : map_) {
 
