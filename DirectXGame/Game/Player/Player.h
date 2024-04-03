@@ -201,7 +201,10 @@ private:
 	bool isFly_ = true;
 
 	//落下速度下限
-	const float maxFallSpeed_ = 15.0f;
+	const float kMaxFallSpeed_ = 15.0f;
+
+	//左右移動速度上限
+	const float kMaxMoveSpeed_ = 10.0f;
 
 	//自然落下速度
 	const float kGravityFallSpeed_ = 2.0f;

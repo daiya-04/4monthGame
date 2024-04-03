@@ -28,6 +28,10 @@ public:
 		const uint32_t kMaxGraceTime = 6;
 		//ギリ壁キックの猶予フレーム
 		uint32_t graceTime = 0;
+		//壁キックのx移動量
+		float wallJumpVelocityX = 10.0f;
+		//壁キックのy移動量
+		float wallJumpVelocityY = -20.0f;
 	};
 
 	//ヒップドロップ関連の構造体
@@ -58,6 +62,6 @@ public:
 	WorkCatch catch_;
 
 	//移動量
-	float speed_ = 5.0f;
+	float speed_ = 1.0f;
 
 };

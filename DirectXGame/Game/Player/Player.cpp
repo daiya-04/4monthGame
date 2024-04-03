@@ -72,26 +72,38 @@ void Player::Update(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxStageWidt
 
 		useCollision_ = true;
 
+		//移動処理
+		Move();
+
 		//ジャンプ処理
 		Jump();
 
 		//壁キック処理
 		WallJump();
 
-		//移動処理
-		Move();
-
 		//速度加算、オブジェクトに更新した座標を適用
 		{
 
+			//左右速度の制限
+			if (std::fabsf(velocity_.x) > kMaxMoveSpeed_) {
+
+				if (velocity_.x > 0.0f) {
+					velocity_.x = kMaxMoveSpeed_;
+				}
+				else {
+					velocity_.x = -kMaxMoveSpeed_;
+				}
+
+			}
+
 			//落下処理
-			if (velocity_.y < maxFallSpeed_) {
+			if (velocity_.y < kMaxFallSpeed_) {
 
 				velocity_.y += kGravityFallSpeed_;
 
 				//下限値を超えないように調整
-				if (velocity_.y > maxFallSpeed_) {
-					velocity_.y = maxFallSpeed_;
+				if (velocity_.y > kMaxFallSpeed_) {
+					velocity_.y = kMaxFallSpeed_;
 				}
 
 
@@ -163,13 +175,33 @@ void Player::Move() {
 
 	//移動
 	if (input_->TiltLStick(Input::Stick::Right)) {
-		velocity_.x = parameter_.speed_;
+
+		if (velocity_.x < -2.0f) {
+			velocity_.x = 0.0f;
+		}
+
+		velocity_.x += parameter_.speed_;
 	}
 	else if (input_->TiltLStick(Input::Stick::Left)) {
-		velocity_.x = -parameter_.speed_;
+
+		if (velocity_.x > 2.0f) {
+			velocity_.x = 0.0f;
+		}
+
+		velocity_.x -= parameter_.speed_;
 	}
 	else {
-		velocity_.x = 0.0f;
+
+		if (velocity_.x > 2.5f) {
+			velocity_.x -= 2.0f;
+		}
+		else if (velocity_.x < -2.5f) {
+			velocity_.x += 2.0f;
+		}
+		else {
+			velocity_.x = 0.0f;
+		}
+
 	}
 
 }
@@ -194,6 +226,10 @@ void Player::WallJump() {
 
 	//壁キック
 	if (parameter_.wallJump_.canWallJump && input_->TriggerButton(Input::Button::A)) {
+
+		parameter_.wallJump_.canWallJump = false;
+
+
 
 	}
 
@@ -248,31 +284,30 @@ void Player::CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxS
 
 							SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
 
+							//落下に入った時に壁キックを可能にする
+							if (velocity_.y < -0.5f) {
+
+								parameter_.wallJump_.canWallJump = true;
+
+							}
+
 						}
 						else {
 
-							velocity_.y = 0;
+							if (preLeftTop_.x > block->GetPosition().x + Block::kBlockHalfSize_ - 1) {
 
-							SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+
+							}
+							else {
+
+								velocity_.y = 0;
+
+								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+							}
 
 						}
-
-						/*if (leftTop_.x < block->GetPosition().x + Block::kBlockHalfSize_ - 1) {
-							
-							velocity_.x = 0;
-
-							SetTmpPosition({ block->GetPosition().x + Block::kBlockSize_, tmpPosition_.y });
-
-						}
-
-						プレイヤーがブロックより上側にいたなら押し戻し
-						if (leftTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
-							
-							velocity_.y = 0;
-
-							SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + Block::kBlockSize_ });
-
-						}*/
 
 					}
 					//右上が当たっていた
@@ -288,29 +323,20 @@ void Player::CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxS
 						}
 						else {
 
-							velocity_.y = 0;
+							if (preRightTop_.x < block->GetPosition().x - Block::kBlockHalfSize_) {
 
-							SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+
+							}
+							else {
+
+								velocity_.y = 0;
+
+								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+							}
 
 						}
-
-						////プレイヤーがブロックより右側にいたなら押し戻し
-						//if (rightTop_.x > block->GetPosition().x - Block::kBlockHalfSize_) {
-
-						//	velocity_.x = 0;
-
-						//	SetTmpPosition({ block->GetPosition().x - Block::kBlockSize_, tmpPosition_.y });
-
-						//}
-
-						////プレイヤーがブロックより上側にいたなら押し戻し
-						//if (rightTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
-
-						//	velocity_.y = 0;
-
-						//	SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + Block::kBlockSize_ });
-
-						//}
 
 					}
 
@@ -336,27 +362,6 @@ void Player::CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxS
 
 						}
 
-						////プレイヤーがブロックより左側にいたなら押し戻し
-						//if (leftBottom_.x < block->GetPosition().x + Block::kBlockHalfSize_ - 1) {
-
-						//	velocity_.x = 0;
-
-						//	SetTmpPosition({ block->GetPosition().x + Block::kBlockSize_, tmpPosition_.y });
-
-						//}
-
-						////プレイヤーがブロックより下側にいたなら押し戻し
-						//if (leftBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
-
-						//	velocity_.y = 0;
-
-						//	SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - Block::kBlockSize_ });
-
-						//	SetCanJump(true);
-						//	SetIsFly(false);
-
-						//}
-
 					}
 
 					//右下が当たっていた
@@ -381,30 +386,7 @@ void Player::CheckCollision(uint32_t(&map)[Stage::kMaxStageHeight_][Stage::kMaxS
 
 						}
 
-						////プレイヤーがブロックより右側にいたなら押し戻し
-						//if (rightBottom_.x > block->GetPosition().x - Block::kBlockHalfSize_) {
-
-						//	velocity_.x = 0;
-
-						//	SetTmpPosition({ block->GetPosition().x - Block::kBlockSize_, tmpPosition_.y });
-
-						//}
-
-						////プレイヤーがブロックより下側にいたなら押し戻し
-						//if (rightBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
-
-						//	velocity_.y = 0;
-
-						//	SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - Block::kBlockSize_ });
-
-						//	SetCanJump(true);
-						//	SetIsFly(false);
-
-						//}
-
 					}
-
-					/*player_->SetPosition(tmp);*/
 
 				}
 				else {
