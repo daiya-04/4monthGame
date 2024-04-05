@@ -38,7 +38,7 @@ public:
 	void Load(uint32_t stageNumber);
 
 	//横の長さ、ブロックの数
-	static const uint32_t kMaxStageWidth_ = 200;
+	static const uint32_t kMaxStageWidth_ = 40;
 	//縦の長さ、ブロックの数
 	static const uint32_t kMaxStageHeight_ = 100;
 
@@ -52,6 +52,13 @@ public:
 	std::list<std::shared_ptr<Block>>* GetBlocks() { return &map_; }
 
 	uint32_t blockPositions_[kMaxStageHeight_][kMaxStageWidth_]{};
+
+	static inline const Vector2 kBasePosition = { float(kMaxStageWidth_ * Block::kBlockSize_ / 2.0f - Block::kBlockHalfSize_),
+		-float(Block::kBlockHalfSize_)};
+
+	static inline const Vector2 kBorderLeft = { float(kBasePosition.x - 5.0f * Block::kBlockSize_), -75.0f };
+
+	static inline const Vector2 kBorderRight = { float(kBasePosition.x + 5.0f * Block::kBlockSize_), -75.0f };
 
 private:
 

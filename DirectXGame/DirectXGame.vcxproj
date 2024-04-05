@@ -120,6 +120,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Block\Block.cpp" />
     <ClCompile Include="Game\Block\BlockTextureManager.cpp" />
     <ClCompile Include="Game\Player\Player.cpp" />
+    <ClCompile Include="Game\Player\PlayerParameter.cpp" />
     <ClCompile Include="Game\SaunaStone\SaunaStone.cpp" />
     <ClCompile Include="Game\Scene\DeafultScene.cpp" />
     <ClCompile Include="Game\Scene\GameScene.cpp" />

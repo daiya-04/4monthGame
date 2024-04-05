@@ -28,6 +28,17 @@ public:
 		kCenter, //中央
 	};
 
+	/// <summary>
+	/// 現在使っているキャラクターがどっちかを指す
+	/// </summary>
+	enum Characters : uint32_t {
+		kLeftPlayer, //左から出るプレイヤー
+		kRightPlayer, //右から出るプレイヤー
+
+		kMaxPlayer, //最大人数
+
+	};
+
 	//プレイヤーのサイズ
 	static const uint32_t kPlayerSize_ = 64;
 	//プレイヤーサイズの半分
@@ -145,9 +156,7 @@ public:
 
 	const AABB2D& GetCollision() { return collision_; }
 
-	void SetIsFly(bool flag) { isFly_ = flag; }
-
-	void SetCanJump(bool flag) { parameter_.Jump_.canJump = flag; }
+	void SetCanJump(bool flag) { parameters_[characters_].Jump_.canJump = flag; }
 
 	void ResetVelocityY() { velocity_.y = 0.0f; }
 
@@ -155,19 +164,32 @@ public:
 
 private:
 
+	//移動
 	void Move();
 
+	//ジャンプ
 	void Jump();
 
+	//壁キック
 	void WallJump();
 
+	//溜めジャンプ
 	void ChargeJump();
 
+	//穴掘り
 	void Dig();
 
+	//座標更新
+	void UpdatePosition();
+
+	//当たり判定チェック
 	void CheckCollision();
 
-	void UpdateGrid();
+	//プレイヤー強化
+	void Enhance();
+
+	//キャラクター交代
+	void Change();
 
 private:
 
@@ -181,35 +203,11 @@ private:
 	//当たり判定
 	AABB2D collision_{};
 
-	//体温の最高値
-	/*const uint32_t kMaxTemperature_ = 140;*/
-
-	//体温の最低値
-	/*const uint32_t kMinTemperature_ = 80;*/
-
-	//体温
-	/*uint32_t temperature_ = kMaxTemperature_;*/
-
-	//水分量の最大値
-	/*const uint32_t kMaxBodyMoisture_ = 100;*/
-
-	//水分量の最低値
-	/*const uint32_t kMinBodyMoisture_ = 0;*/
-
-	//水分量
-	/*uint32_t bodyMoisture_ = 50;*/
-
 	//パラメータを纏めたもの
-	PlayerParameter parameter_;
-
-	//空中判定
-	bool isFly_ = true;
+	PlayerParameter parameters_[kMaxPlayer];
 
 	//落下速度下限
 	const float kMaxFallSpeed_ = 25.0f;
-
-	//左右移動速度上限
-	const float kMaxMoveSpeed_ = 10.0f;
 
 	//自然落下速度
 	const float kGravityFallSpeed_ = 2.0f;
@@ -241,15 +239,6 @@ private:
 	//右下
 	Vector2 rightBottom_{};
 
-	//左のマップチップでの座標
-	int32_t leftGrid_ = 0;
-	//右のマップチップでの座標
-	int32_t rightGrid_ = 0;
-	//上のマップチップでの座標
-	int32_t topGrid_ = 0;
-	//下のマップチップでの座標
-	int32_t bottomGrid_ = 0;
-
 	//前フレーム左上
 	Vector2 preLeftTop_{};
 	//前フレーム右上
@@ -274,6 +263,21 @@ private:
 
 	//プレイヤーの向き
 	bool isFacingLeft_ = true;
+
+	//現在使用しているプレイヤー
+	Characters characters_ = kLeftPlayer;
+
+	//採掘開始フラグ
+	bool isMining_ = true;
+
+	//拠点に帰るときのフラグ
+	bool isReturn_ = false;
+
+	//動きを止めるためのフラグ
+	bool isStopMove_ = false;
+
+	//拠点から外に出るときのフラグ
+	bool isOut_ = false;
 
 };
 

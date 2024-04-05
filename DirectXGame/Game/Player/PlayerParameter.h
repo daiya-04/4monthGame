@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <Vec2.h>
 
 /// <summary>
 /// プレイヤーの色々なパラメータを纏めたクラス
@@ -7,6 +8,8 @@
 class PlayerParameter
 {
 public:
+
+	void Initialize();
 
 	//ジャンプ関連の構造体
 	struct WorkJump {
@@ -71,6 +74,12 @@ public:
 		float unBreakVelocity = -2.0f;
 	};
 
+	//探索時間関連
+	struct WorkMiningTimer {
+
+
+	};
+
 	//ジャンプ
 	WorkJump Jump_;
 
@@ -91,5 +100,8 @@ public:
 
 	//移動量
 	float speed_ = 1.0f;
+
+	//左右移動速度上限
+	float maxMoveSpeed_ = 10.0f;
 
 };

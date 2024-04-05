@@ -21,7 +21,7 @@ void Player::Initialize() {
 	textureUp_ = TextureManager::GetInstance()->Load("player/playerUp.png");
 	textureDown_ = TextureManager::GetInstance()->Load("player/playerDown.png");
 
-	position_ = { 200.0f,200.0f };
+	position_ = { 200.0f,-200.0f };
 	tmpPosition_ = position_;
 	prePosition_ = position_;
 
@@ -43,10 +43,13 @@ void Player::Initialize() {
 
 	velocity_ = { 0.0f,0.0f };
 
+	characters_ = kLeftPlayer;
+
 }
 
 void Player::Update() {
 
+	//前フレームの位置をセット
 	prePosition_ = position_;
 
 	preLeftTop_ = leftTop_;
@@ -54,6 +57,7 @@ void Player::Update() {
 	preLeftBottom_ = leftBottom_;
 	preRightBottom_ = rightBottom_;
 
+	//デバッグ中の移動処理
 	if (isDebug_) {
 
 		useCollision_ = false;
@@ -76,119 +80,63 @@ void Player::Update() {
 
 		useCollision_ = true;
 
-		//移動処理
-		Move();
+		//採掘中の行動処理
+		if (isMining_) {
 
-		//ジャンプ処理
-		Jump();
 
-		//壁キック処理
-		WallJump();
+			//帰還ボーダーに触れたら動きを止める
+			if ((position_.y < Stage::kBorderLeft.y || position_.y < Stage::kBorderRight.y) &&
+				position_.x > Stage::kBorderLeft.x && position_.x < Stage::kBorderRight.x) {
+				isStopMove_ = true;
+			}
 
-		//穴掘り処理
-		Dig();
+			//移行できる状態になったら待機モーションに移行
+			if (isStopMove_ && parameters_[characters_].Jump_.canJump) {
+				isMining_ = false;
+				isReturn_ = true;
+			}
 
-		//速度加算、オブジェクトに更新した座標を適用
-		{
+			//動きを止めるフラグが立ったら操作不可にする
+			if (!isStopMove_) {
 
-			//左右速度の制限
-			if (std::fabsf(velocity_.x) > kMaxMoveSpeed_) {
+				//移動処理
+				Move();
 
-				if (velocity_.x > 0.0f) {
-					velocity_.x = kMaxMoveSpeed_;
-				}
-				else {
-					velocity_.x = -kMaxMoveSpeed_;
-				}
+				//ジャンプ処理
+				Jump();
+
+				//壁キック処理
+				WallJump();
+
+				//穴掘り処理
+				Dig();
 
 			}
 
-			//壁キックの左右速度調整
-			if (std::fabsf(wallJumpVelocity_.x) > 1.0f) {
+			//座標の更新
+			UpdatePosition();
 
-				if (wallJumpVelocity_.x > 0.0f) {
-					wallJumpVelocity_.x -= 0.3f;
-				}
-				else {
-					wallJumpVelocity_.x += 0.3f;
-				}
-
+			if (characters_ == kLeftPlayer) {
+				object_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 			}
 			else {
-				wallJumpVelocity_.x = 0.0f;
+				object_->SetColor({ 0.0f,0.0f,1.0f,1.0f });
 			}
-
-			//左右移動の合計速度が上限を超えないように制限
-			if (std::fabsf(wallJumpVelocity_.x + velocity_.x) > kMaxMoveSpeed_) {
-
-				if (wallJumpVelocity_.x + velocity_.x > 0.0f) {
-					velocity_.x = kMaxMoveSpeed_ - wallJumpVelocity_.x;
-				}
-				else {
-					velocity_.x = -kMaxMoveSpeed_ - wallJumpVelocity_.x;
-				}
-
-			}
-
-			//落下処理
-			if (velocity_.y < kMaxFallSpeed_) {
-
-				velocity_.y += kGravityFallSpeed_;
-
-				//下限値を超えないように調整
-				if (velocity_.y > kMaxFallSpeed_) {
-					velocity_.y = kMaxFallSpeed_;
-				}
-
-			}
-
-			//溜めジャンプの破壊フラグが経っている状態で、速度が規定値を超えたらフラグを下す
-			if (parameter_.chargeJump_.canBreak && velocity_.y > parameter_.chargeJump_.unBreakVelocity) {
-				parameter_.chargeJump_.canBreak = false;
-			}
-
-			//壁キック可能時(壁ずりしている時)、下方向の落下速度を減少させる
-			if (parameter_.wallJump_.canWallJump) {
-
-				velocity_.y *= 0.6f;
-
-			}
-
-			//浮いていない場合の処理
-			if (!isFly_) {
-
-			}
-
-			tmpPosition_ = position_;
-
-			tmpPosition_ += velocity_ + wallJumpVelocity_;
-
-			//4頂点の座標を更新
-			leftTop_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
-			rightTop_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y - kPlayerHalfSize_ };
-			leftBottom_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y + kPlayerHalfSize_ - 1 };
-			rightBottom_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
-
-			//仮の当たり判定更新
-			collision_.min = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
-			collision_.max = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
-
-			CheckCollision();
-
-			position_ = tmpPosition_;
-
-			object_->position_ = position_;
-
-			//4頂点の座標を更新
-			leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-			rightTop_ = { position_.x + kPlayerHalfSize_ - 1, position_.y - kPlayerHalfSize_ };
-			leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ - 1 };
-			rightBottom_ = { position_.x + kPlayerHalfSize_ - 1, position_.y + kPlayerHalfSize_ - 1 };
 
 		}
+		//拠点待機中の処理
+		else {
+
+			//キャラクター交代の一連の流れ
+			Change();
+
+		}
+
+		
 		
 	}
 
+	//最終的な当たり判定を更新
 	collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
 	collision_.max = { position_.x + kPlayerHalfSize_ - 1, position_.y + kPlayerHalfSize_ - 1 };
 
@@ -209,7 +157,7 @@ void Player::Move() {
 			velocity_.x = 0.0f;
 		}
 
-		velocity_.x += parameter_.speed_;
+		velocity_.x += parameters_[characters_].speed_;
 
 		isFacingLeft_ = false;
 
@@ -220,7 +168,7 @@ void Player::Move() {
 			velocity_.x = 0.0f;
 		}
 
-		velocity_.x -= parameter_.speed_;
+		velocity_.x -= parameters_[characters_].speed_;
 
 		isFacingLeft_ = true;
 
@@ -240,13 +188,15 @@ void Player::Move() {
 
 	}
 
-	if (parameter_.Jump_.canJump && input_->TiltLStick(Input::Stick::Up)) {
+	//スティック入力で上方向のみの入力の場合にチャージジャンプをできるようにする
+	if (parameters_[characters_].Jump_.canJump && input_->TiltLStick(Input::Stick::Up) && 
+		!input_->TiltLStick(Input::Stick::Left) && !input_->TiltLStick(Input::Stick::Right)) {
 
-		parameter_.chargeJump_.isCharge = true;
+		parameters_[characters_].chargeJump_.isCharge = true;
 
 	}
 	else {
-		parameter_.chargeJump_.isCharge = false;
+		parameters_[characters_].chargeJump_.isCharge = false;
 	}
 
 	//入力方向に応じて画像変更
@@ -272,21 +222,19 @@ void Player::Jump() {
 
 	//落下速度が0.1f以上あったら空中判定とみなし、ジャンプできなくする
 	if (velocity_.y > 0.1f) {
-		parameter_.Jump_.canJump = false;
+		parameters_[characters_].Jump_.canJump = false;
 	}
 
 	//通常ジャンプ
-	if (parameter_.Jump_.canJump && input_->TriggerButton(Input::Button::A) && !parameter_.chargeJump_.isCharge) {
-		velocity_.y += parameter_.Jump_.jumpVelocity;
-		parameter_.Jump_.canJump = false;
-		isFly_ = true;
+	if (parameters_[characters_].Jump_.canJump && input_->TriggerButton(Input::Button::A) && !parameters_[characters_].chargeJump_.isCharge) {
+		velocity_.y += parameters_[characters_].Jump_.jumpVelocity;
+		parameters_[characters_].Jump_.canJump = false;
 	}
 	//溜めジャンプが可能なときに必要な溜めの時間まで行かなかったら通常ジャンプの処理に切り替え
-	else if (parameter_.Jump_.canJump && input_->ReleaseButton(Input::Button::A) && parameter_.chargeJump_.isCharge &&
-		parameter_.chargeJump_.chargeTimer < parameter_.chargeJump_.kMaxChargeTime) {
-		velocity_.y += parameter_.Jump_.jumpVelocity;
-		parameter_.Jump_.canJump = false;
-		isFly_ = true;
+	else if (parameters_[characters_].Jump_.canJump && input_->ReleaseButton(Input::Button::A) && parameters_[characters_].chargeJump_.isCharge &&
+		parameters_[characters_].chargeJump_.chargeTimer < parameters_[characters_].chargeJump_.kMaxChargeTime) {
+		velocity_.y += parameters_[characters_].Jump_.jumpVelocity;
+		parameters_[characters_].Jump_.canJump = false;
 	}
 
 	//溜めジャンプ処理
@@ -297,35 +245,35 @@ void Player::Jump() {
 void Player::ChargeJump() {
 
 	//チャージ完了した状態でボタンを離した時に溜めジャンプ発動
-	if (parameter_.chargeJump_.chargeTimer == parameter_.chargeJump_.kMaxChargeTime &&
+	if (parameters_[characters_].chargeJump_.chargeTimer == parameters_[characters_].chargeJump_.kMaxChargeTime &&
 		input_->ReleaseButton(Input::Button::A)) {
 
-		velocity_.y += parameter_.chargeJump_.chargeJumpVelocity;
-		parameter_.chargeJump_.canBreak = true;
-		parameter_.Jump_.canJump = false;
-		isFly_ = true;
+		velocity_.y += parameters_[characters_].chargeJump_.chargeJumpVelocity;
+		parameters_[characters_].chargeJump_.canBreak = true;
+		parameters_[characters_].Jump_.canJump = false;
 
 	}
 
 	//チャージできたら画像の色変更
-	if (parameter_.chargeJump_.chargeTimer == parameter_.chargeJump_.kMaxChargeTime) {
+	if (parameters_[characters_].chargeJump_.chargeTimer == parameters_[characters_].chargeJump_.kMaxChargeTime) {
 		object_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
 	}
 	else {
 		object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	}
 
-	if (parameter_.chargeJump_.isCharge && input_->PushButton(Input::Button::A)) {
+	//ジャンプボタンを押している間チャージカウント増加
+	if (parameters_[characters_].chargeJump_.isCharge && input_->PushButton(Input::Button::A)) {
 
 		//最大値になるまでカウント
-		if (parameter_.chargeJump_.chargeTimer < parameter_.chargeJump_.kMaxChargeTime) {
-			parameter_.chargeJump_.chargeTimer++;
+		if (parameters_[characters_].chargeJump_.chargeTimer < parameters_[characters_].chargeJump_.kMaxChargeTime) {
+			parameters_[characters_].chargeJump_.chargeTimer++;
 		}
 
 	}
 	else {
 
-		parameter_.chargeJump_.chargeTimer = 0;
+		parameters_[characters_].chargeJump_.chargeTimer = 0;
 
 	}
 
@@ -334,18 +282,18 @@ void Player::ChargeJump() {
 void Player::WallJump() {
 
 	//壁キック
-	if (parameter_.wallJump_.canWallJump && input_->TriggerButton(Input::Button::A)) {
+	if (parameters_[characters_].wallJump_.canWallJump && input_->TriggerButton(Input::Button::A)) {
 
-		parameter_.wallJump_.canWallJump = false;
+		parameters_[characters_].wallJump_.canWallJump = false;
 
-		velocity_.y = parameter_.wallJump_.wallJumpVelocity.y;
+		velocity_.y = parameters_[characters_].wallJump_.wallJumpVelocity.y;
 
 		//向きと逆方向に移動する
 		if (isFacingLeft_) {
-			wallJumpVelocity_.x = parameter_.wallJump_.wallJumpVelocity.x;
+			wallJumpVelocity_.x = parameters_[characters_].wallJump_.wallJumpVelocity.x;
 		}
 		else {
-			wallJumpVelocity_.x = -parameter_.wallJump_.wallJumpVelocity.x;
+			wallJumpVelocity_.x = -parameters_[characters_].wallJump_.wallJumpVelocity.x;
 		}
 
 	}
@@ -355,32 +303,246 @@ void Player::WallJump() {
 void Player::Dig() {
 
 	//地面にいる状態なら穴掘り可能
-	if (parameter_.Jump_.canJump && input_->TriggerButton(Input::Button::X)) {
+	if (parameters_[characters_].Jump_.canJump && input_->TriggerButton(Input::Button::X)) {
 
-		parameter_.dig_.isDig = true;
+		parameters_[characters_].dig_.isDig = true;
 
 		//上下左右どこを掘るか決める(左右優先)
 		if (input_->TiltLStick(Input::Stick::Right)) {
-			parameter_.dig_.digPosition = { position_.x + Block::kBlockSize_, position_.y };
+			parameters_[characters_].dig_.digPosition = { position_.x + Block::kBlockSize_, position_.y };
 		}
 		else if (input_->TiltLStick(Input::Stick::Left)) {
-			parameter_.dig_.digPosition = { position_.x - Block::kBlockSize_, position_.y };
+			parameters_[characters_].dig_.digPosition = { position_.x - Block::kBlockSize_, position_.y };
 		}
 		else if (input_->TiltLStick(Input::Stick::Up)) {
-			parameter_.dig_.digPosition = { position_.x, position_.y - Block::kBlockSize_ };
+			parameters_[characters_].dig_.digPosition = { position_.x, position_.y - Block::kBlockSize_ };
 		}
 		else if (input_->TiltLStick(Input::Stick::Down)) {
-			parameter_.dig_.digPosition = { position_.x, position_.y + Block::kBlockSize_ };
+			parameters_[characters_].dig_.digPosition = { position_.x, position_.y + Block::kBlockSize_ };
 		}
 
 	}
 	else {
 
-		parameter_.dig_.isDig = false;
+		parameters_[characters_].dig_.isDig = false;
 
-		parameter_.dig_.digPosition = { -10000.0f,-10000.0f };
+		parameters_[characters_].dig_.digPosition = { -10000.0f,-10000.0f };
 
 	}
+
+}
+
+void Player::Enhance() {
+
+
+
+}
+
+void Player::Change() {
+
+	//範囲外参照を防ぐため、characters_の値がどちらでもない場合、return
+	if (characters_ < kLeftPlayer || characters_ > kRightPlayer) {
+		return;
+	}
+
+	//帰還中の挙動
+	if (isReturn_) {
+
+		//左側にいた場合
+		if (position_.x < Stage::kBasePosition.x) {
+
+			object_->SetTextureHandle(textureRight_);
+
+			position_.x += parameters_[characters_].speed_ * 5.0f;
+
+			//サウナ室内に入ったら切り替え
+			if (position_.x > Stage::kBasePosition.x - Block::kBlockHalfSize_) {
+				
+				if (characters_ == kLeftPlayer) {
+					characters_ = kRightPlayer;
+				}
+				else {
+					characters_ = kLeftPlayer;
+				}
+
+				position_.x = Stage::kBasePosition.x;
+				isReturn_ = false;
+
+			}
+
+		}
+		else {
+
+			object_->SetTextureHandle(textureLeft_);
+
+			position_.x -= parameters_[characters_].speed_ * 5.0f;
+
+			//サウナ室内に入ったら切り替え
+			if (position_.x < Stage::kBasePosition.x + Block::kBlockHalfSize_) {
+				
+				if (characters_ == kLeftPlayer) {
+					characters_ = kRightPlayer;
+				}
+				else {
+					characters_ = kLeftPlayer;
+				}
+
+				position_.x = Stage::kBasePosition.x;
+				isReturn_ = false;
+
+			}
+
+		}
+
+	}
+	//外に出る途中の挙動
+	else if (isOut_) {
+
+		switch (characters_)
+		{
+		default:
+		case Player::kLeftPlayer:
+
+			position_.x -= parameters_[characters_].speed_ * 5.0f;
+
+			//サウナ室内に入ったら切り替え
+			if (position_.x < Stage::kBorderLeft.x - Block::kBlockSize_) {
+				isOut_ = false;
+				isMining_ = true;
+				isStopMove_ = false;
+			}
+
+
+			break;
+		case Player::kRightPlayer:
+
+			position_.x += parameters_[characters_].speed_ * 5.0f;
+
+			//サウナ室内に入ったら切り替え
+			if (position_.x > Stage::kBorderRight.x + Block::kBlockSize_) {
+				isOut_ = false;
+				isMining_ = true;
+				isStopMove_ = false;
+			}
+
+			break;
+		}
+
+	}
+	//拠点にいる時の挙動
+	else {
+
+		if (input_->TriggerButton(Input::Button::A)) {
+			isOut_ = true;
+		}
+
+	}
+
+	object_->position_ = position_;
+
+	//4頂点の座標を更新
+	leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
+	rightTop_ = { position_.x + kPlayerHalfSize_ - 1, position_.y - kPlayerHalfSize_ };
+	leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ - 1 };
+	rightBottom_ = { position_.x + kPlayerHalfSize_ - 1, position_.y + kPlayerHalfSize_ - 1 };
+
+}
+
+void Player::UpdatePosition() {
+
+	//範囲外参照を防ぐため、characters_の値がどちらでもない場合、return
+	if (characters_ < kLeftPlayer || characters_ > kRightPlayer) {
+		return;
+	}
+
+	//左右速度の制限
+	if (std::fabsf(velocity_.x) > parameters_[characters_].maxMoveSpeed_) {
+
+		if (velocity_.x > 0.0f) {
+			velocity_.x = parameters_[characters_].maxMoveSpeed_;
+		}
+		else {
+			velocity_.x = -parameters_[characters_].maxMoveSpeed_;
+		}
+
+	}
+
+	//壁キックの左右速度調整
+	if (std::fabsf(wallJumpVelocity_.x) > 1.0f) {
+
+		if (wallJumpVelocity_.x > 0.0f) {
+			wallJumpVelocity_.x -= 0.3f;
+		}
+		else {
+			wallJumpVelocity_.x += 0.3f;
+		}
+
+	}
+	else {
+		wallJumpVelocity_.x = 0.0f;
+	}
+
+	//左右移動の合計速度が上限を超えないように制限
+	if (std::fabsf(wallJumpVelocity_.x + velocity_.x) > parameters_[characters_].maxMoveSpeed_) {
+
+		if (wallJumpVelocity_.x + velocity_.x > 0.0f) {
+			velocity_.x = parameters_[characters_].maxMoveSpeed_ - wallJumpVelocity_.x;
+		}
+		else {
+			velocity_.x = -parameters_[characters_].maxMoveSpeed_ - wallJumpVelocity_.x;
+		}
+
+	}
+
+	//落下処理
+	if (velocity_.y < kMaxFallSpeed_) {
+
+		velocity_.y += kGravityFallSpeed_;
+
+		//下限値を超えないように調整
+		if (velocity_.y > kMaxFallSpeed_) {
+			velocity_.y = kMaxFallSpeed_;
+		}
+
+	}
+
+	//溜めジャンプの破壊フラグが経っている状態で、速度が規定値を超えたらフラグを下す
+	if (parameters_[characters_].chargeJump_.canBreak && velocity_.y > parameters_[characters_].chargeJump_.unBreakVelocity) {
+		parameters_[characters_].chargeJump_.canBreak = false;
+	}
+
+	//壁キック可能時(壁ずりしている時)、下方向の落下速度を減少させる
+	if (parameters_[characters_].wallJump_.canWallJump) {
+
+		velocity_.y *= 0.6f;
+
+	}
+
+	tmpPosition_ = position_;
+
+	tmpPosition_ += velocity_ + wallJumpVelocity_;
+
+	//4頂点の座標を更新
+	leftTop_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
+	rightTop_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y - kPlayerHalfSize_ };
+	leftBottom_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+	rightBottom_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+
+	//仮の当たり判定更新
+	collision_.min = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
+	collision_.max = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+
+	CheckCollision();
+
+	position_ = tmpPosition_;
+
+	object_->position_ = position_;
+
+	//4頂点の座標を更新
+	leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
+	rightTop_ = { position_.x + kPlayerHalfSize_ - 1, position_.y - kPlayerHalfSize_ };
+	leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ - 1 };
+	rightBottom_ = { position_.x + kPlayerHalfSize_ - 1, position_.y + kPlayerHalfSize_ - 1 };
 
 }
 
@@ -388,9 +550,7 @@ void Player::CheckCollision() {
 
 	Vector2 tmp = position_;
 
-	UpdateGrid();
-
-	parameter_.wallJump_.canWallJump = false;
+	parameters_[characters_].wallJump_.canWallJump = false;
 
 	if (blocksPtr_) {
 
@@ -415,7 +575,7 @@ void Player::CheckCollision() {
 					if (IsCollision(block->GetCollision(), leftTop_)) {
 
 						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
-						if (parameter_.chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
+						if (parameters_[characters_].chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
 							block->Break();
 						}
 						else {
@@ -430,7 +590,7 @@ void Player::CheckCollision() {
 								//落下に入った時に壁キックを可能にする
 								if (velocity_.y > 2.5f) {
 
-									parameter_.wallJump_.canWallJump = true;
+									parameters_[characters_].wallJump_.canWallJump = true;
 
 								}
 
@@ -459,7 +619,7 @@ void Player::CheckCollision() {
 					if (IsCollision(block->GetCollision(), rightTop_)) {
 
 						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
-						if (parameter_.chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
+						if (parameters_[characters_].chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
 							block->Break();
 						}
 						else {
@@ -474,7 +634,7 @@ void Player::CheckCollision() {
 								//落下に入った時に壁キックを可能にする
 								if (velocity_.y > 2.5f) {
 
-									parameter_.wallJump_.canWallJump = true;
+									parameters_[characters_].wallJump_.canWallJump = true;
 
 								}
 
@@ -519,7 +679,7 @@ void Player::CheckCollision() {
 								//落下に入った時に壁キックを可能にする
 								if (velocity_.y > 2.5f) {
 
-									parameter_.wallJump_.canWallJump = true;
+									parameters_[characters_].wallJump_.canWallJump = true;
 
 								}
 
@@ -531,7 +691,6 @@ void Player::CheckCollision() {
 								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
 
 								SetCanJump(true);
-								SetIsFly(false);
 
 							}
 
@@ -560,7 +719,7 @@ void Player::CheckCollision() {
 								//落下に入った時に壁キックを可能にする
 								if (velocity_.y > 2.5f) {
 
-									parameter_.wallJump_.canWallJump = true;
+									parameters_[characters_].wallJump_.canWallJump = true;
 
 								}
 
@@ -572,7 +731,6 @@ void Player::CheckCollision() {
 								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
 
 								SetCanJump(true);
-								SetIsFly(false);
 
 							}
 
@@ -588,7 +746,7 @@ void Player::CheckCollision() {
 				}
 
 				//ここから穴掘りの当たり判定
-				if (parameter_.dig_.isDig && IsCollision(block->GetCollision(), parameter_.dig_.digPosition)) {
+				if (parameters_[characters_].dig_.isDig && IsCollision(block->GetCollision(), parameters_[characters_].dig_.digPosition)) {
 
 					if (Block::CheckCanBreak(block->GetType())) {
 						block->Break();
@@ -608,15 +766,6 @@ void Player::CheckCollision() {
 	}
 
 	/*position_ = tmp;*/
-
-}
-
-void Player::UpdateGrid() {
-
-	leftGrid_ = int(leftTop_.x) / Block::kBlockSize_;
-	rightGrid_ = int(rightBottom_.x - 1) / Block::kBlockSize_;
-	topGrid_ = int(leftTop_.y) / Block::kBlockSize_;
-	bottomGrid_ = int(rightBottom_.y - 1) / Block::kBlockSize_;
 
 }
 

@@ -173,6 +173,9 @@
     <ClCompile Include="Game\Scroll\Scroll.cpp">
       <Filter>Game\Scroll</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Player\PlayerParameter.cpp">
+      <Filter>Game\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
