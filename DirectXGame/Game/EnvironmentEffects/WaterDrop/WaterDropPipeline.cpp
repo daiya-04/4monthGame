@@ -131,9 +131,9 @@ void WaterDropPipeline::StaticInitialize(ID3D12Device* device, int windowWidth, 
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
 	//
 	//α値のブレンド設定で基本的に使わないからいじらない
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_BLEND_FACTOR;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_BLEND_FACTOR;
 
 	//RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
@@ -248,7 +248,7 @@ void WaterDropPipeline::preDraw(ID3D12GraphicsCommandList* commandList) {
 
 	assert(commandList);
 	commandList_ = commandList;
-	const float factor[4] = { 0.5f,0.5f,0.25f,1.0f };
+	const float factor[4] = { 0.5f,0.5f,0.25f,0.5f };
 	commandList_->OMSetBlendFactor(factor);
 	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
 

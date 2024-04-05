@@ -27,7 +27,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	//sourceColor.y *= 2.0f;
 	
 	///effect
-	if (sourceColor.a > 0.1f) {
+	if (sourceColor.a > 0.1f || 1) {
 		float32_t2 offset;
 		//sourceColor.x *= 1.0f * sourceColor.a;
 		//sourceColor.y *= 1.0f * sourceColor.a;
