@@ -43,7 +43,20 @@ void Player::Initialize() {
 
 	velocity_ = { 0.0f,0.0f };
 
+	parameters_[kRightPlayer].Jump_.jumpVelocity = -50.0f;
+
 	characters_ = kLeftPlayer;
+
+	SetOnBase();
+
+}
+
+void Player::SetOnBase() {
+
+	isStopMove_ = true;
+	isMining_ = false;
+	isReturn_ = false;
+	position_ = Stage::kBasePosition;
 
 }
 

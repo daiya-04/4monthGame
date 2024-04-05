@@ -191,6 +191,9 @@ private:
 	//キャラクター交代
 	void Change();
 
+	//現在拠点にいる状態にするための設定
+	void SetOnBase();
+
 private:
 
 	Input* input_;
