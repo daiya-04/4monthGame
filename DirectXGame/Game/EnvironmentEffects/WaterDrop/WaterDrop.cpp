@@ -12,9 +12,15 @@ void WaterDrop::Init() {
 		waterDropSprite_[i].reset(new Sprite(TextureManager::GetInstance()->Load("weightCircle.png"), { 640.0f,360.0f }, 1.0f / 64.0f));
 		waterDropSprite_[i]->Initialize();
 		waterDropSprite_[i]->SetSize({ 128.0f,128.0f });
-		position_[i] = { 640.0f,360.0f };
-		radius_[i] = { 128.0f,128.0f };
+		position_[i] = { 640.0f,64.0f };
+		radius_[i] = { 64.0f,64.0f };
 	}
+	for (int i = 0; i < 2;i++) {
+		internalEffectTextures_[i].reset(new PostEffect());
+		internalEffectTextures_[i]->Init(L"Resources/shaders/WaterDropUpdateEffect.VS.hlsl", L"Resources/shaders/WaterDropUpdateEffect.PS.hlsl");
+	}
+	latestTextureNum_ = 0;
+	isDrawInternal_ = false;
 }
 
 void WaterDrop::Update() {
@@ -31,6 +37,10 @@ void WaterDrop::Update() {
 		waterDropSprite_[i]->SetSize({radius_[i].x,radius_[i].y});
 		waterDropSprite_[i]->SetPosition(position_[i]);
 	}
+	if (ImGui::Button("DrawInternal"))
+	{
+		isDrawInternal_ = true;
+	}
 	ImGui::End();
 #endif // _DEBUG
 	
@@ -38,11 +48,24 @@ void WaterDrop::Update() {
 }
 
 void WaterDrop::DrawInternal() {
-	sorceTexture_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
-	Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	WaterDropPipeline::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	for (int i = 0; i < dropNum_; i++) {
-		waterDropSprite_[i]->Draw();
+	if (isDrawInternal_) {
+		sorceTexture_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+		Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+		WaterDropPipeline::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+		for (int i = 0; i < dropNum_; i++) {
+			waterDropSprite_[i]->Draw();
+		}
+		sorceTexture_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+		internalEffectTextures_[latestTextureNum_]->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+		sorceTexture_->Draw(DirectXCommon::GetInstance()->GetCommandList());
+		internalEffectTextures_[latestTextureNum_]->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+		isDrawInternal_ = false;
 	}
-	sorceTexture_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+}
+
+void WaterDrop::DrawUpdateEffect() {
+	latestTextureNum_ = bool(!latestTextureNum_);
+	internalEffectTextures_[latestTextureNum_]->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+	internalEffectTextures_[!latestTextureNum_]->Draw(DirectXCommon::GetInstance()->GetCommandList());
+	internalEffectTextures_[latestTextureNum_]->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 }

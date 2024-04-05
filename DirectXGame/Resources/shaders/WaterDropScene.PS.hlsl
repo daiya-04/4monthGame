@@ -27,14 +27,14 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	//sourceColor.y *= 2.0f;
 	
 	///effect
-	if (sourceColor.a > 0.1f || 1) {
+	if (sourceColor.a > 0.1f) {
 		float32_t2 offset;
 		//sourceColor.x *= 1.0f * sourceColor.a;
 		//sourceColor.y *= 1.0f * sourceColor.a;
 		offset.x = sourceColor.x * 2.0f - 1.0f;
 		offset.y = sourceColor.y * 2.0f - 1.0f;
-		offset.x *= 1.0f / sourceColor.a;
-		offset.y *= 1.0f / sourceColor.a;
+		//offset.x *= 1.0f / sourceColor.a;
+		//offset.y *= 1.0f / sourceColor.a;
 		//offset.x = offset.x * offset.x * offset.x;
 		//offset.y = offset.y * offset.y * offset.y;
 		float32_t2 normalizedOffset = normalize(offset);
@@ -74,7 +74,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 			gTextureNextScene.Sample(gSampler, transformdL).a == 0.0f ||
 			gTextureNextScene.Sample(gSampler, transformdU).a == 0.0f ||
 			gTextureNextScene.Sample(gSampler, transformdD).a == 0.0f ) {
-			output.color = float32_t4(0.2f, 0.2f, 0.2f, 0.5f);
+			//output.color = output.color +  float32_t4(0.2f, 0.2f, 0.2f, 0.1f);
 		}
 	}
 

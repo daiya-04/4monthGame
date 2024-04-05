@@ -13,7 +13,7 @@
 
 using namespace Microsoft::WRL;
 
-const float WaterDropSourceTexture::clearColorWaterDrop_[4] = { 0.5f,0.5f,0.0f,0.5f };
+const float WaterDropSourceTexture::clearColorWaterDrop_[4] = { 0.5f,0.5f,0.0f,0.0f };
 
 void WaterDropSourceTexture::Init() {
 	HRESULT hr;

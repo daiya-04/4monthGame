@@ -51,7 +51,7 @@ void GameScene::Update(){
 void GameScene::DrawNotSetPipeline() {
 
 	waterDrop_->DrawInternal();
-
+	waterDrop_->DrawUpdateEffect();
 	//極寒状態だったら
 	if (!environmentEffectsManager_->GetIsNowScene()) {
 		DrawCold(environmentEffectsManager_->GetPrevScene());
