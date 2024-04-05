@@ -6,6 +6,8 @@ void HeatHazeManager::Init() {
 	offset_ = 0;
 	roop_ = 2.3f;
 	width_ = 0.003f;
+	effectTexture_.reset(new PostEffect());
+	effectTexture_->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 }
 
 void HeatHazeManager::Update() {
