@@ -10,7 +10,7 @@ EnvironmentEffectsManager::EnvironmentEffectsManager() {
 	
 	weightCircle_.reset(new WeightCircle);
 	weightCircle_->Init(); dualSceneDrawer_->Init();
-	isNowScene_ = false;
+	isNowScene_ = true;
 	isChangeComplete_ = false;
 }
 

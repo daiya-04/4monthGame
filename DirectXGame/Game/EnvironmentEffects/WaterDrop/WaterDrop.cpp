@@ -12,7 +12,7 @@ void WaterDrop::Init() {
 		waterDropSprite_[i].reset(new Sprite(TextureManager::GetInstance()->Load("weightCircle.png"), { 640.0f,360.0f }, 1.0f / 64.0f));
 		waterDropSprite_[i]->Initialize();
 		waterDropSprite_[i]->SetSize({ 128.0f,128.0f });
-		position_[i] = { 640.0f,64.0f };
+		position_[i] = { 1280.0f-32.0f*float(i),64.0f };
 		radius_[i] = { 64.0f,64.0f };
 	}
 	for (int i = 0; i < 2;i++) {
@@ -48,7 +48,7 @@ void WaterDrop::Update() {
 }
 
 void WaterDrop::DrawInternal() {
-	if (isDrawInternal_) {
+	if (isDrawInternal_ || 1) {
 		sorceTexture_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 		Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 		WaterDropPipeline::preDraw(DirectXCommon::GetInstance()->GetCommandList());
