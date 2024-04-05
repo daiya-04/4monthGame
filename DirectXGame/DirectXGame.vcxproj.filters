@@ -50,6 +50,18 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{951f94c5-20fb-491b-b20e-c5528d356ac4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\EnvironmentEffects">
+      <UniqueIdentifier>{0527f0f3-001c-4e55-b6e5-aa6cfc2d3dfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\EnvironmentEffects\HeatHaze">
+      <UniqueIdentifier>{75231248-6310-46d6-8cfb-776c0b69c520}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\EnvironmentEffects\CameraFrozen">
+      <UniqueIdentifier>{e8aa39d9-f719-4b57-a93d-61324979a3b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\EnvironmentEffects\WaterDrop">
+      <UniqueIdentifier>{3f17d62e-6ca2-4dfb-b40d-8a63d03c238f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -125,15 +137,33 @@
     </ClCompile>
     <ClCompile Include="Engine\2d\DualSceneDrawer.cpp" />
     <ClCompile Include="Game\WeightCircle\WeightCircle.cpp" />
-    <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.cpp" />
-    <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.cpp" />
-    <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.cpp" />
-    <ClCompile Include="Game\EnvironmentEffects\EnvironmentEffectsManager.cpp" />
-    <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.cpp" />
-    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.cpp" />
-    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.cpp" />
-    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.cpp" />
-    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropSourceTexture.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.cpp">
+      <Filter>Game\EnvironmentEffects\HeatHaze</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.cpp">
+      <Filter>Game\EnvironmentEffects\HeatHaze</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.cpp">
+      <Filter>Game\EnvironmentEffects\CameraFrozen</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.cpp">
+      <Filter>Game\EnvironmentEffects\CameraFrozen</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\EnvironmentEffectsManager.cpp">
+      <Filter>Game\EnvironmentEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropSourceTexture.cpp">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.cpp">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.cpp">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.cpp">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -232,14 +262,32 @@
     </ClInclude>
     <ClInclude Include="Engine\2d\DualSceneDrawer.h" />
     <ClInclude Include="Game\WeightCircle\WeightCircle.h" />
-    <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.h" />
-    <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.h" />
-    <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.h" />
-    <ClInclude Include="Game\EnvironmentEffects\EnvironmentEffectsManager.h" />
-    <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.h" />
-    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.h" />
-    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.h" />
-    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.h" />
-    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropSourceTexture.h" />
+    <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.h">
+      <Filter>Game\EnvironmentEffects\HeatHaze</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.h">
+      <Filter>Game\EnvironmentEffects\HeatHaze</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.h">
+      <Filter>Game\EnvironmentEffects\CameraFrozen</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.h">
+      <Filter>Game\EnvironmentEffects\CameraFrozen</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\EnvironmentEffectsManager.h">
+      <Filter>Game\EnvironmentEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropSourceTexture.h">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.h">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.h">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.h">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
