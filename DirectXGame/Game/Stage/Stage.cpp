@@ -47,6 +47,22 @@ void Stage::Update() {
 
 	});
 
+	if (Input::GetInstance()->TriggerKey(DIK_1)) {
+		CreateIceBlock();
+	}
+
+	if (Input::GetInstance()->TriggerKey(DIK_2)) {
+		BreakIceBlock();
+	}
+
+	if (Input::GetInstance()->TriggerKey(DIK_3)) {
+		SwitchBlock();
+	}
+
+	if (Input::GetInstance()->TriggerKey(DIK_4)) {
+		BreakAllBlock();
+	}
+
 	//ブロックの更新
 	for (auto& block : map_) {
 
@@ -104,6 +120,81 @@ void Stage::Draw() {
 		}
 
 	}*/
+
+}
+
+void Stage::SwitchBlock() {
+
+	for (auto& block : map_) {
+
+		if (block->GetType() == Block::BlockType::kSnow) {
+			block->ChangeType(Block::BlockType::kMagma);
+			SetUV(block.get());
+		}
+		else if (block->GetType() == Block::BlockType::kMagma) {
+			block->ChangeType(Block::BlockType::kSnow);
+			SetUV(block.get());
+		}
+
+	}
+
+}
+
+void Stage::CreateIceBlock() {
+
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			
+			//生成するブロックの当たり判定
+			AABB2D tmpCollision{};
+
+
+			tmpCollision.min = { float(x) * Block::kBlockSize_ - Block::kBlockHalfSize_, float(y) * Block::kBlockSize_ - Block::kBlockHalfSize_ };
+			tmpCollision.max = { float(x) * Block::kBlockSize_ + Block::kBlockHalfSize_, float(y) * Block::kBlockSize_ + Block::kBlockHalfSize_ };
+
+			//ブロックが無い且つプレイヤーと当たらない部分に氷ブロックを生成
+			if (blockPositions_[y][x] == 0 && !IsCollision(tmpCollision, player_->GetCollision())) {
+
+				//ブロックの実体を生成、初期化
+				std::shared_ptr<Block> block = std::make_shared<Block>();
+				block->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, BaseBlock::BlockType::kIceBlock);
+				block->SetPlayer(player_);
+				block->SetBlockPosition(x, y);
+				map_.push_back(block);
+
+				blockPositions_[y][x] = BaseBlock::BlockType::kIceBlock;
+
+			}
+
+		}
+
+	}
+
+}
+
+void Stage::BreakIceBlock() {
+
+	for (auto& block : map_) {
+
+		if (block->GetType() == BaseBlock::BlockType::kIceBlock) {
+			block->Break();
+		}
+
+	}
+
+}
+
+void Stage::BreakAllBlock() {
+
+	for (auto& block : map_) {
+
+		if (block->GetType() > BaseBlock::BlockType::kUnbreakable) {
+			block->Break();
+		}
+
+	}
 
 }
 

@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include <memory>
 #include "Hit.h"
+#include "BlockTextureManager.h"
 
 class Player;
 
@@ -25,48 +26,23 @@ public:
 		kUnbreakable = 1,
 		//極寒時のブロック
 		kSnow,
-		//サウナストーンブロック
-		kSaunaBlock,
-		//坂道版ブロック
-		kUnbreakableSlope,
-		//坂道極寒ブロック
-		kSnowSlope,
-
-		//-----エディターで使うブロックここまで-----
-
 		//灼熱時のブロック
 		kMagma,
-		//坂道灼熱ブロック
-		kMagmaSlope,
+		//連続して壊せる氷ブロック
+		kIceBlock,
+		//サウナストーンブロック
+		kSaunaBlock,
 		//ブロックの最大種類
 		kMaxBlock
 
 	};
 
-	//形状
-	enum Shape : uint32_t {
-		//正方形ブロック
-		kBlock,
-		//坂道ブロック
-		kSlope,
-	};
-
-	static Shape CheckShape(uint32_t num) {
-
-		//坂道ブロックなら坂道の変数を返す
-		if (num == kUnbreakableSlope || num == kSnowSlope || num == kMagmaSlope) {
-			return kSlope;
-		}
-
-		return kBlock;
-
-	}
-
 	//破壊可能ブロックならtrueを返す関数
 	static bool CheckCanBreak(BlockType type) {
 
 		//破壊可能ブロックならtrueを返す
-		if (type == kSnow || type == kMagma || type == kSaunaBlock || type == kSnowSlope || type == kMagmaSlope) {
+		if (type == kSnow || type == kMagma || type == kSaunaBlock ||
+			type == kIceBlock) {
 			return true;
 		}
 
@@ -97,7 +73,11 @@ public:
 	/// ブロックの種類を変更
 	/// </summary>
 	/// <param name="type">変更先のブロックの種類</param>
-	void ChangeType(BlockType type) { type_ = type; }
+	void ChangeType(BlockType type) { 
+		type_ = type;
+		texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
+		object_->SetTextureHandle(texture_);
+	}
 
 	/// <summary>
 	/// プレイヤーをセット

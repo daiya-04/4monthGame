@@ -597,6 +597,7 @@ void Player::CheckCollision() {
 							if (preLeftTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
 
 								velocity_.x = 0;
+								wallJumpVelocity_.x = 0.0f;
 
 								SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
 
@@ -641,6 +642,7 @@ void Player::CheckCollision() {
 							if (preRightTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
 
 								velocity_.x = 0;
+								wallJumpVelocity_.x = 0.0f;
 
 								SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
 
@@ -686,6 +688,7 @@ void Player::CheckCollision() {
 							if (preLeftBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
 
 								velocity_.x = 0;
+								wallJumpVelocity_.x = 0.0f;
 
 								SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
 
@@ -726,6 +729,7 @@ void Player::CheckCollision() {
 							if (preRightBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
 
 								velocity_.x = 0;
+								wallJumpVelocity_.x = 0.0f;
 
 								SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
 

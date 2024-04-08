@@ -62,6 +62,20 @@ public:
 
 private:
 
+	//ブロック切り替え
+	void SwitchBlock();
+
+	//マップの空いてるマスに氷を追加する
+	void CreateIceBlock();
+
+	//氷ブロックを溶かす
+	void BreakIceBlock();
+
+	//壊せないブロック以外の破壊(デバッグ)
+	void BreakAllBlock();
+
+private:
+
 	Player* player_;
 
 	Camera* camera_;
