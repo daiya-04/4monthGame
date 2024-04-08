@@ -48,7 +48,7 @@ void WaterDrop::Update() {
 }
 
 void WaterDrop::DrawInternal() {
-	if (isDrawInternal_ || 1) {
+	if (isDrawInternal_ ) {
 		sorceTexture_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 		Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 		WaterDropPipeline::preDraw(DirectXCommon::GetInstance()->GetCommandList());
