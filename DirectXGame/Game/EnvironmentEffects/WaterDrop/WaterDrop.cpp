@@ -101,14 +101,27 @@ void WaterDrop::DrawUpdateEffect() {
 	}
 }
 
+float direction(Vector2 a, Vector2 b, int p) {
+	float d = 0.0;
+	d += float(std::pow(std::abs(a.x - b.x), p));
+	d += float(std::pow(std::abs(a.y - b.y), p));
+	d = std::powf(d, 1.0f / float(p));
+	return d;
+}
+
 void WaterDrop::SetPositionRandom() {
 	for (int i = 0; i < dropNum_; i++) {
 		float length = RandomEngine::GetRandom(0.8f, 1.4f);
-		Vector2 dir = { RandomEngine::GetRandom(-1280.0f,1280.0f),RandomEngine::GetRandom(-720.0f,720.0f) };
+		Vector2 dir = { RandomEngine::GetRandom(-1.0f,1.0f),RandomEngine::GetRandom(-1.0f,1.0f) };
 		//Vector2 normalizedDir = dir.Normalize();
 		Vector2 halfWinSize = { 640.0f,360.0f };
 		//dir.x = normalizedDir.x * (halfWinSize.x / halfWinSize.y);
 		dir = dir.Normalize();
+
+		float d = direction(dir, {0,0},1);
+		
+		length = RandomEngine::GetRandom(0.9f, d);
+
 		//dir.y = normalizedDir.y * (halfWinSize.y / halfWinSize.x);
 		position_[i] = { halfWinSize.x * (dir.x * length) + halfWinSize.x,halfWinSize.y * (dir.y * length) + halfWinSize.y };
 		position_[i].x = std::clamp(position_[i].x, 8.0f, 1280.0f - 8.0f);
