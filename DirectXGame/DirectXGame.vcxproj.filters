@@ -295,5 +295,6 @@
     <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropManager.h">
       <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
     </ClInclude>
+    <ClInclude Include="Game\RandomEngine\RandomEngine.h" />
   </ItemGroup>
 </Project>

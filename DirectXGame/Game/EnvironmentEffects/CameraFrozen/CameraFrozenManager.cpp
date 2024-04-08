@@ -36,10 +36,13 @@ void CameraFrozenManager::Update() {
 		else {
 			isActive_ = false;
 			radius_ = radiusMin_;
+			if (cameraFrozen_->GetMode()) {
+				isClearRender_=true;
+			}
 		}
 	}
 	seed_+=0.01f;
-	cameraFrozen_->SetRadius(0.75f);
+	cameraFrozen_->SetRadius(0.7f);
 	cameraFrozen_->SetBorder(border_);
 	cameraFrozen_->SetSeed(seed_);
 }

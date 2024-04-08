@@ -36,7 +36,7 @@ void WeightCircle::Update() {
 #endif // _DEBUG
 	if (isStart_) {
 		radius_ += 66.0f;
-		if (radius_ >=2000.0f){
+		if (radius_ >=1600.0f){
 			isEnd_ = true;
 		}
 	}

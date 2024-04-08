@@ -20,8 +20,6 @@
 #include "EnvironmentEffects/CameraFrozen/CameraFrozenManager.h"
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
 #include "EnvironmentEffects/WaterDrop/WaterDropManager.h"
-#include "EnvironmentEffects/WaterDrop/WaterDropPipeline.h"
-#include "EnvironmentEffects/WaterDrop/WaterDropSceneDrawer.h"
 class GameScene : public IScene {
 public:
 

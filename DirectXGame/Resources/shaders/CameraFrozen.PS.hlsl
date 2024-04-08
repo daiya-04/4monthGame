@@ -8,6 +8,7 @@ struct CameraFrozenData {
 	float radius;
 	float border;
 	float seed;
+	int32_t mode;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -30,14 +31,27 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	float32_t2 center = {0.5f,0.5f};
 	//output.color = {1.0f,1.0f,1.0f,1.0f};
 	float32_t2 distance = input.texcoord- center;
-	output.color = float32_t4(1.0f, 1.0f, 1.0f, 1.0f);
-	if (gCameraFrozenData.radius + (rand(input.texcoord)*2.0f - 1.0f)/4.0f > sqrt(dot(distance, distance))) {
-		output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
-		discard;
+	if (gCameraFrozenData.mode==0) {
+		output.color = float32_t4(1.0f, 1.0f, 1.0f, 1.0f);
+		if (gCameraFrozenData.radius + (rand(input.texcoord) * 2.0f - 1.0f) / 4.0f > sqrt(dot(distance, distance))) {
+			output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
+			discard;
+		}
+		if (gCameraFrozenData.border > rand(input.texcoord + gCameraFrozenData.seed)) {
+			output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
+			discard;
+		}
 	}
-	if (gCameraFrozenData.border > rand(input.texcoord + gCameraFrozenData.seed)) {
+	else {
 		output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
-		discard;
+		if (gCameraFrozenData.radius + (rand(input.texcoord) * 2.0f - 1.0f) / 4.0f > sqrt(dot(distance, distance))) {
+			output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
+			discard;
+		}
+		if (gCameraFrozenData.border > rand(input.texcoord + gCameraFrozenData.seed)) {
+			output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
+			discard;
+		}
 	}
 	//output.color.a = 1.0f;
 	return output;

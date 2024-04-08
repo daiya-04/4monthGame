@@ -58,6 +58,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		offset.x = input.texcoord.x - normalizedOffset.x;
 		offset.y = input.texcoord.y - normalizedOffset.y;
 		output.color = gTexturePrevScene.Sample(gSampler, offset);
+		output.color = output.color + float32_t4(0.4f, 0.4f, 0.4f, 0.1f);
 	}
 
 	///outline
@@ -74,7 +75,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 			gTextureNextScene.Sample(gSampler, transformdL).a == 0.0f ||
 			gTextureNextScene.Sample(gSampler, transformdU).a == 0.0f ||
 			gTextureNextScene.Sample(gSampler, transformdD).a == 0.0f ) {
-			//output.color = output.color +  float32_t4(0.2f, 0.2f, 0.2f, 0.1f);
+			output.color = output.color +  float32_t4(0.2f, 0.2f, 0.2f, 0.1f);
 		}
 	}
 

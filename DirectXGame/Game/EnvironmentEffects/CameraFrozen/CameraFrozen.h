@@ -15,6 +15,7 @@ public:
 		float radius; //半径
 		float border; //書き込み確率(0~1,0で確定)
 		float seed;//乱数のシード(適当な値)
+		int32_t mode;//0->凍結 1->解凍
 	};
 
 	CameraFrozen() = default;
@@ -39,6 +40,14 @@ public:
 	void SetSeed(float seed) {
 		cameraFrozenData_->seed = seed;
 	};
+	void SetMode(int32_t mode) {
+		cameraFrozenData_->mode = mode;
+	}
+
+	int32_t GetMode() {
+		return cameraFrozenData_->mode;
+	}
+
 private:
 	/// <summary>
 	/// 自らに書き込むためのパイプライン作成関数

@@ -20,10 +20,14 @@ public:
 		isActive_ = true;
 		radius_ = radiusMax_;
 		isClearRender_ = true;
+		cameraFrozen_->SetMode(0);
 	};
 	//アニメーションリセット(エフェクトクリア)
 	void Reset() {
-		isClearRender_ = true;
+		//isClearRender_ = true;
+		isActive_ = true;
+		radius_ = radiusMax_;
+		cameraFrozen_->SetMode(1);
 	}
 private:
 	CameraFrozenManager() {

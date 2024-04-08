@@ -34,9 +34,12 @@ void GameScene::Update(){
 	if (environmentEffectsManager_->GetIsChangeComplete()) {
 		if (!environmentEffectsManager_->GetIsNowScene()) {
 			cameraFrozen_->Start();
+			//waterDropManager_->Reset();
 		}
 		else {
 			cameraFrozen_->Reset();
+			waterDropManager_->Reset();
+			waterDropManager_->Start();
 		}
 	}
 	cameraFrozen_->Update();
@@ -120,6 +123,7 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 }
 
 void GameScene::DrawHeat(PostEffect* targetScene) {
+	cameraFrozen_->DrawInternal(commandList_);
 	heatHazeManager_->PreDraw(commandList_);
 	Sprite::preDraw(commandList_);
 	sample1->Draw();
@@ -130,6 +134,7 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	targetScene->PreDrawScene(commandList_);
 	//heatHazeManager_->Draw(commandList_);
 	waterDropManager_->DrawScene(commandList_, heatHazeManager_->GetHandle());
+	cameraFrozen_->Draw(commandList_);
 	targetScene->PostDrawScene(commandList_);
 
 }

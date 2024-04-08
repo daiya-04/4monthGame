@@ -24,6 +24,7 @@ void CameraFrozen::Init() {
 	cameraFrozenData_->radius = 1.0f;
 	cameraFrozenData_->border = 0.0f;
 	cameraFrozenData_->seed = 0.0f;
+	cameraFrozenData_->mode = 0;
 }
 
 void CameraFrozen::PreDrawNotClearRTV(ID3D12GraphicsCommandList* cmdList) {
