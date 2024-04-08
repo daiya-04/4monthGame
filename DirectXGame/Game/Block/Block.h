@@ -20,7 +20,7 @@ public:
 
 	enum BlockType : uint32_t {
 
-		//空白ブロック(使わない)
+		//空白ブロック
 		kNone,
 		//壊せないブロック
 		kUnbreakable = 1,
@@ -109,7 +109,10 @@ public:
 	void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 	//外的要因(プレイヤーなど)で破壊された時に呼び出される関数
-	void Break() { isBreak_ = true; }
+	void Break();
+
+	//ブロックが再生する時の関数(再び当たり判定を持つ)
+	void Repair() { isBreak_ = false; }
 
 	bool GetIsBreak() { return isBreak_; }
 
@@ -129,7 +132,7 @@ protected:
 	uint32_t texture_;
 
 	//uvの座標
-	uint32_t uvNumber_;
+	uint32_t uvNumber_ = 0;
 	//描画の開始座標を決める数字
 	uint32_t uvPositionX_ = 0;
 	uint32_t uvPositionY_ = 0;

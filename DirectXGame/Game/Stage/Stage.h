@@ -18,8 +18,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="stageNumber">ステージ番号</param>
-	void Initialize(uint32_t stageNumber);
+	void Initialize();
 
 	/// <summary>
 	/// 更新
@@ -49,7 +48,7 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	//ブロック取得
-	std::list<std::shared_ptr<Block>>* GetBlocks() { return &map_; }
+	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_>* GetBlocks() { return &map_; }
 
 	uint32_t blockPositions_[kMaxStageHeight_][kMaxStageWidth_]{};
 
@@ -61,6 +60,9 @@ public:
 	static inline const Vector2 kBorderRight = { float(kBasePosition.x + 5.0f * Block::kBlockSize_), -75.0f };
 
 private:
+
+	//実体生成
+	void CreateEntity();
 
 	//ブロック切り替え
 	void SwitchBlock();
@@ -83,8 +85,7 @@ private:
 	void SetUV(Block* block);
 
 	//マップ
-	/*std::array<std::array<std::shared_ptr<Block>, kMaxStageHeight_>, kMaxStageWidth_> map_;*/
-	std::list<std::shared_ptr<Block>> map_;
+	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
 
 	//サウナストーン(ステージ毎に数が違っても対応できるようにvector)
 	std::vector<std::shared_ptr<SaunaStone>> stones_;

@@ -1,9 +1,14 @@
 #include "Block.h"
 
-Block::Block()
-{
+void BaseBlock::Break() {
 
-	
+	isBreak_ = true;
+	type_ = kNone;
+
+}
+
+Block::Block()
+{	
 
 }
 
@@ -28,6 +33,10 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 
 void Block::Update() {
 
+	if (type_ == kNone) {
+		isBreak_ = true;
+	}
+
 	object_->SetTextureArea({ float(uvPositionX_ * 64.0f),float(uvPositionY_ * 64.0f) }, { 64.0f,64.0f });
 
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
@@ -37,6 +46,8 @@ void Block::Update() {
 
 void Block::Draw(const Camera& camera) {
 
-	object_->Draw(camera);
+	if (!isBreak_) {
+		object_->Draw(camera);
+	}
 
 }

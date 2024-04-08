@@ -567,105 +567,114 @@ void Player::CheckCollision() {
 
 	if (blocksPtr_) {
 
-		for (auto& block : *blocksPtr_) {
+		for (uint32_t y = 0; y < Stage::kMaxStageHeight_; y++) {
 
-			//プレイヤーの周囲のみ当たり判定チェック
-			if (block->GetPosition().x >= tmpPosition_.x - Block::kBlockSize_ * 3 &&
-				block->GetPosition().x <= tmpPosition_.x + Block::kBlockSize_ * 3 &&
-				block->GetPosition().y >= tmpPosition_.y - Block::kBlockSize_ * 3 &&
-				block->GetPosition().y <= tmpPosition_.y + Block::kBlockSize_ * 3) {
+			for (uint32_t x = 0; x < Stage::kMaxStageWidth_; x++) {
 
-				//当たり判定チェック
-				if (IsCollision(block->GetCollision(), collision_)) {
+				//破壊されているものは処理しない
+				if ((*blocksPtr_)[y][x]->GetIsBreak()) {
+					continue;
+				}
 
-					if (block->isDebug_) {
+				//プレイヤーの周囲のみ当たり判定チェック
+				if ((*blocksPtr_)[y][x]->GetPosition().x >= tmpPosition_.x - Block::kBlockSize_ * 3 &&
+					(*blocksPtr_)[y][x]->GetPosition().x <= tmpPosition_.x + Block::kBlockSize_ * 3 &&
+					(*blocksPtr_)[y][x]->GetPosition().y >= tmpPosition_.y - Block::kBlockSize_ * 3 &&
+					(*blocksPtr_)[y][x]->GetPosition().y <= tmpPosition_.y + Block::kBlockSize_ * 3) {
 
-						block->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+					//当たり判定チェック
+					if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), collision_)) {
 
-					}
+						if ((*blocksPtr_)[y][x]->isDebug_) {
 
-					//左上が当たっていた
-					if (IsCollision(block->GetCollision(), leftTop_)) {
+							(*blocksPtr_)[y][x]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
-						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
-						if (parameters_[characters_].chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
-							block->Break();
 						}
-						else {
 
-							//プレイヤーが左側から侵入したなら右に押し戻し
-							if (preLeftTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
+						//左上が当たっていた
+						if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), leftTop_)) {
 
-								velocity_.x = 0;
-								wallJumpVelocity_.x = 0.0f;
-
-								SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
-
-								//落下に入った時に壁キックを可能にする
-								if (velocity_.y > 2.5f) {
-
-									parameters_[characters_].wallJump_.canWallJump = true;
-
-								}
-
+							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+							if (parameters_[characters_].chargeJump_.canBreak && Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
+								(*blocksPtr_)[y][x]->Break();
 							}
 							else {
 
-								if (preLeftTop_.x > block->GetPosition().x + Block::kBlockHalfSize_ - 1) {
+								//プレイヤーが左側から侵入したなら右に押し戻し
+								if (preLeftTop_.y < (*blocksPtr_)[y][x]->GetPosition().y + Block::kBlockHalfSize_ - 1) {
 
+									velocity_.x = 0;
+									wallJumpVelocity_.x = 0.0f;
 
+									SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+									//落下に入った時に壁キックを可能にする
+									if (velocity_.y > 2.5f) {
+
+										parameters_[characters_].wallJump_.canWallJump = true;
+
+									}
 
 								}
 								else {
 
-									velocity_.y = 0;
+									if (preLeftTop_.x > (*blocksPtr_)[y][x]->GetPosition().x + Block::kBlockHalfSize_ - 1) {
 
-									SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+
+									}
+									else {
+
+										velocity_.y = 0;
+
+										SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+									}
 
 								}
 
 							}
 
 						}
+						//右上が当たっていた
+						if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), rightTop_)) {
 
-					}
-					//右上が当たっていた
-					if (IsCollision(block->GetCollision(), rightTop_)) {
-
-						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
-						if (parameters_[characters_].chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
-							block->Break();
-						}
-						else {
-
-							//プレイヤーが右側から侵入したなら左に押し戻し
-							if (preRightTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
-
-								velocity_.x = 0;
-								wallJumpVelocity_.x = 0.0f;
-
-								SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
-
-								//落下に入った時に壁キックを可能にする
-								if (velocity_.y > 2.5f) {
-
-									parameters_[characters_].wallJump_.canWallJump = true;
-
-								}
-
+							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+							if (parameters_[characters_].chargeJump_.canBreak && Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
+								(*blocksPtr_)[y][x]->Break();
 							}
 							else {
 
-								if (preRightTop_.x < block->GetPosition().x - Block::kBlockHalfSize_) {
+								//プレイヤーが右側から侵入したなら左に押し戻し
+								if (preRightTop_.y < (*blocksPtr_)[y][x]->GetPosition().y + Block::kBlockHalfSize_ - 1) {
 
+									velocity_.x = 0;
+									wallJumpVelocity_.x = 0.0f;
 
+									SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+									//落下に入った時に壁キックを可能にする
+									if (velocity_.y > 2.5f) {
+
+										parameters_[characters_].wallJump_.canWallJump = true;
+
+									}
 
 								}
 								else {
 
-									velocity_.y = 0;
+									if (preRightTop_.x < (*blocksPtr_)[y][x]->GetPosition().x - Block::kBlockHalfSize_) {
 
-									SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+
+									}
+									else {
+
+										velocity_.y = 0;
+
+										SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+									}
 
 								}
 
@@ -673,24 +682,26 @@ void Player::CheckCollision() {
 
 						}
 
-					}
+						//左下が当たっていた
+						if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), leftBottom_)) {
 
-					//左下が当たっていた
-					if (IsCollision(block->GetCollision(), leftBottom_)) {
+							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+							/*if (false && Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
 
-						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
-						if (false && Block::CheckCanBreak(block->GetType())) {
+							}
+							else {
 
-						}
-						else {
+								
+
+							}*/
 
 							//プレイヤーが左側から侵入したなら右に押し戻し
-							if (preLeftBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
+							if (preLeftBottom_.y > (*blocksPtr_)[y][x]->GetPosition().y - Block::kBlockHalfSize_) {
 
 								velocity_.x = 0;
 								wallJumpVelocity_.x = 0.0f;
 
-								SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+								SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
 
 								//落下に入った時に壁キックを可能にする
 								if (velocity_.y > 2.5f) {
@@ -704,7 +715,7 @@ void Player::CheckCollision() {
 
 								velocity_.y = 0;
 
-								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+								SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
 
 								SetCanJump(true);
 
@@ -712,26 +723,26 @@ void Player::CheckCollision() {
 
 						}
 
-						
+						//右下が当たっていた
+						if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), rightBottom_)) {
 
-					}
+							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+							/*if (false && Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
 
-					//右下が当たっていた
-					if (IsCollision(block->GetCollision(), rightBottom_)) {
+							}
+							else {
 
-						//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
-						if (false && Block::CheckCanBreak(block->GetType())) {
+								
 
-						}
-						else {
+							}*/
 
 							//プレイヤーが右側から侵入したなら左に押し戻し
-							if (preRightBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
+							if (preRightBottom_.y > (*blocksPtr_)[y][x]->GetPosition().y - Block::kBlockHalfSize_) {
 
 								velocity_.x = 0;
 								wallJumpVelocity_.x = 0.0f;
 
-								SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+								SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
 
 								//落下に入った時に壁キックを可能にする
 								if (velocity_.y > 2.5f) {
@@ -745,12 +756,244 @@ void Player::CheckCollision() {
 
 								velocity_.y = 0;
 
-								SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+								SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
 
 								SetCanJump(true);
 
 							}
 
+						}
+
+					}
+					else {
+
+						(*blocksPtr_)[y][x]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+					}
+
+					//ここから穴掘りの当たり判定
+					if (parameters_[characters_].dig_.isDig && IsCollision((*blocksPtr_)[y][x]->GetCollision(), parameters_[characters_].dig_.digPosition)) {
+
+						if (Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
+							(*blocksPtr_)[y][x]->Break();
+						}
+
+					}
+
+				}
+				else {
+
+					(*blocksPtr_)[y][x]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+				}
+
+			}
+
+		}
+
+		//過去の当たり判定
+		/*{
+
+			for (auto& block : *blocksPtr_) {
+
+				//プレイヤーの周囲のみ当たり判定チェック
+				if (block->GetPosition().x >= tmpPosition_.x - Block::kBlockSize_ * 3 &&
+					block->GetPosition().x <= tmpPosition_.x + Block::kBlockSize_ * 3 &&
+					block->GetPosition().y >= tmpPosition_.y - Block::kBlockSize_ * 3 &&
+					block->GetPosition().y <= tmpPosition_.y + Block::kBlockSize_ * 3) {
+
+					//当たり判定チェック
+					if (IsCollision(block->GetCollision(), collision_)) {
+
+						if (block->isDebug_) {
+
+							block->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+
+						}
+
+						//左上が当たっていた
+						if (IsCollision(block->GetCollision(), leftTop_)) {
+
+							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+							if (parameters_[characters_].chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
+								block->Break();
+							}
+							else {
+
+								//プレイヤーが左側から侵入したなら右に押し戻し
+								if (preLeftTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
+
+									velocity_.x = 0;
+									wallJumpVelocity_.x = 0.0f;
+
+									SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+									//落下に入った時に壁キックを可能にする
+									if (velocity_.y > 2.5f) {
+
+										parameters_[characters_].wallJump_.canWallJump = true;
+
+									}
+
+								}
+								else {
+
+									if (preLeftTop_.x > block->GetPosition().x + Block::kBlockHalfSize_ - 1) {
+
+
+
+									}
+									else {
+
+										velocity_.y = 0;
+
+										SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+									}
+
+								}
+
+							}
+
+						}
+						//右上が当たっていた
+						if (IsCollision(block->GetCollision(), rightTop_)) {
+
+							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+							if (parameters_[characters_].chargeJump_.canBreak && Block::CheckCanBreak(block->GetType())) {
+								block->Break();
+							}
+							else {
+
+								//プレイヤーが右側から侵入したなら左に押し戻し
+								if (preRightTop_.y < block->GetPosition().y + Block::kBlockHalfSize_ - 1) {
+
+									velocity_.x = 0;
+									wallJumpVelocity_.x = 0.0f;
+
+									SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+									//落下に入った時に壁キックを可能にする
+									if (velocity_.y > 2.5f) {
+
+										parameters_[characters_].wallJump_.canWallJump = true;
+
+									}
+
+								}
+								else {
+
+									if (preRightTop_.x < block->GetPosition().x - Block::kBlockHalfSize_) {
+
+
+
+									}
+									else {
+
+										velocity_.y = 0;
+
+										SetTmpPosition({ tmpPosition_.x,block->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+									}
+
+								}
+
+							}
+
+						}
+
+						//左下が当たっていた
+						if (IsCollision(block->GetCollision(), leftBottom_)) {
+
+							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+							if (false && Block::CheckCanBreak(block->GetType())) {
+
+							}
+							else {
+
+								//プレイヤーが左側から侵入したなら右に押し戻し
+								if (preLeftBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
+
+									velocity_.x = 0;
+									wallJumpVelocity_.x = 0.0f;
+
+									SetTmpPosition({ block->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+									//落下に入った時に壁キックを可能にする
+									if (velocity_.y > 2.5f) {
+
+										parameters_[characters_].wallJump_.canWallJump = true;
+
+									}
+
+								}
+								else {
+
+									velocity_.y = 0;
+
+									SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+									SetCanJump(true);
+
+								}
+
+							}
+
+
+
+						}
+
+						//右下が当たっていた
+						if (IsCollision(block->GetCollision(), rightBottom_)) {
+
+							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
+							if (false && Block::CheckCanBreak(block->GetType())) {
+
+							}
+							else {
+
+								//プレイヤーが右側から侵入したなら左に押し戻し
+								if (preRightBottom_.y > block->GetPosition().y - Block::kBlockHalfSize_) {
+
+									velocity_.x = 0;
+									wallJumpVelocity_.x = 0.0f;
+
+									SetTmpPosition({ block->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+
+									//落下に入った時に壁キックを可能にする
+									if (velocity_.y > 2.5f) {
+
+										parameters_[characters_].wallJump_.canWallJump = true;
+
+									}
+
+								}
+								else {
+
+									velocity_.y = 0;
+
+									SetTmpPosition({ tmpPosition_.x,block->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+
+									SetCanJump(true);
+
+								}
+
+							}
+
+						}
+
+					}
+					else {
+
+						block->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+					}
+
+					//ここから穴掘りの当たり判定
+					if (parameters_[characters_].dig_.isDig && IsCollision(block->GetCollision(), parameters_[characters_].dig_.digPosition)) {
+
+						if (Block::CheckCanBreak(block->GetType())) {
+							block->Break();
 						}
 
 					}
@@ -762,23 +1005,10 @@ void Player::CheckCollision() {
 
 				}
 
-				//ここから穴掘りの当たり判定
-				if (parameters_[characters_].dig_.isDig && IsCollision(block->GetCollision(), parameters_[characters_].dig_.digPosition)) {
-
-					if (Block::CheckCanBreak(block->GetType())) {
-						block->Break();
-					}
-
-				}
-
-			}
-			else {
-
-				block->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
 			}
 
-		}
+		}*/
+		
 
 	}
 

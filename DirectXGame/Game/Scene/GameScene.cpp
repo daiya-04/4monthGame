@@ -19,7 +19,8 @@ void GameScene::Init(){
 
 	stage_ = std::make_unique<Stage>();
 	stage_->SetPlayer(player_.get());
-	stage_->Initialize(stageNumber_);
+	stage_->Initialize();
+	stage_->Load(stageNumber_);
 	player_->SetBlocks(stage_->GetBlocks());
 
 	camera_ = std::make_shared<Camera>();

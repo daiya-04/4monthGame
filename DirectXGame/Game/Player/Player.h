@@ -160,7 +160,7 @@ public:
 
 	void ResetVelocityY() { velocity_.y = 0.0f; }
 
-	void SetBlocks(std::list<std::shared_ptr<Block>>* blocks) { blocksPtr_ = blocks; }
+	void SetBlocks(std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_>* blocks) { blocksPtr_ = blocks; }
 
 private:
 
@@ -201,7 +201,7 @@ private:
 	std::unique_ptr<Object2d> object_;
 
 	//ブロックのvectorポインタ
-	std::list<std::shared_ptr<Block>>* blocksPtr_ = nullptr;
+	std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_>* blocksPtr_ = nullptr;
 
 	//当たり判定
 	AABB2D collision_{};

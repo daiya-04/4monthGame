@@ -14,9 +14,9 @@ Stage::~Stage()
 {
 }
 
-void Stage::Initialize(uint32_t stageNumber) {
+void Stage::Initialize() {
 
-	map_.clear();
+	/*map_.clear();*/
 	stones_.clear();
 
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
@@ -29,14 +29,13 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	}
 
-	//マップロード
-	Load(stageNumber);
+	CreateEntity();
 
 }
 
 void Stage::Update() {
 
-	map_.remove_if([&](auto& block) {
+	/*map_.remove_if([&](auto& block) {
 
 		if (block->GetIsBreak()) {
 			blockPositions_[block->GetBlockPositionY()][block->GetBlockPositionX()] = 0;
@@ -45,7 +44,7 @@ void Stage::Update() {
 
 		return false;
 
-	});
+	});*/
 
 	if (Input::GetInstance()->TriggerKey(DIK_1)) {
 		CreateIceBlock();
@@ -64,13 +63,23 @@ void Stage::Update() {
 	}
 
 	//ブロックの更新
-	for (auto& block : map_) {
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			blockPositions_[y][x] = map_[y][x]->GetType();
+			SetUV(map_[y][x].get());
+			map_[y][x]->Update();
+		}
+
+	}
+
+	/*for (auto& block : map_) {
 
 		SetUV(block.get());
 
 		block->Update();
 
-	}
+	}*/
 
 	//サウナストーン更新
 	for (auto& stone : stones_) {
@@ -102,7 +111,22 @@ void Stage::Draw() {
 	}
 
 	//ブロックの描画
-	for (auto& block : map_) {
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+
+			if (map_[y][x]->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
+				map_[y][x]->GetPosition().x <= camera_->translation_.x + 1280 + Block::kBlockSize_ &&
+				map_[y][x]->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
+				map_[y][x]->GetPosition().y <= camera_->translation_.y + 720 + Block::kBlockSize_) {
+				map_[y][x]->Draw(*camera_);
+			}
+			
+		}
+
+	}
+
+	/*for (auto& block : map_) {
 
 		if (block->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
 			block->GetPosition().x <= camera_->translation_.x + 1280 + Block::kBlockSize_ &&
@@ -111,7 +135,7 @@ void Stage::Draw() {
 			block->Draw(*camera_);
 		}
 
-	}
+	}*/
 	
 	/*for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
@@ -125,7 +149,24 @@ void Stage::Draw() {
 
 void Stage::SwitchBlock() {
 
-	for (auto& block : map_) {
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			
+			if (map_[y][x]->GetType() == Block::BlockType::kSnow) {
+				map_[y][x]->ChangeType(Block::BlockType::kMagma);
+			}
+			else if (map_[y][x]->GetType() == Block::BlockType::kMagma) {
+				map_[y][x]->ChangeType(Block::BlockType::kSnow);
+			}
+
+			blockPositions_[y][x] = map_[y][x]->GetType();
+
+		}
+
+	}
+
+	/*for (auto& block : map_) {
 
 		if (block->GetType() == Block::BlockType::kSnow) {
 			block->ChangeType(Block::BlockType::kMagma);
@@ -136,7 +177,7 @@ void Stage::SwitchBlock() {
 			SetUV(block.get());
 		}
 
-	}
+	}*/
 
 }
 
@@ -147,22 +188,11 @@ void Stage::CreateIceBlock() {
 		
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
 			
-			//生成するブロックの当たり判定
-			AABB2D tmpCollision{};
-
-
-			tmpCollision.min = { float(x) * Block::kBlockSize_ - Block::kBlockHalfSize_, float(y) * Block::kBlockSize_ - Block::kBlockHalfSize_ };
-			tmpCollision.max = { float(x) * Block::kBlockSize_ + Block::kBlockHalfSize_, float(y) * Block::kBlockSize_ + Block::kBlockHalfSize_ };
-
 			//ブロックが無い且つプレイヤーと当たらない部分に氷ブロックを生成
-			if (blockPositions_[y][x] == 0 && !IsCollision(tmpCollision, player_->GetCollision())) {
+			if (map_[y][x]->GetIsBreak() && !IsCollision(map_[y][x]->GetCollision(), player_->GetCollision())) {
 
-				//ブロックの実体を生成、初期化
-				std::shared_ptr<Block> block = std::make_shared<Block>();
-				block->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, BaseBlock::BlockType::kIceBlock);
-				block->SetPlayer(player_);
-				block->SetBlockPosition(x, y);
-				map_.push_back(block);
+				map_[y][x]->ChangeType(Block::BlockType::kIceBlock);
+				map_[y][x]->Repair();
 
 				blockPositions_[y][x] = BaseBlock::BlockType::kIceBlock;
 
@@ -176,22 +206,75 @@ void Stage::CreateIceBlock() {
 
 void Stage::BreakIceBlock() {
 
-	for (auto& block : map_) {
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+
+			//氷ブロックを破壊する
+			if (map_[y][x]->GetType() == Block::BlockType::kIceBlock) {
+
+				map_[y][x]->Break();
+
+			}
+
+		}
+
+	}
+
+	/*for (auto& block : map_) {
 
 		if (block->GetType() == BaseBlock::BlockType::kIceBlock) {
 			block->Break();
 		}
 
-	}
+	}*/
 
 }
 
 void Stage::BreakAllBlock() {
 
-	for (auto& block : map_) {
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+
+			//壊せないブロック以外を破壊する
+			if (Block::CheckCanBreak(map_[y][x]->GetType())) {
+
+				map_[y][x]->Break();
+
+			}
+
+		}
+
+	}
+
+	/*for (auto& block : map_) {
 
 		if (block->GetType() > BaseBlock::BlockType::kUnbreakable) {
 			block->Break();
+		}
+
+	}*/
+
+}
+
+void Stage::CreateEntity() {
+
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+
+			//実体がない場合、生成する
+			if (!map_[y][x]) {
+
+				//ブロックの実体を生成、初期化
+				map_[y][x] = std::make_shared<Block>();
+				map_[y][x]->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, Block::BlockType::kNone);
+				map_[y][x]->SetPlayer(player_);
+				map_[y][x]->SetBlockPosition(x, y);
+
+			}
+
 		}
 
 	}
@@ -247,21 +330,10 @@ void Stage::Load(uint32_t stageNumber) {
 			}
 
 			//空気ブロックでなければブロックを生成
-			if (num != 0) {
+			//ブロックのパラメータ変更
+			map_[y][x]->ChangeType(type);
 
-				//ブロックの実体を生成、初期化
-				std::shared_ptr<Block> block = std::make_shared<Block>();
-				block->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, type);
-				block->SetPlayer(player_);
-				block->SetBlockPosition(x, y);
-				map_.push_back(block);
-
-				blockPositions_[y][x] = num;
-
-				/*map_[y][x] = std::make_shared<Block>();
-				map_[y][x]->Initialize({ x * 32.0f, y * 32.0f }, type);*/
-
-			}
+			blockPositions_[y][x] = num;
 
 		}
 
