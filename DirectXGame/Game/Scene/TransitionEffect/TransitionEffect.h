@@ -10,6 +10,10 @@ public:
 
 	void Update();
 
+	void InEffectUpdate();
+
+	void OutEffectUpdate();
+
 	void Draw();
 	//演出開始
 	void InEffectStart();
@@ -36,10 +40,6 @@ public:
 	bool OutEffectEnter() const { return !preIsOutEffect_ && isOutEffect_; }
 	//アウト演出終了時
 	bool OutEffectEnd() const { return preIsOutEffect_ && !isOutEffect_; }
-
-	//void InEffectUpdate();
-
-	//void OutEffectUpdate();
 
 private:
 

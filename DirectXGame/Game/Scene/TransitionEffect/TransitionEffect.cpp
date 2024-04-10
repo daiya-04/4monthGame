@@ -14,28 +14,40 @@ void TransitionEffect::Update() {
 
 	if (isInEffect_) {
 
-		param_ += 0.01f;
-		param_ = std::clamp(param_, 0.0f, 1.0f);
-		float T = Easing::easeInSine(param_);
-		alpha_ = Lerp(T, 1.0f, 0.0f);
-		if (param_ >= 1.0f) {
-			IsActiveOff();
-		}
+		InEffectUpdate();
 
 	}else if (isOutEffect_) {
 
-		param_ += 0.01f;
-		param_ = std::clamp(param_, 0.0f, 1.0f);
-		float T = Easing::easeInSine(param_);
-		alpha_ = Lerp(T, 0.0f, 1.0f);
-		if (param_ >= 1.0f) {
-			InEffectStart();
-		}
+		OutEffectUpdate();
 	}
 
 	
 
 	effect_->SetColor({ 0.0f,0.0f,0.0f,alpha_ });
+}
+
+void TransitionEffect::InEffectUpdate() {
+
+	param_ += 0.02f;
+	param_ = std::clamp(param_, 0.0f, 1.0f);
+	float T = Easing::easeInSine(param_);
+	alpha_ = Lerp(T, 1.0f, 0.0f);
+	if (param_ >= 1.0f) {
+		IsActiveOff();
+	}
+
+}
+
+void TransitionEffect::OutEffectUpdate() {
+
+	param_ += 0.02f;
+	param_ = std::clamp(param_, 0.0f, 1.0f);
+	float T = Easing::easeInSine(param_);
+	alpha_ = Lerp(T, 0.0f, 1.0f);
+	if (param_ >= 1.0f) {
+		InEffectStart();
+	}
+
 }
 
 void TransitionEffect::Draw() {
