@@ -16,8 +16,8 @@ void WaterDropManager::Update() {
 	waterDrop_->Update();
 }
 
-void WaterDropManager::DrawEffectUpdate() {
-	waterDrop_->DrawInternal();
+void WaterDropManager::DrawEffectUpdate(PostEffect* sorceTexture) {
+	waterDrop_->DrawInternal(sorceTexture);
 	waterDrop_->DrawUpdateEffect();
 }
 

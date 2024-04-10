@@ -14,7 +14,7 @@ public:
 	void Init();
 	void Update();
 	//GPUの更新
-	void DrawEffectUpdate();
+	void DrawEffectUpdate(PostEffect* sorceTexture);
 
 	void DrawScene(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE prevSceneHandle);
 

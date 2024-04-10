@@ -19,7 +19,7 @@ void GameScene::Init(){
 
 	sample0.reset(new Sprite(TextureManager::GetInstance()->Load("sample0.png"), {640.0f,360.0f},10.0f));
 	sample0->Initialize();
-	sample1.reset(new Sprite(TextureManager::GetInstance()->Load("hhTest.png"), { 640.0f,360.0f }, 1.0f));
+	sample1.reset(new Sprite(TextureManager::GetInstance()->Load("hhTest.png"), { 500.0f,360.0f }, 1.0f));
 	sample1->Initialize();
 	
 	waterDropManager_ = WaterDropManager::GetInstance();
@@ -30,7 +30,7 @@ void GameScene::Update(){
 	environmentEffectsManager_->Update();
 	heatHazeManager_->Update();
 	waterDropManager_->Update();
-	//遷移完了時に凍結エフェクトをリセットする
+	//遷移完了時にエフェクトを発行する
 	if (environmentEffectsManager_->GetIsChangeComplete()) {
 		if (!environmentEffectsManager_->GetIsNowScene()) {
 			cameraFrozen_->Start();
@@ -46,8 +46,8 @@ void GameScene::Update(){
 }
 
 void GameScene::DrawNotSetPipeline() {
-
-	waterDropManager_->DrawEffectUpdate();
+	cameraFrozen_->DrawInternal(commandList_);
+	waterDropManager_->DrawEffectUpdate(cameraFrozen_->GetEffectTexture());
 	//極寒状態だったら
 	if (!environmentEffectsManager_->GetIsNowScene()) {
 		DrawCold(environmentEffectsManager_->GetPrevScene());
@@ -110,7 +110,7 @@ void GameScene::DebugGUI(){
 
 void GameScene::DrawCold(PostEffect* targetScene) {
 	//エフェクトの描画
-	cameraFrozen_->DrawInternal(commandList_);
+	//cameraFrozen_->DrawInternal(commandList_);
 	//取得したシーンに対して描画
 	targetScene->PreDrawScene(commandList_);
 	Sprite::preDraw(commandList_);
@@ -123,7 +123,7 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 }
 
 void GameScene::DrawHeat(PostEffect* targetScene) {
-	cameraFrozen_->DrawInternal(commandList_);
+	//cameraFrozen_->DrawInternal(commandList_);
 	heatHazeManager_->PreDraw(commandList_);
 	Sprite::preDraw(commandList_);
 	sample1->Draw();

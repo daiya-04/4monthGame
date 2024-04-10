@@ -29,6 +29,9 @@ public:
 		radius_ = radiusMax_;
 		cameraFrozen_->SetMode(1);
 	}
+
+	PostEffect* GetEffectTexture() { return cameraFrozen_.get(); };
+
 private:
 	CameraFrozenManager() {
 		Init();

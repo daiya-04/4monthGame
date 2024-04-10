@@ -20,7 +20,7 @@ void WaterDrop::Init() {
 		position_[i] = { halfWinSize .x*(dir.x*length) + halfWinSize.x,halfWinSize.y * (dir.y * length)+ halfWinSize.y };
 		position_[i].x = std::clamp(position_[i].x, 8.0f, 1280.0f - 8.0f);
 		position_[i].y = std::clamp(position_[i].y, 8.0f,  720.0f - 8.0f);
-		radius_[i] = { 6.0f,8.0f };
+		radius_[i] = { 8.0f,10.0f };
 	}
 	for (int i = 0; i < 2;i++) {
 		internalEffectTextures_[i].reset(new PostEffect());
@@ -35,7 +35,7 @@ void WaterDrop::Init() {
 void WaterDrop::Update() {
 #ifdef _DEBUG
 	ImGui::Begin("WaterDrop");
-	for (int i = 0; i < dropNum_; i++) {
+	/*for (int i = 0; i < dropNum_; i++) {
 		char name[32];
 		sprintf_s(name,32,"%dposition",i);
 		ImGui::DragFloat2(name, &position_[i].x, 1.0f);
@@ -45,7 +45,7 @@ void WaterDrop::Update() {
 		ImGui::DragFloat(name, &radius_[i].y, 1.0f);
 		waterDropSprite_[i]->SetSize({radius_[i].x,radius_[i].y});
 		waterDropSprite_[i]->SetPosition(position_[i]);
-	}
+	}*/
 	if (ImGui::Button("DrawInternal"))
 	{
 		isDrawInternal_ = true;
@@ -76,14 +76,15 @@ void WaterDrop::Start() {
 	isDrawUpdate_ = true;
 }
 
-void WaterDrop::DrawInternal() {
+void WaterDrop::DrawInternal(PostEffect* sorceTexture) {
 	if (isDrawInternal_ ) {
 		sorceTexture_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
-		Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+		/*Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 		WaterDropPipeline::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 		for (int i = 0; i < dropNum_; i++) {
 			waterDropSprite_[i]->Draw();
-		}
+		}*/
+		sorceTexture->Draw(DirectXCommon::GetInstance()->GetCommandList());
 		sorceTexture_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 		internalEffectTextures_[latestTextureNum_]->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 		sorceTexture_->Draw(DirectXCommon::GetInstance()->GetCommandList());
@@ -124,7 +125,10 @@ void WaterDrop::SetPositionRandom() {
 
 		//dir.y = normalizedDir.y * (halfWinSize.y / halfWinSize.x);
 		position_[i] = { halfWinSize.x * (dir.x * length) + halfWinSize.x,halfWinSize.y * (dir.y * length) + halfWinSize.y };
-		position_[i].x = std::clamp(position_[i].x, 8.0f, 1280.0f - 8.0f);
-		position_[i].y = std::clamp(position_[i].y, 8.0f, 720.0f - 8.0f);
+		radius_[i] = { RandomEngine::GetRandom(4.0f, 4.0f),RandomEngine::GetRandom(4.0f, 4.0f) };
+		position_[i].x = std::clamp(position_[i].x, radius_[i].x+1.0f, 1280.0f - radius_[i].x-1.0f);
+		position_[i].y = std::clamp(position_[i].y, radius_[i].y+1.0f, 720.0f - radius_[i].y-1.0f);
+		waterDropSprite_[i]->SetSize({ radius_[i].x*2.0f,radius_[i].y*2.0f });
+		waterDropSprite_[i]->SetPosition(position_[i]);
 	}
 }
