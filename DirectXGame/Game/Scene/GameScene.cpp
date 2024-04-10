@@ -76,7 +76,7 @@ void GameScene::DrawBackGround(){
 
 }
 
-void GameScene::DrawModel(){
+void GameScene::DrawObject(){
 
 	
 

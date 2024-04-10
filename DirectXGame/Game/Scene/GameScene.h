@@ -5,13 +5,13 @@
 #include <vector>
 
 #include "Sprite.h"
-#include "Object3d.h"
+#include "Object2d.h"
 #include "Particle.h"
 #include "Camera.h"
 #include "WorldTransform.h"
 #include "PointLight.h"
 #include "SpotLight.h"
-#include "LevelLoader.h"
+#include "Engine/Loader/LevelLoader.h"
 #include "PostEffect.h"
 #include "DualSceneDrawer.h"
 #include "Sprite.h"
@@ -27,11 +27,11 @@ public:
 
 	void Update()override;
 
-	void DrawNotSetPipeline()override;//パイプライン未設定(最初に呼び出される)
+	void DrawNotSetPipeline()override;//�p�C�v���C�����ݒ�(�ŏ��ɌĂяo�����)
 
 	void DrawBackGround()override;
 
-	void DrawModel()override;
+	void DrawObject()override;
 
 	void DrawParticleModel()override;
 
@@ -44,15 +44,15 @@ public:
 	~GameScene()override;
 	
 	/// <summary>
-	/// 灼熱状態のシーン描画
+	/// �ܔM��Ԃ̃V�[���`��
 	/// </summary>
-	/// <param name="targetScene">書き込み先</param>
+	/// <param name="targetScene">�������ݐ�</param>
 	void DrawHeat(PostEffect* targetScene);
 
 	/// <summary>
-	/// 極寒状態のシーン描画
+	/// �Ɋ���Ԃ̃V�[���`��
 	/// </summary>
-	/// <param name="targetScene">書き込み先</param>
+	/// <param name="targetScene">�������ݐ�</param>
 	void DrawCold(PostEffect* targetScene);
 
 private:

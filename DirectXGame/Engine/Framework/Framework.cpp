@@ -6,7 +6,7 @@
 #include "ModelManager.h"
 #include "DirectionalLight.h"
 #include "Sprite.h"
-#include "Object3d.h"
+#include "Object2d.h"
 #include "Particle.h"
 #include "GlobalVariables.h"
 #include "Audio.h"
@@ -15,7 +15,11 @@
 void DSFramework::Init(){
 	
 	WinApp::GetInstance()->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
+#ifdef NDEBUG
+	WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
+#endif // _DEBUG
 
+	
 	
 	DirectXCommon::GetInstance()->Initialize();
 	ImGuiManager::GetInstance()->Initialize();
@@ -28,7 +32,7 @@ void DSFramework::Init(){
 	//TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
-	Object3d::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
+	Object2d::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
 	Particle::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
 
 	GlobalVariables::GetInstance()->LoadFiles();
@@ -41,8 +45,14 @@ void DSFramework::Init(){
 
 void DSFramework::Update(){
 
-	if (WinApp::GetInstance()->ProcessMessage()) { endRequest_ = true; }
+	if (WinApp::GetInstance()->ProcessMessage() || Input::GetInstance()->TriggerKey(DIK_ESCAPE)) { endRequest_ = true; }
 
+	if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_9)) {
+		WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
+	}
+	if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_0)) {
+		WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kWindow);
+	}
 
 	ImGuiManager::GetInstance()->Begin();
 

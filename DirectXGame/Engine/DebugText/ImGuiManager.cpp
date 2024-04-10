@@ -33,8 +33,7 @@ void ImGuiManager::Initialize(){
 
 	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
 
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontDefault();
+	ImGui::GetIO().Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\msgothic.ttc", 13.0f, NULL, ImGui::GetIO().Fonts->GetGlyphRangesJapanese());
 #endif // _DEBUG
 
 }

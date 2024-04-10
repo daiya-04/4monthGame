@@ -2,7 +2,7 @@
 #include "SceneFactory.h"
 #include "DirectXCommon.h"
 #include "Sprite.h"
-#include "Object3d.h"
+#include "Object2d.h"
 #include "Particle.h"
 #include "ImGuiManager.h"
 #include "TextureManager.h"
@@ -68,12 +68,12 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	DirectXCommon::GetInstance()->ClearDepthBaffer();
 
-	///3dオブジェクト
-	Object3d::preDraw();
+	///2dオブジェクト
+	Object2d::preDraw(commandList);
 
-	scene_->DrawModel();
+	scene_->DrawObject();
 
-	Object3d::postDraw();
+	Object2d::postDraw();
 
 	///パーティクル
 	Particle::preDraw();

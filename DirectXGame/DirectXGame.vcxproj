@@ -132,7 +132,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Collision\Hit.cpp" />
     <ClCompile Include="Engine\DebugText\GlobalVariables.cpp" />
     <ClCompile Include="Game\WeightCircle\WeightCircle.cpp" />
-    <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="Engine\Loader\LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\3d\ModelManager.cpp" />
     <ClCompile Include="Engine\3d\Object3d.cpp" />
@@ -146,6 +146,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\BaseScene\SceneManager.cpp" />
     <ClCompile Include="Engine\3d\SpotLight.cpp" />
     <ClCompile Include="Engine\2d\PostEffect.cpp" />
+    <ClCompile Include="Engine\2d\Object2d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2d\DualSceneDrawer.h" />
@@ -192,7 +193,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DebugText\GlobalVariables.h" />
     <ClInclude Include="Engine\3d\SpotLight.h" />
     <ClInclude Include="Game\WeightCircle\WeightCircle.h" />
-    <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="Engine\Loader\LevelLoader.h" />
+    <ClInclude Include="Engine\2d\Object2d.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

@@ -25,7 +25,7 @@ public:
 		Vector4 color_;
 	};
 
-protected:  //静的メンバ変数
+private:  //静的メンバ変数
 
 	//共通部分の変数
 	static ID3D12Device* device_ ;
@@ -61,7 +61,7 @@ public: //静的メンバ関数
 	/// <returns></returns>
 	static ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
 
-protected: //メンバ変数
+private: //メンバ変数
 
 
 
