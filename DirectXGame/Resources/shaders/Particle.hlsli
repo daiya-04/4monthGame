@@ -1,13 +1,13 @@
 struct VertexShaderOutput {
 	float32_t4 position : SV_POSITION;
-	//float32_t2 texcoord : TEXCOORD0;
-	//float32_t4 color : COLOR0;
+	float32_t2 texcoord : TEXCOORD0;
+	float32_t4 color : COLOR0;
 };
 
 struct GeometryShaderOutput{
 	float32_t4 position : SV_POSITION;
 	float32_t2 texcoord : TEXCOORD0;
-	//float32_t4 color : COLOR0;
+	float32_t4 color : COLOR0;
 };
 
 struct Material {
@@ -18,7 +18,7 @@ ConstantBuffer<Material> gMaterial : register(b0);
 
 struct ParticleGPU {
 	float32_t4x4 world;
-	//float32_t4 color;
+	float32_t4 color;
 };
 
 StructuredBuffer<ParticleGPU> gParticle : register(t0);

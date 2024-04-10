@@ -100,16 +100,16 @@ void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	assert(SUCCEEDED(hr));
 
 	//InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[1] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-	/*inputElementDescs[1].SemanticName = "TEXCOORD";
+	inputElementDescs[1].SemanticName = "TEXCOORD";
 	inputElementDescs[1].SemanticIndex = 0;
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;*/
+	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
@@ -186,8 +186,8 @@ void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	//利用するトポロジ（形状）のタイプ。三角形
-	//graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	//graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 	//どのように画面に色を打ち込むかの設定
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -217,8 +217,8 @@ void Particle::preDraw() {
 
 	commandList_->SetPipelineState(graphicsPipelineState_.Get());  //PSOを設定
 	//形状を設定。PSOに設定しているものとはまた別。設置物を設定すると考えておけばいい
-	//commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 }
 
@@ -226,14 +226,14 @@ void Particle::postDraw() {}
 
 Particle::ParticleData Particle::MakeNewParticle(std::mt19937& randomEngine, const Vector2& translate){
 
-	std::uniform_real_distribution<float> distPos(-5.0f, 5.0f);
+	std::uniform_real_distribution<float> distPos(-100.0f, 100.0f);
 	std::uniform_real_distribution<float> distVelocity(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distColor(0.4f, 1.0f);
 	std::uniform_real_distribution<float> distTime(1.0f, 6.0f);
 	ParticleData particle;
 
 	//particle.worldTransform_.translation_ = { /*distPos(randomEngine),distPos(randomEngine) ,distPos(randomEngine)*/ };
-	particle.pos_ = translate;
+	particle.pos_ = { translate.x + distPos(randomEngine),translate.y + distPos(randomEngine) };
 	particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine)};
 	particle.color_ = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine),1.0 };
 	particle.lifeTime_ = 2.0f;
@@ -366,8 +366,8 @@ void Particle::Draw(std::list<ParticleData>& particleData,const Camera& camera) 
 
 		if (particleNum_ < particleMaxNum_) {
 			instancingData[particleNum_].matWorld = worldMatrix;
-			//instancingData[particleNum_].color = (*itParticle).color_;
-			//instancingData[particleNum_].color.w = alpha;
+			instancingData[particleNum_].color = (*itParticle).color_;
+			instancingData[particleNum_].color.w = alpha;
 			particleNum_++;
 		}
 		itParticle++;
@@ -379,7 +379,7 @@ void Particle::Draw(std::list<ParticleData>& particleData,const Camera& camera) 
 
 	//VBVを設定
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	//commandList_->IASetIndexBuffer(&indexBufferView_);
+	commandList_->IASetIndexBuffer(&indexBufferView_);
 	//マテリアルCBufferの場所を設定
 	commandList_->SetGraphicsRootConstantBufferView((UINT)RootParameter::kMaterial, materialResource_->GetGPUVirtualAddress());
 	//wvp用のCBufferの場所の設定
@@ -389,8 +389,8 @@ void Particle::Draw(std::list<ParticleData>& particleData,const Camera& camera) 
 	//SRVのDescriptorTableの先頭を設定。
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, uvHandle_);
 
-	//commandList_->DrawIndexedInstanced(6, (UINT)particleNum_, 0, 0, 0);
-	commandList_->DrawInstanced(1, (UINT)particleNum_, 0, 0);
+	commandList_->DrawIndexedInstanced(6, (UINT)particleNum_, 0, 0, 0);
+	//commandList_->DrawInstanced(1, (UINT)particleNum_, 0, 0);
 
 }
 
@@ -404,7 +404,7 @@ void Particle::CreateMesh() {
 
 	TransferVertex();
 
-	/*indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * 6);
+	indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * 6);
 
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
@@ -414,7 +414,7 @@ void Particle::CreateMesh() {
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indices));
 
 	indices[0] = 1;  indices[1] = 0;  indices[2] = 2;
-	indices[3] = 0;  indices[4] = 3;  indices[5] = 2;*/
+	indices[3] = 0;  indices[4] = 3;  indices[5] = 2;
 
 
 	materialResource_ = CreateBufferResource(device_, sizeof(Material));
@@ -447,21 +447,21 @@ void Particle::TransferVertex() {
 	VertexData* vertices = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertices));
 
-	////左上
-	//vertices[0].pos_ = { 0.0f,0.0f,0.0f,1.0f };
-	//vertices[0].uv_ = { 0.0f,0.0f };
-	////左下
-	//vertices[1].pos_ = { 0.0f, 1.0f,0.0f,1.0f };
-	//vertices[1].uv_ = { 0.0f,1.0f };
-	////右下
-	//vertices[2].pos_ = { 1.0f,1.0f,0.0f,1.0f };
-	//vertices[2].uv_ = { 1.0f,1.0f };
-	////右上
-	//vertices[3].pos_ = { 1.0f,0.0f,0.0f,1.0f };
-	//vertices[3].uv_ = { 1.0f,0.0f };
-
+	//左上
 	vertices[0].pos_ = { 0.0f,0.0f,0.0f,1.0f };
-	//vertices[0].uv_ = { 0.0f,0.0f };
+	vertices[0].uv_ = { 0.0f,0.0f };
+	//左下
+	vertices[1].pos_ = { 0.0f, 1.0f,0.0f,1.0f };
+	vertices[1].uv_ = { 0.0f,1.0f };
+	//右下
+	vertices[2].pos_ = { 1.0f,1.0f,0.0f,1.0f };
+	vertices[2].uv_ = { 1.0f,1.0f };
+	//右上
+	vertices[3].pos_ = { 1.0f,0.0f,0.0f,1.0f };
+	vertices[3].uv_ = { 1.0f,0.0f };
+
+	/*vertices[0].pos_ = { 0.0f,0.0f,0.0f,1.0f };
+	vertices[0].uv_ = { 0.0f,0.0f };*/
 
 }
 

@@ -33,7 +33,7 @@ private:
 
 	struct VertexData {
 		Vector4 pos_;
-		//Vector2 uv_;
+		Vector2 uv_;
 	};
 
 	struct Material {
@@ -42,7 +42,7 @@ private:
 
 	struct ParticleGPU {
 		Matrix4x4 matWorld;
-		//Vector4 color;
+		Vector4 color;
 	};
 
 public:
@@ -104,8 +104,8 @@ private:
 	ComPtr<ID3D12Resource> vertexResource_;
 	ComPtr<ID3D12Resource> materialResource_;
 	ComPtr<ID3D12Resource> wvpResource_;
-	/*ComPtr<ID3D12Resource> indexResource_;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};*/
+	ComPtr<ID3D12Resource> indexResource_;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
 	ComPtr<ID3D12Resource> instancingResource_;
 	D3D12_CPU_DESCRIPTOR_HANDLE particleSrvHandleCPU_{};
 	D3D12_GPU_DESCRIPTOR_HANDLE particleSrvHandleGPU_{};

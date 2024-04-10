@@ -13,21 +13,18 @@ void GameScene::Init(){
 
 	camera_.Init();
 
-	uint32_t circleTex = TextureManager::Load("uvChecker.png");
+	uint32_t circleTex = TextureManager::Load("circle.png");
 
-	particle_.reset(Particle::Create(circleTex, 10000));
+	particle_.reset(Particle::Create(circleTex, 5000));
 
 	emitter_ = {
 		{640.0f,360.0f},
 		//{0.0f,0.0f},
-		200,
+		100,
 		0.2f,
 		0.0f
 	};
-	/*std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
 	
-	data_.splice(data_.end(), Particle::Emit(emitter_, randomEngine));*/
 }
 
 void GameScene::Update(){
