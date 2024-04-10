@@ -40,8 +40,8 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float32_t2 normalizedOffset = normalize(offset);
 		//offset = normalize(offset);
 		
-		normalizedOffset.x *= 6.0f/1280.0f;
-		normalizedOffset.y *= 6.0f/720.0f;
+		normalizedOffset.x = 6.0f/1280.0f;
+		normalizedOffset.y = 6.0f/720.0f;
 		float32_t4 afterColor = gTextureNextScene.Sample(gSampler, (input.texcoord - normalizedOffset));
 		afterColor.x *= 2.0f;
 		afterColor.y *= 2.0f;

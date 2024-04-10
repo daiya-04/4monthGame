@@ -9,7 +9,7 @@ void WaterDrop::Init() {
 	sorceTexture_.reset(new WaterDropSourceTexture());
 	sorceTexture_->Init();
 
-	for (int i = 0; i < dropNum_;i++) {
+	/*for (int i = 0; i < dropNum_; i++) {
 		waterDropSprite_[i].reset(new Sprite(TextureManager::GetInstance()->Load("weightCircle.png"), { 640.0f,360.0f }, 1.0f / 64.0f));
 		waterDropSprite_[i]->Initialize();
 		waterDropSprite_[i]->SetSize({ 128.0f,128.0f });
@@ -21,7 +21,7 @@ void WaterDrop::Init() {
 		position_[i].x = std::clamp(position_[i].x, 8.0f, 1280.0f - 8.0f);
 		position_[i].y = std::clamp(position_[i].y, 8.0f,  720.0f - 8.0f);
 		radius_[i] = { 8.0f,10.0f };
-	}
+	}*/
 	for (int i = 0; i < 2;i++) {
 		internalEffectTextures_[i].reset(new PostEffect());
 		internalEffectTextures_[i]->Init(L"Resources/shaders/WaterDropUpdateEffect.VS.hlsl", L"Resources/shaders/WaterDropUpdateEffect.PS.hlsl");
@@ -111,7 +111,7 @@ float direction(Vector2 a, Vector2 b, int p) {
 }
 
 void WaterDrop::SetPositionRandom() {
-	for (int i = 0; i < dropNum_; i++) {
+	/*for (int i = 0; i < dropNum_; i++) {
 		float length = RandomEngine::GetRandom(0.8f, 1.4f);
 		Vector2 dir = { RandomEngine::GetRandom(-1.0f,1.0f),RandomEngine::GetRandom(-1.0f,1.0f) };
 		//Vector2 normalizedDir = dir.Normalize();
@@ -130,5 +130,5 @@ void WaterDrop::SetPositionRandom() {
 		position_[i].y = std::clamp(position_[i].y, radius_[i].y+1.0f, 720.0f - radius_[i].y-1.0f);
 		waterDropSprite_[i]->SetSize({ radius_[i].x*2.0f,radius_[i].y*2.0f });
 		waterDropSprite_[i]->SetPosition(position_[i]);
-	}
+	}*/
 }

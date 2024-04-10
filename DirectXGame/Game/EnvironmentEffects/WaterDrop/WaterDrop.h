@@ -47,10 +47,10 @@ private:
 	std::unique_ptr<WaterDropSourceTexture> sorceTexture_;//オリジナルのテクスチャの書き込み場所
 	std::unique_ptr<PostEffect> internalEffectTextures_[2];//加工後の水滴テクスチャ、書き込みごとに入れ替わる
 	size_t latestTextureNum_;//書き込み先のテクスチャ番号(0 or 1)
-	static const size_t dropNum_=256;//水滴の数
+	static const size_t dropNum_=1;//水滴の数
 	bool isDrawInternal_;//オリジナルテクスチャの書き込みを行うか
-	Vector2 radius_[dropNum_] = { Vector2{1.0f,1.0f} };
-	Vector2 position_[dropNum_];
-	std::unique_ptr<Sprite> waterDropSprite_[dropNum_];//水滴用Sprite
+	//Vector2 radius_[dropNum_] = { Vector2{1.0f,1.0f} };
+	//Vector2 position_[dropNum_];
+	//std::unique_ptr<Sprite> waterDropSprite_[dropNum_];//水滴用Sprite
 	bool isDrawUpdate_;//エフェクトの更新を行うか
 };
