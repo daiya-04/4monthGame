@@ -31,7 +31,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	else {
 		//transformedTexcoord.y -= 0.001f;
 	}
-	transformedTexcoord.y -= 0.001f;
+	transformedTexcoord.y -= 0.002f;
 
 	float32_t2 dir = input.texcoord;
 	dir.x *= 100.0f;
@@ -49,8 +49,16 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	left.x -= 1.0f / 1280.0f;
 	float32_t2 right = transformedTexcoord;
 	right.x += 1.0f / 1280.0f;
+	float32_t2 top = transformedTexcoord;
+	top.y -= 1.0f / 720.0f;
+	float32_t2 down = transformedTexcoord;
+	down.y += 1.0f / 720.0f;
+
 	if ((gTexture.Sample(gSampler, left ).a == 0.0f || 
-		gTexture.Sample(gSampler, right).a == 0.0f) && rand(float32_t2(dir.x, input.texcoord.y))>0.85f) {
+		gTexture.Sample(gSampler, right).a == 0.0f ||
+		gTexture.Sample(gSampler, top).a == 0.0f || 
+		gTexture.Sample(gSampler, down).a == 0.0f)
+		&& rand(float32_t2(dir.x, input.texcoord.y))>0.70f) {
 		output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 

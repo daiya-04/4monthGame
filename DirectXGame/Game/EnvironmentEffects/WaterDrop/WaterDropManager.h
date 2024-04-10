@@ -13,9 +13,14 @@ public:
 
 	void Init();
 	void Update();
-	//GPUの更新
+	//GPUでのエフェクトの更新
 	void DrawEffectUpdate(PostEffect* sorceTexture);
 
+
+	/// <summary>
+	/// 水滴エフェクトとシーンを合成して描画
+	/// </summary>
+	/// /// <param name="targetScene">エフェクトを掛けたいシーンのSrvHandle</param>
 	void DrawScene(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE prevSceneHandle);
 
 	//アニメーションの初期配置を行う
@@ -28,7 +33,7 @@ private:
 	WaterDropManager(){ Init(); };
 	~WaterDropManager() = default;
 
-	std::unique_ptr<WaterDrop> waterDrop_;
-	std::unique_ptr<WaterDropSceneDrawer> waterDropSceneDrawer_;
+	std::unique_ptr<WaterDrop> waterDrop_;//水滴エフェクト本体
+	std::unique_ptr<WaterDropSceneDrawer> waterDropSceneDrawer_;//水滴エフェクトとシーンを合成する機能
 };
 
