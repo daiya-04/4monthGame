@@ -37,11 +37,5 @@ public:
 
 private:
 
-	Camera camera_;
-
-	std::unique_ptr<Particle> particle_;
-	std::list<Particle::ParticleData> data_;
-	Particle::Emitter emitter_;
-
 };
 

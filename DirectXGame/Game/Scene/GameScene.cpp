@@ -11,41 +11,14 @@ GameScene::~GameScene() {}
 
 void GameScene::Init(){
 
-	camera_.Init();
-
-	uint32_t circleTex = TextureManager::Load("circle.png");
-
-	particle_.reset(Particle::Create(circleTex, 5000));
-
-	emitter_ = {
-		{640.0f,360.0f},
-		//{0.0f,0.0f},
-		100,
-		0.2f,
-		0.0f
-	};
+	
 	
 }
 
 void GameScene::Update(){
 	DebugGUI();
 
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
-	const float kDeltaTime = 1.0f / 60.0f;
-
-	emitter_.frequencyTime_ += kDeltaTime;
-	if (emitter_.frequencyTime_ >= emitter_.frequency_) {
-		data_.splice(data_.end(), Particle::Emit(emitter_, randomEngine));
-		emitter_.frequencyTime_ = 0.0f;
-	}
-
-	for (std::list<Particle::ParticleData>::iterator itParticle = data_.begin(); itParticle != data_.end(); itParticle++) {
-		(*itParticle).pos_ += (*itParticle).velocity_;
-		(*itParticle).currentTime_ += kDeltaTime;
-	}
 	
-	camera_.UpdateViewMatrix();
 }
 
 void GameScene::DrawBackGround(){
@@ -68,7 +41,7 @@ void GameScene::DrawParticleModel(){
 
 void GameScene::DrawParticle(){
 
-	particle_->Draw(data_, camera_);
+	
 
 }
 
