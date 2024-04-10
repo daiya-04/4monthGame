@@ -45,9 +45,9 @@ void GameScene::Update(){
 
 	player_->Update();
 
-	camera_->UpdateMatrix();
-
 	scroll_->Update();
+
+	camera_->UpdateMatrix();
 
 }
 
@@ -62,12 +62,6 @@ void GameScene::DrawObject(){
 	stage_->Draw();
 
 	player_->Draw(*camera_.get());
-
-}
-
-void GameScene::DrawParticleModel(){
-
-
 
 }
 

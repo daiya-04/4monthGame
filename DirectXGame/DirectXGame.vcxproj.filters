@@ -68,6 +68,12 @@
     <Filter Include="Game\Scroll">
       <UniqueIdentifier>{c7acd84c-c7b7-45cf-b9fa-b4fb8787da09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Scene\TransitionEffect">
+      <UniqueIdentifier>{20ea340d-2493-4169-93a2-36702a4c701b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Easing">
+      <UniqueIdentifier>{d8d4555b-daa0-42be-904b-3232d5c1cc29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -175,6 +181,12 @@
     </ClCompile>
     <ClCompile Include="Game\Player\PlayerParameter.cpp">
       <Filter>Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\TransitionEffect\TransitionEffect.cpp">
+      <Filter>Game\Scene\TransitionEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Easing\Easing.cpp">
+      <Filter>Engine\Easing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -306,6 +318,12 @@
     </ClInclude>
     <ClInclude Include="Game\Player\PlayerParameter.h">
       <Filter>Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\TransitionEffect\TransitionEffect.h">
+      <Filter>Game\Scene\TransitionEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Easing\Easing.h">
+      <Filter>Engine\Easing</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

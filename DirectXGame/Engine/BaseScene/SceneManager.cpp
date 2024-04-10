@@ -6,6 +6,7 @@
 #include "Particle.h"
 #include "ImGuiManager.h"
 #include "TextureManager.h"
+#include "Input.h"
 #include <cassert>
 
 SceneManager* SceneManager::GetInstance(){
@@ -23,17 +24,12 @@ void SceneManager::Init() {
 	postEffect_ = std::make_unique<PostEffect>();
 	postEffect_->Init();
 
+	transitionEffect_ = std::make_unique<TransitionEffect>();
+	transitionEffect_->Init();
+
 }
 
 void SceneManager::Update(){
-
-	if (nextScene_) {
-		scene_ = std::move(nextScene_);
-		scene_->Init();
-	}
-
-
-	scene_->Update();
 
 #ifdef _DEBUG
 
@@ -43,8 +39,55 @@ void SceneManager::Update(){
 
 	ImGui::End();
 
+	
 #endif // _DEBUG
 
+	if (isStart_) {
+		scene_ = std::move(nextScene_);
+		scene_->Init();
+		transitionEffect_->IsActiveOff();
+		isStart_ = false;
+	}
+	
+	//シーンの更新
+	if (nextScene_ == nullptr && !transitionEffect_->IsActive()) {
+		scene_->Update();
+	}
+
+#ifdef _DEBUG
+
+	if (!transitionEffect_->IsActive()) {
+		if (Input::GetInstance()->TriggerKey(DIK_1)) {
+			ChangeScene("Title");
+		}
+		if (Input::GetInstance()->TriggerKey(DIK_2)) {
+			ChangeScene("StageSelect");
+		}
+		if (Input::GetInstance()->TriggerKey(DIK_3)) {
+			ChangeScene("Game");
+		}
+
+	}
+	
+#endif // _DEBUG
+
+
+	//シーンの切り替えがないならここで終了
+	
+
+	if (transitionEffect_->isActiveStart()) {
+		transitionEffect_->OutEffectStart();
+	}
+
+	transitionEffect_->Update();
+
+	if (transitionEffect_->InEffectEnter()) {
+		scene_ = std::move(nextScene_);
+		scene_->Init();
+		scene_->Update();
+	}
+
+	transitionEffect_->FlagUpdate();
 }
 
 void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
@@ -87,6 +130,11 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	scene_->DrawUI();
 
+	if (transitionEffect_->IsActive()) {
+		transitionEffect_->Draw();
+	}
+	
+
 	Sprite::postDraw();
 
 	ImGuiManager::GetInstance()->Draw();
@@ -101,6 +149,7 @@ void SceneManager::ChangeScene(const std::string& sceneName){
 	assert(nextScene_ == nullptr);
 
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
+	transitionEffect_->IsActiveOn();
 }
 
 
