@@ -38,4 +38,7 @@ private:
 	uint32_t bgTexture_;
 	std::unique_ptr<Sprite> backGround_;
 
+	uint32_t stageNumTex_;
+	std::unique_ptr<Sprite> stageNum_;
+
 };

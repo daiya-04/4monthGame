@@ -12,7 +12,7 @@ TitleScene::~TitleScene() {}
 
 void TitleScene::Init() {
 
-	bgTexture_ = TextureManager::Load("monsterBall.png");
+	bgTexture_ = TextureManager::Load("backGround/titleBG.png");
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
 
