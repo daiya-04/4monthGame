@@ -17,7 +17,7 @@ void GameScene::Init(){
 	cameraFrozen_ = CameraFrozenManager::GetInstance();
 	heatHazeManager_ = HeatHazeManager::GetInstance();
 
-	sample0.reset(new Sprite(TextureManager::GetInstance()->Load("sample0.png"), {640.0f,360.0f},10.0f));
+	sample0.reset(new Sprite(TextureManager::GetInstance()->Load("gokkan.png"), {640.0f,360.0f},7.5f));
 	sample0->Initialize();
 	sample1.reset(new Sprite(TextureManager::GetInstance()->Load("hhTest.png"), { 640.0f,360.0f }, 1.0f));
 	sample1->Initialize();
