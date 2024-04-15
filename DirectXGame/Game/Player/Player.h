@@ -10,6 +10,7 @@
 #include <vector>
 #include "Stage/Stage.h"
 #include <list>
+#include "Sprite.h"
 
 class Player
 {
@@ -39,6 +40,26 @@ public:
 
 	};
 
+	//現在操作しているプレイヤーに加算するパラメータ値
+	struct AddParameters {
+		//スピード
+		float addSpeed = 0.0f;
+		//採掘速度
+		int32_t addDigSpeed = 0;
+		//耐熱時間
+		uint32_t addSaunaTime = 0;
+	};
+
+	//ブロック1つ当たりの加算量
+	struct AddValue {
+		//スピード
+		float speed = 2.0f;
+		//採掘速度
+		int32_t digSpeed = 5;
+		//耐熱時間
+		uint32_t saunaTime = 100;
+	};
+
 	//プレイヤーのサイズ
 	static const uint32_t kPlayerSize_ = 64;
 	//プレイヤーサイズの半分
@@ -58,6 +79,11 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw(const Camera& camera);
+
+	/// <summary>
+	/// UI描画
+	/// </summary>
+	void DrawUI();
 
 	/// <summary>
 	/// デバッグ描画
@@ -156,11 +182,13 @@ public:
 
 	const AABB2D& GetCollision() { return collision_; }
 
-	void SetCanJump(bool flag) { parameters_[characters_].Jump_.canJump = flag; }
+	void SetCanJump(bool flag) { parameters_[currentCharacters_].Jump_.canJump = flag; }
 
 	void ResetVelocityY() { velocity_.y = 0.0f; }
 
 	void SetBlocks(std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_>* blocks) { blocksPtr_ = blocks; }
+
+	bool GetIsDead() const { return isDead_; }
 
 private:
 
@@ -194,13 +222,16 @@ private:
 	//現在拠点にいる状態にするための設定
 	void SetOnBase();
 
+	//サウナ室にいる方の残り時間カウント
+	void CountSaunaTime();
+
 private:
 
 	Input* input_;
 
 	std::unique_ptr<Object2d> object_;
 
-	//ブロックのvectorポインタ
+	//ブロックの配列ポインタ
 	std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_>* blocksPtr_ = nullptr;
 
 	//当たり判定
@@ -208,6 +239,12 @@ private:
 
 	//パラメータを纏めたもの
 	PlayerParameter parameters_[kMaxPlayer];
+
+	//パラメータ値加算量を蓄積するもの
+	AddParameters addParameters_;
+
+	//一ブロック毎の加算量
+	AddValue addValue_;
 
 	//落下速度下限
 	const float kMaxFallSpeed_ = 25.0f;
@@ -268,7 +305,10 @@ private:
 	bool isFacingLeft_ = true;
 
 	//現在使用しているプレイヤー
-	Characters characters_ = kLeftPlayer;
+	Characters currentCharacters_ = kLeftPlayer;
+
+	//サウナ室に入っているプレイヤー
+	Characters reserveCharacters_ = kRightPlayer;
 
 	//採掘開始フラグ
 	bool isMining_ = true;
@@ -281,6 +321,22 @@ private:
 
 	//拠点から外に出るときのフラグ
 	bool isOut_ = false;
+
+	//死亡フラグ
+	bool isDead_ = false;
+
+	//UI関連
+	std::unique_ptr<Sprite> lifeLeftGage_;
+	std::unique_ptr<Sprite> lifeLeftFrame_;
+	std::unique_ptr<Sprite> lifeRightGage_;
+	std::unique_ptr<Sprite> lifeRightFrame_;
+	std::unique_ptr<Sprite> deadSprite_;
+
+	uint32_t lifeLeftGageTexture_;
+	uint32_t lifeLeftFrameTexture_;
+	uint32_t lifeRightGageTexture_;
+	uint32_t lifeRightFrameTexture_;
+	uint32_t deadTexture_;
 
 };
 

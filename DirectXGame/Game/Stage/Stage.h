@@ -6,6 +6,7 @@
 #include <array>
 #include "Camera.h"
 #include <list>
+#include "Object2d.h"
 
 class Player;
 
@@ -37,9 +38,9 @@ public:
 	void Load(uint32_t stageNumber);
 
 	//横の長さ、ブロックの数
-	static const uint32_t kMaxStageWidth_ = 40;
+	static const int32_t kMaxStageWidth_ = 40;
 	//縦の長さ、ブロックの数
-	static const uint32_t kMaxStageHeight_ = 100;
+	static const int32_t kMaxStageHeight_ = 100;
 
 	//プレイヤーをセット
 	void SetPlayer(Player* player) { player_ = player; }
@@ -82,10 +83,12 @@ private:
 
 	Camera* camera_;
 
+	std::array<std::unique_ptr<Object2d>, 2>  borders_;
+
 	void SetUV(Block* block);
 
 	//マップ
-	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
+	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
 
 	//サウナストーン(ステージ毎に数が違っても対応できるようにvector)
 	std::vector<std::shared_ptr<SaunaStone>> stones_;

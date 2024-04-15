@@ -6,6 +6,8 @@
 #include <cassert>
 #include "Game/Player/Player.h"
 
+std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_> Stage::map_;
+
 Stage::Stage()
 {
 }
@@ -332,6 +334,7 @@ void Stage::Load(uint32_t stageNumber) {
 			//空気ブロックでなければブロックを生成
 			//ブロックのパラメータ変更
 			map_[y][x]->ChangeType(type);
+			map_[y][x]->Reset();
 
 			blockPositions_[y][x] = num;
 
@@ -388,21 +391,91 @@ void Stage::SetUV(Block* block) {
 	int32_t py = block->GetBlockPositionY();
 
 	//周囲八マスの判定を取るための変数
-	uint32_t left = std::clamp(px - 1, 0, int(kMaxStageWidth_));
-	uint32_t right = std::clamp(px + 1, 0, int(kMaxStageWidth_));
-	uint32_t top = std::clamp(py - 1, 0, int(kMaxStageHeight_));
-	uint32_t bottom = std::clamp(py + 1, 0, int(kMaxStageHeight_));
+	int32_t left = px - 1;
+	int32_t right = px + 1;
+	int32_t top = py - 1;
+	int32_t bottom = py + 1;
 	
 	//周囲八マスと現在のブロックの数字
 	int32_t centerNum = blockPositions_[py][px];
-	int32_t leftNum = blockPositions_[py][left];
-	int32_t rightNum = blockPositions_[py][right];
-	int32_t topNum = blockPositions_[top][px];
-	int32_t bottomNum = blockPositions_[bottom][px];
-	int32_t topLeftNum = blockPositions_[top][left];
-	int32_t topRightNum = blockPositions_[top][right];
-	int32_t bottomLeftNum = blockPositions_[bottom][left];
-	int32_t bottomRightNum = blockPositions_[bottom][right];
+	int32_t leftNum = 0;
+	int32_t rightNum = 0;
+	int32_t topNum = 0;
+	int32_t bottomNum = 0;
+	int32_t topLeftNum = 0;
+	int32_t topRightNum = 0;
+	int32_t bottomLeftNum = 0;
+	int32_t bottomRightNum = 0;
+
+	//範囲外に出るかどうかで代入する値を変更
+	if (left < 0 || left >= kMaxStageWidth_) {
+
+		leftNum = 0;
+		topLeftNum = 0;
+		bottomLeftNum = 0;
+
+
+	}
+	else {
+
+		leftNum = blockPositions_[py][left];
+
+	}
+
+	if (right < 0 || right >= kMaxStageWidth_) {
+
+		rightNum = 0;
+		topRightNum = 0;
+		bottomRightNum = 0;
+
+	}
+	else {
+
+		rightNum = blockPositions_[py][right];
+
+	}
+
+	if (top < 0 || top >= kMaxStageHeight_) {
+
+		topNum = 0;
+		topLeftNum = 0;
+		topRightNum = 0;
+
+	}
+	else {
+
+		topNum = blockPositions_[top][px];
+
+		if (left >= 0 && left < kMaxStageWidth_) {
+			topLeftNum = blockPositions_[top][left];
+		}
+
+		if (right >= 0 && right < kMaxStageWidth_) {
+			topRightNum = blockPositions_[top][right];
+		}
+
+	}
+
+	if (bottom < 0 || bottom >= kMaxStageHeight_) {
+
+		bottomNum = 0;
+		bottomLeftNum = 0;
+		bottomRightNum = 0;
+
+	}
+	else {
+
+		bottomNum = blockPositions_[bottom][px];
+
+		if (left >= 0 && left < kMaxStageWidth_) {
+			bottomLeftNum = blockPositions_[bottom][left];
+		}
+
+		if (right >= 0 && right < kMaxStageWidth_) {
+			bottomRightNum = blockPositions_[bottom][right];
+		}
+
+	}
 
 	//周囲八マスに同一ブロックがある場合
 	if (centerNum == leftNum && centerNum == rightNum &&

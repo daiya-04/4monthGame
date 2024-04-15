@@ -41,6 +41,8 @@ public:
 
 private:
 
+	void Reset();
+
 	std::unique_ptr<Stage> stage_;
 
 	std::shared_ptr<Player> player_;

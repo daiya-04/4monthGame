@@ -68,6 +68,9 @@
     <Filter Include="Game\Scroll">
       <UniqueIdentifier>{c7acd84c-c7b7-45cf-b9fa-b4fb8787da09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Enemy">
+      <UniqueIdentifier>{4fdfdebd-ae0d-4473-8df4-adc213d31b30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -175,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="Game\Player\PlayerParameter.cpp">
       <Filter>Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Enemy\Enemy.cpp">
+      <Filter>Game\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -306,6 +312,9 @@
     </ClInclude>
     <ClInclude Include="Game\Player\PlayerParameter.h">
       <Filter>Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Enemy\Enemy.h">
+      <Filter>Game\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

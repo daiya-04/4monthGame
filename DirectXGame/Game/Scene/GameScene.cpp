@@ -39,8 +39,25 @@ void GameScene::Init(){
 
 }
 
+void GameScene::Reset() {
+
+	player_->Initialize();
+	stage_->Load(stageNumber_);
+	camera_->Init();
+	scroll_->Initialize();
+
+}
+
 void GameScene::Update(){
 	DebugGUI();
+
+	if (player_->GetIsDead()) {
+
+		if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
+			Reset();
+		}
+
+	}
 
 	stage_->Update();
 
@@ -80,7 +97,7 @@ void GameScene::DrawParticle(){
 
 void GameScene::DrawUI(){
 
-	
+	player_->DrawUI();
 
 }
 

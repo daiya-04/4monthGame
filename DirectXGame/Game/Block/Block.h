@@ -4,6 +4,7 @@
 #include <memory>
 #include "Hit.h"
 #include "BlockTextureManager.h"
+#include "Audio.h"
 
 class Player;
 
@@ -18,6 +19,8 @@ public:
 
 	static const uint32_t kBlockHalfSize_ = kBlockSize_ / 2;
 
+	const float kTextureBlockSize_ = 32.0f;
+
 	enum BlockType : uint32_t {
 
 		//空白ブロック
@@ -30,23 +33,26 @@ public:
 		kMagma,
 		//連続して壊せる氷ブロック
 		kIceBlock,
-		//サウナストーンブロック
-		kSaunaBlock,
+		//速度が速くなるブロック
+		kSpeedBlock,
+		//採掘速度が上がるブロック
+		kDigerBlock,
+		//耐熱時間が長くなるブロック
+		kSaunnerBlock,
 		//ブロックの最大種類
 		kMaxBlock
 
 	};
 
-	//破壊可能ブロックならtrueを返す関数
+	//破壊可能ブロックなら、trueを返す関数
 	static bool CheckCanBreak(BlockType type) {
 
-		//破壊可能ブロックならtrueを返す
-		if (type == kSnow || type == kMagma || type == kSaunaBlock ||
-			type == kIceBlock) {
-			return true;
+		//破壊不可能ブロックなら、falseを返す
+		if (type == kUnbreakable) {
+			return false;
 		}
 
-		return false;
+		return true;
 
 	}
 
@@ -116,6 +122,8 @@ public:
 
 	bool GetIsBreak() { return isBreak_; }
 
+	void Reset();
+
 protected:
 
 	Player* player_;
@@ -144,6 +152,9 @@ protected:
 
 	//破壊されたかどうか
 	bool isBreak_ = false;
+
+	//ザクザク音
+	size_t digSE_;
 
 };
 

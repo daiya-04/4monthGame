@@ -16,9 +16,9 @@ public:
 		//ジャンプ可能かどうかのフラグ
 		bool canJump = false;
 		//ギリジャンの最大猶予フレーム
-		const uint32_t kMaxGraceTime = 6;
+		int32_t kMaxGraceTime = 6;
 		//ギリジャンの猶予フレーム
-		uint32_t graceTime = 0;
+		int32_t graceTime = 0;
 		//ジャンプ時のy速度
 		float jumpVelocity = -25.0f;
 	};
@@ -28,9 +28,9 @@ public:
 		//壁キックできるかどうかのフラグ
 		bool canWallJump = false;
 		//ギリ壁キックの最大猶予フレーム
-		const uint32_t kMaxGraceTime = 6;
+		int32_t kMaxGraceTime = 6;
 		//ギリ壁キックの猶予フレーム
-		uint32_t graceTime = 0;
+		int32_t graceTime = 0;
 		//壁キックの移動量
 		Vector2 wallJumpVelocity = { 10.0f,-30.0f };
 	};
@@ -40,7 +40,7 @@ public:
 		//ヒップドロップ可能かどうか
 		bool canHipDrop = false;
 		//ヒップドロップ可能になるまでの空中待機フレーム
-		const uint32_t kNecessaryTime = 15;
+		int32_t kNecessaryTime = 15;
 	};
 
 	//穴掘り関連の処理
@@ -49,6 +49,10 @@ public:
 		bool isDig = false;
 		//穴堀りを行うポジション
 		Vector2 digPosition{};
+		//採掘インターバル
+		int32_t digInterval = 42;
+		//採掘カウント
+		int32_t digCount = 0;
 	};
 
 	//掴み関連の処理
@@ -60,24 +64,32 @@ public:
 
 	//溜めジャンプ関連の構造体
 	struct WorkChargeJump {
+		//チャージジャンプ中かどうか
+		bool isChargeJumping = false;
 		//現在チャージ可能かどうか
 		bool isCharge = false;
 		//チャージにかかる時間
-		const uint32_t kMaxChargeTime = 60;
+		int32_t kMaxChargeTime = 40;
 		//チャージ時間をカウントする変数
-		uint32_t chargeTimer = 0;
+		int32_t chargeTimer = 0;
 		//溜めジャンプのy移動量
 		float chargeJumpVelocity = -35.0f;
+		//何マス分ジャンプするか
+		int32_t jumpValue = 5;
+		//ジャンプを止めるライン
+		float stopLine = 0.0f;
 		//溜めジャンプによるブロック破壊フラグ
 		bool canBreak = false;
 		//破壊ができなくなる速度
 		float unBreakVelocity = -2.0f;
 	};
 
-	//探索時間関連
-	struct WorkMiningTimer {
-
-
+	//耐熱時間関連
+	struct WorkSaunaTimer {
+		//サウナにいられる時間(制限時間)
+		int32_t maxSaunaTime = 3600;
+		//実際にカウントする時間
+		int32_t countSaunaTimer = maxSaunaTime;
 	};
 
 	//ジャンプ
@@ -97,6 +109,9 @@ public:
 
 	//穴掘り
 	WorkDig dig_;
+
+	//!!!サウナタイム!!!
+	WorkSaunaTimer saunaTimer_;
 
 	//移動量
 	float speed_ = 1.0f;
