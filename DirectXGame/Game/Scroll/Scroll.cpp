@@ -10,7 +10,7 @@ Scroll::~Scroll()
 
 void Scroll::Initialize() {
 
-	startScroll_ = { limitStart_.x + kWindowCenter_.x, limitStart_.y + kWindowCenter_.y };
+	startScroll_ = { limitStart_.x + camera_->center_.x, limitStart_.y + camera_->center_.y };
 
 }
 
@@ -29,13 +29,13 @@ void Scroll::Update() {
 		else if (target_->x > limitEnd_.x) {
 
 			//カメラのX座標を限界値にする
-			camera_->translation_.x = limitEnd_.x - kWindowCenter_.x;
+			camera_->translation_.x = limitEnd_.x - camera_->center_.x;
 
 		}
 		//スクロール範囲内ならターゲット座標に追従
 		else {
 
-			camera_->translation_.x = target_->x - kWindowCenter_.x;
+			camera_->translation_.x = target_->x - camera_->center_.x;
 
 		}
 
@@ -50,13 +50,13 @@ void Scroll::Update() {
 		else if (target_->y > limitEnd_.y) {
 
 			//カメラのY座標を限界値にする
-			camera_->translation_.y = limitEnd_.y - kWindowCenter_.y;
+			camera_->translation_.y = limitEnd_.y - camera_->center_.y;
 
 		}
 		//スクロール範囲内ならターゲット座標に追従
 		else {
 
-			camera_->translation_.y = target_->y - kWindowCenter_.y;
+			camera_->translation_.y = target_->y - camera_->center_.y;
 
 		}
 

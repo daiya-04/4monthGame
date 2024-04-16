@@ -29,9 +29,10 @@ void GameScene::Init(){
 	stage_->SetCamera(camera_.get());
 
 	scroll_ = std::make_unique<Scroll>();
+	scroll_->SetCamera(camera_.get());
 	scroll_->Initialize();
 	scroll_->SetTarget(player_->GetPositionPtr());
-	scroll_->SetCamera(camera_.get());
+	
 
 	bgTexture_ = TextureManager::Load("backGround/backGround.png");
 
@@ -61,18 +62,20 @@ void GameScene::Update(){
 
 	if (player_->GetIsBirdsEye()) {
 		scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
+		camera_->ChangeDrawingRange({ 1920,1080.0f });
 	}
 	else {
 		scroll_->SetTarget(player_->GetPositionPtr());
+		camera_->ChangeDrawingRange({ 1280.0f,720.0f });
 	}
 
 	stage_->Update();
 
 	player_->Update();
 
-	camera_->UpdateMatrix();
-
 	scroll_->Update();
+
+	camera_->UpdateMatrix();
 
 }
 

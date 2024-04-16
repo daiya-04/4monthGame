@@ -59,6 +59,8 @@ public:
 		return billboardMat;
 	}
 
+	Vector2 GetDrawingRange() const { return drawingRange_; }
+
 private:
 
 	void CreateCBuffer();
