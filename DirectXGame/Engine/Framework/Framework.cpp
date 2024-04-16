@@ -14,12 +14,10 @@
 
 void DSFramework::Init(){
 	
-	WinApp::GetInstance()->CreateGameWindow(L"LE2A_12_セト_ダイヤ");
+	WinApp::GetInstance()->CreateGameWindow(L"～互サ道～");
 #ifdef NDEBUG
 	WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
 #endif // _DEBUG
-
-	
 	
 	DirectXCommon::GetInstance()->Initialize();
 	ImGuiManager::GetInstance()->Initialize();

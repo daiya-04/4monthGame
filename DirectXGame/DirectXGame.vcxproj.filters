@@ -50,8 +50,26 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{951f94c5-20fb-491b-b20e-c5528d356ac4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Block">
+      <UniqueIdentifier>{f999f1ee-b923-48ea-95a7-e0746a837c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Player">
+      <UniqueIdentifier>{9a685484-17cf-4365-993a-298ce5f54845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Stage">
+      <UniqueIdentifier>{d75cdc5d-40bc-4a5a-9b77-b6af6022bf3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\SaunaStone">
+      <UniqueIdentifier>{50420988-0adb-4fc3-926a-cf247daaed63}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Engine\Loader">
       <UniqueIdentifier>{2045ef8e-5836-4da6-9a64-5d419d54ce82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scroll">
+      <UniqueIdentifier>{c7acd84c-c7b7-45cf-b9fa-b4fb8787da09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Enemy">
+      <UniqueIdentifier>{4fdfdebd-ae0d-4473-8df4-adc213d31b30}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -125,11 +143,44 @@
     <ClCompile Include="Engine\2d\PostEffect.cpp">
       <Filter>Engine\2d</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Scene\DeafultScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\TitleScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\StageSelectScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Block\Block.cpp">
+      <Filter>Game\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Block\BlockTextureManager.cpp">
+      <Filter>Game\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Stage\Stage.cpp">
+      <Filter>Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Player\Player.cpp">
+      <Filter>Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SaunaStone\SaunaStone.cpp">
+      <Filter>Game\SaunaStone</Filter>
+    </ClCompile>
     <ClCompile Include="Engine\2d\Object2d.cpp">
       <Filter>Engine\2d</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Loader\LevelLoader.cpp">
       <Filter>Engine\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scroll\Scroll.cpp">
+      <Filter>Game\Scroll</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Player\PlayerParameter.cpp">
+      <Filter>Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Enemy\Enemy.cpp">
+      <Filter>Game\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,8 +280,41 @@
     <ClInclude Include="Engine\2d\Object2d.h">
       <Filter>Engine\2d</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Scene\DefaultScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\TitleScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\StageSelectScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Block\Block.h">
+      <Filter>Game\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Block\BlockTextureManager.h">
+      <Filter>Game\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Stage\Stage.h">
+      <Filter>Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Player\Player.h">
+      <Filter>Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SaunaStone\SaunaStone.h">
+      <Filter>Game\SaunaStone</Filter>
+    </ClInclude>
     <ClInclude Include="Engine\Loader\LevelLoader.h">
       <Filter>Engine\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scroll\Scroll.h">
+      <Filter>Game\Scroll</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Player\PlayerParameter.h">
+      <Filter>Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Enemy\Enemy.h">
+      <Filter>Game\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

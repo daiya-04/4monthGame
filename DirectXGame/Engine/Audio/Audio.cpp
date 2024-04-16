@@ -154,8 +154,16 @@ size_t Audio::LoadWaveInternal(const std::string& filename) {
 	FormatChunk format{};
 	//チャンクヘッダーの確認
 	file.read((char*)&format, sizeof(ChunkHeader));
-	if (strncmp(format.chunk.id, "fmt ", 4) != 0) {
-		assert(0);
+	while (strncmp(format.chunk.id, "fmt ", 4) != 0) {
+		//読み取り位置をJUNKチャンクの終わりまで進める
+		file.seekg(format.chunk.size, std::ios_base::cur);
+		//再読み込み
+		file.read((char*)&format.chunk, sizeof(format.chunk));
+		//読み込めなかった場合
+		if (file.eof()) {
+			assert(0);
+		}
+
 	}
 	//チャンク本体の読み込み
 	assert(format.chunk.size <= sizeof(format.fmt));
@@ -204,8 +212,16 @@ size_t Audio::LoadWaveInternal(const std::string& filename) {
 		// 再読み込み
 		file.read((char*)&data, sizeof(data));
 	}
-	if (strncmp(data.id, "data", 4) != 0) {
-		assert(0);
+	//データの読み込み
+	while (strncmp(data.id, "data", 4) != 0) {
+		//読み取り位置をJUNKチャンクの終わりまで進める
+		file.seekg(data.size, std::ios_base::cur);
+		//再読み込み
+		file.read((char*)&data, sizeof(data));
+		//読み込めなかった場合
+		if (file.eof()) {
+			assert(0);
+		}
 	}
 	//Dataチャンクのデータ部(波形データ)の読み込み
 	std::vector<BYTE> pBuffer(data.size);

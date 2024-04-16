@@ -117,9 +117,20 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DebugText\ImGuiManager.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
     <ClCompile Include="Engine\Framework\Framework.cpp" />
+    <ClCompile Include="Game\Block\Block.cpp" />
+    <ClCompile Include="Game\Block\BlockTextureManager.cpp" />
+    <ClCompile Include="Game\Enemy\Enemy.cpp" />
+    <ClCompile Include="Game\Player\Player.cpp" />
+    <ClCompile Include="Game\Player\PlayerParameter.cpp" />
+    <ClCompile Include="Game\SaunaStone\SaunaStone.cpp" />
+    <ClCompile Include="Game\Scene\DeafultScene.cpp" />
     <ClCompile Include="Game\Scene\GameScene.cpp" />
     <ClCompile Include="Engine\Collision\Hit.cpp" />
     <ClCompile Include="Engine\DebugText\GlobalVariables.cpp" />
+    <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene.cpp" />
+    <ClCompile Include="Game\Scroll\Scroll.cpp" />
+    <ClCompile Include="Game\Stage\Stage.cpp" />
     <ClCompile Include="Engine\Loader\LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\3d\ModelManager.cpp" />
@@ -160,6 +171,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\WinApp.h" />
     <ClInclude Include="Engine\3d\WorldTransform.h" />
     <ClInclude Include="Engine\Framework\Framework.h" />
+    <ClInclude Include="Game\Block\Block.h" />
+    <ClInclude Include="Game\Block\BlockTextureManager.h" />
+    <ClInclude Include="Game\Enemy\Enemy.h" />
+    <ClInclude Include="Game\Player\Player.h" />
+    <ClInclude Include="Game\Player\PlayerParameter.h" />
+    <ClInclude Include="Game\SaunaStone\SaunaStone.h" />
+    <ClInclude Include="Game\Scene\DefaultScene.h" />
     <ClInclude Include="Game\Scene\GameScene.h" />
     <ClInclude Include="Game\MyGame.h" />
     <ClInclude Include="Engine\BaseScene\IScene.h" />
@@ -168,6 +186,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Collision\Hit.h" />
     <ClInclude Include="Engine\DebugText\GlobalVariables.h" />
     <ClInclude Include="Engine\3d\SpotLight.h" />
+    <ClInclude Include="Game\Scene\StageSelectScene.h" />
+    <ClInclude Include="Game\Scene\TitleScene.h" />
+    <ClInclude Include="Game\Scroll\Scroll.h" />
+    <ClInclude Include="Game\Stage\Stage.h" />
     <ClInclude Include="Engine\Loader\LevelLoader.h" />
     <ClInclude Include="Engine\2d\Object2d.h" />
   </ItemGroup>

@@ -3,7 +3,6 @@
 #include <memory>
 #include <list>
 #include <vector>
-#include <array>
 
 #include "Sprite.h"
 #include "Object2d.h"
@@ -13,11 +12,8 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 
-#include "Stage/Stage.h"
-#include "Player/Player.h"
-#include "Scroll/Scroll.h"
 
-class GameScene : public DefaultScene {
+class StageSelectScene : public DefaultScene {
 public:
 
 	void Init()override;
@@ -36,24 +32,9 @@ public:
 
 	void DebugGUI()override;
 
-	~GameScene()override;
-	
+	~StageSelectScene()override;
+
 
 private:
 
-	void Reset();
-
-	std::unique_ptr<Stage> stage_;
-
-	std::shared_ptr<Player> player_;
-
-	std::shared_ptr<Camera> camera_;
-
-	std::unique_ptr<Scroll> scroll_;
-
-	uint32_t bgTexture_;
-
-	std::unique_ptr<Sprite> backGround_;
-
 };
-
