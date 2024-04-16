@@ -59,6 +59,13 @@ void GameScene::Update(){
 
 	}
 
+	if (player_->GetIsBirdsEye()) {
+		scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
+	}
+	else {
+		scroll_->SetTarget(player_->GetPositionPtr());
+	}
+
 	stage_->Update();
 
 	player_->Update();

@@ -47,7 +47,7 @@ public:
 		//採掘速度
 		int32_t addDigSpeed = 0;
 		//耐熱時間
-		uint32_t addSaunaTime = 0;
+		int32_t addSaunaTime = 0;
 	};
 
 	//ブロック1つ当たりの加算量
@@ -57,7 +57,7 @@ public:
 		//採掘速度
 		int32_t digSpeed = 5;
 		//耐熱時間
-		uint32_t saunaTime = 100;
+		int32_t saunaTime = 100;
 	};
 
 	//プレイヤーのサイズ
@@ -180,15 +180,19 @@ public:
 
 	Vector2* GetPositionPtr() { return &position_; }
 
+	Vector2* GetBirdsEyePositionPtr() { return &birdsEyePosition_; }
+
 	const AABB2D& GetCollision() { return collision_; }
 
-	void SetCanJump(bool flag) { parameters_[currentCharacters_].Jump_.canJump = flag; }
+	void SetCanJump(bool flag) { parameters_[currentCharacters_]->Jump_.canJump = flag; }
 
 	void ResetVelocityY() { velocity_.y = 0.0f; }
 
 	void SetBlocks(std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_>* blocks) { blocksPtr_ = blocks; }
 
 	bool GetIsDead() const { return isDead_; }
+
+	bool GetIsBirdsEye() const { return isBirdsEye_; }
 
 private:
 
@@ -237,8 +241,11 @@ private:
 	//当たり判定
 	AABB2D collision_{};
 
+	//デフォルトパラメータ。調整、初期化用
+	std::unique_ptr<PlayerParameter> defaultParameter_;
+
 	//パラメータを纏めたもの
-	PlayerParameter parameters_[kMaxPlayer];
+	std::array<std::unique_ptr<PlayerParameter>, kMaxPlayer> parameters_;
 
 	//パラメータ値加算量を蓄積するもの
 	AddParameters addParameters_;
@@ -288,6 +295,9 @@ private:
 	//前フレーム右下
 	Vector2 preRightBottom_{};
 
+	//俯瞰視点のターゲット座標
+	Vector2 birdsEyePosition_{};
+
 	//プレイヤー画像
 	uint32_t texture_;
 	uint32_t textureLeft_;
@@ -321,6 +331,9 @@ private:
 
 	//拠点から外に出るときのフラグ
 	bool isOut_ = false;
+
+	//カメラ俯瞰視点に移行する時のフラグ
+	bool isBirdsEye_ = false;
 
 	//死亡フラグ
 	bool isDead_ = false;
