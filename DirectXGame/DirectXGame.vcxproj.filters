@@ -175,6 +175,8 @@
     <ClCompile Include="Engine\Loader\LevelLoader.cpp">
       <Filter>Engine\Loader</Filter>
     </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\Snow\SnowManager.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -309,5 +311,7 @@
     <ClInclude Include="Engine\Loader\LevelLoader.h">
       <Filter>Engine\Loader</Filter>
     </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\Snow\SnowManager.h" />
+    <ClInclude Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.h" />
   </ItemGroup>
 </Project>

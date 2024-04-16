@@ -23,10 +23,22 @@ void GameScene::Init(){
 	sample1->Initialize();
 	
 	waterDropManager_ = WaterDropManager::GetInstance();
+
+	snowManager_ = SnowManager::GetInstance();
+
+	camera_ = std::make_shared<Camera>();
+	camera_->Init();
+	camera_->translation_ = { 0.0f,0.0f,0.0f };
+
+	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("star.png"), { 1.0f,1.0f }));
 }
 
 void GameScene::Update(){
 	DebugGUI();
+
+	testObject_->position_=testObjectPosition_;
+	camera_->UpdateMatrix();
+
 	environmentEffectsManager_->Update();
 	heatHazeManager_->Update();
 	waterDropManager_->Update();
@@ -103,23 +115,33 @@ void GameScene::DrawUI(){
 void GameScene::DebugGUI(){
 #ifdef _DEBUG
 
-	
+	ImGui::Begin("testObkect");
+	ImGui::DragFloat2("position", &testObjectPosition_.x, 1.0f);
+	ImGui::End();
 
 #endif // _DEBUG
 }
 
 void GameScene::DrawCold(PostEffect* targetScene) {
 	//エフェクトの描画
+	snowManager_->PreDrawUpdateEffect();
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	testObject_->Draw(*camera_.get());
+	snowManager_->PostDrawUpdateEffect(*(camera_.get()));
+	 
 	//cameraFrozen_->DrawInternal(commandList_);
 	//取得したシーンに対して描画
 	targetScene->PreDrawScene(commandList_);
 	Sprite::preDraw(commandList_);
 	sample0->Draw();
 	Sprite::postDraw();
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	testObject_->Draw(*camera_.get());
+	snowManager_->Draw();
 	cameraFrozen_->Draw(commandList_);
 	targetScene->PostDrawScene(commandList_);
 
-
+	
 }
 
 void GameScene::DrawHeat(PostEffect* targetScene) {

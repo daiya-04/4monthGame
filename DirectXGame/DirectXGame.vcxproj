@@ -123,6 +123,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\EnvironmentEffects\EnvironmentEffectsManager.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\Snow\SnowManager.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropManager.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.cpp" />
@@ -178,6 +180,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\EnvironmentEffects\EnvironmentEffectsManager.h" />
     <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.h" />
     <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.h" />
+    <ClInclude Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.h" />
+    <ClInclude Include="Game\EnvironmentEffects\Snow\SnowManager.h" />
     <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.h" />
     <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropManager.h" />
     <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.h" />

@@ -20,6 +20,7 @@
 #include "EnvironmentEffects/CameraFrozen/CameraFrozenManager.h"
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
 #include "EnvironmentEffects/WaterDrop/WaterDropManager.h"
+#include "EnvironmentEffects/Snow/SnowManager.h"
 class GameScene : public IScene {
 public:
 
@@ -66,8 +67,13 @@ private:
 	std::unique_ptr<Sprite> sample1;
 
 	WaterDropManager* waterDropManager_;
+	SnowManager* snowManager_;
 	float offset_;
 	float roop_;
 	float width_;
+
+	std::shared_ptr<Camera> camera_;
+	std::shared_ptr<Object2d> testObject_;//雪テスト用
+	Vector2 testObjectPosition_ = {640.0f,160.0f};
 };
 
