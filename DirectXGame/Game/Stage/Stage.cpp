@@ -104,9 +104,9 @@ void Stage::Draw() {
 	for (auto& stone : stones_) {
 		
 		if (stone->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
-			stone->GetPosition().x <= camera_->translation_.x + 1280 + Block::kBlockSize_ &&
+			stone->GetPosition().x <= camera_->translation_.x + camera_->GetDrawingRange().x + Block::kBlockSize_ &&
 			stone->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
-			stone->GetPosition().y <= camera_->translation_.y + 720 + Block::kBlockSize_) {
+			stone->GetPosition().y <= camera_->translation_.y + camera_->GetDrawingRange().y + Block::kBlockSize_) {
 			stone->Draw(*camera_);
 		}
 
@@ -118,9 +118,9 @@ void Stage::Draw() {
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
 
 			if (map_[y][x]->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
-				map_[y][x]->GetPosition().x <= camera_->translation_.x + 1280 + Block::kBlockSize_ &&
+				map_[y][x]->GetPosition().x <= camera_->translation_.x + camera_->GetDrawingRange().x + Block::kBlockSize_ &&
 				map_[y][x]->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
-				map_[y][x]->GetPosition().y <= camera_->translation_.y + 720 + Block::kBlockSize_) {
+				map_[y][x]->GetPosition().y <= camera_->translation_.y + camera_->GetDrawingRange().y + Block::kBlockSize_) {
 				map_[y][x]->Draw(*camera_);
 			}
 			
