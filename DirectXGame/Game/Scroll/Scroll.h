@@ -21,7 +21,7 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	//画面の中心座標
-	static inline const Vector2 kWindowCenter_ = { 640.0f,360.0f };
+	static inline Vector2 kWindowCenter_ = { 640.0f,360.0f };
 
 	//スクロール制限始点
 	static inline Vector2 limitStart_{ 0.0f,-1000.0f };
@@ -42,6 +42,6 @@ private:
 	Vector2 scroll_{};
 
 	//スクロール開始座標
-	Vector2 startScroll_{ limitStart_.x + kWindowCenter_.x,limitStart_.y + kWindowCenter_.y };
+	Vector2 startScroll_;
 
 };
