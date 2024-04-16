@@ -15,7 +15,9 @@
 void DSFramework::Init(){
 	
 	WinApp::GetInstance()->CreateGameWindow(L"～互サ道～");
-
+#ifdef NDEBUG
+	WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
+#endif // _DEBUG
 	
 	DirectXCommon::GetInstance()->Initialize();
 	ImGuiManager::GetInstance()->Initialize();
@@ -41,8 +43,14 @@ void DSFramework::Init(){
 
 void DSFramework::Update(){
 
-	if (WinApp::GetInstance()->ProcessMessage()) { endRequest_ = true; }
+	if (WinApp::GetInstance()->ProcessMessage() || Input::GetInstance()->TriggerKey(DIK_ESCAPE)) { endRequest_ = true; }
 
+	if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_9)) {
+		WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
+	}
+	if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_0)) {
+		WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kWindow);
+	}
 
 	ImGuiManager::GetInstance()->Begin();
 

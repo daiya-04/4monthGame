@@ -33,6 +33,8 @@ LRESULT WinApp::WinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 void WinApp::CreateGameWindow(const wchar_t* title, int32_t clientWidth, int32_t clientHeight) {
 
+	title_ = title;
+
 	//システムタイマーの分解機能を上げる
 	timeBeginPeriod(1);
 
@@ -51,25 +53,28 @@ void WinApp::CreateGameWindow(const wchar_t* title, int32_t clientWidth, int32_t
 	//ウィンドウクラスを登録する
 	RegisterClass(&wc_);
 
+	windowStyle_ = WS_OVERLAPPEDWINDOW;
+
 	//ウィンドウサイズを表す構造体にクライアント領域を入れる
-	RECT rect = { 0,0,clientWidth,clientHeight };
+	windowRect_ = { 0,0,clientWidth,clientHeight };
 	//クライアント領域を元に実際のサイズにrectを変更してもらう
-	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+	AdjustWindowRect(&windowRect_, windowStyle_, false);
 
 	hwnd_ = CreateWindow(
 		wc_.lpszClassName,
-		title,
+		title_,
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		rect.right - rect.left,
-		rect.bottom - rect.top,
+		50,
+		30,
+		windowRect_.right - windowRect_.left,
+		windowRect_.bottom - windowRect_.top,
 		nullptr,
 		nullptr,
 		wc_.hInstance,
 		nullptr
 	);
 
+	
 	ShowWindow(hwnd_, SW_SHOW);
 }
 
@@ -91,4 +96,36 @@ bool WinApp::ProcessMessage() {
 void WinApp::TerminateGameWindow() {
 	CoUninitialize();
 	CloseWindow(hwnd_);
+}
+
+void WinApp::ChangeScreenMode(ScreenMode screenMode) {
+
+	switch (screenMode) {
+		case ScreenMode::kWindow:
+			// 通常のウィンドウに戻す
+			SetWindowLong(hwnd_, GWL_STYLE, windowStyle_);
+			SetWindowPos(
+				hwnd_,
+				NULL,
+				50, 30,
+				windowRect_.right - windowRect_.left,
+				windowRect_.bottom - windowRect_.top,
+				SWP_FRAMECHANGED | SWP_SHOWWINDOW
+			);
+			break;
+		case ScreenMode::kFullScreen:
+			// 通常ウィンドウの時の状態を保存
+			windowStyle_ = GetWindowLong(hwnd_, GWL_STYLE);
+			GetWindowRect(hwnd_, &windowRect_);
+
+			// フルスクリーンにする
+			SetWindowLong(hwnd_, GWL_STYLE, WS_POPUP);
+			SetWindowPos(hwnd_, HWND_TOP, 0, 0,
+				GetSystemMetrics(SM_CXSCREEN),
+				GetSystemMetrics(SM_CYSCREEN),
+				SWP_FRAMECHANGED | SWP_SHOWWINDOW
+			);
+			break;
+	}
+
 }
