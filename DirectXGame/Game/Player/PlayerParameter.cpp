@@ -23,3 +23,24 @@ void PlayerParameter::Initialize() {
 	saunaTimer_.countSaunaTimer = saunaTimer_.maxSaunaTime;
 
 }
+
+void PlayerParameter::CopyParameter(const PlayerParameter& origin) {
+
+	speed_ = origin.speed_;
+	maxMoveSpeed_ = origin.maxMoveSpeed_;
+
+	Jump_.kMaxGraceTime = origin.Jump_.kMaxGraceTime;
+	Jump_.jumpVelocity = origin.Jump_.jumpVelocity;
+
+	wallJump_.kMaxGraceTime = origin.wallJump_.kMaxGraceTime;
+	wallJump_.wallJumpVelocity = origin.wallJump_.wallJumpVelocity;
+
+	dig_.digInterval = origin.dig_.digInterval;
+
+	chargeJump_.maxChargeTime = origin.chargeJump_.maxChargeTime;
+	chargeJump_.chargeJumpVelocity = origin.chargeJump_.chargeJumpVelocity;
+	chargeJump_.jumpValue = origin.chargeJump_.jumpValue;
+
+	saunaTimer_.maxSaunaTime = origin.saunaTimer_.maxSaunaTime;
+
+}

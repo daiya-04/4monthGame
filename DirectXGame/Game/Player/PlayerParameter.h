@@ -28,12 +28,12 @@ struct WorkWallJump {
 };
 
 //ヒップドロップ関連の構造体
-struct WorkHipDrop {
-	//ヒップドロップ可能かどうか
-	bool canHipDrop = false;
-	//ヒップドロップ可能になるまでの空中待機フレーム
-	int32_t kNecessaryTime = 15;
-};
+//struct WorkHipDrop {
+//	//ヒップドロップ可能かどうか
+//	bool canHipDrop = false;
+//	//ヒップドロップ可能になるまでの空中待機フレーム
+//	int32_t kNecessaryTime = 15;
+//};
 
 //穴掘り関連の処理
 struct WorkDig {
@@ -48,11 +48,11 @@ struct WorkDig {
 };
 
 //掴み関連の処理
-struct WorkCatch {
-	//現在掴める状態かどうか
-	bool canCatch = true;
-
-};
+//struct WorkCatch {
+//	//現在掴める状態かどうか
+//	bool canCatch = true;
+//
+//};
 
 //溜めジャンプ関連の構造体
 struct WorkChargeJump {
@@ -61,7 +61,7 @@ struct WorkChargeJump {
 	//現在チャージ可能かどうか
 	bool isCharge = false;
 	//チャージにかかる時間
-	int32_t kMaxChargeTime = 40;
+	int32_t maxChargeTime = 40;
 	//チャージ時間をカウントする変数
 	int32_t chargeTimer = 0;
 	//溜めジャンプのy移動量
@@ -91,7 +91,11 @@ public:
 
 	void Initialize();
 
-	
+	/// <summary>
+	/// 必要な変数をコピーする関数
+	/// </summary>
+	/// <param name="origin">コピー元</param>
+	void CopyParameter(const PlayerParameter& origin);
 
 	//ジャンプ
 	WorkJump Jump_;
@@ -100,10 +104,10 @@ public:
 	WorkWallJump wallJump_;
 
 	//ヒップドロップ
-	WorkHipDrop hipDrop_;
+	/*WorkHipDrop hipDrop_;*/
 
 	//掴み
-	WorkCatch catch_;
+	/*WorkCatch catch_;*/
 
 	//溜めジャンプ
 	WorkChargeJump chargeJump_;

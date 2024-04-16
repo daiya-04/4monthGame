@@ -85,7 +85,7 @@ void Player::Initialize() {
 
 	SetOnBase();
 
-	std::string groupName = "Player";
+	std::string groupName = "Player - DefaultParameter";
 
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
 
@@ -95,10 +95,15 @@ void Player::Initialize() {
 	GlobalVariables::GetInstance()->AddItem(groupName, "Add Value - SaunaTime", addValue_.saunaTime);
 
 	//パラメータ調整項目
+	GlobalVariables::GetInstance()->AddItem(groupName, "Move - AccelValue", defaultParameter_->speed_);
+	GlobalVariables::GetInstance()->AddItem(groupName, "Move - MaxSpeed", defaultParameter_->maxMoveSpeed_);
 	GlobalVariables::GetInstance()->AddItem(groupName, "Jump - Velocity", defaultParameter_->Jump_.jumpVelocity);
 	GlobalVariables::GetInstance()->AddItem(groupName, "WallJump - JumpVelocity", defaultParameter_->wallJump_.wallJumpVelocity);
 	GlobalVariables::GetInstance()->AddItem(groupName, "Dig - Interval", defaultParameter_->dig_.digInterval);
-
+	GlobalVariables::GetInstance()->AddItem(groupName, "ChargeJump - ChargeTime", defaultParameter_->chargeJump_.maxChargeTime);
+	GlobalVariables::GetInstance()->AddItem(groupName, "ChargeJump - Velocity", defaultParameter_->chargeJump_.chargeJumpVelocity);
+	GlobalVariables::GetInstance()->AddItem(groupName, "ChargeJump - JumpValue", defaultParameter_->chargeJump_.jumpValue);
+	GlobalVariables::GetInstance()->AddItem(groupName, "SaunaTimer - SaunaTime", defaultParameter_->saunaTimer_.maxSaunaTime);
 
 
 }
@@ -352,7 +357,7 @@ void Player::Jump() {
 	}
 	//溜めジャンプが可能なときに必要な溜めの時間まで行かなかったら通常ジャンプの処理に切り替え
 	else if (parameters_[currentCharacters_]->Jump_.canJump && input_->ReleaseButton(Input::Button::A) && parameters_[currentCharacters_]->chargeJump_.isCharge &&
-		parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.kMaxChargeTime) {
+		parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
 		velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 		parameters_[currentCharacters_]->Jump_.canJump = false;
 	}
@@ -398,7 +403,7 @@ void Player::ChargeJump() {
 	}
 
 	//チャージ完了した状態でボタンを離した時に溜めジャンプ発動
-	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.kMaxChargeTime &&
+	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.maxChargeTime &&
 		input_->ReleaseButton(Input::Button::A)) {
 
 		velocity_.y = parameters_[currentCharacters_]->chargeJump_.chargeJumpVelocity;
@@ -413,7 +418,7 @@ void Player::ChargeJump() {
 	}
 
 	//チャージできたら画像の色変更
-	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.kMaxChargeTime) {
+	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
 		object_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
 	}
 
@@ -421,7 +426,7 @@ void Player::ChargeJump() {
 	if (parameters_[currentCharacters_]->chargeJump_.isCharge && input_->PushButton(Input::Button::A)) {
 
 		//最大値になるまでカウント
-		if (parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.kMaxChargeTime) {
+		if (parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
 			parameters_[currentCharacters_]->chargeJump_.chargeTimer++;
 		}
 
@@ -687,7 +692,7 @@ void Player::CountSaunaTime() {
 
 	if (parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer > 0) {
 
-		/*parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer--;*/
+		parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer--;
 
 		//カウント0で死亡
 		if (parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer <= 0) {
@@ -1272,10 +1277,47 @@ void Player::Debug() {
 
 	ImGui::Begin("Player");
 	ImGui::Text("position x : %1.2f y : %1.2f", position_.x, position_.y);
+	ImGui::Separator();
+	//左のプレイヤーのパラメータ
+	ImGui::Text("Left");
+	ImGui::Text("L-Accel : %1.2f", parameters_[kLeftPlayer]->speed_);
+	ImGui::Text("L-MaxSpeed : %1.2f", parameters_[kLeftPlayer]->maxMoveSpeed_);
+	ImGui::Text("L-DigInterval : %d", parameters_[kLeftPlayer]->dig_.digInterval);
+	ImGui::Text("L-DigCoolTime : %d", parameters_[kLeftPlayer]->dig_.digCount);
+	ImGui::Text("L-MaxChargeTime : %d", parameters_[kLeftPlayer]->chargeJump_.maxChargeTime);
+	ImGui::Text("L-ChargeTimer : %d", parameters_[kLeftPlayer]->chargeJump_.chargeTimer);
+	ImGui::Text("L-MaxSaunaTime : %d", parameters_[kLeftPlayer]->saunaTimer_.maxSaunaTime);
+	ImGui::Text("L-SaunaTime : %d", parameters_[kLeftPlayer]->saunaTimer_.countSaunaTimer);
+	ImGui::Separator();
+	//右のプレイヤーのパラメータ
+	ImGui::Text("Right");
+	ImGui::Text("R-Accel : %1.2f", parameters_[kRightPlayer]->speed_);
+	ImGui::Text("R-MaxSpeed : %1.2f", parameters_[kRightPlayer]->maxMoveSpeed_);
+	ImGui::Text("R-DigInterval : %d", parameters_[kRightPlayer]->dig_.digInterval);
+	ImGui::Text("R-DigCoolTime : %d", parameters_[kRightPlayer]->dig_.digCount);
+	ImGui::Text("R-MaxChargeTime : %d", parameters_[kRightPlayer]->chargeJump_.maxChargeTime);
+	ImGui::Text("R-ChargeTimer : %d", parameters_[kRightPlayer]->chargeJump_.chargeTimer);
+	ImGui::Text("R-MaxSaunaTime : %d", parameters_[kRightPlayer]->saunaTimer_.maxSaunaTime);
+	ImGui::Text("R-SaunaTime : %d", parameters_[kRightPlayer]->saunaTimer_.countSaunaTimer);
 	ImGui::End();
 
 	//プレイヤーパラメータ調整
+	std::string groupName = "Player - DefaultParameter";
 
+	addValue_.speed = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Add Value - Speed");
+	addValue_.digSpeed = GlobalVariables::GetInstance()->GetIntValue(groupName, "Add Value - DigSpeed");
+	addValue_.saunaTime = GlobalVariables::GetInstance()->GetIntValue(groupName, "Add Value - SaunaTime");
+	defaultParameter_->speed_ = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Move - AccelValue");
+	defaultParameter_->maxMoveSpeed_ = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Move - MaxSpeed");
+	defaultParameter_->Jump_.jumpVelocity = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Jump - Velocity");
+	defaultParameter_->wallJump_.wallJumpVelocity = GlobalVariables::GetInstance()->GetVec2Value(groupName, "WallJump - JumpVelocity");
+	defaultParameter_->dig_.digInterval = GlobalVariables::GetInstance()->GetIntValue(groupName, "Dig - Interval");
+	defaultParameter_->chargeJump_.maxChargeTime = GlobalVariables::GetInstance()->GetIntValue(groupName, "ChargeJump - ChargeTime");
+	defaultParameter_->chargeJump_.chargeJumpVelocity = GlobalVariables::GetInstance()->GetFloatValue(groupName, "ChargeJump - Velocity");
+	defaultParameter_->chargeJump_.jumpValue = GlobalVariables::GetInstance()->GetIntValue(groupName, "ChargeJump - JumpValue");
+	defaultParameter_->saunaTimer_.maxSaunaTime = GlobalVariables::GetInstance()->GetIntValue(groupName, "SaunaTimer - SaunaTime");
+
+	
 
 #endif // _DEBUG
 

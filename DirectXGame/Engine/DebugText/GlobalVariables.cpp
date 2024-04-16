@@ -60,7 +60,7 @@ void GlobalVariables::Update() {
 			//Vec2型の値を保持していれば
 			else if (std::holds_alternative<Vector2>(item.value)) {
 				Vector2* ptr = std::get_if<Vector2>(&item.value);
-				ImGui::DragFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f);
+				ImGui::DragFloat2(itemName.c_str(), reinterpret_cast<float*>(ptr), 0.01f);
 			}
 
 		}
