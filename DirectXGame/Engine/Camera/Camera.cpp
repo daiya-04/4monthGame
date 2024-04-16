@@ -58,5 +58,13 @@ void Camera::UpdateViewMatrix() {
 
 void Camera::UpdateProjectionMatrix() {
 	//matProjection_ = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
-	matProjection_ = MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(WinApp::kClientWidth), static_cast<float>(WinApp::kClientHeight), 0.0f, 100.0f);
+	matProjection_ = MakeOrthographicMatrix(0.0f, 0.0f, static_cast<float>(drawingRange_.x), static_cast<float>(drawingRange_.y), 0.0f, 100.0f);
+}
+
+void Camera::ChangeDrawingRange(const Vector2& drawingRange) {
+	drawingRange_ = drawingRange;
+	center_ = drawingRange / 2.0f;
+
+	UpdateProjectionMatrix();
+	Map();
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec3.h"
+#include "Vec2.h"
 #include "Matrix44.h"
 #include <d3d12.h>
 #include <wrl.h>
@@ -14,10 +15,10 @@ struct CBufferDataCamera {
 class Camera {
 public:
 
-	Vector3 translation_ = { 0.0f, 0.0f, -10.0f };
+	Vector3 translation_ = { 0.0f, 0.0f, 0.0f };
 	Vector3 rotation_ = {};
 
-	
+	Vector2 center_ = { 1280.0f / 2.0f,720.0f / 2.0f };
 
 private:
 
@@ -25,6 +26,8 @@ private:
 	float aspectRatio = (float)16 / (float)9;
 	float nearZ = 0.1f;
 	float farZ = 1000.0f;
+
+	Vector2 drawingRange_ = { 1280.0f,720.0f };
 
 	Matrix4x4 matView_ = MakeIdentity44();
 	Matrix4x4 matProjection_ = MakeIdentity44();
@@ -41,6 +44,8 @@ public:
 	void UpdateViewMatrix();
 
 	void UpdateProjectionMatrix();
+
+	void ChangeDrawingRange(const Vector2& drawingRange);
 
 	D3D12_GPU_VIRTUAL_ADDRESS GetGPUVirtualAddress() const { return cBuffer_->GetGPUVirtualAddress(); }
 
