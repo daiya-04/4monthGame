@@ -177,6 +177,7 @@
     </ClCompile>
     <ClCompile Include="Game\EnvironmentEffects\Snow\SnowManager.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\Snow\SnowObstacle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -313,5 +314,6 @@
     </ClInclude>
     <ClInclude Include="Game\EnvironmentEffects\Snow\SnowManager.h" />
     <ClInclude Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.h" />
+    <ClInclude Include="Game\EnvironmentEffects\Snow\SnowObstacle.h" />
   </ItemGroup>
 </Project>

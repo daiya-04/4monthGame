@@ -167,6 +167,10 @@ void SnowEffectDrawer::Init() {
 	materialBuff_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color_ = Vector4({ 1.0f,1.0f,1.0f,1.0f });
 
+	cameraSlideBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Vector2));
+	cameraSlideBuff_->Map(0, nullptr, reinterpret_cast<void**>(&cameraSlideData_));
+	cameraSlideData_->x = 0;
+	cameraSlideData_->y = 0;
 }
 
 
@@ -190,6 +194,7 @@ void SnowEffectDrawer::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRI
 	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(cmdList, 2, textureHandle_);
 	cmdList->SetGraphicsRootDescriptorTable(1, prevSceneHandle);
 	cmdList->SetGraphicsRootDescriptorTable(2, nextSceneHandle);
+	cmdList->SetGraphicsRootConstantBufferView(3, cameraSlideBuff_->GetGPUVirtualAddress());
 
 	cmdList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
@@ -343,7 +348,7 @@ void SnowEffectDrawer::CreateGraphicsPipelineState() {
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[3] = {};
+	D3D12_ROOT_PARAMETER rootParameters[4] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
@@ -360,6 +365,9 @@ void SnowEffectDrawer::CreateGraphicsPipelineState() {
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRangeNextScene; //Tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeNextScene); //Tableで利用する数
 
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
+	rootParameters[3].Descriptor.ShaderRegister = 1;   //レジスタ番号1とバインド
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ

@@ -8,8 +8,8 @@ void SnowManager::Init() {
 
 	
 	for (int i = 0; i < 2; i++) {
-		internalEffectTextures_[i].reset(new PostEffect());
-		internalEffectTextures_[i]->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+		internalEffectTextures_[i].reset(new SnowObstacle());
+		internalEffectTextures_[i]->Init();
 	}
 	latestTextureNum_ = 0;
 	
@@ -35,6 +35,7 @@ void SnowManager::PreDrawUpdateEffect() {
 
 	latestTextureNum_ = bool(!latestTextureNum_);
 	internalEffectTextures_[latestTextureNum_]->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
+	internalEffectTextures_[!latestTextureNum_]->SetCamelaSlide(cameraSlide_);
 	internalEffectTextures_[!latestTextureNum_]->Draw(DirectXCommon::GetInstance()->GetCommandList());
 	//新しい位置の書き込み処理
 	

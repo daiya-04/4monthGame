@@ -1,4 +1,4 @@
-#include"WaterDropScene.hlsli"
+#include"NoneEffect.hlsli"
 
 struct Material {
 	float32_t4 color;
@@ -12,23 +12,23 @@ struct SlideData {
 
 ConstantBuffer<SlideData> gSlide : register(b1);
 
+
 struct PixelShaderOutput {
 	float32_t4 color : SV_TARGET0;
 };
 
-Texture2D<float32_t4> gTexturePrevScene : register(t0);
-Texture2D<float32_t4> gTextureNextScene : register(t1);
+Texture2D<float32_t4> gTexture : register(t0);
 
 SamplerState gSampler : register(s0);
 
-float length(float32_t2 distance) {
-	return sqrt(dot(distance, distance));
-}
-
 PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
-	output.color = gTexturePrevScene.Sample(gSampler, input.texcoord);
-	if (gTextureNextScene.Sample(gSampler, input.texcoord).a>0.5f || output.color.a <=0.1f) {
+	float32_t2 slide = gSlide.slide;
+	slide.x /= 1280;
+	//slide.y += 1.0f;
+	slide.y /= 720;
+	output.color = gTexture.Sample(gSampler, input.texcoord+slide);
+	if (output.color.a <= 0.01f|| input.texcoord.x <= 0.001f || input.texcoord.x >= 0.999f) {
 		discard;
 	}
 	output.color.a = 1.0f;

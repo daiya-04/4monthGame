@@ -45,6 +45,9 @@ public: //メンバ関数
 	/// SRV指定用ハンドル取得
 	/// </summary>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU() { return textureSrvHandleGPU_; };
+
+	void SetCamelaSlide(const Vector2& vec) { (*cameraSlideData_) = vec; };
+
 private:
 
 	void TransferVertex();
@@ -84,6 +87,10 @@ private: //メンバ変数
 
 	ComPtr<ID3D12Resource> materialBuff_;
 	MaterialData* materialData_ = nullptr;
+
+	//カメラ平行移動
+	ComPtr<ID3D12Resource> cameraSlideBuff_;
+	Vector2* cameraSlideData_=nullptr;
 
 };
 

@@ -34,11 +34,12 @@ void GameScene::Init(){
 }
 
 void GameScene::Update(){
+	preCameraPosition_ = camera_->translation_;
 	DebugGUI();
 
 	testObject_->position_=testObjectPosition_;
 	camera_->UpdateMatrix();
-
+	snowManager_->SetCameraSlide({ camera_->translation_.x - preCameraPosition_.x, camera_->translation_.y - preCameraPosition_.y });
 	environmentEffectsManager_->Update();
 	heatHazeManager_->Update();
 	waterDropManager_->Update();
@@ -117,6 +118,7 @@ void GameScene::DebugGUI(){
 
 	ImGui::Begin("testObkect");
 	ImGui::DragFloat2("position", &testObjectPosition_.x, 1.0f);
+	ImGui::DragFloat2("cameraPos", &camera_->translation_.x, 1.0f);
 	ImGui::End();
 
 #endif // _DEBUG
