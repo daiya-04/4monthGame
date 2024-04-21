@@ -33,7 +33,8 @@ Stage::Stage()
 	borders_[1].reset(Object2d::Create(borderTex_, kBorderRight));
 	borders_[1]->SetAnchorpoint({ 0.5f,1.0f });
 
-	magma_.reset(Object2d::Create(magmaTex_, { 0.0f,magmaLine_ }));
+	magma_.reset(Object2d::Create(magmaTex_, { kBasePosition.x,magmaLine_ }));
+	magma_->SetColor({ 1.0f,1.0f,1.0f,0.8f });
 	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 64.0f });
 	magma_->SetTextureArea({ 0.0f,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 32.0f });
 
@@ -112,6 +113,17 @@ void Stage::Update() {
 
 		numbers_[i]->SetTextureArea({64.0f * num, 0.0f}, { 64.0f,64.0f });
 
+	}
+
+	//マグマ更新
+	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 10000.0f - magmaLine_ });
+	magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 10000.0f - magmaLine_ });
+
+	magmaLine_ -= 0.1f;
+
+	magmaTexBaseX_++;
+	if (magmaTexBaseX_ > 256.0f) {
+		magmaTexBaseX_ = 0.0f;
 	}
 
 }

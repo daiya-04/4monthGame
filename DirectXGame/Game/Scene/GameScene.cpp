@@ -91,9 +91,9 @@ void GameScene::DrawBackGround(){
 
 void GameScene::DrawObject(){
 
-	stage_->Draw();
-
 	player_->Draw(*camera_.get());
+
+	stage_->Draw();
 
 }
 
