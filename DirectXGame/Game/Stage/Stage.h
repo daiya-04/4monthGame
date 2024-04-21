@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include <list>
 #include "Object2d.h"
+#include "Sprite.h"
 
 class Player;
 
@@ -32,6 +33,11 @@ public:
 	void Draw();
 
 	/// <summary>
+	/// UI描画
+	/// </summary>
+	void DrawUI();
+
+	/// <summary>
 	/// マップをロードする
 	/// </summary>
 	/// <param name="stageNumber">ステージ番号</param>
@@ -53,12 +59,12 @@ public:
 
 	uint32_t blockPositions_[kMaxStageHeight_][kMaxStageWidth_]{};
 
-	static inline const Vector2 kBasePosition = { float(kMaxStageWidth_ * Block::kBlockSize_ / 2.0f - Block::kBlockHalfSize_),
-		-80.0f };
+	static inline const Vector2 kBasePosition =
+	{ float(kMaxStageWidth_ * Block::kBlockSize_ / 2.0f - Block::kBlockHalfSize_),-80.0f };
 
-	static inline const Vector2 kBorderLeft = { float(kBasePosition.x - 5.0f * Block::kBlockSize_), -75.0f };
+	static inline const Vector2 kBorderLeft = { float(kBasePosition.x - 5.0f * Block::kBlockSize_), -48.0f };
 
-	static inline const Vector2 kBorderRight = { float(kBasePosition.x + 5.0f * Block::kBlockSize_), -75.0f };
+	static inline const Vector2 kBorderRight = { float(kBasePosition.x + 5.0f * Block::kBlockSize_), -48.0f };
 
 private:
 
@@ -77,21 +83,39 @@ private:
 	//壊せないブロック以外の破壊(デバッグ)
 	void BreakAllBlock();
 
+	void SetUV(Block* block);
+
 private:
 
 	Player* player_;
 
 	Camera* camera_;
 
-	std::array<std::unique_ptr<Object2d>, 2>  borders_;
+	static const int32_t kMaxNumber_ = 2;
 
-	void SetUV(Block* block);
+	std::array<std::unique_ptr<Object2d>, kMaxNumber_>  borders_;
+	std::unique_ptr<Object2d> magma_;
 
 	//マップ
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
 
-	//サウナストーン(ステージ毎に数が違っても対応できるようにvector)
-	std::vector<std::shared_ptr<SaunaStone>> stones_;
+	//マグマのライン
+	float magmaLine_ = 10000.0f;
+
+	//パーツの数
+	int32_t remainingParts_ = 0;
+
+	bool isClear_ = false;
+
+	//パーツ数を表示する数字
+	std::array<std::unique_ptr<Sprite>, 2> numbers_;
+	std::unique_ptr<Sprite> clearSprite_;
+
+	//テクスチャ
+	uint32_t numTex_;
+	uint32_t clearTex_;
+	uint32_t borderTex_;
+	uint32_t magmaTex_;
 
 };
 

@@ -45,7 +45,7 @@ void GlobalVariables::Update() {
 			//int32_t型の値を保持していれば
 			if (std::holds_alternative<int32_t>(item.value)) {
 				int32_t* ptr = std::get_if<int32_t>(&item.value);
-				ImGui::InputInt(itemName.c_str(), ptr, 1);
+				ImGui::DragInt(itemName.c_str(), ptr, 0.1f);
 			}
 			//float型の値を保持していれば
 			else if (std::holds_alternative<float>(item.value)) {

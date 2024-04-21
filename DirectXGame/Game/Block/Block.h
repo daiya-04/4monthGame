@@ -39,6 +39,8 @@ public:
 		kDigerBlock,
 		//耐熱時間が長くなるブロック
 		kSaunnerBlock,
+		//パーツブロック
+		kParts,
 		//ブロックの最大種類
 		kMaxBlock
 

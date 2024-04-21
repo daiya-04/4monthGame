@@ -43,9 +43,7 @@ private:
 
 	void Reset();
 
-	std::unique_ptr<Stage> stage_;
-
-	std::shared_ptr<Player> player_;
+	
 
 	std::shared_ptr<Camera> camera_;
 

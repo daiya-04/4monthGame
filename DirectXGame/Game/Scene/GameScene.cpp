@@ -52,6 +52,10 @@ void GameScene::Reset() {
 void GameScene::Update(){
 	DebugGUI();
 
+	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
+		SceneManager::GetInstance()->ChangeScene("StageSelect");
+	}
+
 	if (player_->GetIsDead()) {
 
 		if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
@@ -108,6 +112,8 @@ void GameScene::DrawParticle(){
 void GameScene::DrawUI(){
 
 	player_->DrawUI();
+
+	stage_->DrawUI();
 
 }
 

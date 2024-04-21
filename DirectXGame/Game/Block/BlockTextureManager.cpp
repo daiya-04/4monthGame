@@ -28,6 +28,8 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/testItem_03.png");
 	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/parts.png");
+	blockTextures_.push_back(texture);
 
 
 }

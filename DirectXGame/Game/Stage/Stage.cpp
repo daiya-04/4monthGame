@@ -5,11 +5,38 @@
 #include <fstream>
 #include <cassert>
 #include "Game/Player/Player.h"
+#include "TextureManager.h"
+#include <cmath>
 
 std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_> Stage::map_;
 
 Stage::Stage()
 {
+
+	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
+	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
+	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
+	magmaTex_ = TextureManager::GetInstance()->Load("stageObject/magmaLine.png");
+
+	for (int32_t i = 0; i < 2; i++) {
+
+		numbers_[i].reset(Sprite::Create(numTex_, {1150.0f + 64.0f * i, 660.0f}));
+		numbers_[i]->SetSize({ 64.0f,64.0f });
+		numbers_[i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
+
+	}
+
+	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
+
+	borders_[0].reset(Object2d::Create(borderTex_, kBorderLeft));
+	borders_[0]->SetAnchorpoint({ 0.5f,1.0f });
+	borders_[1].reset(Object2d::Create(borderTex_, kBorderRight));
+	borders_[1]->SetAnchorpoint({ 0.5f,1.0f });
+
+	magma_.reset(Object2d::Create(magmaTex_, { 0.0f,magmaLine_ }));
+	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 64.0f });
+	magma_->SetTextureArea({ 0.0f,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 32.0f });
+
 }
 
 Stage::~Stage()
@@ -17,9 +44,6 @@ Stage::~Stage()
 }
 
 void Stage::Initialize() {
-
-	/*map_.clear();*/
-	stones_.clear();
 
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
@@ -33,20 +57,17 @@ void Stage::Initialize() {
 
 	CreateEntity();
 
+	isClear_ = false;
+
 }
 
 void Stage::Update() {
 
-	/*map_.remove_if([&](auto& block) {
-
-		if (block->GetIsBreak()) {
-			blockPositions_[block->GetBlockPositionY()][block->GetBlockPositionX()] = 0;
-			return true;
-		}
-
-		return false;
-
-	});*/
+	//パーツがなくなったらクリアフラグをセット
+	if (remainingParts_ <= 0 && !player_->GetIsClear()) {
+		player_->SetIsClear(true);
+		isClear_ = true;
+	}
 
 	if (Input::GetInstance()->TriggerKey(DIK_1)) {
 		CreateIceBlock();
@@ -64,6 +85,11 @@ void Stage::Update() {
 		BreakAllBlock();
 	}
 
+	//拠点に帰った時にパーツを回収
+	if (player_->GetIsHome() && player_->GetPartsCount() > 0) {
+		player_->HandOverParts(remainingParts_);
+	}
+
 	//ブロックの更新
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
@@ -75,42 +101,22 @@ void Stage::Update() {
 
 	}
 
-	/*for (auto& block : map_) {
+	//数字更新
+	for (int32_t i = 0; i < kMaxNumber_; i++) {
 
-		SetUV(block.get());
+		int32_t num = 0;
 
-		block->Update();
+		int32_t divide = int32_t(std::pow(10, kMaxNumber_ - 1 - i));
+		
+		num = remainingParts_ / divide;
 
-	}*/
+		numbers_[i]->SetTextureArea({64.0f * num, 0.0f}, { 64.0f,64.0f });
 
-	//サウナストーン更新
-	for (auto& stone : stones_) {
-		stone->Update();
 	}
-
-	/*for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
-
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
-			map_[y][x]->Update();
-		}
-
-	}*/
 
 }
 
 void Stage::Draw() {
-
-	//サウナストーン描画
-	for (auto& stone : stones_) {
-		
-		if (stone->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
-			stone->GetPosition().x <= camera_->translation_.x + camera_->GetDrawingRange().x + Block::kBlockSize_ &&
-			stone->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
-			stone->GetPosition().y <= camera_->translation_.y + camera_->GetDrawingRange().y + Block::kBlockSize_) {
-			stone->Draw(*camera_);
-		}
-
-	}
 
 	//ブロックの描画
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
@@ -128,24 +134,23 @@ void Stage::Draw() {
 
 	}
 
-	/*for (auto& block : map_) {
+	for (uint32_t i = 0; i < 2; i++) {
+		borders_[i]->Draw(*camera_);
+	}
 
-		if (block->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
-			block->GetPosition().x <= camera_->translation_.x + 1280 + Block::kBlockSize_ &&
-			block->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
-			block->GetPosition().y <= camera_->translation_.y + 720 + Block::kBlockSize_) {
-			block->Draw(*camera_);
-		}
+	magma_->Draw(*camera_);
 
-	}*/
-	
-	/*for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+}
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
-			map_[y][x]->Draw();
-		}
+void Stage::DrawUI() {
 
-	}*/
+	for (uint32_t i = 0; i < 2; i++) {
+		numbers_[i]->Draw();
+	}
+
+	if (isClear_) {
+		clearSprite_->Draw();
+	}
 
 }
 
@@ -167,19 +172,6 @@ void Stage::SwitchBlock() {
 		}
 
 	}
-
-	/*for (auto& block : map_) {
-
-		if (block->GetType() == Block::BlockType::kSnow) {
-			block->ChangeType(Block::BlockType::kMagma);
-			SetUV(block.get());
-		}
-		else if (block->GetType() == Block::BlockType::kMagma) {
-			block->ChangeType(Block::BlockType::kSnow);
-			SetUV(block.get());
-		}
-
-	}*/
 
 }
 
@@ -223,14 +215,6 @@ void Stage::BreakIceBlock() {
 
 	}
 
-	/*for (auto& block : map_) {
-
-		if (block->GetType() == BaseBlock::BlockType::kIceBlock) {
-			block->Break();
-		}
-
-	}*/
-
 }
 
 void Stage::BreakAllBlock() {
@@ -249,14 +233,6 @@ void Stage::BreakAllBlock() {
 		}
 
 	}
-
-	/*for (auto& block : map_) {
-
-		if (block->GetType() > BaseBlock::BlockType::kUnbreakable) {
-			block->Break();
-		}
-
-	}*/
 
 }
 
@@ -284,6 +260,9 @@ void Stage::CreateEntity() {
 }
 
 void Stage::Load(uint32_t stageNumber) {
+
+	//パーツの残り数をリセット
+	remainingParts_ = 0;
 
 	std::string fileName = "./Resources/Maps/stage";
 
@@ -336,52 +315,16 @@ void Stage::Load(uint32_t stageNumber) {
 			map_[y][x]->ChangeType(type);
 			map_[y][x]->Reset();
 
+			//ブロックがパーツなら残りのパーツ数を増加
+			if (type == Block::BlockType::kParts) {
+				remainingParts_++;
+			}
+
 			blockPositions_[y][x] = num;
 
 		}
 
 	}
-
-	/*{
-
-		//サウナストーンの数
-		uint32_t saunaStoneNumber = 0;
-		//カンマ区切りで数を取得
-		std::getline(newFile, line, ',');
-		if (!line.empty()) {
-			saunaStoneNumber = std::stoi(line);
-		}
-
-		//サウナストーンリセット
-		stones_.clear();
-
-		//サウナストーンを生成、
-		for (uint32_t i = 0; i < saunaStoneNumber; i++) {
-
-			Vector2 position{};
-
-			//一行取得
-			std::getline(newFile, line, ',');
-
-			//カンマ区切りで読み込む用の文字列
-			std::istringstream iss(line);
-
-			std::string sNum;
-
-			//座標を格納
-			std::getline(iss, sNum, ',');
-			position.x = std::stof(sNum);
-			std::getline(iss, sNum, ',');
-			position.y = std::stof(sNum);
-
-			std::shared_ptr<SaunaStone> stone = std::make_shared<SaunaStone>();
-			stone->Initialize(position);
-			stones_.push_back(stone);
-
-		}
-
-	}*/ 
-
 
 }
 

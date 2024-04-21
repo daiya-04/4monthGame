@@ -7,15 +7,6 @@
 
 Player::Player()
 {
-}
-
-Player::~Player()
-{
-}
-
-void Player::Initialize() {
-
-	input_ = Input::GetInstance();
 
 	texture_ = TextureManager::GetInstance()->Load("player/player.png");
 	textureLeft_ = TextureManager::GetInstance()->Load("player/playerLeft.png");
@@ -40,6 +31,21 @@ void Player::Initialize() {
 	lifeRightFrame_.reset(Sprite::Create(lifeRightFrameTexture_, { 1180.0f,536.0f }));
 	lifeRightFrame_->SetSize({ 128.0f, 256.0f });
 	deadSprite_.reset(Sprite::Create(deadTexture_, { 640.0f,360.0f }));
+	object_.reset(Object2d::Create(texture_, position_));
+	object_->SetSize({ kPlayerSize_, kPlayerSize_ });
+
+
+}
+
+Player::~Player()
+{
+}
+
+void Player::Initialize() {
+
+	input_ = Input::GetInstance();
+
+	
 
 	position_ = Stage::kBasePosition;
 	birdsEyePosition_ = position_;
@@ -49,8 +55,7 @@ void Player::Initialize() {
 	collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
 	collision_.max = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
 
-	object_.reset(Object2d::Create(texture_, position_));
-	object_->SetSize({ kPlayerSize_, kPlayerSize_ });
+	
 
 	leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
 	rightTop_ = { position_.x + kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
@@ -82,6 +87,9 @@ void Player::Initialize() {
 
 	currentCharacters_ = kLeftPlayer;
 	reserveCharacters_ = kRightPlayer;
+
+	partsCount_ = 0;
+	isClear_ = false;
 
 	SetOnBase();
 
@@ -116,6 +124,7 @@ void Player::SetOnBase() {
 	isReturn_ = false;
 	isBirdsEye_ = false;
 	isOut_ = false;
+	isHome_ = true;
 	position_ = Stage::kBasePosition;
 	birdsEyePosition_ = position_;
 	isDead_ = false;
@@ -169,7 +178,7 @@ void Player::Update() {
 		useCollision_ = true;
 
 		//採掘中の行動処理
-		if (isMining_ && !isDead_) {
+		if (isMining_ && !isDead_ && !isClear_) {
 
 
 			//帰還ボーダーに触れたら動きを止める
@@ -209,7 +218,7 @@ void Player::Update() {
 
 		}
 		//死亡時処理
-		else if (isDead_) {
+		else if (isDead_ && !isClear_) {
 
 		}
 		//拠点待機中の処理
@@ -252,10 +261,10 @@ void Player::Draw(const Camera& camera) {
 
 void Player::DrawUI() {
 
-	lifeLeftGage_->Draw();
+	/*lifeLeftGage_->Draw();
 	lifeLeftFrame_->Draw();
 	lifeRightGage_->Draw();
-	lifeRightFrame_->Draw();
+	lifeRightFrame_->Draw();*/
 
 	if (isDead_) {
 		deadSprite_->Draw();
@@ -477,9 +486,9 @@ void Player::Dig() {
 		parameters_[currentCharacters_]->dig_.digCount--;
 	}
 
-	//地面にいる状態且つクールタイムが0なら穴掘り可能
+	//地面にいる状態且つクールタイムが終わったら穴掘り可能
 	if (parameters_[currentCharacters_]->Jump_.canJump && input_->PushButton(Input::Button::X) && 
-		parameters_[currentCharacters_]->dig_.digCount == 0) {
+		parameters_[currentCharacters_]->dig_.digCount <= 0) {
 
 		parameters_[currentCharacters_]->dig_.isDig = true;
 
@@ -663,12 +672,20 @@ void Player::Change() {
 	//拠点にいる時の挙動
 	else {
 
-		if (input_->TriggerButton(Input::Button::A)) {
-			isOut_ = true;
-		}
-		else if (input_->TriggerButton(Input::Button::X)) {
-			birdsEyePosition_ = position_;
-			isBirdsEye_ = true;
+		//拠点にいるフラグを立てる
+		isHome_ = true;
+
+		if (!isClear_) {
+
+			if (input_->TriggerButton(Input::Button::A)) {
+				isOut_ = true;
+				isHome_ = false;
+			}
+			else if (input_->TriggerButton(Input::Button::X)) {
+				birdsEyePosition_ = position_;
+				isBirdsEye_ = true;
+			}
+
 		}
 
 	}
@@ -692,7 +709,7 @@ void Player::CountSaunaTime() {
 
 	if (parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer > 0) {
 
-		parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer--;
+		/*parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer--;*/
 
 		//カウント0で死亡
 		if (parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer <= 0) {
@@ -1027,10 +1044,14 @@ void Player::CheckCollision() {
 							else if ((*blocksPtr_)[y][x]->GetType() == Block::BlockType::kSaunnerBlock) {
 								addParameters_.addSaunaTime += addValue_.saunaTime;
 							}
+							//部品ブロックを壊したら、部品を1つ手に入れる
+							else if ((*blocksPtr_)[y][x]->GetType() == Block::BlockType::kParts) {
+								partsCount_++;
+							}
 
 							(*blocksPtr_)[y][x]->Break();
 
-							//
+							//穴掘りクールタイムを設定
 							parameters_[currentCharacters_]->dig_.digCount = parameters_[currentCharacters_]->dig_.digInterval;
 
 						}
@@ -1277,6 +1298,25 @@ void Player::Debug() {
 
 	ImGui::Begin("Player");
 	ImGui::Text("position x : %1.2f y : %1.2f", position_.x, position_.y);
+	ImGui::Text("parts : %d", partsCount_);
+
+	//デフォルトパラメータを適用
+	if (ImGui::Button("Apply Default")) {
+		parameters_[kLeftPlayer]->CopyParameter(*defaultParameter_);
+		parameters_[kRightPlayer]->CopyParameter(*defaultParameter_);
+	}
+
+	ImGui::Separator();
+	//デフォルトのパラメータ
+	ImGui::Text("Default");
+	ImGui::Text("D-Accel : %1.2f", defaultParameter_->speed_);
+	ImGui::Text("D-MaxSpeed : %1.2f", defaultParameter_->maxMoveSpeed_);
+	ImGui::Text("D-DigInterval : %d", defaultParameter_->dig_.digInterval);
+	ImGui::Text("D-DigCoolTime : %d", defaultParameter_->dig_.digCount);
+	ImGui::Text("D-MaxChargeTime : %d", defaultParameter_->chargeJump_.maxChargeTime);
+	ImGui::Text("D-ChargeTimer : %d", defaultParameter_->chargeJump_.chargeTimer);
+	ImGui::Text("D-MaxSaunaTime : %d", defaultParameter_->saunaTimer_.maxSaunaTime);
+	ImGui::Text("D-SaunaTime : %d", defaultParameter_->saunaTimer_.countSaunaTimer);
 	ImGui::Separator();
 	//左のプレイヤーのパラメータ
 	ImGui::Text("Left");

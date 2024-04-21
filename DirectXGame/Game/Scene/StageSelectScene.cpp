@@ -18,6 +18,9 @@ void StageSelectScene::Init() {
 void StageSelectScene::Update() {
 	DebugGUI();
 
+	if (Input::GetInstance()->TriggerKey(DIK_E)) {
+		SceneManager::GetInstance()->ChangeScene("Game");
+	}
 
 }
 

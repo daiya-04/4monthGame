@@ -194,6 +194,21 @@ public:
 
 	bool GetIsBirdsEye() const { return isBirdsEye_; }
 
+	bool GetIsHome() const { return isHome_; }
+
+	//クリアフラグのセット
+	void SetIsClear(bool flag) { isClear_ = flag; }
+
+	bool GetIsClear() const { return isClear_; }
+
+	const int32_t& GetPartsCount() { return partsCount_; }
+
+	//パーツの受け渡し
+	void HandOverParts(int32_t& remainingParts) {
+		remainingParts -= partsCount_;
+		partsCount_ = 0;
+	}
+
 private:
 
 	//移動
@@ -332,11 +347,20 @@ private:
 	//拠点から外に出るときのフラグ
 	bool isOut_ = false;
 
+	//拠点にいる時のフラグ
+	bool isHome_ = true;
+
 	//カメラ俯瞰視点に移行する時のフラグ
 	bool isBirdsEye_ = false;
 
 	//死亡フラグ
 	bool isDead_ = false;
+
+	//クリアフラグ
+	bool isClear_ = false;
+
+	//パーツカウント
+	int32_t partsCount_ = 0;
 
 	//UI関連
 	std::unique_ptr<Sprite> lifeLeftGage_;
@@ -344,6 +368,7 @@ private:
 	std::unique_ptr<Sprite> lifeRightGage_;
 	std::unique_ptr<Sprite> lifeRightFrame_;
 	std::unique_ptr<Sprite> deadSprite_;
+	std::array<std::unique_ptr<Sprite>, 2> numbers_;
 
 	uint32_t lifeLeftGageTexture_;
 	uint32_t lifeLeftFrameTexture_;
