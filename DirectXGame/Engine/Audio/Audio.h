@@ -1,5 +1,8 @@
 #pragma once
 #include <xaudio2.h>
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
 #include <wrl.h>
 
 #include <fstream>
@@ -43,12 +46,16 @@ public:
 public:
 	static Audio* GetInstance();
 
-	static size_t LoadWave(const std::string& filename);
+	//static size_t LoadWave(const std::string& filename);
+	//音声ファイルの読み込み
+	static size_t Load(const std::string& filename);
 private:
 
 	size_t FindUnUsedPlayHandle();
 
 	void DestroyPlayHandle(size_t playHandle);
+
+	size_t LoadInternal(const std::string& filename);
 
 public:
 	void Initialize();
@@ -56,12 +63,12 @@ public:
 	//音声データの解放
 	void SoundUnload(size_t soundHandle);
 	//音声再生
-	size_t SoundPlayWave(size_t soundHandle, float volume = 1.0f,bool loop = false);
+	size_t Play(size_t soundHandle, float volume = 1.0f,bool loop = false);
 
 	//size_t SoundPlayLoopStart(size_t soundHandle);
 	void SoundPlayLoopEnd(size_t playhandle);
 	//音声ロード
-	size_t LoadWaveInternal(const std::string& filename);
+	//size_t LoadWaveInternal(const std::string& filename);
 
 	void StopSound(size_t playhandle);
 	void SetPitch(size_t playHandle, float pitch);

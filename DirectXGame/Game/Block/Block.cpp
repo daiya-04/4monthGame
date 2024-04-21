@@ -6,7 +6,7 @@ void BaseBlock::Break() {
 	type_ = kNone;
 	SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	Audio::GetInstance()->SoundPlayWave(digSE_);
+	Audio::GetInstance()->Play(digSE_);
 
 }
 
@@ -39,7 +39,7 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 	object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
 	object_->SetTextureArea({ 0.0f,0.0f }, { kTextureBlockSize_,kTextureBlockSize_ });
 
-	digSE_ = Audio::GetInstance()->LoadWaveInternal("SE/dig.wav");
+	digSE_ = Audio::GetInstance()->Load("SE/dig.wav");
 
 }
 
