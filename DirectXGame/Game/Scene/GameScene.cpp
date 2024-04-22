@@ -30,17 +30,22 @@ void GameScene::Init(){
 	camera_->Init();
 	camera_->translation_ = { 0.0f,0.0f,0.0f };
 
-	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("star.png"), { 1.0f,1.0f }));
+	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("playerBlue.png"), { 1.0f,0.5f }));
+	testObject_->SetSize({128.0f,128.0f});
 }
 
 void GameScene::Update(){
-	preCameraPosition_ = camera_->translation_;
+	if (isPlayGame_) {
+		preCameraPosition_ = camera_->translation_;
+	}
 	DebugGUI();
 
 	testObject_->position_=testObjectPosition_;
 	camera_->UpdateMatrix();
-	snowManager_->SetCameraSlide({ camera_->translation_.x - preCameraPosition_.x, camera_->translation_.y - preCameraPosition_.y });
-	environmentEffectsManager_->Update();
+	if (isPlayGame_) {
+		snowManager_->SetCameraSlide({ camera_->translation_.x - preCameraPosition_.x, camera_->translation_.y - preCameraPosition_.y });
+		environmentEffectsManager_->Update();
+	}
 	heatHazeManager_->Update();
 	waterDropManager_->Update();
 	//遷移完了時にエフェクトを発行する
@@ -59,28 +64,30 @@ void GameScene::Update(){
 }
 
 void GameScene::DrawNotSetPipeline() {
-	cameraFrozen_->DrawInternal(commandList_);
-	waterDropManager_->DrawEffectUpdate(cameraFrozen_->GetEffectTexture());
-	//極寒状態だったら
-	if (!environmentEffectsManager_->GetIsNowScene()) {
-		DrawCold(environmentEffectsManager_->GetPrevScene());
-		//切り替えアニメーション中は裏に反対の状態を描画する
-		if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
-			DrawHeat(environmentEffectsManager_->GetNextScene());
+	if (isPlayGame_) {
+		cameraFrozen_->DrawInternal(commandList_);
+		waterDropManager_->DrawEffectUpdate(cameraFrozen_->GetEffectTexture());
+	}
+		//極寒状態だったら
+		if (!environmentEffectsManager_->GetIsNowScene()) {
+			DrawCold(environmentEffectsManager_->GetPrevScene());
+			//切り替えアニメーション中は裏に反対の状態を描画する
+			if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
+				DrawHeat(environmentEffectsManager_->GetNextScene());
+			}
 		}
-	}
-	else {
-		DrawHeat(environmentEffectsManager_->GetPrevScene());
-		if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
-			DrawCold(environmentEffectsManager_->GetNextScene());
+		else {
+			DrawHeat(environmentEffectsManager_->GetPrevScene());
+			if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
+				DrawCold(environmentEffectsManager_->GetNextScene());
+			}
 		}
-	}
-	
-	//二重描画用のテクスチャデータ書き込み
-	if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
-		environmentEffectsManager_->WeightCircleDraw();
-	}
 
+		//二重描画用のテクスチャデータ書き込み
+		if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
+			environmentEffectsManager_->WeightCircleDraw();
+		}
+	
 }
 
 void GameScene::DrawBackGround(){
@@ -121,16 +128,26 @@ void GameScene::DebugGUI(){
 	ImGui::DragFloat2("cameraPos", &camera_->translation_.x, 1.0f);
 	ImGui::End();
 
+	ImGui::Begin("IsPlayGamme");
+	ImGui::Checkbox("IsPlay",&isPlayGame_);
+	
+	ImGui::End();
+
+	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
+		isPlayGame_ = !isPlayGame_;
+	};
+
 #endif // _DEBUG
 }
 
 void GameScene::DrawCold(PostEffect* targetScene) {
 	//エフェクトの描画
-	snowManager_->PreDrawUpdateEffect();
-	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	testObject_->Draw(*camera_.get());
-	snowManager_->PostDrawUpdateEffect(*(camera_.get()));
-	 
+	if (isPlayGame_) {
+		snowManager_->PreDrawUpdateEffect();
+		Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+		testObject_->Draw(*camera_.get());
+		snowManager_->PostDrawUpdateEffect(*(camera_.get()));
+	}
 	//cameraFrozen_->DrawInternal(commandList_);
 	//取得したシーンに対して描画
 	targetScene->PreDrawScene(commandList_);
@@ -152,6 +169,8 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	Sprite::preDraw(commandList_);
 	sample1->Draw();
 	Sprite::postDraw();
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	testObject_->Draw(*camera_.get());
 	heatHazeManager_->PostDraw(commandList_);
 
 	//取得したシーンに対して描画

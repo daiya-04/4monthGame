@@ -13,9 +13,9 @@ void SnowManager::Init() {
 	}
 	latestTextureNum_ = 0;
 	
-	originalSnow.reset(Object2d::Create(TextureManager::GetInstance()->Load("White.png"), {10.0f,2.0f}));
-	originalSnow->SetSize({400.0f,100.0f});
-	originalSnow->position_ = {640.0f,360.0f};
+	originalSnow.reset(Object2d::Create(TextureManager::GetInstance()->Load("White.png"), {90.0f,2.0f}));
+	originalSnow->SetSize({1200.0f,100.0f});
+	originalSnow->position_ = {640.0f,560.0f};
 	snowPositionTexture_.reset(new PostEffect());
 	snowPositionTexture_->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 
