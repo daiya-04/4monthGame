@@ -123,13 +123,13 @@ void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 
 	//ここをいじるといろいろなブレンドモードを設定できる
 	//ノーマルブレンド
-	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;*/
-	//加算
 	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	//加算
+	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;*/
 	//減算
 	/*blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
@@ -159,6 +159,8 @@ void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/Particle.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(verterShaderBlob != nullptr);
 
+	ComPtr<IDxcBlob> geometryShaderBlob = CompileShader(L"Resources/shaders/Particle.GS.hlsl", L"gs_6_0", dxcUtils, dxcCompiler, includeHandler);
+
 	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/Particle.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(pixelShaderBlob != nullptr);
 
@@ -176,6 +178,7 @@ void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	graphicsPipelineStateDesc.pRootSignature = rootSignature_.Get(); //RootSignature
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;  //InputLayout
 	graphicsPipelineStateDesc.VS = { verterShaderBlob->GetBufferPointer(),verterShaderBlob->GetBufferSize() };//VerterShader
+	graphicsPipelineStateDesc.GS = { geometryShaderBlob->GetBufferPointer(),geometryShaderBlob->GetBufferSize() };//GeometryShader
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),pixelShaderBlob->GetBufferSize() };//pixelShader
 	graphicsPipelineStateDesc.BlendState = blendDesc; //blendState
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;//RasterizerState
@@ -184,6 +187,7 @@ void Particle::StaticInitialize(ID3D12Device* device, ID3D12GraphicsCommandList*
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	//利用するトポロジ（形状）のタイプ。三角形
 	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	//graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 	//どのように画面に色を打ち込むかの設定
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -214,22 +218,23 @@ void Particle::preDraw() {
 	commandList_->SetPipelineState(graphicsPipelineState_.Get());  //PSOを設定
 	//形状を設定。PSOに設定しているものとはまた別。設置物を設定すると考えておけばいい
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 }
 
 void Particle::postDraw() {}
 
-Particle::ParticleData Particle::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate){
+Particle::ParticleData Particle::MakeNewParticle(std::mt19937& randomEngine, const Vector2& translate){
 
-	std::uniform_real_distribution<float> distPos(-5.0f, 5.0f);
+	std::uniform_real_distribution<float> distPos(-100.0f, 100.0f);
 	std::uniform_real_distribution<float> distVelocity(-1.0f, 1.0f);
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	std::uniform_real_distribution<float> distColor(0.4f, 1.0f);
 	std::uniform_real_distribution<float> distTime(1.0f, 6.0f);
 	ParticleData particle;
 
 	//particle.worldTransform_.translation_ = { /*distPos(randomEngine),distPos(randomEngine) ,distPos(randomEngine)*/ };
-	particle.worldTransform_.translation_ = translate;
-	particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine) ,distVelocity(randomEngine) };
+	particle.pos_ = { translate.x + distPos(randomEngine),translate.y + distPos(randomEngine) };
+	particle.velocity_ = { distVelocity(randomEngine), distVelocity(randomEngine)};
 	particle.color_ = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine),1.0 };
 	particle.lifeTime_ = 2.0f;
 	//particle.lifeTime_ = distTime(randomEngine);
@@ -356,13 +361,13 @@ void Particle::Draw(std::list<ParticleData>& particleData,const Camera& camera) 
 		billboardMat.m[3][1] = 0.0f;
 		billboardMat.m[3][2] = 0.0f;*/
 
-		Matrix4x4 worldMatrix = MakeScaleMatrix((*itParticle).worldTransform_.scale_) * camera.GetBillBoadMatrix() * MakeTranslateMatrix((*itParticle).worldTransform_.translation_);
-		//float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
+		Matrix4x4 worldMatrix = MakeAffineMatrix({ (*itParticle).scale_.x,(*itParticle).scale_.y,0.0f }, { 0.0f,0.0f,(*itParticle).rotated_ }, { (*itParticle).pos_.x,(*itParticle).pos_.y,0.0f });
+		float alpha = 1.0f - ((*itParticle).currentTime_ / (*itParticle).lifeTime_);
 
 		if (particleNum_ < particleMaxNum_) {
 			instancingData[particleNum_].matWorld = worldMatrix;
 			instancingData[particleNum_].color = (*itParticle).color_;
-			//instancingData[particleNum_].color.w = alpha;
+			instancingData[particleNum_].color.w = alpha;
 			particleNum_++;
 		}
 		itParticle++;
@@ -385,6 +390,7 @@ void Particle::Draw(std::list<ParticleData>& particleData,const Camera& camera) 
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, (UINT)RootParameter::kTexture, uvHandle_);
 
 	commandList_->DrawIndexedInstanced(6, (UINT)particleNum_, 0, 0, 0);
+	//commandList_->DrawInstanced(1, (UINT)particleNum_, 0, 0);
 
 }
 
@@ -396,26 +402,7 @@ void Particle::CreateMesh() {
 	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
-	VertexData* vertices = nullptr;
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertices));
-
-	//左下
-	vertices[0].pos_ = { -1.0f,-1.0f,0.0f,1.0f };
-	vertices[0].uv_ = { 0.0f,1.0f };
-	//左上
-	vertices[1].pos_ = { -1.0f,1.0f,0.0f,1.0f };
-	vertices[1].uv_ = { 0.0f,0.0f };
-	//右下
-	vertices[2].pos_ = { 1.0f,-1.0f,0.0f,1.0f };
-	vertices[2].uv_ = { 1.0f,1.0f };
-
-	//左上
-	//vertices[3] = vertices[1];
-	//右上
-	vertices[3].pos_ = { 1.0f,1.0f,0.0f,1.0f };
-	vertices[3].uv_ = { 1.0f,0.0f };
-	//右下
-	//vertices[5] = vertices[2];
+	TransferVertex();
 
 	indexResource_ = CreateBufferResource(device_, sizeof(uint32_t) * 6);
 
@@ -426,8 +413,8 @@ void Particle::CreateMesh() {
 	uint32_t* indices = nullptr;
 	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indices));
 
-	indices[0] = 0;  indices[1] = 1;  indices[2] = 2;
-	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;
+	indices[0] = 1;  indices[1] = 0;  indices[2] = 2;
+	indices[3] = 0;  indices[4] = 3;  indices[5] = 2;
 
 
 	materialResource_ = CreateBufferResource(device_, sizeof(Material));
@@ -452,6 +439,29 @@ void Particle::CreateMesh() {
 	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
 
 	device_->CreateShaderResourceView(instancingResource_.Get(), &instancingSrvDesc, particleSrvHandleCPU_);
+
+}
+
+void Particle::TransferVertex() {
+
+	VertexData* vertices = nullptr;
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertices));
+
+	//左上
+	vertices[0].pos_ = { 0.0f,0.0f,0.0f,1.0f };
+	vertices[0].uv_ = { 0.0f,0.0f };
+	//左下
+	vertices[1].pos_ = { 0.0f, 1.0f,0.0f,1.0f };
+	vertices[1].uv_ = { 0.0f,1.0f };
+	//右下
+	vertices[2].pos_ = { 1.0f,1.0f,0.0f,1.0f };
+	vertices[2].uv_ = { 1.0f,1.0f };
+	//右上
+	vertices[3].pos_ = { 1.0f,0.0f,0.0f,1.0f };
+	vertices[3].uv_ = { 1.0f,0.0f };
+
+	/*vertices[0].pos_ = { 0.0f,0.0f,0.0f,1.0f };
+	vertices[0].uv_ = { 0.0f,0.0f };*/
 
 }
 

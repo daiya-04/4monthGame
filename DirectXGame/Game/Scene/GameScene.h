@@ -39,9 +39,9 @@ public:
 
 private:
 
-	std::unique_ptr<Stage> stage_;
+	void Reset();
 
-	std::shared_ptr<Player> player_;
+	
 
 	std::shared_ptr<Camera> camera_;
 

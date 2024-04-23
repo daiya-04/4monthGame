@@ -1,10 +1,25 @@
 #include "Block.h"
-#include "BlockTextureManager.h"
+#include "AudioManager.h"
+
+void BaseBlock::Break() {
+
+	isBreak_ = true;
+	type_ = kNone;
+	SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+	digSE_->Play();
+
+}
+
+void BaseBlock::Reset() {
+
+	isBreak_ = false;
+	SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+}
 
 Block::Block()
-{
-
-	
+{	
 
 }
 
@@ -23,13 +38,20 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 
 	object_.reset(Object2d::Create(texture_, position_));
 	object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
-	object_->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
+	object_->SetTextureArea({ 0.0f,0.0f }, { kTextureBlockSize_,kTextureBlockSize_ });
+
+	digSE_ = AudioManager::GetInstance()->Load("SE/dig.wav");
 
 }
 
 void Block::Update() {
 
-	object_->SetTextureArea({ float(uvPositionX_ * 64.0f),float(uvPositionY_ * 64.0f) }, { 64.0f,64.0f });
+	if (type_ == kNone) {
+		isBreak_ = true;
+	}
+
+	object_->SetTextureArea({ float(uvPositionX_ * kTextureBlockSize_),float(uvPositionY_ * kTextureBlockSize_) },
+		{ kTextureBlockSize_,kTextureBlockSize_ });
 
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
@@ -38,6 +60,8 @@ void Block::Update() {
 
 void Block::Draw(const Camera& camera) {
 
-	object_->Draw(camera);
+	if (!isBreak_) {
+		object_->Draw(camera);
+	}
 
 }

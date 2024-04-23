@@ -12,9 +12,19 @@ private:
 
 	WNDCLASS wc_{};
 	HWND hwnd_ = nullptr;
+
+	const wchar_t* title_;
+	RECT windowRect_{};
+	UINT windowStyle_;
+
 public: //静的メンバ変数
 	static const int32_t kClientWidth = 1280;
 	static const int32_t kClientHeight = 720;
+
+	enum class ScreenMode {
+		kWindow,
+		kFullScreen,
+	};
 
 public: //静的メンバ関数
 
@@ -31,6 +41,8 @@ public: //メンバ関数
 	bool ProcessMessage();
 
 	void TerminateGameWindow();
+
+	void ChangeScreenMode(ScreenMode screenMode);
 
 };
 

@@ -19,7 +19,8 @@ void GameScene::Init(){
 
 	stage_ = std::make_unique<Stage>();
 	stage_->SetPlayer(player_.get());
-	stage_->Initialize(stageNumber_);
+	stage_->Initialize();
+	stage_->Load(stageNumber_);
 	player_->SetBlocks(stage_->GetBlocks());
 
 	camera_ = std::make_shared<Camera>();
@@ -28,9 +29,10 @@ void GameScene::Init(){
 	stage_->SetCamera(camera_.get());
 
 	scroll_ = std::make_unique<Scroll>();
+	scroll_->SetCamera(camera_.get());
 	scroll_->Initialize();
 	scroll_->SetTarget(player_->GetPositionPtr());
-	scroll_->SetCamera(camera_.get());
+	
 
 	bgTexture_ = TextureManager::Load("backGround/backGround.png");
 
@@ -38,8 +40,38 @@ void GameScene::Init(){
 
 }
 
+void GameScene::Reset() {
+
+	player_->Initialize();
+	stage_->Load(stageNumber_);
+	camera_->Init();
+	scroll_->Initialize();
+
+}
+
 void GameScene::Update(){
 	DebugGUI();
+
+	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
+		SceneManager::GetInstance()->ChangeScene("StageSelect");
+	}
+
+	if (player_->GetIsDead()) {
+
+		if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
+			Reset();
+		}
+
+	}
+
+	if (player_->GetIsBirdsEye()) {
+		scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
+		camera_->ChangeDrawingRange({ 1920,1080.0f });
+	}
+	else {
+		scroll_->SetTarget(player_->GetPositionPtr());
+		camera_->ChangeDrawingRange({ 1280.0f,720.0f });
+	}
 
 	stage_->Update();
 
@@ -59,9 +91,9 @@ void GameScene::DrawBackGround(){
 
 void GameScene::DrawObject(){
 
-	stage_->Draw();
-
 	player_->Draw(*camera_.get());
+
+	stage_->Draw();
 
 }
 
@@ -73,7 +105,9 @@ void GameScene::DrawParticle(){
 
 void GameScene::DrawUI(){
 
-	
+	player_->DrawUI();
+
+	stage_->DrawUI();
 
 }
 

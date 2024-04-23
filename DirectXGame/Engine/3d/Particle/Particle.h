@@ -48,22 +48,24 @@ private:
 public:
 
 	struct ParticleData {
-		WorldTransform worldTransform_;
-		Vector3 velocity_;
-		Vector4 color_;
+		Vector2 pos_{};
+		Vector2 scale_ = { 100.0f, 100.0f };
+		float rotated_ = 0.0f;
+		Vector2 velocity_{};
+		Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 		float lifeTime_ = 0; //生存時間
 		float currentTime_ = 0; //生成されてから今の時間
 	};
 
 	struct Emitter {
-		Vector3 translate_;
+		Vector2 translate_;
 		uint32_t count_; //一度に生成する数
 		float frequency_; //発生間隔
 		float frequencyTime_; //発生してからの今の時間
 	};
 
 	struct AccelerationField {
-		Vector3 acceleration_; //効果(加速度)
+		Vector2 acceleration_; //効果(加速度)
 		AABB area_; //効果範囲
 	};
 
@@ -85,7 +87,7 @@ public:
 	//描画後処理
 	static void postDraw();
 
-	static ParticleData MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate);
+	static ParticleData MakeNewParticle(std::mt19937& randomEngine, const Vector2& translate);
 
 	static std::list<ParticleData> Emit(const Particle::Emitter& emitter, std::mt19937& randomEngine);
 
@@ -128,6 +130,8 @@ public:
 private:
 
 	void CreateMesh();
+
+	void TransferVertex();
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
 
