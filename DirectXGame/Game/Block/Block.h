@@ -154,7 +154,7 @@ protected:
 	bool isBreak_ = false;
 
 	//ザクザク音
-	size_t digSE_;
+	Audio* digSE_;
 
 };
 

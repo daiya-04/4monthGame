@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
+#include "AudioManager.h"
 #include "DirectionalLight.h"
 #include "Sprite.h"
 #include "Object2d.h"
@@ -23,7 +24,7 @@ void DSFramework::Init(){
 	ImGuiManager::GetInstance()->Initialize();
 	
 	Input::GetInstance()->Initialize();
-	Audio::GetInstance()->Initialize();
+	AudioManager::GetInstance()->Init();
 
 	TextureManager::GetInstance()->Initialize();
 	Model::SetDevice();
@@ -55,7 +56,7 @@ void DSFramework::Update(){
 	ImGuiManager::GetInstance()->Begin();
 
 	Input::GetInstance()->Update();
-	Audio::GetInstance()->Update();
+	AudioManager::GetInstance()->Update();
 
 	GlobalVariables::GetInstance()->Update();
 
