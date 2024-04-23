@@ -134,7 +134,7 @@ public:
 
 	void SetColor(const Vector4& color);
 
-	void SetTextureHandle(uint32_t textureHandle) { textureHandle_ = textureHandle; }
+	void SetTextureHandle(uint32_t textureHandle);
 
 	uint32_t GetTextureHandle() { return textureHandle_; };
 

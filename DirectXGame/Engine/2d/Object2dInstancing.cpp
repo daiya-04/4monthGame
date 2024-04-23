@@ -501,3 +501,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE Object2dInstancing::GetGPUDescriptorHandle(ComPtr<ID
 	handleGPU.ptr += (descriptorSize * index);
 	return handleGPU;
 }
+
+void Object2dInstancing::SetTextureHandle(uint32_t textureHandle) {
+	textureHandle_ = textureHandle;
+	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
+}
