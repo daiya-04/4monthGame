@@ -839,7 +839,7 @@ void Player::CheckCollision() {
 
 						if ((*blocksPtr_)[y][x]->isDebug_) {
 
-							(*blocksPtr_)[y][x]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
+							//(*blocksPtr_)[y][x]->SetColor({ 1.0f,0.0f,0.0f,1.0f });
 
 						}
 
@@ -1025,7 +1025,7 @@ void Player::CheckCollision() {
 					}
 					else {
 
-						(*blocksPtr_)[y][x]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+						//(*blocksPtr_)[y][x]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
 					}
 
@@ -1061,7 +1061,7 @@ void Player::CheckCollision() {
 				}
 				else {
 
-					(*blocksPtr_)[y][x]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+					//(*blocksPtr_)[y][x]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
 				}
 

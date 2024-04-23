@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include "TextureManager.h"
 #include "Log.h"
+#include "DirectXCommon.h"
 
 #pragma comment(lib,"dxcompiler.lib")
 
@@ -204,7 +205,7 @@ void Object2dInstancing::StaticInitialize(ID3D12Device* device, int windowWidth,
 
 Object2dInstancing* Object2dInstancing::Create(uint32_t textureHandle, Vector2 postion,uint32_t instanceMax, float scale) {
 
-	Object2dInstancing* obj = new Object2dInstancing(textureHandle, postion, scale);
+	Object2dInstancing* obj = new Object2dInstancing(textureHandle, scale);
 	obj->Init(instanceMax);
 
 	return obj;
@@ -227,16 +228,16 @@ void Object2dInstancing::postDraw() {
 
 }
 
-Object2dInstancing::Object2dInstancing(uint32_t textureHandle, Vector2 position, float scale, Vector4 color) {
+Object2dInstancing::Object2dInstancing(uint32_t textureHandle, float scale, Vector4 color) {
 
 	textureHandle_ = textureHandle;
 	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
-	position_ = position;
+	//position_ = position;
 	size_ = { (float)resourceDesc_.Width * scale,(float)resourceDesc_.Height * scale };
 	rotate_ = 0.0f;
 	anchorpoint_ = { 0.5f,0.5f };
 	color_ = color;
-	texSize_ = { (float)resourceDesc_.Width,(float)resourceDesc_.Height };
+	//texSize_ = { (float)resourceDesc_.Width,(float)resourceDesc_.Height };
 
 }
 
@@ -279,14 +280,45 @@ void Object2dInstancing::Init(uint32_t instanceMax) {
 	materialData->color_ = color_;
 
 	instancingForVSResource_ = CreateBufferResource(device_, sizeof(InstancingForVSData)*instanceMax);
-	HRESULT hr = instancingForVSResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingForVSMap_));
-	instancingForVSMap_->worldMat_ = MakeIdentity44();
+	instanceCount_ = 0;
 
+	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
+	instancingSrvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingSrvDesc.Buffer.FirstElement = 0;
+	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingSrvDesc.Buffer.NumElements = instanceMax_;
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(InstancingForVSData);
+	UINT handleSize = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	instancingSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	instancingSrvHandleGPU_ = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), handleSize, DirectXCommon::GetInstance()->GetSrvHeapCount());
+	DirectXCommon::GetInstance()->IncrementSrvHeapCount();
+
+	device_->CreateShaderResourceView(instancingForVSResource_.Get(), &instancingSrvDesc, instancingSrvHandleCPU_);
 }
 
 void Object2dInstancing::Draw(const Camera& camera) {
 
-	*worldMatMap_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,rotate_ }, { position_.x,position_.y,0.0f });
+	//*worldMatMap_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,rotate_ }, { position_.x,position_.y,0.0f });
+	//必要分座標追加処理
+	HRESULT hr = instancingForVSResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingForVSMap_));
+	
+	for (uint32_t index = 0; index < instanceCount_;index++) {
+		instancingForVSMap_[index].worldMat_ = MakeAffineMatrix({1.0f,1.0f,1.0f}, {0.0f,0.0f,rotate_}, {instancingCPUData_[index].position_.x,instancingCPUData_[index].position_.y,0.0f});
+		
+		float uvLeft = instancingCPUData_[index].texBase_.x / (float)resourceDesc_.Width;
+		float uvRight = (instancingCPUData_[index].texBase_.x + instancingCPUData_[index].texSize_.x) / (float)resourceDesc_.Width;
+		float uvTop = instancingCPUData_[index].texBase_.y / (float)resourceDesc_.Height;
+		float uvBottom = (instancingCPUData_[index].texBase_.y + instancingCPUData_[index].texSize_.y) / (float)resourceDesc_.Height;
+		
+		instancingForVSMap_[index].texcoord_[0] = { uvLeft,uvTop };
+		instancingForVSMap_[index].texcoord_[1] = { uvLeft,uvBottom };
+		instancingForVSMap_[index].texcoord_[2] = { uvRight,uvBottom };
+		instancingForVSMap_[index].texcoord_[3] = { uvRight,uvTop };
+		
+	}
+
 
 
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -294,11 +326,12 @@ void Object2dInstancing::Draw(const Camera& camera) {
 
 	commandList_->SetGraphicsRootConstantBufferView(RootParameter::kMaterial, matrialResource_->GetGPUVirtualAddress());
 	//commandList_->SetGraphicsRootConstantBufferView(RootParameter::kForVS, worldMatResource_->GetGPUVirtualAddress());
+	commandList_->SetGraphicsRootDescriptorTable((UINT)RootParameter::kForVS, instancingSrvHandleGPU_);
 
 	commandList_->SetGraphicsRootConstantBufferView(RootParameter::kCamera, camera.GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, RootParameter::kTexture, textureHandle_);
 
-	commandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	commandList_->DrawIndexedInstanced(6, instanceCount_, 0, 0, 0);
 
 }
 
@@ -340,8 +373,8 @@ void Object2dInstancing::SetColor(const Vector4& color) {
 }
 
 void Object2dInstancing::SetTextureArea(const Vector2& texBase, const Vector2& texSize) {
-	texBase_ = texBase;
-	texSize_ = texSize;
+	//texBase_ = texBase;
+	//texSize_ = texSize;
 
 	TransferVertex();
 }
@@ -352,25 +385,25 @@ void Object2dInstancing::TransferVertex() {
 	float right = (1.0f - anchorpoint_.x) * size_.x;
 	float top = (0.0f - anchorpoint_.y) * size_.y;
 	float bottom = (1.0f - anchorpoint_.y) * size_.y;
-
+	/*
 	float uvLeft = texBase_.x / (float)resourceDesc_.Width;
 	float uvRight = (texBase_.x + texSize_.x) / (float)resourceDesc_.Width;
 	float uvTop = texBase_.y / (float)resourceDesc_.Height;
 	float uvBottom = (texBase_.y + texSize_.y) / (float)resourceDesc_.Height;
-
+	*/
 	//頂点データを設定する
 	VertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//1枚目の三角形
 	vertexData[0].pos_ = { left,top,0.0f,1.0f };//左上
-	vertexData[0].uv_ = { uvLeft,uvTop };
+	//vertexData[0].uv_ = { uvLeft,uvTop };
 	vertexData[1].pos_ = { left,bottom,0.0f,1.0f };//左下
-	vertexData[1].uv_ = { uvLeft,uvBottom };
+	//vertexData[1].uv_ = { uvLeft,uvBottom };
 	vertexData[2].pos_ = { right,bottom,0.0f,1.0f };//右下
-	vertexData[2].uv_ = { uvRight,uvBottom };
+	//vertexData[2].uv_ = { uvRight,uvBottom };
 	//2枚目の三角形
 	vertexData[3].pos_ = { right,top,0.0f,1.0f };//右上
-	vertexData[3].uv_ = { uvRight,uvTop };
+	//vertexData[3].uv_ = { uvRight,uvTop };
 
 }
 
@@ -455,4 +488,16 @@ ComPtr<IDxcBlob> Object2dInstancing::CompileShader(const std::wstring& filePath,
 	//実行用のバイナリを返却
 	return shaderBlob;
 
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE Object2dInstancing::GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE Object2dInstancing::GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index) {
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (descriptorSize * index);
+	return handleGPU;
 }

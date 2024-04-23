@@ -7,7 +7,8 @@
 #include "Game/Player/Player.h"
 #include "TextureManager.h"
 #include <cmath>
-
+#include "Block/BlockTextureManager.h"
+#include "DirectXCommon.h"
 std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_> Stage::map_;
 
 Stage::Stage()
@@ -130,6 +131,9 @@ void Stage::Update() {
 
 void Stage::Draw() {
 
+	//リスト初期化
+	BlockTextureManager::GetInstance()->ClearObject();
+
 	//ブロックの描画
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
@@ -145,7 +149,10 @@ void Stage::Draw() {
 		}
 
 	}
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	BlockTextureManager::GetInstance()->DrawAll(*camera_);
 
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
 	}

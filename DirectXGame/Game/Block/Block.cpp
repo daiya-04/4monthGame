@@ -4,7 +4,7 @@ void BaseBlock::Break() {
 
 	isBreak_ = true;
 	type_ = kNone;
-	SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
 	Audio::GetInstance()->Play(digSE_);
 
@@ -13,7 +13,7 @@ void BaseBlock::Break() {
 void BaseBlock::Reset() {
 
 	isBreak_ = false;
-	SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
 }
 
@@ -35,9 +35,9 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
 
-	object_.reset(Object2d::Create(texture_, position_));
-	object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
-	object_->SetTextureArea({ 0.0f,0.0f }, { kTextureBlockSize_,kTextureBlockSize_ });
+	//object_.reset(Object2d::Create(texture_, position_));
+	//object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
+	//object_->SetTextureArea({ 0.0f,0.0f }, { kTextureBlockSize_,kTextureBlockSize_ });
 
 	digSE_ = Audio::GetInstance()->Load("SE/dig.wav");
 
@@ -49,8 +49,8 @@ void Block::Update() {
 		isBreak_ = true;
 	}
 
-	object_->SetTextureArea({ float(uvPositionX_ * kTextureBlockSize_),float(uvPositionY_ * kTextureBlockSize_) },
-		{ kTextureBlockSize_,kTextureBlockSize_ });
+	//object_->SetTextureArea({ float(uvPositionX_ * kTextureBlockSize_),float(uvPositionY_ * kTextureBlockSize_) },
+		//{ kTextureBlockSize_,kTextureBlockSize_ });
 
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
@@ -60,7 +60,8 @@ void Block::Update() {
 void Block::Draw(const Camera& camera) {
 
 	if (!isBreak_) {
-		object_->Draw(camera);
+		//object_->Draw(camera);
+		BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ },type_);
 	}
 
 }

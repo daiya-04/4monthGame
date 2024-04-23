@@ -8,7 +8,7 @@
 #include <string>
 #include <array>
 #include "Camera.h"
-
+#include <vector>
 
 class Object2dInstancing {
 private:
@@ -38,10 +38,20 @@ public:
 		Vector4 color_;
 	};
 
-	//instancingに使うパラメータ
+	//VertexShaderに送るパラメータ
 	struct InstancingForVSData {
 		Matrix4x4 worldMat_;
 		Vector2 texcoord_[4];
+	};
+
+	//CPU内で処理に使うデータ
+	struct InstancingCPUData {
+		//座標
+		Vector2 position_{};
+		//テクスチャ左上座標
+		Vector2 texBase_{};
+		//テクスチャサイズ
+		Vector2 texSize_ = { 100.0f,100.0f };
 	};
 
 private: //静的メンバ変数
@@ -80,8 +90,8 @@ private: //メンバ変数
 	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
 	D3D12_RESOURCE_DESC resourceDesc_;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE particleSrvHandleCPU_{};
-	D3D12_GPU_DESCRIPTOR_HANDLE particleSrvHandleGPU_{};
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU_{};
+	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU_{};
 
 	//サイズ
 	Vector2 size_ = { 100.0f,100.0f };
@@ -92,21 +102,24 @@ private: //メンバ変数
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 	//テクスチャ左上座標
-	Vector2 texBase_{};
+	//Vector2 texBase_{};
 	//テクスチャサイズ
-	Vector2 texSize_ = { 100.0f,100.0f };
+	//Vector2 texSize_ = { 100.0f,100.0f };
+
+	std::vector<InstancingCPUData> instancingCPUData_;
 
 public:
 	//座標
-	Vector2 position_{};
+	//Vector2 position_{};
 
 	//回転
 	float rotate_{};
 
 
+
 public:
 
-	Object2dInstancing(uint32_t textureHandle, Vector2 position, float scale = 1.0f, Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
+	Object2dInstancing(uint32_t textureHandle,float scale = 1.0f, Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
 
 	void Init(uint32_t instanceMax);
 
@@ -123,13 +136,38 @@ public:
 
 	void SetTextureHandle(uint32_t textureHandle) { textureHandle_ = textureHandle; }
 
+	uint32_t GetTextureHandle() { return textureHandle_; };
+
 	void SetTextureArea(const Vector2& texBase, const Vector2& texSize);
+
+	//使用数をクリア(0に)する
+	void ClearUseCount() { 
+		instanceCount_ = 0; 
+		instancingCPUData_.clear();
+	};
+
+	//描画オブジェクトを追加する
+	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize) {
+		if (instanceCount_ >= instanceMax_) {
+			return;
+		}
+		InstancingCPUData data;
+		data.position_ = position;
+		data.texBase_ = texBase;
+		data.texSize_ = texSize;
+		instancingCPUData_.push_back(data);
+		instanceCount_++;
+	};
 
 private:
 
 	void TransferVertex();
 
 	ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
 
 };
 

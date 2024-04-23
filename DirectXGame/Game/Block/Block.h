@@ -84,7 +84,7 @@ public:
 	void ChangeType(BlockType type) { 
 		type_ = type;
 		texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
-		object_->SetTextureHandle(texture_);
+		//object_->SetTextureHandle(texture_);
 	}
 
 	/// <summary>
@@ -114,7 +114,7 @@ public:
 	//デバッグ用変数
 	bool isDebug_ = true;
 
-	void SetColor(const Vector4& color) { object_->SetColor(color); }
+	//void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 	//外的要因(プレイヤーなど)で破壊された時に呼び出される関数
 	void Break();
@@ -132,7 +132,7 @@ protected:
 
 	BlockType type_ = kUnbreakable;
 
-	std::unique_ptr<Object2d> object_;
+	//std::unique_ptr<Object2d> object_;
 
 	//当たり判定
 	AABB2D collision_{};
