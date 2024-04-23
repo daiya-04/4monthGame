@@ -1,4 +1,5 @@
 #include "Block.h"
+#include "AudioManager.h"
 
 void BaseBlock::Break() {
 
@@ -6,7 +7,7 @@ void BaseBlock::Break() {
 	type_ = kNone;
 	SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
-	Audio::GetInstance()->Play(digSE_);
+	digSE_->Play();
 
 }
 
@@ -39,7 +40,7 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 	object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
 	object_->SetTextureArea({ 0.0f,0.0f }, { kTextureBlockSize_,kTextureBlockSize_ });
 
-	digSE_ = Audio::GetInstance()->Load("SE/dig.wav");
+	digSE_ = AudioManager::GetInstance()->Load("SE/dig.wav");
 
 }
 
