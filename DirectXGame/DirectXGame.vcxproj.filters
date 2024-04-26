@@ -322,5 +322,11 @@
     <ClInclude Include="Engine\Audio\AudioManager.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXGame.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
