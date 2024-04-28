@@ -45,6 +45,10 @@ struct WorkDig {
 	int32_t digInterval = 42;
 	//採掘カウント
 	int32_t digCount = 0;
+	//耐久減少量の最高値
+	int32_t maxDigPower = 20;
+	//採掘時の耐久減少量
+	int32_t digPower = 1;
 };
 
 //掴み関連の処理
@@ -75,12 +79,12 @@ struct WorkChargeJump {
 };
 
 //耐熱時間関連
-struct WorkSaunaTimer {
-	//サウナにいられる時間(制限時間)
-	int32_t maxSaunaTime = 3600;
-	//実際にカウントする時間
-	int32_t countSaunaTimer = maxSaunaTime;
-};
+//struct WorkSaunaTimer {
+//	//サウナにいられる時間(制限時間)
+//	int32_t maxSaunaTime = 3600;
+//	//実際にカウントする時間
+//	int32_t countSaunaTimer = maxSaunaTime;
+//};
 
 /// <summary>
 /// プレイヤーの色々なパラメータを纏めたクラス
@@ -116,7 +120,7 @@ public:
 	WorkDig dig_;
 
 	//!!!サウナタイム!!!
-	WorkSaunaTimer saunaTimer_;
+	/*WorkSaunaTimer saunaTimer_;*/
 
 	//移動量
 	float speed_ = 1.0f;

@@ -49,9 +49,13 @@ private:
 
 	std::unique_ptr<Scroll> scroll_;
 
-	uint32_t bgTexture_;
-
+	//UI関連
 	std::unique_ptr<Sprite> backGround_;
+	std::unique_ptr<Sprite> pose_;
+	std::unique_ptr<Sprite> black_;
+
+	uint32_t bgTexture_;
+	uint32_t poseTex_;
 
 };
 

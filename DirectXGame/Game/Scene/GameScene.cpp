@@ -52,25 +52,33 @@ void GameScene::Reset() {
 void GameScene::Update(){
 	DebugGUI();
 
-	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
-		SceneManager::GetInstance()->ChangeScene("StageSelect");
-	}
+	//シーンチェンジしたら操作不可に
+	if (!isSceneChange_) {
 
-	if (player_->GetIsDead()) {
+		if (Input::GetInstance()->TriggerKey(DIK_Q)) {
+			SceneManager::GetInstance()->ChangeScene("StageSelect");
+		}
 
-		if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
-			Reset();
+		if (player_->GetIsDead() || stage_->GetIsClear()) {
+
+			if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
+				Reset();
+			}
+
+		}
+
+		if (player_->GetIsBirdsEye()) {
+			scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
+			camera_->ChangeDrawingRange({ 1920,1080.0f });
+		}
+		else {
+			scroll_->SetTarget(player_->GetPositionPtr());
+			camera_->ChangeDrawingRange({ 1280.0f,720.0f });
 		}
 
 	}
-
-	if (player_->GetIsBirdsEye()) {
-		scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
-		camera_->ChangeDrawingRange({ 1920,1080.0f });
-	}
 	else {
-		scroll_->SetTarget(player_->GetPositionPtr());
-		camera_->ChangeDrawingRange({ 1280.0f,720.0f });
+
 	}
 
 	stage_->Update();

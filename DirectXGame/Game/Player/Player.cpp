@@ -77,13 +77,10 @@ void Player::Initialize() {
 	parameters_[kLeftPlayer]->Initialize();
 	parameters_[kRightPlayer]->Initialize();
 
-	parameters_[kRightPlayer]->saunaTimer_.maxSaunaTime = 300;
-	parameters_[kRightPlayer]->saunaTimer_.countSaunaTimer = 300;
-
 	//加算量リセット
 	addParameters_.addSpeed = 0.0f;
 	addParameters_.addDigSpeed = 0;
-	addParameters_.addSaunaTime = 0;
+	addParameters_.addDigPower = 0;
 
 	currentCharacters_ = kLeftPlayer;
 	reserveCharacters_ = kRightPlayer;
@@ -100,7 +97,7 @@ void Player::Initialize() {
 	//加算値調整項目
 	GlobalVariables::GetInstance()->AddItem(groupName, "Add Value - Speed", addValue_.speed);
 	GlobalVariables::GetInstance()->AddItem(groupName, "Add Value - DigSpeed", addValue_.digSpeed);
-	GlobalVariables::GetInstance()->AddItem(groupName, "Add Value - SaunaTime", addValue_.saunaTime);
+	GlobalVariables::GetInstance()->AddItem(groupName, "Add Value - DigPower", addValue_.digPower);
 
 	//パラメータ調整項目
 	GlobalVariables::GetInstance()->AddItem(groupName, "Move - AccelValue", defaultParameter_->speed_);
@@ -108,10 +105,10 @@ void Player::Initialize() {
 	GlobalVariables::GetInstance()->AddItem(groupName, "Jump - Velocity", defaultParameter_->Jump_.jumpVelocity);
 	GlobalVariables::GetInstance()->AddItem(groupName, "WallJump - JumpVelocity", defaultParameter_->wallJump_.wallJumpVelocity);
 	GlobalVariables::GetInstance()->AddItem(groupName, "Dig - Interval", defaultParameter_->dig_.digInterval);
+	GlobalVariables::GetInstance()->AddItem(groupName, "Dig - Power", defaultParameter_->dig_.digPower);
 	GlobalVariables::GetInstance()->AddItem(groupName, "ChargeJump - ChargeTime", defaultParameter_->chargeJump_.maxChargeTime);
 	GlobalVariables::GetInstance()->AddItem(groupName, "ChargeJump - Velocity", defaultParameter_->chargeJump_.chargeJumpVelocity);
 	GlobalVariables::GetInstance()->AddItem(groupName, "ChargeJump - JumpValue", defaultParameter_->chargeJump_.jumpValue);
-	GlobalVariables::GetInstance()->AddItem(groupName, "SaunaTimer - SaunaTime", defaultParameter_->saunaTimer_.maxSaunaTime);
 
 
 }
@@ -234,7 +231,7 @@ void Player::Update() {
 	}
 
 	//制限時間のゲージ表示を更新
-	lifeLeftGage_->SetSize({64.0f,128.0f * float(parameters_[kLeftPlayer]->saunaTimer_.countSaunaTimer) /
+	/*lifeLeftGage_->SetSize({64.0f,128.0f * float(parameters_[kLeftPlayer]->saunaTimer_.countSaunaTimer) /
 		float(parameters_[kLeftPlayer]->saunaTimer_.maxSaunaTime) });
 	lifeLeftGage_->SetTextureArea({ 0.0f,256.0f - 256.0f * float(parameters_[kLeftPlayer]->saunaTimer_.countSaunaTimer) /
 		float(parameters_[kLeftPlayer]->saunaTimer_.maxSaunaTime) }, 
@@ -245,7 +242,7 @@ void Player::Update() {
 	lifeRightGage_->SetTextureArea({ 0.0f,256.0f - 256.0f * float(parameters_[kRightPlayer]->saunaTimer_.countSaunaTimer) /
 		float(parameters_[kRightPlayer]->saunaTimer_.maxSaunaTime) },
 		{ 128.0f, 256.0f * float(parameters_[kRightPlayer]->saunaTimer_.countSaunaTimer) /
-		float(parameters_[kRightPlayer]->saunaTimer_.maxSaunaTime) });
+		float(parameters_[kRightPlayer]->saunaTimer_.maxSaunaTime) });*/
 
 	//最終的な当たり判定を更新
 	collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
@@ -271,6 +268,10 @@ void Player::DrawUI() {
 	}
 
 }
+
+/// <summary>
+/// プレイヤーの行動処理関連ここから------------------------------------------------
+/// </summary>
 
 void Player::Move() {
 
@@ -329,20 +330,18 @@ void Player::Move() {
 	}
 
 	//入力方向に応じて画像変更
-	if (input_->TiltLStick(Input::Stick::Right)) {
-		object_->SetTextureHandle(textureRight_);
-	}
-	else if (input_->TiltLStick(Input::Stick::Left)) {
+	if (isFacingLeft_) {
 		object_->SetTextureHandle(textureLeft_);
 	}
-	else if (input_->TiltLStick(Input::Stick::Up)) {
+	else {
+		object_->SetTextureHandle(textureRight_);
+	}
+
+	if (input_->TiltLStick(Input::Stick::Up)) {
 		object_->SetTextureHandle(textureUp_);
 	}
 	else if (input_->TiltLStick(Input::Stick::Down)) {
 		object_->SetTextureHandle(textureDown_);
-	}
-	else {
-		object_->SetTextureHandle(texture_);
 	}
 
 }
@@ -523,6 +522,10 @@ void Player::Enhance() {
 
 }
 
+/// <summary>
+/// プレイヤーの帰還、外出関連処理ここから------------------------------------------------
+/// </summary>
+
 void Player::Change() {
 
 	//範囲外参照を防ぐため、characters_の値がどちらでもない場合、return
@@ -555,28 +558,8 @@ void Player::Change() {
 		if (position_.x > Stage::kBasePosition.x - Block::kBlockHalfSize_ && 
 			position_.x < Stage::kBasePosition.x + Block::kBlockHalfSize_) {
 
-			//速度パラメータ加算
-			parameters_[currentCharacters_]->maxMoveSpeed_ += addParameters_.addSpeed;
-			addParameters_.addSpeed = 0.0f;
-			//採掘インターバル減少
-			if (parameters_[currentCharacters_]->dig_.digInterval > 1) {
-
-				parameters_[currentCharacters_]->dig_.digInterval -= addParameters_.addDigSpeed;
-
-				//インターバルが1未満になるなら1に戻す
-				if (parameters_[currentCharacters_]->dig_.digInterval < 1) {
-					parameters_[currentCharacters_]->dig_.digInterval = 1;
-				}
-				
-			}
-			addParameters_.addDigSpeed = 0;
-			//サウナタイム継続演出!!!
-			parameters_[currentCharacters_]->saunaTimer_.maxSaunaTime += addParameters_.addSaunaTime;
-			parameters_[currentCharacters_]->saunaTimer_.countSaunaTimer = parameters_[currentCharacters_]->saunaTimer_.maxSaunaTime;
-			addParameters_.addSaunaTime = 0;
-
-			//サウナタイム復活!!!
-			parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer = parameters_[reserveCharacters_]->saunaTimer_.maxSaunaTime;
+			//パラメータの処理
+			AdjustmentParameter();
 
 			//プレイヤー切り替え
 			if (currentCharacters_ == kLeftPlayer) {
@@ -606,7 +589,7 @@ void Player::Change() {
 
 			position_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
-			//サウナ室内に入ったら切り替え
+			//ラインを超えたら採掘時の処理ループに移行
 			if (position_.x < Stage::kBorderLeft.x - Block::kBlockSize_) {
 				isOut_ = false;
 				isMining_ = true;
@@ -621,7 +604,7 @@ void Player::Change() {
 
 			position_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 
-			//サウナ室内に入ったら切り替え
+			//ラインを超えたら採掘時の処理ループに移行
 			if (position_.x > Stage::kBorderRight.x + Block::kBlockSize_) {
 				isOut_ = false;
 				isMining_ = true;
@@ -700,6 +683,30 @@ void Player::Change() {
 
 }
 
+void Player::AdjustmentParameter() {
+
+	//速度パラメータ加算
+	parameters_[currentCharacters_]->maxMoveSpeed_ += addParameters_.addSpeed;
+	addParameters_.addSpeed = 0.0f;
+	//採掘インターバル減少
+	if (parameters_[currentCharacters_]->dig_.digInterval > 1) {
+
+		parameters_[currentCharacters_]->dig_.digInterval -= addParameters_.addDigSpeed;
+
+		//インターバルが1未満になるなら1に戻す
+		if (parameters_[currentCharacters_]->dig_.digInterval < 1) {
+			parameters_[currentCharacters_]->dig_.digInterval = 1;
+		}
+
+	}
+	addParameters_.addDigSpeed = 0;
+
+	//採掘破壊力加算
+	parameters_[currentCharacters_]->dig_.digPower += addParameters_.addDigPower;
+	addParameters_.addDigPower = 0;
+
+}
+
 void Player::CountSaunaTime() {
 
 	//範囲外参照を防ぐため、characters_の値がどちらでもない場合、return
@@ -707,18 +714,11 @@ void Player::CountSaunaTime() {
 		return;
 	}
 
-	if (parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer > 0) {
-
-		/*parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer--;*/
-
-		//カウント0で死亡
-		if (parameters_[reserveCharacters_]->saunaTimer_.countSaunaTimer <= 0) {
-			isDead_ = true;
-		}
-
-	}
-
 }
+
+/// <summary>
+/// プレイヤーの位置移動関連ここから------------------------------------------------
+/// </summary>
 
 void Player::UpdatePosition() {
 
@@ -848,7 +848,7 @@ void Player::CheckCollision() {
 
 							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
 							if (parameters_[currentCharacters_]->chargeJump_.canBreak && Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
-								(*blocksPtr_)[y][x]->Break();
+								(*blocksPtr_)[y][x]->Break(999);
 							}
 							else {
 
@@ -896,7 +896,7 @@ void Player::CheckCollision() {
 
 							//破壊可能状態なら押し戻し判定をスキップしブロックを破壊
 							if (parameters_[currentCharacters_]->chargeJump_.canBreak && Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
-								(*blocksPtr_)[y][x]->Break();
+								(*blocksPtr_)[y][x]->Break(999);
 							}
 							else {
 
@@ -975,7 +975,10 @@ void Player::CheckCollision() {
 
 								SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
 
-								SetCanJump(true);
+								//着地した瞬間
+								if (!parameters_[currentCharacters_]->Jump_.canJump) {
+									SetCanJump(true);
+								}
 
 							}
 
@@ -1016,7 +1019,10 @@ void Player::CheckCollision() {
 
 								SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
 
-								SetCanJump(true);
+								//着地した瞬間
+								if (!parameters_[currentCharacters_]->Jump_.canJump) {
+									SetCanJump(true);
+								}
 
 							}
 
@@ -1034,22 +1040,8 @@ void Player::CheckCollision() {
 
 						if (Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
 
-							//壊したブロックに応じてパラメータ強化の値を増加させる
-							if ((*blocksPtr_)[y][x]->GetType() == Block::BlockType::kSpeedBlock) {
-								addParameters_.addSpeed += addValue_.speed;
-							}
-							else if ((*blocksPtr_)[y][x]->GetType() == Block::BlockType::kDigerBlock) {
-								addParameters_.addDigSpeed += addValue_.digSpeed;
-							}
-							else if ((*blocksPtr_)[y][x]->GetType() == Block::BlockType::kSaunnerBlock) {
-								addParameters_.addSaunaTime += addValue_.saunaTime;
-							}
-							//部品ブロックを壊したら、部品を1つ手に入れる
-							else if ((*blocksPtr_)[y][x]->GetType() == Block::BlockType::kParts) {
-								partsCount_++;
-							}
-
-							(*blocksPtr_)[y][x]->Break();
+							//自身の破壊力に応じてダメージを与える
+							(*blocksPtr_)[y][x]->Break(parameters_[currentCharacters_]->dig_.digPower);
 
 							//穴掘りクールタイムを設定
 							parameters_[currentCharacters_]->dig_.digCount = parameters_[currentCharacters_]->dig_.digInterval;
@@ -1292,6 +1284,10 @@ void Player::CheckCollision() {
 
 }
 
+/// <summary>
+/// デバッグ処理関連ここから------------------------------------------------
+/// </summary>
+
 void Player::Debug() {
 
 #ifdef _DEBUG
@@ -1313,10 +1309,9 @@ void Player::Debug() {
 	ImGui::Text("D-MaxSpeed : %1.2f", defaultParameter_->maxMoveSpeed_);
 	ImGui::Text("D-DigInterval : %d", defaultParameter_->dig_.digInterval);
 	ImGui::Text("D-DigCoolTime : %d", defaultParameter_->dig_.digCount);
+	ImGui::Text("D-DigPower : %d", defaultParameter_->dig_.digPower);
 	ImGui::Text("D-MaxChargeTime : %d", defaultParameter_->chargeJump_.maxChargeTime);
 	ImGui::Text("D-ChargeTimer : %d", defaultParameter_->chargeJump_.chargeTimer);
-	ImGui::Text("D-MaxSaunaTime : %d", defaultParameter_->saunaTimer_.maxSaunaTime);
-	ImGui::Text("D-SaunaTime : %d", defaultParameter_->saunaTimer_.countSaunaTimer);
 	ImGui::Separator();
 	//左のプレイヤーのパラメータ
 	ImGui::Text("Left");
@@ -1324,10 +1319,9 @@ void Player::Debug() {
 	ImGui::Text("L-MaxSpeed : %1.2f", parameters_[kLeftPlayer]->maxMoveSpeed_);
 	ImGui::Text("L-DigInterval : %d", parameters_[kLeftPlayer]->dig_.digInterval);
 	ImGui::Text("L-DigCoolTime : %d", parameters_[kLeftPlayer]->dig_.digCount);
+	ImGui::Text("L-DigPower : %d", parameters_[kLeftPlayer]->dig_.digPower);
 	ImGui::Text("L-MaxChargeTime : %d", parameters_[kLeftPlayer]->chargeJump_.maxChargeTime);
 	ImGui::Text("L-ChargeTimer : %d", parameters_[kLeftPlayer]->chargeJump_.chargeTimer);
-	ImGui::Text("L-MaxSaunaTime : %d", parameters_[kLeftPlayer]->saunaTimer_.maxSaunaTime);
-	ImGui::Text("L-SaunaTime : %d", parameters_[kLeftPlayer]->saunaTimer_.countSaunaTimer);
 	ImGui::Separator();
 	//右のプレイヤーのパラメータ
 	ImGui::Text("Right");
@@ -1335,10 +1329,9 @@ void Player::Debug() {
 	ImGui::Text("R-MaxSpeed : %1.2f", parameters_[kRightPlayer]->maxMoveSpeed_);
 	ImGui::Text("R-DigInterval : %d", parameters_[kRightPlayer]->dig_.digInterval);
 	ImGui::Text("R-DigCoolTime : %d", parameters_[kRightPlayer]->dig_.digCount);
+	ImGui::Text("R-DigPower : %d", parameters_[kRightPlayer]->dig_.digPower);
 	ImGui::Text("R-MaxChargeTime : %d", parameters_[kRightPlayer]->chargeJump_.maxChargeTime);
 	ImGui::Text("R-ChargeTimer : %d", parameters_[kRightPlayer]->chargeJump_.chargeTimer);
-	ImGui::Text("R-MaxSaunaTime : %d", parameters_[kRightPlayer]->saunaTimer_.maxSaunaTime);
-	ImGui::Text("R-SaunaTime : %d", parameters_[kRightPlayer]->saunaTimer_.countSaunaTimer);
 	ImGui::End();
 
 	//プレイヤーパラメータ調整
@@ -1346,16 +1339,16 @@ void Player::Debug() {
 
 	addValue_.speed = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Add Value - Speed");
 	addValue_.digSpeed = GlobalVariables::GetInstance()->GetIntValue(groupName, "Add Value - DigSpeed");
-	addValue_.saunaTime = GlobalVariables::GetInstance()->GetIntValue(groupName, "Add Value - SaunaTime");
+	addValue_.digPower = GlobalVariables::GetInstance()->GetIntValue(groupName, "Add Value - DigPower");
 	defaultParameter_->speed_ = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Move - AccelValue");
 	defaultParameter_->maxMoveSpeed_ = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Move - MaxSpeed");
 	defaultParameter_->Jump_.jumpVelocity = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Jump - Velocity");
 	defaultParameter_->wallJump_.wallJumpVelocity = GlobalVariables::GetInstance()->GetVec2Value(groupName, "WallJump - JumpVelocity");
 	defaultParameter_->dig_.digInterval = GlobalVariables::GetInstance()->GetIntValue(groupName, "Dig - Interval");
+	defaultParameter_->dig_.digPower = GlobalVariables::GetInstance()->GetIntValue(groupName, "Dig - Power");
 	defaultParameter_->chargeJump_.maxChargeTime = GlobalVariables::GetInstance()->GetIntValue(groupName, "ChargeJump - ChargeTime");
 	defaultParameter_->chargeJump_.chargeJumpVelocity = GlobalVariables::GetInstance()->GetFloatValue(groupName, "ChargeJump - Velocity");
 	defaultParameter_->chargeJump_.jumpValue = GlobalVariables::GetInstance()->GetIntValue(groupName, "ChargeJump - JumpValue");
-	defaultParameter_->saunaTimer_.maxSaunaTime = GlobalVariables::GetInstance()->GetIntValue(groupName, "SaunaTimer - SaunaTime");
 
 	
 

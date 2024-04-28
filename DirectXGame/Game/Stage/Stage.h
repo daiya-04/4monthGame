@@ -66,6 +66,12 @@ public:
 
 	static inline const Vector2 kBorderRight = { float(kBasePosition.x + 5.0f * Block::kBlockSize_), -48.0f };
 
+	//マグマライン取得
+	float GetMagmaLine() const { return magmaLine_; }
+
+	//クリアフラグ取得
+	bool GetIsClear() const { return isClear_; }
+
 private:
 
 	//実体生成
@@ -82,6 +88,9 @@ private:
 
 	//壊せないブロック以外の破壊(デバッグ)
 	void BreakAllBlock();
+
+	//マグマリセット
+	void ResetMagma();
 
 	void SetUV(Block* block);
 
@@ -100,6 +109,7 @@ private:
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
 
 	//マグマのライン
+	float maxMagmaLine_ = 5000.0f;
 	float magmaLine_ = 5000.0f;
 	float magmaTexBaseX_ = 0.0f;
 

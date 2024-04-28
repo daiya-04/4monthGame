@@ -16,6 +16,8 @@ protected:
 
 	static const uint32_t kMaxStage_ = 2;
 
+	static bool isSceneChange_;
+
 	static uint32_t stageNumber_;
 
 	static std::shared_ptr<Player> player_;

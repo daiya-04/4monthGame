@@ -13,14 +13,12 @@ void PlayerParameter::Initialize() {
 	dig_.isDig = false;
 	dig_.digInterval = 42;
 	dig_.digCount = 0;
+	dig_.digPower = 1;
 
 	chargeJump_.isCharge = false;
 	chargeJump_.chargeTimer = 0;
 	chargeJump_.chargeJumpVelocity = -35.0f;
 	chargeJump_.canBreak = false;
-
-	saunaTimer_.maxSaunaTime = 3600;
-	saunaTimer_.countSaunaTimer = saunaTimer_.maxSaunaTime;
 
 }
 
@@ -36,11 +34,10 @@ void PlayerParameter::CopyParameter(const PlayerParameter& origin) {
 	wallJump_.wallJumpVelocity = origin.wallJump_.wallJumpVelocity;
 
 	dig_.digInterval = origin.dig_.digInterval;
+	dig_.digPower = origin.dig_.digPower;
 
 	chargeJump_.maxChargeTime = origin.chargeJump_.maxChargeTime;
 	chargeJump_.chargeJumpVelocity = origin.chargeJump_.chargeJumpVelocity;
 	chargeJump_.jumpValue = origin.chargeJump_.jumpValue;
-
-	saunaTimer_.maxSaunaTime = origin.saunaTimer_.maxSaunaTime;
 
 }

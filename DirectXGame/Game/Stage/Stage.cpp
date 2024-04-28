@@ -38,6 +38,8 @@ Stage::Stage()
 	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 64.0f });
 	magma_->SetTextureArea({ 0.0f,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 32.0f });
 
+	CreateEntity();
+
 }
 
 Stage::~Stage()
@@ -51,14 +53,17 @@ void Stage::Initialize() {
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
 
 			blockPositions_[y][x] = 0;
+			map_[y][x]->SetPlayer(player_);
+			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
 
 		}
 
 	}
 
-	CreateEntity();
-
 	isClear_ = false;
+
+	magmaLine_ = maxMagmaLine_;
+	magmaTexBaseX_ = 0.0f;
 
 }
 
@@ -102,6 +107,25 @@ void Stage::Update() {
 
 	}
 
+	//採掘中にマグマライン上昇
+	if (player_->GetIsMine()) {
+
+		if (magmaLine_ > 0.0f) {
+			magmaLine_ -= 1.0f;
+		}
+
+	}
+	//サウナ室に戻った時にリセット
+	else if (player_->GetIsHome() && magmaLine_ < maxMagmaLine_) {
+		ResetMagma();
+	}
+
+	//テクスチャの動きを付ける
+	magmaTexBaseX_++;
+	if (magmaTexBaseX_ > 256.0f) {
+		magmaTexBaseX_ = 0.0f;
+	}
+
 	//数字更新
 	for (int32_t i = 0; i < kMaxNumber_; i++) {
 
@@ -118,13 +142,6 @@ void Stage::Update() {
 	//マグマ更新
 	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 10000.0f - magmaLine_ });
 	magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 10000.0f - magmaLine_ });
-
-	magmaLine_ -= 0.1f;
-
-	magmaTexBaseX_++;
-	if (magmaTexBaseX_ > 256.0f) {
-		magmaTexBaseX_ = 0.0f;
-	}
 
 }
 
@@ -163,6 +180,12 @@ void Stage::DrawUI() {
 	if (isClear_) {
 		clearSprite_->Draw();
 	}
+
+}
+
+void Stage::ResetMagma() {
+
+	magmaLine_ = maxMagmaLine_;
 
 }
 
@@ -219,7 +242,7 @@ void Stage::BreakIceBlock() {
 			//氷ブロックを破壊する
 			if (map_[y][x]->GetType() == Block::BlockType::kIceBlock) {
 
-				map_[y][x]->Break();
+				map_[y][x]->Break(999);
 
 			}
 
@@ -238,7 +261,7 @@ void Stage::BreakAllBlock() {
 			//壊せないブロック以外を破壊する
 			if (Block::CheckCanBreak(map_[y][x]->GetType())) {
 
-				map_[y][x]->Break();
+				map_[y][x]->Break(999);
 
 			}
 
@@ -258,7 +281,7 @@ void Stage::CreateEntity() {
 			if (!map_[y][x]) {
 
 				//ブロックの実体を生成、初期化
-				map_[y][x] = std::make_shared<Block>();
+				map_[y][x].reset(new Block({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, Block::BlockType::kNone));
 				map_[y][x]->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, Block::BlockType::kNone);
 				map_[y][x]->SetPlayer(player_);
 				map_[y][x]->SetBlockPosition(x, y);
@@ -326,6 +349,8 @@ void Stage::Load(uint32_t stageNumber) {
 			//ブロックのパラメータ変更
 			map_[y][x]->ChangeType(type);
 			map_[y][x]->Reset();
+			//高さに応じて耐久値を調整
+			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
 
 			//ブロックがパーツなら残りのパーツ数を増加
 			if (type == Block::BlockType::kParts) {

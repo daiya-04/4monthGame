@@ -37,8 +37,8 @@ public:
 		kSpeedBlock,
 		//採掘速度が上がるブロック
 		kDigerBlock,
-		//耐熱時間が長くなるブロック
-		kSaunnerBlock,
+		//破壊力が上昇するブロック
+		kDigPowerBlock,
 		//パーツブロック
 		kParts,
 		//ブロックの最大種類
@@ -117,10 +117,13 @@ public:
 	void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 	//外的要因(プレイヤーなど)で破壊された時に呼び出される関数
-	void Break();
+	void Break(int32_t power);
 
 	//ブロックが再生する時の関数(再び当たり判定を持つ)
 	void Repair() { isBreak_ = false; }
+
+	//ブロックの耐久値設定
+	void SetDurability(int32_t value) { durability_ = value; }
 
 	bool GetIsBreak() { return isBreak_; }
 
@@ -155,6 +158,9 @@ protected:
 	//破壊されたかどうか
 	bool isBreak_ = false;
 
+	//耐久力
+	int32_t durability_ = 3;
+
 	//ザクザク音
 	size_t digSE_;
 
@@ -164,7 +170,7 @@ class Block : public BaseBlock
 {
 public:
 
-	Block();
+	Block(const Vector2& position, BlockType type);
 	~Block() override;
 
 	void Initialize(const Vector2& position, BlockType type) override;

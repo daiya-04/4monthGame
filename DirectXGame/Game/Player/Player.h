@@ -46,8 +46,8 @@ public:
 		float addSpeed = 0.0f;
 		//採掘速度
 		int32_t addDigSpeed = 0;
-		//耐熱時間
-		int32_t addSaunaTime = 0;
+		//採掘のダメージ量
+		int32_t addDigPower = 0;
 	};
 
 	//ブロック1つ当たりの加算量
@@ -56,8 +56,8 @@ public:
 		float speed = 2.0f;
 		//採掘速度
 		int32_t digSpeed = 5;
-		//耐熱時間
-		int32_t saunaTime = 100;
+		//採掘のダメージ量
+		int32_t digPower = 1;
 	};
 
 	//プレイヤーのサイズ
@@ -196,6 +196,8 @@ public:
 
 	bool GetIsHome() const { return isHome_; }
 
+	bool GetIsMine() const { return isMining_; }
+
 	//クリアフラグのセット
 	void SetIsClear(bool flag) { isClear_ = flag; }
 
@@ -208,6 +210,18 @@ public:
 		remainingParts -= partsCount_;
 		partsCount_ = 0;
 	}
+
+	//スピードパラメータの加算
+	void AddSpeedParameter(){ addParameters_.addSpeed += addValue_.speed; }
+
+	//採掘インターバルパラメータの加算
+	void AddDigIntervalParameter(){ addParameters_.addDigSpeed += addValue_.digSpeed; }
+
+	//採掘ダメージ量パラメータの加算
+	void AddDigPowerParameter() { addParameters_.addDigPower += addValue_.digPower; }
+
+	//パーツカウント加算
+	void AddPartsCount() { partsCount_++; }
 
 private:
 
@@ -243,6 +257,9 @@ private:
 
 	//サウナ室にいる方の残り時間カウント
 	void CountSaunaTime();
+
+	//パラメータの計算処理
+	void AdjustmentParameter();
 
 private:
 
