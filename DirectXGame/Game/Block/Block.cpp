@@ -30,9 +30,9 @@ void BaseBlock::Break(int32_t power) {
 
 		}
 
-		isBreak_ = true;
-		type_ = kNone;
-		SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	isBreak_ = true;
+	type_ = kNone;
+	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
 	}
 
@@ -45,7 +45,7 @@ void BaseBlock::Reset() {
 	durability_ = 3;
 
 	isBreak_ = false;
-	SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
 }
 
@@ -55,7 +55,7 @@ Block::Block(const Vector2& position, BlockType type)
 	type_ = type;
 	texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
 	position_ = position;
-	object_.reset(Object2d::Create(texture_, position_));
+	/*object_.reset(Object2d::Create(texture_, position_));*/
 	digSE_ = AudioManager::GetInstance()->Load("SE/dig.wav");
 
 }
@@ -73,8 +73,9 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
 
-	object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
-	object_->SetTextureArea({ 0.0f,0.0f }, { kTextureBlockSize_,kTextureBlockSize_ });
+	//object_.reset(Object2d::Create(texture_, position_));
+	//object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
+	//object_->SetTextureArea({ 0.0f,0.0f }, { kTextureBlockSize_,kTextureBlockSize_ });
 
 }
 
@@ -84,8 +85,8 @@ void Block::Update() {
 		isBreak_ = true;
 	}
 
-	object_->SetTextureArea({ float(uvPositionX_ * kTextureBlockSize_),float(uvPositionY_ * kTextureBlockSize_) },
-		{ kTextureBlockSize_,kTextureBlockSize_ });
+	//object_->SetTextureArea({ float(uvPositionX_ * kTextureBlockSize_),float(uvPositionY_ * kTextureBlockSize_) },
+		//{ kTextureBlockSize_,kTextureBlockSize_ });
 
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
@@ -95,7 +96,8 @@ void Block::Update() {
 void Block::Draw(const Camera& camera) {
 
 	if (!isBreak_) {
-		object_->Draw(camera);
+		//object_->Draw(camera);
+		BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ },type_);
 	}
 
 }
