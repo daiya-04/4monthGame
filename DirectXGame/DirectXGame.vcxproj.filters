@@ -182,6 +182,9 @@
     <ClCompile Include="Game\Enemy\Enemy.cpp">
       <Filter>Game\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Audio\AudioManager.cpp">
+      <Filter>Engine\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -316,5 +319,14 @@
     <ClInclude Include="Game\Enemy\Enemy.h">
       <Filter>Game\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Audio\AudioManager.h">
+      <Filter>Engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXGame.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

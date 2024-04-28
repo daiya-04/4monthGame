@@ -1,4 +1,5 @@
 #include "Block.h"
+#include "AudioManager.h"
 #include "Player/Player.h"
 
 void BaseBlock::Break(int32_t power) {
@@ -35,7 +36,7 @@ void BaseBlock::Break(int32_t power) {
 
 	}
 
-	Audio::GetInstance()->Play(digSE_);
+	digSE_->Play();
 
 }
 
@@ -55,7 +56,7 @@ Block::Block(const Vector2& position, BlockType type)
 	texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
 	position_ = position;
 	object_.reset(Object2d::Create(texture_, position_));
-	digSE_ = Audio::GetInstance()->Load("SE/dig.wav");
+	digSE_ = AudioManager::GetInstance()->Load("SE/dig.wav");
 
 }
 

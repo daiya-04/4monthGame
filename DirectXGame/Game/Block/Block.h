@@ -162,7 +162,7 @@ protected:
 	int32_t durability_ = 3;
 
 	//ザクザク音
-	size_t digSE_;
+	Audio* digSE_;
 
 };
 

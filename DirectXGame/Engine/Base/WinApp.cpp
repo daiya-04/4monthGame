@@ -1,6 +1,8 @@
 #include "WinApp.h"
 #include <imgui_impl_win32.h>
 
+#include "resource.h"
+
 #pragma comment(lib,"winmm.lib")
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -49,6 +51,8 @@ void WinApp::CreateGameWindow(const wchar_t* title, int32_t clientWidth, int32_t
 	wc_.hInstance = GetModuleHandle(nullptr);
 	//カーソル
 	wc_.hCursor = LoadCursor(nullptr, IDC_ARROW);
+
+	wc_.hIcon = LoadIcon(wc_.hInstance, MAKEINTRESOURCE(IDI_ICON1));
 
 	//ウィンドウクラスを登録する
 	RegisterClass(&wc_);
