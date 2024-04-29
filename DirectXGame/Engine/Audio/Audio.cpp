@@ -80,7 +80,7 @@ void Audio::Update() {
 
 void Audio::Play() {
 
-	if (IsValidPlayhandle()) {
+	if (IsValidPlayhandle() && audioType_ == Audio::AudioType::BGM) {
 		return;
 	}
 
