@@ -109,17 +109,17 @@ void Stage::Update() {
 	}
 
 	//採掘中にマグマライン上昇
-	if (player_->GetIsMine()) {
+	//if (player_->GetIsMine()) {
 
-		if (magmaLine_ > 0.0f) {
-			magmaLine_ -= 1.0f;
-		}
+	//	if (magmaLine_ > 0.0f) {
+	//		magmaLine_ -= 1.0f;
+	//	}
 
-	}
-	//サウナ室に戻った時にリセット
-	else if (player_->GetIsHome() && magmaLine_ < maxMagmaLine_) {
-		ResetMagma();
-	}
+	//}
+	////サウナ室に戻った時にリセット
+	//else if (player_->GetIsHome() && magmaLine_ < maxMagmaLine_) {
+	//	ResetMagma();
+	//}
 
 	//テクスチャの動きを付ける
 	magmaTexBaseX_++;

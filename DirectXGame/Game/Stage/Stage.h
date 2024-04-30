@@ -109,8 +109,8 @@ private:
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
 
 	//マグマのライン
-	float maxMagmaLine_ = 5000.0f;
-	float magmaLine_ = 5000.0f;
+	float maxMagmaLine_ = 50000.0f;
+	float magmaLine_ = 50000.0f;
 	float magmaTexBaseX_ = 0.0f;
 
 	//パーツの数

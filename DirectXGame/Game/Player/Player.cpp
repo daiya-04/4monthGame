@@ -224,6 +224,9 @@ void Player::Update() {
 			//キャラクター交代の一連の流れ
 			Change();
 
+			//座標の更新
+			UpdatePosition();
+
 		}
 
 		
@@ -281,7 +284,7 @@ void Player::Move() {
 	}
 
 	//移動
-	if (input_->TiltLStick(Input::Stick::Right) && wallJumpVelocity_.x >= -1.0f) {
+	if (input_->TiltLStick(Input::Stick::Right)/* && wallJumpVelocity_.x >= -1.0f*/) {
 
 		if (velocity_.x < -2.0f) {
 			velocity_.x = 0.0f;
@@ -292,7 +295,7 @@ void Player::Move() {
 		isFacingLeft_ = false;
 
 	}
-	else if (input_->TiltLStick(Input::Stick::Left) && wallJumpVelocity_.x <= 1.0f) {
+	else if (input_->TiltLStick(Input::Stick::Left)/* && wallJumpVelocity_.x <= 1.0f*/) {
 
 		if (velocity_.x > 2.0f) {
 			velocity_.x = 0.0f;
@@ -386,7 +389,7 @@ void Player::ChargeJump() {
 	if (parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
 
 		//チャージジャンプ中は、velocityを調整
-		velocity_.x = 0.0f;
+		/*velocity_.x = 0.0f;*/
 
 		velocity_.y = -8.0f + parameters_[currentCharacters_]->chargeJump_.chargeJumpVelocity * 
 			((position_.y - parameters_[currentCharacters_]->chargeJump_.stopLine) / 
@@ -541,7 +544,7 @@ void Player::Change() {
 
 			object_->SetTextureHandle(textureRight_);
 
-			position_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
+			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 
 			
 
@@ -550,7 +553,7 @@ void Player::Change() {
 
 			object_->SetTextureHandle(textureLeft_);
 
-			position_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
+			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
 		}
 
@@ -572,6 +575,7 @@ void Player::Change() {
 			}
 
 			position_.x = Stage::kBasePosition.x;
+			velocity_ = { 0.0f,0.0f };
 			isReturn_ = false;
 
 		}
@@ -587,10 +591,18 @@ void Player::Change() {
 
 			object_->SetTextureHandle(textureLeft_);
 
-			position_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
+			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
+
+			//ジャンプを入れる
+			if (parameters_[currentCharacters_]->Jump_.canJump &&
+				position_.x < Stage::kBorderLeft.x - Block::kBlockSize_) {
+				velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
+				parameters_[currentCharacters_]->Jump_.canJump = false;
+			}
 
 			//ラインを超えたら採掘時の処理ループに移行
-			if (position_.x < Stage::kBorderLeft.x - Block::kBlockSize_) {
+			if (position_.x < Stage::kBorderLeft.x - Block::kBlockSize_ * 4) {
+				velocity_.x = 0.0f;
 				isOut_ = false;
 				isMining_ = true;
 				isStopMove_ = false;
@@ -602,10 +614,18 @@ void Player::Change() {
 
 			object_->SetTextureHandle(textureRight_);
 
-			position_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
+			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
+
+			//ジャンプを入れる
+			if (parameters_[currentCharacters_]->Jump_.canJump &&
+				position_.x > Stage::kBorderRight.x + Block::kBlockSize_) {
+				velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
+				parameters_[currentCharacters_]->Jump_.canJump = false;
+			}
 
 			//ラインを超えたら採掘時の処理ループに移行
-			if (position_.x > Stage::kBorderRight.x + Block::kBlockSize_) {
+			if (position_.x > Stage::kBorderRight.x + Block::kBlockSize_ * 4) {
+				velocity_.x = 0.0f;
 				isOut_ = false;
 				isMining_ = true;
 				isStopMove_ = false;

@@ -71,6 +71,9 @@
     <Filter Include="Game\Enemy">
       <UniqueIdentifier>{4fdfdebd-ae0d-4473-8df4-adc213d31b30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Score">
+      <UniqueIdentifier>{973a30e3-0065-4167-865e-ac4b5722ccb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -185,6 +188,9 @@
     <ClCompile Include="Engine\2d\Object2dInstancing.cpp" />
     <ClCompile Include="Engine\Audio\AudioManager.cpp">
       <Filter>Engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Score\ScoreManager.cpp">
+      <Filter>Game\Score</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -325,6 +331,9 @@
       <Filter>Engine\Audio</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Game\Score\ScoreManager.h">
+      <Filter>Game\Score</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">
