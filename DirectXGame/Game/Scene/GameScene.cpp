@@ -204,7 +204,7 @@ void GameScene::DebugGUI(){
 	
 	ImGui::End();
 
-	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
+	if (Input::GetInstance()->TriggerKey(DIK_Z)) {
 		isPlayGame_ = !isPlayGame_;
 	};
 
