@@ -18,13 +18,20 @@ private:
 	friend class AudioManager;
 
 public:
+
+	enum class AudioType {
+		BGM,
+		SE,
+	};
+
+public:
 	static void Init();
 	static void DstoroyVoice();
 	void Update();
 	//音声データの解放
 	void SoundUnload();
 	//音声再生
-	void Play(float volume = 1.0f,bool loop = false);
+	void Play();
 
 	//ループ終了
 	void SoundPlayLoopEnd();
@@ -42,6 +49,11 @@ public:
 
 	void DestroyPlayHandle();
 
+public:
+
+	static float bgmVolume_;
+	static float seVolume_;
+
 private:
 
 	static ComPtr<IXAudio2> xAudio2_;
@@ -56,6 +68,7 @@ private:
 	std::vector<BYTE> buffer_;
 	//バッファのサイズ
 	uint32_t bufferSize_;
+	AudioType audioType_{};
 
 };
 

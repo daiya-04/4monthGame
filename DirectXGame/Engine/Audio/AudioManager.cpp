@@ -52,6 +52,14 @@ Audio* AudioManager::LoadInternal(const std::string& filename) {
 			return audio.get();
 		}
 	}
+	
+	std::string audioTypeName;
+	for (const char name : filename) {
+		if (name == '/') {
+			break;
+		}
+		audioTypeName += name;
+	}
 
 	//SourceReaderの作成
 	ComPtr<IMFSourceReader> MFSourceReader;
@@ -103,6 +111,10 @@ Audio* AudioManager::LoadInternal(const std::string& filename) {
 	audio.bufferSize_ = sizeof(BYTE) * static_cast<uint32_t>(mediaData.size());
 	audio.buffer_ = std::move(mediaData);
 	audio.filename_ = filename;
+
+	if (audioTypeName == "SE") { audio.audioType_ = Audio::AudioType::SE; }
+	else if (audioTypeName == "BGM") { audio.audioType_ = Audio::AudioType::BGM; }
+
 	audios_.emplace_back(std::make_unique<Audio>(std::move(audio)));
 
 	return audios_.back().get();

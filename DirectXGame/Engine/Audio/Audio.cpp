@@ -12,6 +12,8 @@ using namespace Microsoft::WRL;
 
 ComPtr<IXAudio2> Audio::xAudio2_;
 IXAudio2MasteringVoice* Audio::masterVoice_ = nullptr;
+float Audio::bgmVolume_ = 0.5f;
+float Audio::seVolume_ = 0.5;
 
 //Audio* Audio::GetInstance() {
 //	static Audio instance;
@@ -65,9 +67,23 @@ void Audio::Update() {
 			DestroyPlayHandle();
 		}
 	}
+	if (IsValidPlayhandle()) {
+		if (audioType_ == AudioType::BGM) {
+			SetVolume(bgmVolume_);
+		}
+		else if (audioType_ == AudioType::SE) {
+			SetVolume(seVolume_);
+		}
+	}
+	
 }
 
-void Audio::Play(float volume, bool loop) {
+void Audio::Play() {
+
+	if (IsValidPlayhandle() && audioType_ == Audio::AudioType::BGM) {
+		return;
+	}
+
 	HRESULT hr;
 
 	//再生する波形データの設定
@@ -75,7 +91,7 @@ void Audio::Play(float volume, bool loop) {
 	buf.pAudioData = buffer_.data();
 	buf.AudioBytes = bufferSize_;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
-	if (loop) {
+	if (audioType_ == AudioType::BGM) {
 		buf.LoopCount = XAUDIO2_LOOP_INFINITE;
 	}
 
@@ -91,7 +107,8 @@ void Audio::Play(float volume, bool loop) {
 	assert(SUCCEEDED(hr));
 
 	sourceVoices_ = pSourcVoice;
-	SetVolume(volume);
+	
+	
 }
 
 void Audio::SoundPlayLoopEnd() {
