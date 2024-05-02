@@ -530,6 +530,7 @@ void Player::Enhance() {
 
 void Player::MoveLift() {
 
+	//地面についている時のみ反応する
 	if (input_->TriggerButton(Input::Button::A) && parameters_[currentCharacters_]->Jump_.canJump) {
 
 		//左側の場合
