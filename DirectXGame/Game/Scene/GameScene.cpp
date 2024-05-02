@@ -105,12 +105,6 @@ void GameScene::DrawObject(){
 
 }
 
-void GameScene::DrawParticleModel(){
-
-
-
-}
-
 void GameScene::DrawParticle(){
 
 	

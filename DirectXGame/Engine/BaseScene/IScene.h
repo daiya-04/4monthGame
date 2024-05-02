@@ -1,6 +1,6 @@
 #pragma once
 
-class SceneManager;
+//class SceneManager;
 
 class IScene{
 public:
@@ -12,7 +12,6 @@ public:
 	virtual void DrawBackGround() = 0;
 	virtual void DrawUI() = 0;
 	virtual void DrawParticle() = 0;
-	virtual void DrawParticleModel() = 0;
 
 	virtual void DebugGUI() = 0;
 

@@ -28,8 +28,6 @@ public:
 
 	void DrawObject()override;
 
-	void DrawParticleModel()override;
-
 	void DrawParticle()override;
 
 	void DrawUI()override;
