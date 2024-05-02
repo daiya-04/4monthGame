@@ -94,6 +94,9 @@ private:
 
 	void SetUV(Block* block);
 
+	//当たり判定関連
+	void CheckCollision();
+
 private:
 
 	Player* player_;
@@ -122,11 +125,17 @@ private:
 	std::array<std::unique_ptr<Sprite>, 2> numbers_;
 	std::unique_ptr<Sprite> clearSprite_;
 
+	//帰還エリア
+	std::array<std::unique_ptr<Object2d>, 2> returnObjects_;
+	std::array<Vector2, 2> returnPosition_;
+	std::array<AABB2D, 2> returnArea_;
+
 	//テクスチャ
 	uint32_t numTex_;
 	uint32_t clearTex_;
 	uint32_t borderTex_;
 	uint32_t magmaTex_;
+	uint32_t returnTex_;
 
 };
 

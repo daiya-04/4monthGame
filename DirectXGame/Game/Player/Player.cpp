@@ -177,7 +177,6 @@ void Player::Update() {
 		//採掘中の行動処理
 		if (isMining_ && !isDead_ && !isClear_) {
 
-
 			//帰還ボーダーに触れたら動きを止める
 			if ((position_.y < Stage::kBorderLeft.y || position_.y < Stage::kBorderRight.y) &&
 				position_.x > Stage::kBorderLeft.x && position_.x < Stage::kBorderRight.x) {
@@ -528,6 +527,29 @@ void Player::Enhance() {
 /// <summary>
 /// プレイヤーの帰還、外出関連処理ここから------------------------------------------------
 /// </summary>
+
+void Player::MoveLift() {
+
+	if (input_->TriggerButton(Input::Button::A) && parameters_[currentCharacters_]->Jump_.canJump) {
+
+		//左側の場合
+		if (position_.x < Stage::kBasePosition.x) {
+
+			position_.x = 13.5f * Block::kBlockSize_;
+			position_.y = -1.0f * Block::kBlockSize_;
+
+		}
+		//右側の場合
+		else {
+
+			position_.x = 25.5f * Block::kBlockSize_;
+			position_.y = -1.0f * Block::kBlockSize_;
+
+		}
+
+	}
+
+}
 
 void Player::Change() {
 

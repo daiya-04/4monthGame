@@ -223,6 +223,9 @@ public:
 	//パーツカウント加算
 	void AddPartsCount() { partsCount_++; }
 
+	//リフト関連処理
+	void MoveLift();
+
 private:
 
 	//移動
@@ -378,6 +381,12 @@ private:
 
 	//パーツカウント
 	int32_t partsCount_ = 0;
+
+	//岩カウント
+	int32_t rockCount_ = 0;
+
+	//岩の必要数
+	/*int32_t needRockCount_ = 5;*/
 
 	//UI関連
 	std::unique_ptr<Sprite> lifeLeftGage_;

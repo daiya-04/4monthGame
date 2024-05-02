@@ -15,9 +15,9 @@ class BaseBlock
 {
 public:
 	
-	static const uint32_t kBlockSize_ = 96;
+	static const int32_t kBlockSize_ = 96;
 
-	static const uint32_t kBlockHalfSize_ = kBlockSize_ / 2;
+	static const int32_t kBlockHalfSize_ = kBlockSize_ / 2;
 
 	const float kTextureBlockSize_ = 32.0f;
 

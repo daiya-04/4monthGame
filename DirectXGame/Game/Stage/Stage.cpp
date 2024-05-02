@@ -18,6 +18,7 @@ Stage::Stage()
 	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
 	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
 	magmaTex_ = TextureManager::GetInstance()->Load("stageObject/magmaLine.png");
+	returnTex_ = TextureManager::GetInstance()->Load("stageObject/returnArea.png");
 
 	for (int32_t i = 0; i < 2; i++) {
 
@@ -38,6 +39,20 @@ Stage::Stage()
 	magma_->SetColor({ 1.0f,1.0f,1.0f,0.8f });
 	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 64.0f });
 	magma_->SetTextureArea({ 0.0f,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 32.0f });
+
+	returnPosition_[0] = { 10.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
+	returnPosition_[1] = { 28.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
+
+	returnObjects_[0].reset(Object2d::Create(returnTex_, returnPosition_[0]));
+	returnObjects_[0]->SetSize({ 96.0f * 2.0f, 96.0f });
+	returnObjects_[1].reset(Object2d::Create(returnTex_, returnPosition_[1]));
+	returnObjects_[1]->SetSize({ 96.0f * 2.0f, 96.0f });
+
+	returnArea_[0].max = { returnPosition_[0].x + Block::kBlockSize_, returnPosition_[0].y + Block::kBlockHalfSize_ };
+	returnArea_[0].min = { returnPosition_[0].x - Block::kBlockSize_, returnPosition_[0].y - Block::kBlockHalfSize_ };
+
+	returnArea_[1].max = { returnPosition_[1].x + Block::kBlockSize_, returnPosition_[1].y + Block::kBlockHalfSize_ };
+	returnArea_[1].min = { returnPosition_[1].x - Block::kBlockSize_, returnPosition_[1].y - Block::kBlockHalfSize_ };
 
 	CreateEntity();
 
@@ -121,6 +136,9 @@ void Stage::Update() {
 	//	ResetMagma();
 	//}
 
+	//当たり判定更新
+	CheckCollision();
+
 	//テクスチャの動きを付ける
 	magmaTexBaseX_++;
 	if (magmaTexBaseX_ > 256.0f) {
@@ -143,6 +161,20 @@ void Stage::Update() {
 	//マグマ更新
 	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 10000.0f - magmaLine_ });
 	magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 10000.0f - magmaLine_ });
+
+}
+
+void Stage::CheckCollision() {
+
+	for (int32_t i = 0; i < 2; i++) {
+
+		if (IsCollision(returnArea_[i], player_->GetCollision())) {
+
+			player_->MoveLift();
+
+		}
+
+	}
 
 }
 
@@ -172,6 +204,7 @@ void Stage::Draw() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
+		returnObjects_[i]->Draw(*camera_);
 	}
 
 	magma_->Draw(*camera_);
