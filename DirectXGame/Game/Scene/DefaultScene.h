@@ -11,7 +11,7 @@ public:
 
 protected:
 
-	static const uint32_t kMaxStage_ = 2;
+	static const uint32_t kMaxStage_ = 10;
 
 	static uint32_t stageNumber_;
 

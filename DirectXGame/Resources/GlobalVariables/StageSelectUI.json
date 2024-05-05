@@ -1,0 +1,49 @@
+{
+    "StageSelectUI": [
+        {
+            "LArrow": {
+                "filePath": "RLArrow.png",
+                "position": [
+                    77.0,
+                    350.0
+                ]
+            }
+        },
+        {
+            "RArrow": {
+                "filePath": "RLArrow.png",
+                "position": [
+                    1199.0,
+                    359.0
+                ]
+            }
+        },
+        {
+            "StageSelectLogo": {
+                "filePath": "StageSelectLogo.png",
+                "position": [
+                    640.0,
+                    156.0
+                ]
+            }
+        },
+        {
+            "ToTitle": {
+                "filePath": "ToTitle.png",
+                "position": [
+                    193.0,
+                    61.0
+                ]
+            }
+        },
+        {
+            "stageNumber": {
+                "filePath": "stageNumber.png",
+                "position": [
+                    640.0,
+                    270.0
+                ]
+            }
+        }
+    ]
+}
