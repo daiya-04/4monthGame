@@ -920,7 +920,12 @@ void Player::UpdatePosition() {
 		break;
 	case Player::kLine:
 
-
+		//規定の高さを超えると強制的に解除
+		if (position_.y < Block::kBlockSize_ * 5.0f) {
+			velocity_ = { 0.0f,0.0f };
+			wallJumpVelocity_ = { 0.0f,0.0f };
+			moveType_ = kNormal;
+		}
 
 		break;
 	}
