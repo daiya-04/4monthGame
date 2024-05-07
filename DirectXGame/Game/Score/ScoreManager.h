@@ -40,6 +40,12 @@ private:
 	//ステージ毎に決められた目標スコア
 	std::array<std::array<int32_t, kRankCount>, DefaultScene::kMaxStage_> baseScores_;
 
+	//スコアデータの読み込み
+	void Load();
+
+	//スコアの書き込み
+	void SaveScore();
+
 private:
 
 	ScoreManager() = default;

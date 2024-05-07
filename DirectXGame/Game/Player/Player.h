@@ -40,6 +40,14 @@ public:
 
 	};
 
+	/// <summary>
+	/// 移動方法。通常移動と直線高速移動
+	/// </summary>
+	enum MoveType {
+		kNormal, //通常移動
+		kLine, //直線移動
+	};
+
 	//現在操作しているプレイヤーに加算するパラメータ値
 	struct AddParameters {
 		//スピード
@@ -378,6 +386,9 @@ private:
 
 	//クリアフラグ
 	bool isClear_ = false;
+
+	//移動タイプ
+	MoveType moveType_ = kNormal;
 
 	//パーツカウント
 	int32_t partsCount_ = 0;

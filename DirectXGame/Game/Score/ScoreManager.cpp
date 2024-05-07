@@ -26,3 +26,13 @@ void ScoreManager::Initialize() {
 	baseScores_[1][R_D] = 0;
 
 }
+
+void ScoreManager::Load() {
+
+
+
+}
+
+void ScoreManager::SaveScore() {
+
+}

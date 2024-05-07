@@ -128,4 +128,7 @@ public:
 	//左右移動速度上限
 	float maxMoveSpeed_ = 10.0f;
 
+	//高速直線移動時の速度
+	float lineMoveSpeed_ = 35.0f;
+
 };
