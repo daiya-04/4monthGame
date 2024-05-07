@@ -5,19 +5,46 @@
 #include <fstream>
 #include <cassert>
 #include "Game/Player/Player.h"
+#include "TextureManager.h"
+#include <cmath>
+
+std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_> Stage::map_;
 
 Stage::Stage()
 {
+
+	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
+	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
+	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
+	magmaTex_ = TextureManager::GetInstance()->Load("stageObject/magmaLine.png");
+
+	for (int32_t i = 0; i < 2; i++) {
+
+		numbers_[i].reset(Sprite::Create(numTex_, {1150.0f + 64.0f * i, 660.0f}));
+		numbers_[i]->SetSize({ 64.0f,64.0f });
+		numbers_[i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
+
+	}
+
+	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
+
+	borders_[0].reset(Object2d::Create(borderTex_, kBorderLeft));
+	borders_[0]->SetAnchorpoint({ 0.5f,1.0f });
+	borders_[1].reset(Object2d::Create(borderTex_, kBorderRight));
+	borders_[1]->SetAnchorpoint({ 0.5f,1.0f });
+
+	magma_.reset(Object2d::Create(magmaTex_, { kBasePosition.x,magmaLine_ }));
+	magma_->SetColor({ 1.0f,1.0f,1.0f,0.8f });
+	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 64.0f });
+	magma_->SetTextureArea({ 0.0f,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 32.0f });
+
 }
 
 Stage::~Stage()
 {
 }
 
-void Stage::Initialize(uint32_t stageNumber) {
-
-	map_.clear();
-	stones_.clear();
+void Stage::Initialize() {
 
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
@@ -29,85 +56,225 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	}
 
-	//マップロード
-	Load(stageNumber);
+	CreateEntity();
+
+	isClear_ = false;
 
 }
 
 void Stage::Update() {
 
-	map_.remove_if([&](auto& block) {
+	//パーツがなくなったらクリアフラグをセット
+	if (remainingParts_ <= 0 && !player_->GetIsClear()) {
+		player_->SetIsClear(true);
+		isClear_ = true;
+	}
 
-		if (block->GetIsBreak()) {
-			blockPositions_[block->GetBlockPositionY()][block->GetBlockPositionX()] = 0;
-			return true;
-		}
+	if (Input::GetInstance()->TriggerKey(DIK_1)) {
+		CreateIceBlock();
+	}
 
-		return false;
+	if (Input::GetInstance()->TriggerKey(DIK_2)) {
+		BreakIceBlock();
+	}
 
-	});
+	if (Input::GetInstance()->TriggerKey(DIK_3)) {
+		SwitchBlock();
+	}
+
+	if (Input::GetInstance()->TriggerKey(DIK_4)) {
+		BreakAllBlock();
+	}
+
+	//拠点に帰った時にパーツを回収
+	if (player_->GetIsHome() && player_->GetPartsCount() > 0) {
+		player_->HandOverParts(remainingParts_);
+	}
 
 	//ブロックの更新
-	for (auto& block : map_) {
-
-		SetUV(block.get());
-
-		block->Update();
-
-	}
-
-	//サウナストーン更新
-	for (auto& stone : stones_) {
-		stone->Update();
-	}
-
-	/*for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			blockPositions_[y][x] = map_[y][x]->GetType();
+			SetUV(map_[y][x].get());
 			map_[y][x]->Update();
 		}
 
-	}*/
+	}
+
+	//数字更新
+	for (int32_t i = 0; i < kMaxNumber_; i++) {
+
+		int32_t num = 0;
+
+		int32_t divide = int32_t(std::pow(10, kMaxNumber_ - 1 - i));
+		
+		num = remainingParts_ / divide;
+
+		numbers_[i]->SetTextureArea({64.0f * num, 0.0f}, { 64.0f,64.0f });
+
+	}
+
+	//マグマ更新
+	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 10000.0f - magmaLine_ });
+	magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 10000.0f - magmaLine_ });
+
+	magmaLine_ -= 0.1f;
+
+	magmaTexBaseX_++;
+	if (magmaTexBaseX_ > 256.0f) {
+		magmaTexBaseX_ = 0.0f;
+	}
 
 }
 
 void Stage::Draw() {
 
-	//サウナストーン描画
-	for (auto& stone : stones_) {
-		
-		if (stone->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
-			stone->GetPosition().x <= camera_->translation_.x + 1280 + Block::kBlockSize_ &&
-			stone->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
-			stone->GetPosition().y <= camera_->translation_.y + 720 + Block::kBlockSize_) {
-			stone->Draw(*camera_);
-		}
-
-	}
-
 	//ブロックの描画
-	for (auto& block : map_) {
-
-		if (block->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
-			block->GetPosition().x <= camera_->translation_.x + 1280 + Block::kBlockSize_ &&
-			block->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
-			block->GetPosition().y <= camera_->translation_.y + 720 + Block::kBlockSize_) {
-			block->Draw(*camera_);
-		}
-
-	}
-	
-	/*for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
-			map_[y][x]->Draw();
+
+			if (map_[y][x]->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
+				map_[y][x]->GetPosition().x <= camera_->translation_.x + camera_->GetDrawingRange().x + Block::kBlockSize_ &&
+				map_[y][x]->GetPosition().y >= camera_->translation_.y - Block::kBlockSize_ &&
+				map_[y][x]->GetPosition().y <= camera_->translation_.y + camera_->GetDrawingRange().y + Block::kBlockSize_) {
+				map_[y][x]->Draw(*camera_);
+			}
+			
 		}
 
-	}*/
+	}
+
+	for (uint32_t i = 0; i < 2; i++) {
+		borders_[i]->Draw(*camera_);
+	}
+
+	magma_->Draw(*camera_);
+
+}
+
+void Stage::DrawUI() {
+
+	for (uint32_t i = 0; i < 2; i++) {
+		numbers_[i]->Draw();
+	}
+
+	if (isClear_) {
+		clearSprite_->Draw();
+	}
+
+}
+
+void Stage::SwitchBlock() {
+
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			
+			if (map_[y][x]->GetType() == Block::BlockType::kSnow) {
+				map_[y][x]->ChangeType(Block::BlockType::kMagma);
+			}
+			else if (map_[y][x]->GetType() == Block::BlockType::kMagma) {
+				map_[y][x]->ChangeType(Block::BlockType::kSnow);
+			}
+
+			blockPositions_[y][x] = map_[y][x]->GetType();
+
+		}
+
+	}
+
+}
+
+void Stage::CreateIceBlock() {
+
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			
+			//ブロックが無い且つプレイヤーと当たらない部分に氷ブロックを生成
+			if (map_[y][x]->GetIsBreak() && !IsCollision(map_[y][x]->GetCollision(), player_->GetCollision())) {
+
+				map_[y][x]->ChangeType(Block::BlockType::kIceBlock);
+				map_[y][x]->Repair();
+
+				blockPositions_[y][x] = BaseBlock::BlockType::kIceBlock;
+
+			}
+
+		}
+
+	}
+
+}
+
+void Stage::BreakIceBlock() {
+
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+
+			//氷ブロックを破壊する
+			if (map_[y][x]->GetType() == Block::BlockType::kIceBlock) {
+
+				map_[y][x]->Break();
+
+			}
+
+		}
+
+	}
+
+}
+
+void Stage::BreakAllBlock() {
+
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+
+			//壊せないブロック以外を破壊する
+			if (Block::CheckCanBreak(map_[y][x]->GetType())) {
+
+				map_[y][x]->Break();
+
+			}
+
+		}
+
+	}
+
+}
+
+void Stage::CreateEntity() {
+
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+
+			//実体がない場合、生成する
+			if (!map_[y][x]) {
+
+				//ブロックの実体を生成、初期化
+				map_[y][x] = std::make_shared<Block>();
+				map_[y][x]->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, Block::BlockType::kNone);
+				map_[y][x]->SetPlayer(player_);
+				map_[y][x]->SetBlockPosition(x, y);
+
+			}
+
+		}
+
+	}
 
 }
 
 void Stage::Load(uint32_t stageNumber) {
+
+	//パーツの残り数をリセット
+	remainingParts_ = 0;
 
 	std::string fileName = "./Resources/Maps/stage";
 
@@ -156,66 +323,20 @@ void Stage::Load(uint32_t stageNumber) {
 			}
 
 			//空気ブロックでなければブロックを生成
-			if (num != 0) {
+			//ブロックのパラメータ変更
+			map_[y][x]->ChangeType(type);
+			map_[y][x]->Reset();
 
-				//ブロックの実体を生成、初期化
-				std::shared_ptr<Block> block = std::make_shared<Block>();
-				block->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, type);
-				block->SetPlayer(player_);
-				block->SetBlockPosition(x, y);
-				map_.push_back(block);
-
-				blockPositions_[y][x] = num;
-
-				/*map_[y][x] = std::make_shared<Block>();
-				map_[y][x]->Initialize({ x * 32.0f, y * 32.0f }, type);*/
-
+			//ブロックがパーツなら残りのパーツ数を増加
+			if (type == Block::BlockType::kParts) {
+				remainingParts_++;
 			}
+
+			blockPositions_[y][x] = num;
 
 		}
 
 	}
-
-	/*{
-
-		//サウナストーンの数
-		uint32_t saunaStoneNumber = 0;
-		//カンマ区切りで数を取得
-		std::getline(newFile, line, ',');
-		if (!line.empty()) {
-			saunaStoneNumber = std::stoi(line);
-		}
-
-		//サウナストーンリセット
-		stones_.clear();
-
-		//サウナストーンを生成、
-		for (uint32_t i = 0; i < saunaStoneNumber; i++) {
-
-			Vector2 position{};
-
-			//一行取得
-			std::getline(newFile, line, ',');
-
-			//カンマ区切りで読み込む用の文字列
-			std::istringstream iss(line);
-
-			std::string sNum;
-
-			//座標を格納
-			std::getline(iss, sNum, ',');
-			position.x = std::stof(sNum);
-			std::getline(iss, sNum, ',');
-			position.y = std::stof(sNum);
-
-			std::shared_ptr<SaunaStone> stone = std::make_shared<SaunaStone>();
-			stone->Initialize(position);
-			stones_.push_back(stone);
-
-		}
-
-	}*/ 
-
 
 }
 
@@ -225,21 +346,91 @@ void Stage::SetUV(Block* block) {
 	int32_t py = block->GetBlockPositionY();
 
 	//周囲八マスの判定を取るための変数
-	uint32_t left = std::clamp(px - 1, 0, int(kMaxStageWidth_));
-	uint32_t right = std::clamp(px + 1, 0, int(kMaxStageWidth_));
-	uint32_t top = std::clamp(py - 1, 0, int(kMaxStageHeight_));
-	uint32_t bottom = std::clamp(py + 1, 0, int(kMaxStageHeight_));
+	int32_t left = px - 1;
+	int32_t right = px + 1;
+	int32_t top = py - 1;
+	int32_t bottom = py + 1;
 	
 	//周囲八マスと現在のブロックの数字
 	int32_t centerNum = blockPositions_[py][px];
-	int32_t leftNum = blockPositions_[py][left];
-	int32_t rightNum = blockPositions_[py][right];
-	int32_t topNum = blockPositions_[top][px];
-	int32_t bottomNum = blockPositions_[bottom][px];
-	int32_t topLeftNum = blockPositions_[top][left];
-	int32_t topRightNum = blockPositions_[top][right];
-	int32_t bottomLeftNum = blockPositions_[bottom][left];
-	int32_t bottomRightNum = blockPositions_[bottom][right];
+	int32_t leftNum = 0;
+	int32_t rightNum = 0;
+	int32_t topNum = 0;
+	int32_t bottomNum = 0;
+	int32_t topLeftNum = 0;
+	int32_t topRightNum = 0;
+	int32_t bottomLeftNum = 0;
+	int32_t bottomRightNum = 0;
+
+	//範囲外に出るかどうかで代入する値を変更
+	if (left < 0 || left >= kMaxStageWidth_) {
+
+		leftNum = 0;
+		topLeftNum = 0;
+		bottomLeftNum = 0;
+
+
+	}
+	else {
+
+		leftNum = blockPositions_[py][left];
+
+	}
+
+	if (right < 0 || right >= kMaxStageWidth_) {
+
+		rightNum = 0;
+		topRightNum = 0;
+		bottomRightNum = 0;
+
+	}
+	else {
+
+		rightNum = blockPositions_[py][right];
+
+	}
+
+	if (top < 0 || top >= kMaxStageHeight_) {
+
+		topNum = 0;
+		topLeftNum = 0;
+		topRightNum = 0;
+
+	}
+	else {
+
+		topNum = blockPositions_[top][px];
+
+		if (left >= 0 && left < kMaxStageWidth_) {
+			topLeftNum = blockPositions_[top][left];
+		}
+
+		if (right >= 0 && right < kMaxStageWidth_) {
+			topRightNum = blockPositions_[top][right];
+		}
+
+	}
+
+	if (bottom < 0 || bottom >= kMaxStageHeight_) {
+
+		bottomNum = 0;
+		bottomLeftNum = 0;
+		bottomRightNum = 0;
+
+	}
+	else {
+
+		bottomNum = blockPositions_[bottom][px];
+
+		if (left >= 0 && left < kMaxStageWidth_) {
+			bottomLeftNum = blockPositions_[bottom][left];
+		}
+
+		if (right >= 0 && right < kMaxStageWidth_) {
+			bottomRightNum = blockPositions_[bottom][right];
+		}
+
+	}
 
 	//周囲八マスに同一ブロックがある場合
 	if (centerNum == leftNum && centerNum == rightNum &&

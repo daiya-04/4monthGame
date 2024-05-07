@@ -3,6 +3,8 @@
 #include "Camera.h"
 #include <memory>
 #include "Hit.h"
+#include "BlockTextureManager.h"
+#include "Audio.h"
 
 class Player;
 
@@ -17,60 +19,42 @@ public:
 
 	static const uint32_t kBlockHalfSize_ = kBlockSize_ / 2;
 
+	const float kTextureBlockSize_ = 32.0f;
+
 	enum BlockType : uint32_t {
 
-		//空白ブロック(使わない)
+		//空白ブロック
 		kNone,
 		//壊せないブロック
 		kUnbreakable = 1,
 		//極寒時のブロック
 		kSnow,
-		//サウナストーンブロック
-		kSaunaBlock,
-		//坂道版ブロック
-		kUnbreakableSlope,
-		//坂道極寒ブロック
-		kSnowSlope,
-
-		//-----エディターで使うブロックここまで-----
-
 		//灼熱時のブロック
 		kMagma,
-		//坂道灼熱ブロック
-		kMagmaSlope,
+		//連続して壊せる氷ブロック
+		kIceBlock,
+		//速度が速くなるブロック
+		kSpeedBlock,
+		//採掘速度が上がるブロック
+		kDigerBlock,
+		//耐熱時間が長くなるブロック
+		kSaunnerBlock,
+		//パーツブロック
+		kParts,
 		//ブロックの最大種類
 		kMaxBlock
 
 	};
 
-	//形状
-	enum Shape : uint32_t {
-		//正方形ブロック
-		kBlock,
-		//坂道ブロック
-		kSlope,
-	};
-
-	static Shape CheckShape(uint32_t num) {
-
-		//坂道ブロックなら坂道の変数を返す
-		if (num == kUnbreakableSlope || num == kSnowSlope || num == kMagmaSlope) {
-			return kSlope;
-		}
-
-		return kBlock;
-
-	}
-
-	//破壊可能ブロックならtrueを返す関数
+	//破壊可能ブロックなら、trueを返す関数
 	static bool CheckCanBreak(BlockType type) {
 
-		//破壊可能ブロックならtrueを返す
-		if (type == kSnow || type == kMagma || type == kSaunaBlock || type == kSnowSlope || type == kMagmaSlope) {
-			return true;
+		//破壊不可能ブロックなら、falseを返す
+		if (type == kUnbreakable) {
+			return false;
 		}
 
-		return false;
+		return true;
 
 	}
 
@@ -97,7 +81,11 @@ public:
 	/// ブロックの種類を変更
 	/// </summary>
 	/// <param name="type">変更先のブロックの種類</param>
-	void ChangeType(BlockType type) { type_ = type; }
+	void ChangeType(BlockType type) { 
+		type_ = type;
+		texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
+		object_->SetTextureHandle(texture_);
+	}
 
 	/// <summary>
 	/// プレイヤーをセット
@@ -129,9 +117,14 @@ public:
 	void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 	//外的要因(プレイヤーなど)で破壊された時に呼び出される関数
-	void Break() { isBreak_ = true; }
+	void Break();
+
+	//ブロックが再生する時の関数(再び当たり判定を持つ)
+	void Repair() { isBreak_ = false; }
 
 	bool GetIsBreak() { return isBreak_; }
+
+	void Reset();
 
 protected:
 
@@ -149,7 +142,7 @@ protected:
 	uint32_t texture_;
 
 	//uvの座標
-	uint32_t uvNumber_;
+	uint32_t uvNumber_ = 0;
 	//描画の開始座標を決める数字
 	uint32_t uvPositionX_ = 0;
 	uint32_t uvPositionY_ = 0;
@@ -161,6 +154,9 @@ protected:
 
 	//破壊されたかどうか
 	bool isBreak_ = false;
+
+	//ザクザク音
+	Audio* digSE_;
 
 };
 

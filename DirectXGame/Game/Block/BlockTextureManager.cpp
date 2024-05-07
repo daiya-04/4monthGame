@@ -11,7 +11,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	//マップチップに使うテクスチャを一括でロードする
 	blockTextures_.clear();
 
-	int32_t texture = 0;
+	uint32_t texture = 0;
 	texture = TextureManager::Load("blocks/blank.png");
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/testNormal.png");
@@ -20,5 +20,16 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/testRed.png");
 	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/testIce.png");
+	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/testItem_01.png");
+	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/testItem_02.png");
+	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/testItem_03.png");
+	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/parts.png");
+	blockTextures_.push_back(texture);
+
 
 }

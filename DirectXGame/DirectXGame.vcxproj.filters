@@ -74,6 +74,9 @@
     <Filter Include="Engine\Easing">
       <UniqueIdentifier>{d8d4555b-daa0-42be-904b-3232d5c1cc29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Enemy">
+      <UniqueIdentifier>{4fdfdebd-ae0d-4473-8df4-adc213d31b30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -187,6 +190,12 @@
     </ClCompile>
     <ClCompile Include="Engine\Easing\Easing.cpp">
       <Filter>Engine\Easing</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Enemy\Enemy.cpp">
+      <Filter>Game\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Audio\AudioManager.cpp">
+      <Filter>Engine\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -324,6 +333,12 @@
     </ClInclude>
     <ClInclude Include="Engine\Easing\Easing.h">
       <Filter>Engine\Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Enemy\Enemy.h">
+      <Filter>Game\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Audio\AudioManager.h">
+      <Filter>Engine\Audio</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
