@@ -21,6 +21,13 @@ public:
 	/// SRV指定用ハンドル取得
 	/// </summary>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetHandle() { return effectTexture_->GetSrvHandleGPU(); };
+
+	void SetMagmaLineScreen(const Vector3& line) {
+		float transformdBorder = ( - line.y + 1.0f) / 2.0f;
+		//transformdBorder = 1.0f - transformdBorder;
+		heatHaze_->SetMagmaLine(transformdBorder);
+	};
+
 private:
 	HeatHazeManager() {
 		Init();

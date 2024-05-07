@@ -15,6 +15,7 @@ public:
 		float offset; //オフセット位置
 		float roop; //ループ(大きいほど変化が細かくなる)
 		float width; //歪み幅、0で歪まない
+		float magmaLine;//マグマの上端の位置(スクリーン座標)
 	};
 
 	HeatHaze()=default;
@@ -32,6 +33,10 @@ public:
 	void SetWidth(float width) {
 		heatHazeData_->width = width;
 	};
+
+	void SetMagmaLine(float line) {
+		heatHazeData_->magmaLine = line;
+	}
 
 private:
 	void CreateGraphicsPipelineState() override;

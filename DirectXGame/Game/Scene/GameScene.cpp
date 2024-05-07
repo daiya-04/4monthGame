@@ -105,7 +105,9 @@ void GameScene::Update() {
 		scroll_->Update();
 
 		camera_->UpdateMatrix();
-
+		//湧き上がる温泉の熱風のエフェクト
+		float line = stage_->GetMagmaLine();
+		heatHazeManager_->SetMagmaLineScreen(Transform(Vector3{ 0.0f,line,0.0f }, (camera_->GetMatView() * camera_->GetMatProjection())));
 		snowManager_->SetCameraSlide({ camera_->translation_.x - preCameraPosition_.x, camera_->translation_.y - preCameraPosition_.y });
 		environmentEffectsManager_->Update();
 
@@ -163,7 +165,7 @@ void GameScene::DrawNotSetPipeline() {
 	if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
 		environmentEffectsManager_->WeightCircleDraw();
 	}
-
+	
 }
 
 void GameScene::DrawBackGround(){

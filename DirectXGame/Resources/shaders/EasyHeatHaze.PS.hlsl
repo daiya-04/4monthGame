@@ -8,6 +8,7 @@ struct HeathazeData {
 	float offset;
 	float roop;
 	float width;
+	float border;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -35,7 +36,14 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	float32_t2 transformdTexcoord = input.texcoord;
 
 	float ty = sin(2.0f* 3.141592f * (input.texcoord.x + gHeatHazeData.offset)* gHeatHazeData.roop);
-	transformdTexcoord.y += ty * gHeatHazeData.width;
+	//transformdTexcoord.y += ty * gHeatHazeData.width;
+
+	//plus
+	float defLine = gHeatHazeData.border - input.texcoord.y;
+	if(0<defLine && defLine < 1.0f){
+		transformdTexcoord.x += ty * gHeatHazeData.width * 3.0f;
+	}
+
 	output.color = gTexture.Sample(gSampler, transformdTexcoord);
 	
 	float totalWeight = 0, sigma = 0.003, stepWidth = 0.001;

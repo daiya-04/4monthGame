@@ -23,7 +23,7 @@ void HeatHaze::Init() {
 	heatHazeData_->offset = 0;
 	heatHazeData_->roop = 1.0f;
 	heatHazeData_->width = 0;
-
+	heatHazeData_->magmaLine = 0.5;
 }
 
 void HeatHaze::Draw(ID3D12GraphicsCommandList* cmdList) {
