@@ -58,6 +58,7 @@ void GameScene::Init(){
 
 	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
+	isFirstAllDraw_ = true;
 }
 
 void GameScene::Reset() {
@@ -129,6 +130,15 @@ void GameScene::Update() {
 	}
 }
 void GameScene::DrawNotSetPipeline() {
+
+	//ゲーム中のオーバーヘッドを回避するため最初に一度すべて描画する
+	if (isFirstAllDraw_) {
+		cameraFrozen_->DrawInternal(commandList_);
+		waterDropManager_->DrawEffectUpdate(cameraFrozen_->GetEffectTexture());
+		DrawHeat(environmentEffectsManager_->GetPrevScene());
+		DrawCold(environmentEffectsManager_->GetNextScene());
+		isFirstAllDraw_ = false;
+	}
 
 	if (isPlayGame_) {
 		cameraFrozen_->DrawInternal(commandList_);

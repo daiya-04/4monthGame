@@ -1,5 +1,5 @@
 #include "EnvironmentEffectsManager.h"
-
+#include "Input.h"
 EnvironmentEffectsManager::EnvironmentEffectsManager() {
 	prevScene.reset(new PostEffect());
 	prevScene->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
@@ -15,6 +15,9 @@ EnvironmentEffectsManager::EnvironmentEffectsManager() {
 }
 
 void EnvironmentEffectsManager::Update() {
+	if (Input::GetInstance()->TriggerKey(DIK_3)) {
+		weightCircle_->Start();
+	}
 	weightCircle_->Update();
 	isChangeComplete_ = false;
 	if (weightCircle_->GetIsEnd()) {

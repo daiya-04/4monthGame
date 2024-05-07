@@ -98,5 +98,6 @@ private:
 	Vector3 preCameraPosition_ = {0,0,0};
 
 	bool isPlayGame_ = true;//ゲームを再生するかどうか
+	bool isFirstAllDraw_;
 };
 
