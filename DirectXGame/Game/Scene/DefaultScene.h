@@ -11,7 +11,7 @@
 class DefaultScene : public IScene {
 public:
 
-	static const uint32_t kMaxStage_ = 2;
+	static const uint32_t kMaxStage_ = 10;
 
 protected:
 

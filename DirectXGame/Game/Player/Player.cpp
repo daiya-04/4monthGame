@@ -88,25 +88,25 @@ void Player::Initialize() {
 
 	SetOnBase();
 
-	std::string groupName = "Player - DefaultParameter";
+	std::string groupName = "DefaultParameter";
 
-	GlobalVariables::GetInstance()->CreateGroup(groupName);
+	GlobalVariables::GetInstance()->CreateGroup(dataName,groupName);
 
 	//加算値調整項目
-	GlobalVariables::GetInstance()->AddItem(groupName, "Add Value - Speed", addValue_.speed);
-	GlobalVariables::GetInstance()->AddItem(groupName, "Add Value - DigSpeed", addValue_.digSpeed);
-	GlobalVariables::GetInstance()->AddItem(groupName, "Add Value - DigPower", addValue_.digPower);
+	GlobalVariables::GetInstance()->AddItem<float>(dataName, groupName, "Add Value - Speed", addValue_.speed);
+	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "Add Value - DigSpeed", addValue_.digSpeed);
+	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "Add Value - SaunaTime", addValue_.saunaTime);
 
 	//パラメータ調整項目
-	GlobalVariables::GetInstance()->AddItem(groupName, "Move - AccelValue", defaultParameter_->speed_);
-	GlobalVariables::GetInstance()->AddItem(groupName, "Move - MaxSpeed", defaultParameter_->maxMoveSpeed_);
-	GlobalVariables::GetInstance()->AddItem(groupName, "Jump - Velocity", defaultParameter_->Jump_.jumpVelocity);
-	GlobalVariables::GetInstance()->AddItem(groupName, "WallJump - JumpVelocity", defaultParameter_->wallJump_.wallJumpVelocity);
-	GlobalVariables::GetInstance()->AddItem(groupName, "Dig - Interval", defaultParameter_->dig_.digInterval);
-	GlobalVariables::GetInstance()->AddItem(groupName, "Dig - Power", defaultParameter_->dig_.digPower);
-	GlobalVariables::GetInstance()->AddItem(groupName, "ChargeJump - ChargeTime", defaultParameter_->chargeJump_.maxChargeTime);
-	GlobalVariables::GetInstance()->AddItem(groupName, "ChargeJump - Velocity", defaultParameter_->chargeJump_.chargeJumpVelocity);
-	GlobalVariables::GetInstance()->AddItem(groupName, "ChargeJump - JumpValue", defaultParameter_->chargeJump_.jumpValue);
+	GlobalVariables::GetInstance()->AddItem<float>(dataName, groupName, "Move - AccelValue", defaultParameter_->speed_);
+	GlobalVariables::GetInstance()->AddItem<float>(dataName, groupName, "Move - MaxSpeed", defaultParameter_->maxMoveSpeed_);
+	GlobalVariables::GetInstance()->AddItem<float>(dataName, groupName, "Jump - Velocity", defaultParameter_->Jump_.jumpVelocity);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "WallJump - JumpVelocity", defaultParameter_->wallJump_.wallJumpVelocity);
+	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "Dig - Interval", defaultParameter_->dig_.digInterval);
+	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "ChargeJump - ChargeTime", defaultParameter_->chargeJump_.maxChargeTime);
+	GlobalVariables::GetInstance()->AddItem<float>(dataName, groupName, "ChargeJump - Velocity", defaultParameter_->chargeJump_.chargeJumpVelocity);
+	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "ChargeJump - JumpValue", defaultParameter_->chargeJump_.jumpValue);
+	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "SaunaTimer - SaunaTime", defaultParameter_->saunaTimer_.maxSaunaTime);
 
 
 }
@@ -1345,20 +1345,20 @@ void Player::Debug() {
 	ImGui::End();
 
 	//プレイヤーパラメータ調整
-	std::string groupName = "Player - DefaultParameter";
+	std::string groupName = "DefaultParameter";
 
-	addValue_.speed = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Add Value - Speed");
-	addValue_.digSpeed = GlobalVariables::GetInstance()->GetIntValue(groupName, "Add Value - DigSpeed");
-	addValue_.digPower = GlobalVariables::GetInstance()->GetIntValue(groupName, "Add Value - DigPower");
-	defaultParameter_->speed_ = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Move - AccelValue");
-	defaultParameter_->maxMoveSpeed_ = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Move - MaxSpeed");
-	defaultParameter_->Jump_.jumpVelocity = GlobalVariables::GetInstance()->GetFloatValue(groupName, "Jump - Velocity");
-	defaultParameter_->wallJump_.wallJumpVelocity = GlobalVariables::GetInstance()->GetVec2Value(groupName, "WallJump - JumpVelocity");
-	defaultParameter_->dig_.digInterval = GlobalVariables::GetInstance()->GetIntValue(groupName, "Dig - Interval");
-	defaultParameter_->dig_.digPower = GlobalVariables::GetInstance()->GetIntValue(groupName, "Dig - Power");
-	defaultParameter_->chargeJump_.maxChargeTime = GlobalVariables::GetInstance()->GetIntValue(groupName, "ChargeJump - ChargeTime");
-	defaultParameter_->chargeJump_.chargeJumpVelocity = GlobalVariables::GetInstance()->GetFloatValue(groupName, "ChargeJump - Velocity");
-	defaultParameter_->chargeJump_.jumpValue = GlobalVariables::GetInstance()->GetIntValue(groupName, "ChargeJump - JumpValue");
+	addValue_.speed = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Add Value - Speed");
+	addValue_.digSpeed = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "Add Value - DigSpeed");
+	addValue_.saunaTime = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "Add Value - SaunaTime");
+	defaultParameter_->speed_ = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Move - AccelValue");
+	defaultParameter_->maxMoveSpeed_ = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Move - MaxSpeed");
+	defaultParameter_->Jump_.jumpVelocity = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Jump - Velocity");
+	defaultParameter_->wallJump_.wallJumpVelocity = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "WallJump - JumpVelocity");
+	defaultParameter_->dig_.digInterval = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "Dig - Interval");
+	defaultParameter_->chargeJump_.maxChargeTime = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "ChargeJump - ChargeTime");
+	defaultParameter_->chargeJump_.chargeJumpVelocity = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "ChargeJump - Velocity");
+	defaultParameter_->chargeJump_.jumpValue = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "ChargeJump - JumpValue");
+	defaultParameter_->saunaTimer_.maxSaunaTime = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "SaunaTimer - SaunaTime");
 
 	
 

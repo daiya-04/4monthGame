@@ -416,6 +416,8 @@ private:
 	uint32_t lifeRightFrameTexture_;
 	uint32_t deadTexture_;
 
+	const std::string dataName = "Player";
+
 };
 
 

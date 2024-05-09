@@ -54,24 +54,6 @@ void SceneManager::Update(){
 		scene_->Update();
 	}
 
-#ifdef _DEBUG
-
-	if (!transitionEffect_->IsActive()) {
-		if (Input::GetInstance()->TriggerKey(DIK_1)) {
-			ChangeScene("Title");
-		}
-		if (Input::GetInstance()->TriggerKey(DIK_2)) {
-			ChangeScene("StageSelect");
-		}
-		if (Input::GetInstance()->TriggerKey(DIK_3)) {
-			ChangeScene("Game");
-		}
-
-	}
-	
-#endif // _DEBUG
-
-
 	//シーンの切り替えがないならここで終了
 	
 
@@ -130,12 +112,11 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	scene_->DrawUI();
 
+	Sprite::postDraw();
+
 	if (transitionEffect_->IsActive()) {
 		transitionEffect_->Draw();
 	}
-	
-
-	Sprite::postDraw();
 
 	ImGuiManager::GetInstance()->Draw();
 
