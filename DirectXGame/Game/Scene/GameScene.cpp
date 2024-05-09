@@ -52,9 +52,20 @@ void GameScene::Reset() {
 void GameScene::Update(){
 	DebugGUI();
 
+	
+#ifdef _DEBUG
+
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
+		SceneManager::GetInstance()->ChangeScene("Title");
+	}
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_2)) {
+		SceneManager::GetInstance()->ChangeScene("StageSelect");
+	}
 	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
 		SceneManager::GetInstance()->ChangeScene("StageSelect");
 	}
+
+#endif // _DEBUG
 
 	if (player_->GetIsDead()) {
 

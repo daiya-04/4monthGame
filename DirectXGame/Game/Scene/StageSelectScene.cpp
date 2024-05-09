@@ -49,7 +49,7 @@ void StageSelectScene::Init() {
 	///UIの設定
 
 	uis_["stageNumber"]->SetSize({ 64.0f,64.0f });
-	uis_["stageNumber"]->SetTextureArea({ 32.0f * stageNumber_, 32.0f * stageNumber_ }, { 32.0f,32.0f });
+	uis_["stageNumber"]->SetTextureArea({ 64.0f * stageNumber_, 64.0f * stageNumber_ }, { 64.0f,64.0f });
 
 	uis_["RArrow"]->SetSize({ 64.0f,64.0f });
 	uis_["RArrow"]->SetTextureArea({ 64.0f,64.0f }, { 64.0f,64.0f });
@@ -138,7 +138,6 @@ void StageSelectScene::DebugGUI() {
 
 	if (ImGui::Button("Add")) {
 
-
 		gb->CreateGroup(dataName, groupName);
 
 		gb->AddItem<const std::string&>(dataName, groupName, "filePath", filePath);
@@ -169,6 +168,18 @@ void StageSelectScene::RootUpdate() {
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 		SceneManager::GetInstance()->ChangeScene("Game");
 	}
+
+#ifdef _DEBUG
+
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
+		SceneManager::GetInstance()->ChangeScene("Title");
+	}
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_3)) {
+		SceneManager::GetInstance()->ChangeScene("Game");
+	}
+
+#endif // _DEBUG
+
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Right) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_RIGHT)) {
 		stageNumber_++;
@@ -238,7 +249,7 @@ void StageSelectScene::MoveUpdate() {
 
 	if (param_ >= 1.0f) {
 		modeRequest_ = Mode::Root;
-		uis_["stageNumber"]->SetTextureArea({ 32.0f * stageNumber_, 32.0f * stageNumber_ }, { 32.0f,32.0f });
+		uis_["stageNumber"]->SetTextureArea({ 64.0f * stageNumber_, 64.0f * stageNumber_ }, { 64.0f,64.0f });
 	}
 
 }

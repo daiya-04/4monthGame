@@ -35,7 +35,16 @@ void TitleScene::Update() {
 		SceneManager::GetInstance()->ChangeScene("StageSelect");
 	}
 
-	
+#ifdef _DEBUG
+
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_2)) {
+		SceneManager::GetInstance()->ChangeScene("StageSelect");
+	}
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_3)) {
+		SceneManager::GetInstance()->ChangeScene("Game");
+	}
+
+#endif // _DEBUG
 
 }
 

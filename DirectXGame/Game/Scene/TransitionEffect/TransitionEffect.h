@@ -1,10 +1,16 @@
 #pragma once
 #include "Vec2.h"
 #include "Sprite.h"
+#include "Particle.h"
+#include "Camera.h"
 #include <memory>
+#include <list>
+#include <random>
 
 class TransitionEffect {
 public:
+
+	TransitionEffect() : randomEngine(seedGenerator()){}
 
 	void Init();
 
@@ -43,7 +49,24 @@ public:
 
 private:
 
+	std::list<Particle::ParticleData> Emit(const Particle::Emitter& emitter, std::mt19937& randomEngine);
+
+	Particle::ParticleData MakeNewParticle(std::mt19937& randomEngine, const Vector2& translate);
+
+private:
+
+	Camera camera_;
+
 	std::unique_ptr<Sprite> effect_;
+
+	std::unique_ptr<Particle> smoke_;
+	std::list<Particle::ParticleData> smokeDatas_;
+	Particle::Emitter smokeEmitter_;
+
+	const float deltaTime_ = 1.0f / 60.0f;
+
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine;
 
 	//演出中か
 	bool isActive_ = false;
