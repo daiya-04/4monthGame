@@ -72,7 +72,7 @@ void GameScene::Update(){
 	if (player_->GetIsDead()) {
 
 		if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
-				Reset();
+			Reset();
 		}
 
 	}

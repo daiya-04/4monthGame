@@ -95,7 +95,6 @@ void Player::Initialize() {
 	//加算値調整項目
 	GlobalVariables::GetInstance()->AddItem<float>(dataName, groupName, "Add Value - Speed", addValue_.speed);
 	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "Add Value - DigSpeed", addValue_.digSpeed);
-	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "Add Value - SaunaTime", addValue_.saunaTime);
 
 	//パラメータ調整項目
 	GlobalVariables::GetInstance()->AddItem<float>(dataName, groupName, "Move - AccelValue", defaultParameter_->speed_);
@@ -106,7 +105,6 @@ void Player::Initialize() {
 	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "ChargeJump - ChargeTime", defaultParameter_->chargeJump_.maxChargeTime);
 	GlobalVariables::GetInstance()->AddItem<float>(dataName, groupName, "ChargeJump - Velocity", defaultParameter_->chargeJump_.chargeJumpVelocity);
 	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "ChargeJump - JumpValue", defaultParameter_->chargeJump_.jumpValue);
-	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "SaunaTimer - SaunaTime", defaultParameter_->saunaTimer_.maxSaunaTime);
 
 
 }
@@ -1349,7 +1347,6 @@ void Player::Debug() {
 
 	addValue_.speed = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Add Value - Speed");
 	addValue_.digSpeed = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "Add Value - DigSpeed");
-	addValue_.saunaTime = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "Add Value - SaunaTime");
 	defaultParameter_->speed_ = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Move - AccelValue");
 	defaultParameter_->maxMoveSpeed_ = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Move - MaxSpeed");
 	defaultParameter_->Jump_.jumpVelocity = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Jump - Velocity");
@@ -1358,7 +1355,6 @@ void Player::Debug() {
 	defaultParameter_->chargeJump_.maxChargeTime = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "ChargeJump - ChargeTime");
 	defaultParameter_->chargeJump_.chargeJumpVelocity = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "ChargeJump - Velocity");
 	defaultParameter_->chargeJump_.jumpValue = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "ChargeJump - JumpValue");
-	defaultParameter_->saunaTimer_.maxSaunaTime = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "SaunaTimer - SaunaTime");
 
 	
 
