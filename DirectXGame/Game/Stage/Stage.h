@@ -103,18 +103,22 @@ private:
 
 	Camera* camera_;
 
-	static const int32_t kMaxNumber_ = 2;
+	static const int32_t kMaxBorder_ = 2;
 
-	std::array<std::unique_ptr<Object2d>, kMaxNumber_>  borders_;
+	//岩の数最大桁
+	static const int32_t kMaxNumbers_ = 3;
+
+	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Object2d> magma_;
 
 	//マップ
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
 
 	//マグマのライン
-	float maxMagmaLine_ = 50000.0f;
-	float magmaLine_ = 50000.0f;
+	float maxMagmaLine_ = 12000.0f;
+	float magmaLine_ = 12000.0f;
 	float magmaTexBaseX_ = 0.0f;
+	float magmaUnderLine_ = 10000.0f;
 
 	//パーツの数
 	int32_t remainingParts_ = 0;
@@ -122,7 +126,7 @@ private:
 	bool isClear_ = false;
 
 	//パーツ数を表示する数字
-	std::array<std::unique_ptr<Sprite>, 2> numbers_;
+	std::array<std::unique_ptr<Sprite>, kMaxNumbers_> numbers_;
 	std::unique_ptr<Sprite> clearSprite_;
 
 	//帰還エリア

@@ -14,6 +14,8 @@ void GameScene::Init(){
 
 	BlockTextureManager::GetInstance()->LoadAllBlockTexture();
 
+	scoreManager_ = ScoreManager::GetInstance();
+
 	player_ = std::make_shared<Player>();
 	player_->Initialize();
 
@@ -116,6 +118,8 @@ void GameScene::DrawUI(){
 	player_->DrawUI();
 
 	stage_->DrawUI();
+
+	scoreManager_->DrawCurrentScore(scorePosition_);
 
 }
 

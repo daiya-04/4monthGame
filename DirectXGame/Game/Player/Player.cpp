@@ -45,7 +45,7 @@ void Player::Initialize() {
 
 	input_ = Input::GetInstance();
 
-	
+	scoreManager_ = ScoreManager::GetInstance();
 
 	position_ = Stage::kBasePosition;
 	birdsEyePosition_ = position_;
@@ -54,8 +54,6 @@ void Player::Initialize() {
 
 	collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
 	collision_.max = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
-
-	
 
 	leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
 	rightTop_ = { position_.x + kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };

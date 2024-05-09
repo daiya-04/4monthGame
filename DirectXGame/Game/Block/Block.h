@@ -5,6 +5,7 @@
 #include "Hit.h"
 #include "BlockTextureManager.h"
 #include "Audio.h"
+#include "Score/ScoreManager.h"
 
 class Player;
 
@@ -130,6 +131,8 @@ public:
 	void Reset();
 
 protected:
+
+	ScoreManager* scoreManager_ = nullptr;
 
 	Player* player_;
 

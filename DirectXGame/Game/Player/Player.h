@@ -11,6 +11,7 @@
 #include "Stage/Stage.h"
 #include <list>
 #include "Sprite.h"
+#include "Score/ScoreManager.h"
 
 class Player
 {
@@ -275,6 +276,8 @@ private:
 private:
 
 	Input* input_;
+
+	ScoreManager* scoreManager_ = nullptr;
 
 	std::unique_ptr<Object2d> object_;
 

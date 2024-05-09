@@ -41,11 +41,13 @@ private:
 
 	void Reset();
 
-	
+	ScoreManager* scoreManager_ = nullptr;
 
 	std::shared_ptr<Camera> camera_;
 
 	std::unique_ptr<Scroll> scroll_;
+
+	Vector2 scorePosition_ = { 256.0f,64.0f };
 
 	//UI関連
 	std::unique_ptr<Sprite> backGround_;
