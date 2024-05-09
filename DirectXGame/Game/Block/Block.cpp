@@ -12,6 +12,8 @@ void BaseBlock::Break(int32_t power) {
 
 		durability_ = 0;
 
+		scoreManager_->AddScore(100);
+
 		//タイプに応じてプレイヤーにパラメータ強化の値を付与
 		if (player_) {
 
@@ -34,6 +36,9 @@ void BaseBlock::Break(int32_t power) {
 	type_ = kNone;
 	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
+	}
+	else {
+		scoreManager_->AddScore(10);
 	}
 
 	digSE_->Play();
@@ -65,6 +70,8 @@ Block::~Block()
 }
 
 void Block::Initialize(const Vector2& position, BlockType type) {
+
+	scoreManager_ = ScoreManager::GetInstance();
 
 	type_ = type;
 	texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);

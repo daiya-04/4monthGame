@@ -3,6 +3,7 @@
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
 #include "PostEffect.h"
+#include "TransitionEffect.h"
 #include <memory>
 
 class SceneManager final {
@@ -14,6 +15,10 @@ private:
 	std::unique_ptr<IScene> nextScene_;
 
 	std::unique_ptr<PostEffect> postEffect_;
+
+	std::unique_ptr<TransitionEffect> transitionEffect_;
+
+	bool isStart_ = true;
 
 public:
 

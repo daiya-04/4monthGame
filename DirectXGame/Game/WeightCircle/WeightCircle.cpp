@@ -17,7 +17,7 @@ void WeightCircle::Init() {
 
 void WeightCircle::Update() {
 #ifdef _DEBUG
-	ImGui::Begin("weightCircle");
+	/*ImGui::Begin("weightCircle");
 	ImGui::DragFloat2("position",&position_.x,1.0f);
 	ImGui::DragFloat("radius", &radius_, 1.0f);
 	ImGui::SliderFloat("weight", &weightColor_, 0.0f, 1.0f);
@@ -32,7 +32,7 @@ void WeightCircle::Update() {
 		isEnd_ = false;
 		radius_ = 0.0f;
 	}
-	ImGui::End();
+	ImGui::End();*/
 #endif // _DEBUG
 	if (isStart_) {
 		radius_ += 66.0f;

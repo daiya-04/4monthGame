@@ -11,6 +11,7 @@
 #include "Stage/Stage.h"
 #include <list>
 #include "Sprite.h"
+#include "Score/ScoreManager.h"
 
 class Player
 {
@@ -38,6 +39,14 @@ public:
 
 		kMaxPlayer, //最大人数
 
+	};
+
+	/// <summary>
+	/// 移動方法。通常移動と直線高速移動
+	/// </summary>
+	enum MoveType {
+		kNormal, //通常移動
+		kLine, //直線移動
 	};
 
 	//現在操作しているプレイヤーに加算するパラメータ値
@@ -223,6 +232,9 @@ public:
 	//パーツカウント加算
 	void AddPartsCount() { partsCount_++; }
 
+	//リフト関連処理
+	void MoveLift();
+
 private:
 
 	//移動
@@ -264,6 +276,8 @@ private:
 private:
 
 	Input* input_;
+
+	ScoreManager* scoreManager_ = nullptr;
 
 	std::unique_ptr<Object2d> object_;
 
@@ -376,8 +390,17 @@ private:
 	//クリアフラグ
 	bool isClear_ = false;
 
+	//移動タイプ
+	MoveType moveType_ = kNormal;
+
 	//パーツカウント
 	int32_t partsCount_ = 0;
+
+	//岩カウント
+	int32_t rockCount_ = 0;
+
+	//岩の必要数
+	/*int32_t needRockCount_ = 5;*/
 
 	//UI関連
 	std::unique_ptr<Sprite> lifeLeftGage_;
@@ -392,6 +415,8 @@ private:
 	uint32_t lifeRightGageTexture_;
 	uint32_t lifeRightFrameTexture_;
 	uint32_t deadTexture_;
+
+	const std::string dataName = "Player";
 
 };
 

@@ -5,6 +5,7 @@
 #include "Hit.h"
 #include "BlockTextureManager.h"
 #include "Audio.h"
+#include "Score/ScoreManager.h"
 
 class Player;
 
@@ -15,9 +16,9 @@ class BaseBlock
 {
 public:
 	
-	static const uint32_t kBlockSize_ = 96;
+	static const int32_t kBlockSize_ = 96;
 
-	static const uint32_t kBlockHalfSize_ = kBlockSize_ / 2;
+	static const int32_t kBlockHalfSize_ = kBlockSize_ / 2;
 
 	const float kTextureBlockSize_ = 32.0f;
 
@@ -130,6 +131,8 @@ public:
 	void Reset();
 
 protected:
+
+	ScoreManager* scoreManager_ = nullptr;
 
 	Player* player_;
 

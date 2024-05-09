@@ -2,6 +2,7 @@
 #include "DefaultScene.h"
 #include <memory>
 #include <list>
+#include <unordered_map>
 #include <vector>
 
 #include "Sprite.h"
@@ -24,8 +25,6 @@ public:
 
 	void DrawObject()override;
 
-	void DrawParticleModel()override;
-
 	void DrawParticle()override;
 
 	void DrawNotSetPipeline()override {};
@@ -36,7 +35,21 @@ public:
 
 	~TitleScene()override;
 
+	void LoadData();
+
+	void ApplyGlobalVariables();
 
 private:
+
+	const std::string dataName = "TitleUI";
+
+	char filePathBuff[256]{};
+	char groupNameBuff[256]{};
+	Vector2 addPos{};
+
+	uint32_t bgTexture_;
+	std::unique_ptr<Sprite> backGround_;
+
+	std::unordered_map<std::string, std::unique_ptr<Sprite>> uis_;
 
 };

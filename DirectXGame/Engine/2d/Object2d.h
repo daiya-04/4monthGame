@@ -70,6 +70,8 @@ private: //メンバ変数
 
 	//サイズ
 	Vector2 size_ = { 100.0f,100.0f };
+	//倍率
+	Vector2 scale_ = { 1.0f,1.0f };
 	//アンカーポイント
 	Vector2 anchorpoint_ = { 0.5f, 0.5f };
 	//色(RGBA)

@@ -15,6 +15,8 @@ void GameScene::Init(){
 
 	BlockTextureManager::GetInstance()->LoadAllBlockTexture();
 
+	scoreManager_ = ScoreManager::GetInstance();
+
 	player_ = std::make_shared<Player>();
 	player_->Initialize();
 
@@ -73,20 +75,28 @@ void GameScene::Reset() {
 void GameScene::Update() {
 	DebugGUI();
 
-	//シーンチェンジしたら操作不可に
-	if (!isSceneChange_) {
+	
+#ifdef _DEBUG
 
-		if (Input::GetInstance()->TriggerKey(DIK_Q)) {
-			SceneManager::GetInstance()->ChangeScene("StageSelect");
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
+		SceneManager::GetInstance()->ChangeScene("Title");
+	}
+	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_2)) {
+		SceneManager::GetInstance()->ChangeScene("StageSelect");
+	}
+	if (Input::GetInstance()->TriggerKey(DIK_Q)) {
+		SceneManager::GetInstance()->ChangeScene("StageSelect");
+	}
+
+#endif // _DEBUG
+
+	if (player_->GetIsDead()) {
+
+		if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
+			Reset();
 		}
 
-		if (player_->GetIsDead() || stage_->GetIsClear()) {
-
-			if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
-				Reset();
-			}
-
-		}
+	}
 
 		preCameraPosition_ = camera_->translation_;
 		if (player_->GetIsBirdsEye()) {
@@ -126,10 +136,8 @@ void GameScene::Update() {
 			}
 		}
 		cameraFrozen_->Update();
-	}
-	else {
-
-	}
+	
+	
 }
 void GameScene::DrawNotSetPipeline() {
 
@@ -141,6 +149,7 @@ void GameScene::DrawNotSetPipeline() {
 		DrawCold(environmentEffectsManager_->GetNextScene());
 		isFirstAllDraw_ = false;
 	}
+	//stage_->Update();
 
 	if (isPlayGame_) {
 		cameraFrozen_->DrawInternal(commandList_);
@@ -182,12 +191,6 @@ void GameScene::DrawObject(){
 	environmentEffectsManager_->Draw(commandList_);
 }
 
-void GameScene::DrawParticleModel(){
-
-
-
-}
-
 void GameScene::DrawParticle(){
 
 	
@@ -199,10 +202,12 @@ void GameScene::DrawUI(){
 
 	stage_->DrawUI();
 
+	scoreManager_->DrawCurrentScore(scorePosition_);
+
 }
 
 void GameScene::DebugGUI(){
-#ifdef _DEBUG
+/*#ifdef _DEBUG
 
 	ImGui::Begin("camera");
 	ImGui::DragFloat3("translation", &camera_->translation_.x, 1.0f);
@@ -211,16 +216,12 @@ void GameScene::DebugGUI(){
 
 	player_->Debug();
 
-	ImGui::Begin("IsPlayGamme");
-	ImGui::Checkbox("IsPlay",&isPlayGame_);
-	
-	ImGui::End();
 
 	if (Input::GetInstance()->TriggerKey(DIK_Z)) {
 		isPlayGame_ = !isPlayGame_;
 	};
 
-#endif // _DEBUG
+#endif // _DEBUG*/
 }
 
 void GameScene::DrawCold(PostEffect* targetScene) {
@@ -244,9 +245,7 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 
 	snowManager_->Draw();
 	cameraFrozen_->Draw(commandList_);
-	targetScene->PostDrawScene(commandList_);
-
-	
+	targetScene->PostDrawScene(commandList_);	
 }
 
 void GameScene::DrawHeat(PostEffect* targetScene) {
