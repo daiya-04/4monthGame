@@ -8,8 +8,8 @@
 #include <string>
 #include <array>
 
-class PostEffect {
-protected:
+class DualSceneDrawer {
+private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 
@@ -24,12 +24,18 @@ public:
 
 public: //メンバ関数
 
-	PostEffect();
+	DualSceneDrawer();
 
-	virtual void Init();
-	void Init(const std::wstring &vertexShaderPath,const std::wstring &pixelShaderPath);
-
-	virtual void Draw(ID3D12GraphicsCommandList* cmdList);
+	void Init();
+	
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="cmdList">コマンドリスト</param>
+	/// <param name="prevSceneHandle">前シーンのハンドル</param>
+	/// <param name="nextSceneHandle">次シーンのハンドル</param>
+	/// <param name="weightHandle">weightMapのハンドル</param>
+	void Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE prevSceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE nextSceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE weightHandle);
 
 	void PreDrawScene(ID3D12GraphicsCommandList* cmdList);
 
@@ -39,13 +45,12 @@ public: //メンバ関数
 	/// SRV指定用ハンドル取得
 	/// </summary>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU() { return textureSrvHandleGPU_; };
-protected:
+private:
 
 	void TransferVertex();
 
-	virtual void CreateGraphicsPipelineState();
-	void CreateGraphicsPipelineState(const std::wstring &vertexShaderPath,const std::wstring &pixelShaderPath);
-
+	void CreateGraphicsPipelineState();
+	
 	ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
 
 	ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandleer);
@@ -54,7 +59,7 @@ protected:
 
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
 
-protected: //メンバ変数
+private: //メンバ変数
 
 	static const float clearColor_[4];
 

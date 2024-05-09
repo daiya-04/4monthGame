@@ -62,6 +62,18 @@
     <Filter Include="Game\SaunaStone">
       <UniqueIdentifier>{50420988-0adb-4fc3-926a-cf247daaed63}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\EnvironmentEffects">
+      <UniqueIdentifier>{0527f0f3-001c-4e55-b6e5-aa6cfc2d3dfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\EnvironmentEffects\HeatHaze">
+      <UniqueIdentifier>{75231248-6310-46d6-8cfb-776c0b69c520}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\EnvironmentEffects\CameraFrozen">
+      <UniqueIdentifier>{e8aa39d9-f719-4b57-a93d-61324979a3b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\EnvironmentEffects\WaterDrop">
+      <UniqueIdentifier>{3f17d62e-6ca2-4dfb-b40d-8a63d03c238f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Engine\Loader">
       <UniqueIdentifier>{2045ef8e-5836-4da6-9a64-5d419d54ce82}</UniqueIdentifier>
     </Filter>
@@ -176,6 +188,38 @@
     <ClCompile Include="Game\SaunaStone\SaunaStone.cpp">
       <Filter>Game\SaunaStone</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\2d\DualSceneDrawer.cpp" />
+    <ClCompile Include="Game\WeightCircle\WeightCircle.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.cpp">
+      <Filter>Game\EnvironmentEffects\HeatHaze</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.cpp">
+      <Filter>Game\EnvironmentEffects\HeatHaze</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.cpp">
+      <Filter>Game\EnvironmentEffects\CameraFrozen</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.cpp">
+      <Filter>Game\EnvironmentEffects\CameraFrozen</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\EnvironmentEffectsManager.cpp">
+      <Filter>Game\EnvironmentEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropSourceTexture.cpp">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.cpp">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.cpp">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.cpp">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\WaterDrop\WaterDropManager.cpp">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClCompile>
     <ClCompile Include="Engine\2d\Object2d.cpp">
       <Filter>Engine\2d</Filter>
     </ClCompile>
@@ -204,6 +248,9 @@
     <ClCompile Include="Game\Score\ScoreManager.cpp">
       <Filter>Game\Score</Filter>
     </ClCompile>
+    <ClCompile Include="Game\EnvironmentEffects\Snow\SnowManager.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.cpp" />
+    <ClCompile Include="Game\EnvironmentEffects\Snow\SnowObstacle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -326,6 +373,39 @@
     <ClInclude Include="Game\SaunaStone\SaunaStone.h">
       <Filter>Game\SaunaStone</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\2d\DualSceneDrawer.h" />
+    <ClInclude Include="Game\WeightCircle\WeightCircle.h" />
+    <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHazeManager.h">
+      <Filter>Game\EnvironmentEffects\HeatHaze</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\HeatHaze\HeatHaze.h">
+      <Filter>Game\EnvironmentEffects\HeatHaze</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozenManager.h">
+      <Filter>Game\EnvironmentEffects\CameraFrozen</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\CameraFrozen\CameraFrozen.h">
+      <Filter>Game\EnvironmentEffects\CameraFrozen</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\EnvironmentEffectsManager.h">
+      <Filter>Game\EnvironmentEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropSourceTexture.h">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropSceneDrawer.h">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropPipeline.h">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDrop.h">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnvironmentEffects\WaterDrop\WaterDropManager.h">
+      <Filter>Game\EnvironmentEffects\WaterDrop</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\RandomEngine\RandomEngine.h" />
     <ClInclude Include="Engine\Loader\LevelLoader.h">
       <Filter>Engine\Loader</Filter>
     </ClInclude>
@@ -357,5 +437,8 @@
     <ResourceCompile Include="DirectXGame.rc">
       <Filter>リソース ファイル</Filter>
     </ResourceCompile>
+    <ClInclude Include="Game\EnvironmentEffects\Snow\SnowManager.h" />
+    <ClInclude Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.h" />
+    <ClInclude Include="Game\EnvironmentEffects\Snow\SnowObstacle.h" />
   </ItemGroup>
 </Project>
