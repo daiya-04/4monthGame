@@ -106,7 +106,7 @@ private:
 	static const int32_t kMaxBorder_ = 2;
 
 	//岩の数最大桁
-	static const int32_t kMaxNumbers_ = 3;
+	static const int32_t kMaxNumbers_ = 5;
 
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Object2d> magma_;
@@ -120,12 +120,17 @@ private:
 	float magmaTexBaseX_ = 0.0f;
 	float magmaUnderLine_ = 10000.0f;
 
-	//パーツの数
-	int32_t remainingParts_ = 0;
+	int32_t rockCount_ = 0;
+
+	//必要な岩の数
+	int32_t goalRockCount_ = 100;
 
 	bool isClear_ = false;
 
-	//パーツ数を表示する数字
+	//数字の表示フラグ
+	std::array<bool, kMaxNumbers_> isActiveNumber_{};
+
+	//岩の数を表示する数字
 	std::array<std::unique_ptr<Sprite>, kMaxNumbers_> numbers_;
 	std::unique_ptr<Sprite> clearSprite_;
 

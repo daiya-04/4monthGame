@@ -17,7 +17,10 @@ void BaseBlock::Break(int32_t power) {
 		//タイプに応じてプレイヤーにパラメータ強化の値を付与
 		if (player_) {
 
-			if (type_ == kSpeedBlock) {
+			if (type_ == kMagma || type_ == kSnow) {
+				player_->AddRockCount(defaultDurability_ / 3 + 1);
+			}
+			else if (type_ == kSpeedBlock) {
 				player_->AddSpeedParameter();
 			}
 			else if (type_ == kDigerBlock) {
@@ -25,9 +28,6 @@ void BaseBlock::Break(int32_t power) {
 			}
 			else if (type_ == kDigPowerBlock) {
 				player_->AddDigPowerParameter();
-			}
-			else if (type_ == kParts) {
-				player_->AddPartsCount();
 			}
 
 		}

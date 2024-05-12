@@ -1,0 +1,21 @@
+{
+    "Player": [
+        {
+            "DefaultParameter": {
+                "Add Value - DigSpeed": 5,
+                "Add Value - Speed": 2.0,
+                "ChargeJump - ChargeTime": 40,
+                "ChargeJump - JumpValue": 5,
+                "ChargeJump - Velocity": -35.0,
+                "Dig - Interval": 1,
+                "Jump - Velocity": -25.0,
+                "Move - AccelValue": 1.0,
+                "Move - MaxSpeed": 10.0,
+                "WallJump - JumpVelocity": [
+                    10.0,
+                    -30.0
+                ]
+            }
+        }
+    ]
+}

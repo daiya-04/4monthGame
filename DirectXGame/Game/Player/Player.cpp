@@ -83,7 +83,6 @@ void Player::Initialize() {
 	currentCharacters_ = kLeftPlayer;
 	reserveCharacters_ = kRightPlayer;
 
-	partsCount_ = 0;
 	isClear_ = false;
 
 	SetOnBase();
@@ -1302,7 +1301,6 @@ void Player::Debug() {
 
 	ImGui::Begin("Player");
 	ImGui::Text("position x : %1.2f y : %1.2f", position_.x, position_.y);
-	ImGui::Text("parts : %d", partsCount_);
 
 	//デフォルトパラメータを適用
 	if (ImGui::Button("Apply Default")) {

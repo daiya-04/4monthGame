@@ -40,8 +40,6 @@ public:
 		kDigerBlock,
 		//破壊力が上昇するブロック
 		kDigPowerBlock,
-		//パーツブロック
-		kParts,
 		//ブロックの最大種類
 		kMaxBlock
 
@@ -124,7 +122,10 @@ public:
 	void Repair() { isBreak_ = false; }
 
 	//ブロックの耐久値設定
-	void SetDurability(int32_t value) { durability_ = value; }
+	void SetDurability(int32_t value) { 
+		defaultDurability_ = value;
+		durability_ = defaultDurability_;
+	}
 
 	bool GetIsBreak() { return isBreak_; }
 
@@ -163,6 +164,8 @@ protected:
 
 	//耐久力
 	int32_t durability_ = 3;
+
+	int32_t defaultDurability_ = 3;
 
 	//ザクザク音
 	Audio* digSE_;

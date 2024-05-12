@@ -24,7 +24,7 @@ Stage::Stage()
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
-		numbers_[i].reset(Sprite::Create(numTex_, {1150.0f + 64.0f * i, 660.0f}));
+		numbers_[i].reset(Sprite::Create(numTex_, {1050.0f + 48.0f * i, 660.0f}));
 		numbers_[i]->SetSize({ 64.0f,64.0f });
 		numbers_[i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
 
@@ -97,8 +97,8 @@ void Stage::Update() {
 #endif // _DEBUG
 
 
-	//パーツがなくなったらクリアフラグをセット
-	if (remainingParts_ <= 0 && !player_->GetIsClear()) {
+	//岩が規定数でクリアフラグをセット
+	if (rockCount_ >= goalRockCount_ && !player_->GetIsClear()) {
 		player_->SetIsClear(true);
 		isClear_ = true;
 	}
@@ -120,8 +120,8 @@ void Stage::Update() {
 	}
 
 	//拠点に帰った時にパーツを回収
-	if (player_->GetIsHome() && player_->GetPartsCount() > 0) {
-		player_->HandOverParts(remainingParts_);
+	if (player_->GetIsHome() && player_->GetRockCount() > 0) {
+		player_->HandOverRocks(rockCount_);
 	}
 
 	//ブロックの更新
@@ -164,7 +164,15 @@ void Stage::Update() {
 
 		int32_t divide = int32_t(std::pow(10, kMaxNumbers_ - 1 - i));
 		
-		num = remainingParts_ / divide;
+		num = rockCount_ / divide;
+
+		//割る数の方が大きい且つnumが0の状態で一桁でない時、数字を表示しない
+		if (num == 0 && rockCount_ < divide && divide != 1) {
+			isActiveNumber_[i] = false;
+		}
+		else {
+			isActiveNumber_[i] = true;
+		}
 
 		numbers_[i]->SetTextureArea({64.0f * num, 0.0f}, { 64.0f,64.0f });
 
@@ -225,9 +233,13 @@ void Stage::Draw() {
 
 void Stage::DrawUI() {
 
-	/*for (uint32_t i = 0; i < 2; i++) {
-		numbers_[i]->Draw();
-	}*/
+	for (uint32_t i = 0; i < kMaxNumbers_; i++) {
+
+		if (isActiveNumber_[i]) {
+			numbers_[i]->Draw();
+		}
+
+	}
 
 	if (isClear_) {
 		clearSprite_->Draw();
@@ -349,7 +361,7 @@ void Stage::CreateEntity() {
 void Stage::Load(uint32_t stageNumber) {
 
 	//パーツの残り数をリセット
-	remainingParts_ = 0;
+	rockCount_ = 0;
 
 	std::string fileName = "./Resources/Maps/stage";
 
@@ -404,16 +416,28 @@ void Stage::Load(uint32_t stageNumber) {
 			//高さに応じて耐久値を調整
 			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
 
-			//ブロックがパーツなら残りのパーツ数を増加
-			if (type == Block::BlockType::kParts) {
-				remainingParts_++;
-			}
+			
 
 			blockPositions_[y][x] = num;
 
 		}
 
 	}
+
+	std::string RockNum;
+
+	//ブロックの必要数を読み取り。描かれていなかったら100に固定
+	if (std::getline(newFile, RockNum, ',')) {
+
+		goalRockCount_ = std::stoi(RockNum);
+
+	}
+	else {
+
+		goalRockCount_ = 100;
+
+	}
+
 
 }
 

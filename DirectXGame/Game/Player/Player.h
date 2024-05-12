@@ -212,12 +212,10 @@ public:
 
 	bool GetIsClear() const { return isClear_; }
 
-	const int32_t& GetPartsCount() { return partsCount_; }
-
-	//パーツの受け渡し
-	void HandOverParts(int32_t& remainingParts) {
-		remainingParts -= partsCount_;
-		partsCount_ = 0;
+	//岩の受け渡し
+	void HandOverRocks(int32_t& rockCount) {
+		rockCount += rockCount_;
+		rockCount_ = 0;
 	}
 
 	//スピードパラメータの加算
@@ -230,7 +228,10 @@ public:
 	void AddDigPowerParameter() { addParameters_.addDigPower += addValue_.digPower; }
 
 	//パーツカウント加算
-	void AddPartsCount() { partsCount_++; }
+	void AddRockCount(int32_t addNum) { rockCount_ += addNum; }
+
+	//ブロックの数取得
+	int32_t GetRockCount() const { return rockCount_; }
 
 	//リフト関連処理
 	void MoveLift();
@@ -392,9 +393,6 @@ private:
 
 	//移動タイプ
 	MoveType moveType_ = kNormal;
-
-	//パーツカウント
-	int32_t partsCount_ = 0;
 
 	//岩カウント
 	int32_t rockCount_ = 0;
