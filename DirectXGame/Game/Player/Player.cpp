@@ -13,27 +13,34 @@ Player::Player()
 	textureRight_ = TextureManager::GetInstance()->Load("player/playerRight.png");
 	textureUp_ = TextureManager::GetInstance()->Load("player/playerUp.png");
 	textureDown_ = TextureManager::GetInstance()->Load("player/playerDown.png");
+	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
+	rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
+	rockUITextures_[BringRocks::kSpeed] = TextureManager::GetInstance()->Load("UI/speedRock.png");
+	rockUITextures_[BringRocks::kDigSpeed] = TextureManager::GetInstance()->Load("UI/digSpeedRock.png");
+	rockUITextures_[BringRocks::kPower] = TextureManager::GetInstance()->Load("UI/powerRock.png");
 
-	lifeLeftGageTexture_ = TextureManager::GetInstance()->Load("UI/lifeLeft_01.png");
-	lifeLeftFrameTexture_ = TextureManager::GetInstance()->Load("UI/lifeLeft_02.png");
-	lifeRightGageTexture_ = TextureManager::GetInstance()->Load("UI/lifeRight_01.png");
-	lifeRightFrameTexture_ = TextureManager::GetInstance()->Load("UI/lifeRight_02.png");
 	deadTexture_ = TextureManager::GetInstance()->Load("UI/dead.png");
 
-	lifeLeftGage_.reset(Sprite::Create(lifeLeftGageTexture_, { 100.0f,600.0f }));
-	lifeLeftGage_->SetSize({ 64.0f, 128.0f });
-	lifeLeftGage_->SetAnchorpoint({ 0.5f,1.0f });
-	lifeLeftFrame_.reset(Sprite::Create(lifeLeftFrameTexture_, { 100.0f,536.0f }));
-	lifeLeftFrame_->SetSize({ 128.0f, 256.0f });
-	lifeRightGage_.reset(Sprite::Create(lifeRightGageTexture_, { 1180.0f,600.0f }));
-	lifeRightGage_->SetSize({ 64.0f, 128.0f });
-	lifeRightGage_->SetAnchorpoint({ 0.5f,1.0f });
-	lifeRightFrame_.reset(Sprite::Create(lifeRightFrameTexture_, { 1180.0f,536.0f }));
-	lifeRightFrame_->SetSize({ 128.0f, 256.0f });
 	deadSprite_.reset(Sprite::Create(deadTexture_, { 640.0f,360.0f }));
 	object_.reset(Object2d::Create(texture_, position_));
 	object_->SetSize({ kPlayerSize_, kPlayerSize_ });
 
+	//数字リセット
+	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
+
+		for (int32_t i = 0; i < 5; i++) {
+
+			numbers_[height][i].reset(Sprite::Create(numberTexture_, { 100.0f + 32.0f * i , 500.0f + 64.0f * height }));
+			numbers_[height][i]->SetSize({ 48.0f,48.0f });
+			numbers_[height][i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
+
+		}
+
+		//岩UIリセット
+		rocksUI_[height].reset(Sprite::Create(rockUITextures_[height], { 50.0f, 500.0f + 64.0f * height }));
+		rocksUI_[height]->SetSize({ 48.0f,48.0f });
+
+	}
 
 }
 
@@ -75,10 +82,16 @@ void Player::Initialize() {
 	parameters_[kLeftPlayer]->Initialize();
 	parameters_[kRightPlayer]->Initialize();
 
-	//加算量リセット
-	addParameters_.addSpeed = 0.0f;
-	addParameters_.addDigSpeed = 0;
-	addParameters_.addDigPower = 0;
+	//岩の保有数リセット
+	for (int32_t i = 0; i < kMaxPlayer; i++) {
+
+		for (int32_t k = 0; k < BringRocks::kMaxType; k++) {
+
+			addParameters_[i].rocks_[k] = 0;
+
+		}
+
+	}
 
 	currentCharacters_ = kLeftPlayer;
 	reserveCharacters_ = kRightPlayer;
@@ -227,19 +240,22 @@ void Player::Update() {
 		
 	}
 
-	//制限時間のゲージ表示を更新
-	/*lifeLeftGage_->SetSize({64.0f,128.0f * float(parameters_[kLeftPlayer]->saunaTimer_.countSaunaTimer) /
-		float(parameters_[kLeftPlayer]->saunaTimer_.maxSaunaTime) });
-	lifeLeftGage_->SetTextureArea({ 0.0f,256.0f - 256.0f * float(parameters_[kLeftPlayer]->saunaTimer_.countSaunaTimer) /
-		float(parameters_[kLeftPlayer]->saunaTimer_.maxSaunaTime) }, 
-		{ 128.0f, 256.0f * float(parameters_[kLeftPlayer]->saunaTimer_.countSaunaTimer) /
-		float(parameters_[kLeftPlayer]->saunaTimer_.maxSaunaTime) });
-	lifeRightGage_->SetSize({ 64.0f,128.0f * float(parameters_[kRightPlayer]->saunaTimer_.countSaunaTimer) /
-		float(parameters_[kRightPlayer]->saunaTimer_.maxSaunaTime) });
-	lifeRightGage_->SetTextureArea({ 0.0f,256.0f - 256.0f * float(parameters_[kRightPlayer]->saunaTimer_.countSaunaTimer) /
-		float(parameters_[kRightPlayer]->saunaTimer_.maxSaunaTime) },
-		{ 128.0f, 256.0f * float(parameters_[kRightPlayer]->saunaTimer_.countSaunaTimer) /
-		float(parameters_[kRightPlayer]->saunaTimer_.maxSaunaTime) });*/
+	//数字の更新
+	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
+
+		for (int32_t i = 0; i < 5; i++) {
+
+			int32_t num = 0;
+
+			int32_t divide = int32_t(std::pow(10, 5 - 1 - i));
+
+			num = addParameters_[currentCharacters_].rocks_[height] / divide;
+
+			numbers_[height][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
+
+		}
+
+	}
 
 	//最終的な当たり判定を更新
 	collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
@@ -255,10 +271,18 @@ void Player::Draw(const Camera& camera) {
 
 void Player::DrawUI() {
 
-	/*lifeLeftGage_->Draw();
-	lifeLeftFrame_->Draw();
-	lifeRightGage_->Draw();
-	lifeRightFrame_->Draw();*/
+	//持っているブロック数の表示
+	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
+
+		for (int32_t i = 0; i < 5; i++) {
+
+			numbers_[height][i]->Draw();
+
+		}
+
+		rocksUI_[height]->Draw();
+
+	}
 
 	if (isDead_) {
 		deadSprite_->Draw();
@@ -663,9 +687,6 @@ void Player::Change() {
 		if (position_.x > Stage::kBasePosition.x - Block::kBlockHalfSize_ && 
 			position_.x < Stage::kBasePosition.x + Block::kBlockHalfSize_) {
 
-			//パラメータの処理
-			AdjustmentParameter();
-
 			//プレイヤー切り替え
 			if (currentCharacters_ == kLeftPlayer) {
 				currentCharacters_ = kRightPlayer;
@@ -802,30 +823,6 @@ void Player::Change() {
 	rightTop_ = { position_.x + kPlayerHalfSize_ - 1, position_.y - kPlayerHalfSize_ };
 	leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ - 1 };
 	rightBottom_ = { position_.x + kPlayerHalfSize_ - 1, position_.y + kPlayerHalfSize_ - 1 };
-
-}
-
-void Player::AdjustmentParameter() {
-
-	//速度パラメータ加算
-	parameters_[currentCharacters_]->maxMoveSpeed_ += addParameters_.addSpeed;
-	addParameters_.addSpeed = 0.0f;
-	//採掘インターバル減少
-	if (parameters_[currentCharacters_]->dig_.digInterval > 1) {
-
-		parameters_[currentCharacters_]->dig_.digInterval -= addParameters_.addDigSpeed;
-
-		//インターバルが1未満になるなら1に戻す
-		if (parameters_[currentCharacters_]->dig_.digInterval < 1) {
-			parameters_[currentCharacters_]->dig_.digInterval = 1;
-		}
-
-	}
-	addParameters_.addDigSpeed = 0;
-
-	//採掘破壊力加算
-	parameters_[currentCharacters_]->dig_.digPower += addParameters_.addDigPower;
-	addParameters_.addDigPower = 0;
 
 }
 

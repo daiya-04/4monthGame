@@ -49,22 +49,29 @@ public:
 		kLine, //直線移動
 	};
 
-	//現在操作しているプレイヤーに加算するパラメータ値
-	struct AddParameters {
-		//スピード
-		float addSpeed = 0.0f;
-		//採掘速度
-		int32_t addDigSpeed = 0;
-		//採掘のダメージ量
-		int32_t addDigPower = 0;
+	
+
+	//現在操作しているプレイヤーが保有しているブロックの構造体
+	struct BringRocks {
+
+		enum RockType {
+			kRock, //通常の岩
+			kSpeed, //移動速度
+			kDigSpeed, //採掘速度
+			kPower, //ダメージ量
+			kMaxType, //種類
+		};
+
+		std::array<int32_t, RockType::kMaxType> rocks_{};
+
 	};
 
 	//ブロック1つ当たりの加算量
 	struct AddValue {
 		//スピード
-		float speed = 2.0f;
+		float speed = 0.5f;
 		//採掘速度
-		int32_t digSpeed = 5;
+		int32_t digSpeed = 1;
 		//採掘のダメージ量
 		int32_t digPower = 1;
 	};
@@ -214,24 +221,24 @@ public:
 
 	//岩の受け渡し
 	void HandOverRocks(int32_t& rockCount) {
-		rockCount += rockCount_;
-		rockCount_ = 0;
+		rockCount += addParameters_[currentCharacters_].rocks_[BringRocks::kRock];
+		addParameters_[currentCharacters_].rocks_[BringRocks::kRock] = 0;
 	}
 
-	//スピードパラメータの加算
-	void AddSpeedParameter(){ addParameters_.addSpeed += addValue_.speed; }
+	//スピードの岩を加算
+	void AddSpeedParameter(int32_t addNum = 1) { addParameters_[currentCharacters_].rocks_[BringRocks::kSpeed] += addNum; }
 
-	//採掘インターバルパラメータの加算
-	void AddDigIntervalParameter(){ addParameters_.addDigSpeed += addValue_.digSpeed; }
+	//採掘速度の岩を加算
+	void AddDigIntervalParameter(int32_t addNum = 1){ addParameters_[currentCharacters_].rocks_[BringRocks::kDigSpeed] += addNum; }
 
-	//採掘ダメージ量パラメータの加算
-	void AddDigPowerParameter() { addParameters_.addDigPower += addValue_.digPower; }
+	//採掘ダメージ量の岩を加算
+	void AddDigPowerParameter(int32_t addNum = 1) { addParameters_[currentCharacters_].rocks_[BringRocks::kPower] += addNum; }
 
-	//パーツカウント加算
-	void AddRockCount(int32_t addNum) { rockCount_ += addNum; }
+	//岩カウント加算
+	void AddRockCount(int32_t addNum = 1) { addParameters_[currentCharacters_].rocks_[BringRocks::kRock] += addNum; }
 
 	//ブロックの数取得
-	int32_t GetRockCount() const { return rockCount_; }
+	int32_t GetRockCount() const { return addParameters_[currentCharacters_].rocks_[BringRocks::kRock]; }
 
 	//リフト関連処理
 	void MoveLift();
@@ -271,9 +278,6 @@ private:
 	//サウナ室にいる方の残り時間カウント
 	void CountSaunaTime();
 
-	//パラメータの計算処理
-	void AdjustmentParameter();
-
 private:
 
 	Input* input_;
@@ -295,7 +299,7 @@ private:
 	std::array<std::unique_ptr<PlayerParameter>, kMaxPlayer> parameters_;
 
 	//パラメータ値加算量を蓄積するもの
-	AddParameters addParameters_;
+	std::array<BringRocks, kMaxPlayer> addParameters_;
 
 	//一ブロック毎の加算量
 	AddValue addValue_;
@@ -394,25 +398,21 @@ private:
 	//移動タイプ
 	MoveType moveType_ = kNormal;
 
-	//岩カウント
-	int32_t rockCount_ = 0;
-
 	//岩の必要数
 	/*int32_t needRockCount_ = 5;*/
 
 	//UI関連
-	std::unique_ptr<Sprite> lifeLeftGage_;
-	std::unique_ptr<Sprite> lifeLeftFrame_;
-	std::unique_ptr<Sprite> lifeRightGage_;
-	std::unique_ptr<Sprite> lifeRightFrame_;
 	std::unique_ptr<Sprite> deadSprite_;
-	std::array<std::unique_ptr<Sprite>, 2> numbers_;
+	std::array<std::array<std::unique_ptr<Sprite>, 5>, BringRocks::RockType::kMaxType> numbers_;
+	std::array<std::unique_ptr<Sprite>, BringRocks::RockType::kMaxType> rocksUI_;
 
 	uint32_t lifeLeftGageTexture_;
 	uint32_t lifeLeftFrameTexture_;
 	uint32_t lifeRightGageTexture_;
 	uint32_t lifeRightFrameTexture_;
 	uint32_t deadTexture_;
+	uint32_t numberTexture_;
+	std::array<uint32_t, BringRocks::kMaxType> rockUITextures_;
 
 	const std::string dataName = "Player";
 

@@ -119,11 +119,6 @@ void Stage::Update() {
 		BreakAllBlock();
 	}
 
-	//拠点に帰った時にパーツを回収
-	if (player_->GetIsHome() && player_->GetRockCount() > 0) {
-		player_->HandOverRocks(rockCount_);
-	}
-
 	//ブロックの更新
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
