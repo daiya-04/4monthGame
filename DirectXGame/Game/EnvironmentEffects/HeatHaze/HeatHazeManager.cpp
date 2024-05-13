@@ -8,6 +8,9 @@ void HeatHazeManager::Init() {
 	width_ = 0.002f;
 	effectTexture_.reset(new PostEffect());
 	effectTexture_->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+
+	magmaDistortion_.reset(new MagmaDistortion());
+	magmaDistortion_->Init();
 }
 
 void HeatHazeManager::Update() {
@@ -22,4 +25,8 @@ void HeatHazeManager::Update() {
 	heatHaze_->SetOffset(offset_);
 	heatHaze_->SetRoop(roop_);
 	heatHaze_->SetWidth(width_);
+
+	magmaDistortion_->SetOffset(offset_);
+	magmaDistortion_->SetRoop(roop_);
+	magmaDistortion_->SetWidth(width_);
 }
