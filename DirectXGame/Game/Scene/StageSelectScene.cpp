@@ -3,6 +3,7 @@
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
+#include "Score/ScoreManager.h"
 #include "GlobalVariables.h"
 #include "SceneManager.h"
 #include "Audio.h"
@@ -27,13 +28,12 @@ void StageSelectScene::Init() {
 
 	bgTexture_ = TextureManager::Load("backGround/stageSelectBG.png");
 	saunaRoomTex_ = TextureManager::Load("saunaRoom.png");
-	//stageNumTex_ = TextureManager::Load("stageNumber.png");
+	playerTex_ = TextureManager::Load("playerBlue.png");
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
 
-	//stageNum_.reset(Sprite::Create(stageNumTex_, { 640.0f,400.0f }));
-	//stageNum_->SetSize({ 96.0f, 96.0f });
-	//stageNum_->SetTextureArea({ 0.0f,0.0f }, { 32.0f,32.0f });
+	player_.reset(Object2d::Create(playerTex_, { 282.0f,586.0f }));
+	player_->SetScale(0.5f);
 
 	for (size_t index = 0; index < kMaxStage_; index++) {
 		saunaRooms_.emplace_back(Object2d::Create(saunaRoomTex_, {640.0f + 640.0f * index, 650.0f}));
@@ -76,6 +76,9 @@ void StageSelectScene::Update() {
 			case Mode::Move:
 				MoveInit();
 				break;
+			case Mode::Enter:
+				EnterInit();
+				break;
 		}
 
 		modeRequest_ = std::nullopt;
@@ -87,6 +90,9 @@ void StageSelectScene::Update() {
 			break;
 		case Mode::Move:
 			MoveUpdate();
+			break;
+		case Mode::Enter:
+			EnterUpdate();
 			break;
 	}
 
@@ -101,9 +107,16 @@ void StageSelectScene::DrawBackGround() {
 
 void StageSelectScene::DrawObject() {
 
+	if (mode_ == Mode::Enter) {
+		player_->Draw(camera_);
+	}
 	for (const auto& room : saunaRooms_) {
 		room->Draw(camera_);
 	}
+	if (mode_ != Mode::Enter) {
+		player_->Draw(camera_);
+	}
+	
 
 }
 
@@ -120,6 +133,11 @@ void StageSelectScene::DrawUI() {
 		ui.second->Draw();
 	}
 
+	if (mode_ == Mode::Root) {
+		ScoreManager::GetInstance()->DrawBestScore(stageNumber_ - 1, scorePos_);
+	}
+	
+
 }
 
 void StageSelectScene::DebugGUI() {
@@ -127,7 +145,7 @@ void StageSelectScene::DebugGUI() {
 
 	GlobalVariables* gb = GlobalVariables::GetInstance();
 
-	ImGui::Begin("AddGroup");
+	ImGui::Begin("AddUI");
 
 	ImGui::InputText("texurePath", filePathBuff, sizeof(filePathBuff));
 	std::string filePath = filePathBuff;
@@ -166,7 +184,8 @@ void StageSelectScene::RootUpdate() {
 	preStageNum_ = stageNumber_;
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
-		SceneManager::GetInstance()->ChangeScene("Game");
+		//SceneManager::GetInstance()->ChangeScene("Game");
+		modeRequest_ = Mode::Enter;
 	}
 
 #ifdef _DEBUG
@@ -176,6 +195,10 @@ void StageSelectScene::RootUpdate() {
 	}
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_3)) {
 		SceneManager::GetInstance()->ChangeScene("Game");
+	}
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		//SceneManager::GetInstance()->ChangeScene("Game");
+		modeRequest_ = Mode::Enter;
 	}
 
 #endif // _DEBUG
@@ -220,12 +243,16 @@ void StageSelectScene::MoveInit() {
 
 void StageSelectScene::MoveUpdate() {
 
+	float prePos = camera_.translation_.x;
+
 	param_ += 0.03f;
 	param_ = min(param_, 1.0f);
 
 	float T = Easing::easeInOutQuart(param_);
 	camera_.translation_.x = Lerp(T, moveStartPos_, moveEndPos_);
-
+	
+	float distance = camera_.translation_.x - prePos;
+	player_->position_.x += distance;
 	uint32_t index = stageNumber_ - 1;
 	uint32_t preIndex = preStageNum_ - 1;
 
@@ -233,23 +260,33 @@ void StageSelectScene::MoveUpdate() {
 		saunaRooms_[index]->SetScale(Lerp(T, 0.3f, 1.0f));
 		saunaRooms_[preIndex]->SetScale(Lerp(T, 1.0f, 0.3f));
 	}
-	
-
-	/*if (stageNumber_ < preStageNum_) {
-
-		
-
-	}else if (stageNumber_ > preStageNum_) {
-
-
-		
-
-	}*/
-
 
 	if (param_ >= 1.0f) {
 		modeRequest_ = Mode::Root;
 		uis_["stageNumber"]->SetTextureArea({ 64.0f * stageNumber_, 64.0f * stageNumber_ }, { 64.0f,64.0f });
+	}
+
+}
+
+void StageSelectScene::EnterInit() {
+
+	param_ = 0.0f;
+
+	moveStartPos_ = player_->position_.x;
+	moveEndPos_ = moveStartPos_ + 400.0f;
+
+}
+
+void StageSelectScene::EnterUpdate() {
+
+	param_ += 0.02f;
+	param_ = min(param_, 1.0f);
+
+	float T = Easing::easeInBack(param_);
+	player_->position_.x = Lerp(T, moveStartPos_, moveEndPos_);
+
+	if (param_ >= 1.0f) {
+		SceneManager::GetInstance()->ChangeScene("Game");
 	}
 
 }

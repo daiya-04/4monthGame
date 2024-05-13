@@ -78,7 +78,7 @@ void TitleScene::DebugGUI() {
 #ifdef _DEBUG
 	GlobalVariables* gb = GlobalVariables::GetInstance();
 
-	ImGui::Begin("AddGroup");
+	ImGui::Begin("AddUI");
 	
 	ImGui::InputText("texurePath", filePathBuff, sizeof(filePathBuff));
 	std::string filePath = filePathBuff;

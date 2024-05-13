@@ -4,8 +4,8 @@
             "LArrow": {
                 "filePath": "RLArrow.png",
                 "position": [
-                    77.0,
-                    350.0
+                    70.0,
+                    360.0
                 ]
             }
         },
@@ -13,17 +13,8 @@
             "RArrow": {
                 "filePath": "RLArrow.png",
                 "position": [
-                    1199.0,
-                    359.0
-                ]
-            }
-        },
-        {
-            "StageSelectLogo": {
-                "filePath": "StageSelectLogo.png",
-                "position": [
-                    640.0,
-                    145.0
+                    1210.0,
+                    360.0
                 ]
             }
         },

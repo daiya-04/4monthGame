@@ -54,6 +54,10 @@ private:
 	std::unique_ptr<Sprite> backGround_;
 
 	std::unordered_map<std::string, std::unique_ptr<Sprite>> uis_;
+	Vector2 scorePos_ = { 1000.0f,250.0f };
+
+	uint32_t playerTex_ = 0;
+	std::unique_ptr<Object2d> player_;
 
 	uint32_t saunaRoomTex_;
 	std::vector<std::unique_ptr<Object2d>> saunaRooms_;
@@ -70,17 +74,19 @@ private:
 	enum class Mode {
 		Root,
 		Move,
+		Enter,
 	};
 
 private:
 
 	void RootInit();
-
 	void RootUpdate();
 
 	void MoveInit();
-
 	void MoveUpdate();
+
+	void EnterInit();
+	void EnterUpdate();
 
 private:
 
