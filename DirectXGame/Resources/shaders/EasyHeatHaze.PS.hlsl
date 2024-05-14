@@ -47,7 +47,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 
 	output.color = gTexture.Sample(gSampler, transformdTexcoord);
 	
-	float totalWeight = 0, sigma = 0.003, stepWidth = 0.001;
+	float totalWeight = 0, sigma = 0.0015, stepWidth = 0.001;
 	float32_t4 sampleColor = float32_t4(0.0, 0.0, 0.0, 0.0);
 
 	for(float py = -sigma * 2; py <= sigma * 2; py += stepWidth){

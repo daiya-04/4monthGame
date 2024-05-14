@@ -102,6 +102,7 @@ void GameScene::Update() {
 		if (player_->GetIsBirdsEye()) {
 			scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
 			camera_->ChangeDrawingRange({ 1920,1080.0f });
+			snowManager_->ClearEffect();
 		}
 		else {
 			scroll_->SetTarget(player_->GetPositionPtr());
