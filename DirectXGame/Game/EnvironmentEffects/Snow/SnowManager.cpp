@@ -4,6 +4,7 @@
 #include "TextureManager.h"
 #include "ImGuiManager.h"
 #include "RandomEngine/RandomEngine.h"
+#include "Stage/Stage.h"
 void SnowManager::Init() {
 
 	
@@ -12,10 +13,19 @@ void SnowManager::Init() {
 		internalEffectTextures_[i]->Init();
 	}
 	latestTextureNum_ = 0;
-	
+	std::unique_ptr<Object2d> originalSnow;
 	originalSnow.reset(Object2d::Create(TextureManager::GetInstance()->Load("White.png"), {90.0f,2.0f}));
-	originalSnow->SetSize({1200.0f,100.0f});
-	originalSnow->position_ = {640.0f,560.0f};
+	originalSnow->SetSize({1296.0f+48.0f,48.0f});
+	originalSnow->position_ = {Stage::kBasePosition.x,-48.0f};
+	originalSnows_.push_back(std::move(originalSnow));
+	originalSnow.reset(Object2d::Create(TextureManager::GetInstance()->Load("White.png"), { 90.0f,2.0f }));
+	originalSnow->SetSize({ 9.0f*96.0f,48.0f });
+	originalSnow->position_ = { 96.0f*4 ,-48.0f };
+	originalSnows_.push_back(std::move(originalSnow));
+	originalSnow.reset(Object2d::Create(TextureManager::GetInstance()->Load("White.png"), { 90.0f,2.0f }));
+	originalSnow->SetSize({ 9.0f*96.0f,48.0f });
+	originalSnow->position_ = { Stage::kBasePosition.x + 96.0f * 15 + 48.0f ,-48.0f };
+	originalSnows_.push_back(std::move(originalSnow));
 	snowPositionTexture_.reset(new PostEffect());
 	snowPositionTexture_->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 
@@ -48,7 +58,9 @@ void SnowManager::PostDrawUpdateEffect(const Camera& camera) {
 
 	snowPositionTexture_->PreDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	originalSnow->Draw(camera);
+	for (std::unique_ptr<Object2d> &originalSnow : originalSnows_) {
+		originalSnow->Draw(camera);
+	}
 	Object2d::postDraw();
 	snowPositionTexture_->PostDrawScene(DirectXCommon::GetInstance()->GetCommandList());
 

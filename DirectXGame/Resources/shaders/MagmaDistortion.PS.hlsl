@@ -62,9 +62,9 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	output.color.rgb = sampleColor.rgb * 2;
 	*/
 	if(/*0<defLine &&*/ defLine < magmaborder){
-		//output.color.r -= 0.1f*(magmaborder-defLine);
+		output.color.r -= 0.2f*(magmaborder-defLine);
 		output.color.g -= 0.2f*(magmaborder-defLine);
-		output.color.b -= 0.2f*(magmaborder-defLine);
+		//output.color.b -= 0.2f*(magmaborder-defLine);
 	}
 	output.color.a = 1.0f;
 	return output;
