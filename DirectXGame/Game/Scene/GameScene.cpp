@@ -234,8 +234,7 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 		snowManager_->PostDrawUpdateEffect(*(camera_.get()));
 	}
 
-	//取得したシーンに対して描画
-	targetScene->PreDrawScene(commandList_);
+	heatHazeManager_->PreDrawMagma(commandList_);
 	Sprite::preDraw(commandList_);
 	backGround_->Draw();
 	Sprite::postDraw();
@@ -244,6 +243,11 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 	stage_->Draw();
 
 	snowManager_->Draw();
+	heatHazeManager_->PostDrawMagma(commandList_);
+
+	//取得したシーンに対して描画
+	targetScene->PreDrawScene(commandList_);
+	heatHazeManager_->DrawMagma(commandList_);
 	cameraFrozen_->Draw(commandList_);
 	targetScene->PostDrawScene(commandList_);	
 }
