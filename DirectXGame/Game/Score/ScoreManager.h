@@ -22,7 +22,7 @@ class ScoreManager
 {
 public:
 
-	static const int32_t kMaxStage_ = 2;
+	static const int32_t kMaxStage_ = 10;
 
 	//最大桁数
 	static const int32_t kMaxDigits_ = 8;

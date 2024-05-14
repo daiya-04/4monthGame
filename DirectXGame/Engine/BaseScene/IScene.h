@@ -13,6 +13,11 @@ public:
 	virtual void DrawUI() = 0;
 	virtual void DrawParticle() = 0;
 
+	/// <summary>
+	/// パイプライン未設定(最初に呼び出される)
+	/// </summary>
+	virtual void DrawNotSetPipeline() = 0;
+
 	virtual void DebugGUI() = 0;
 
 	virtual ~IScene() {};

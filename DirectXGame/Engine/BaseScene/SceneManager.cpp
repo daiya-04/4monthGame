@@ -74,6 +74,8 @@ void SceneManager::Update(){
 
 void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
+	scene_->DrawNotSetPipeline();
+
 	postEffect_->PreDrawScene(commandList);
 
 	

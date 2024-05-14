@@ -27,6 +27,8 @@ public:
 
 	void DrawParticle()override;
 
+	void DrawNotSetPipeline()override {};
+
 	void DrawUI()override;
 
 	void DebugGUI()override;

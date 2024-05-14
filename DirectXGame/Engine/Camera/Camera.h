@@ -61,6 +61,12 @@ public:
 
 	Vector2 GetDrawingRange() const { return drawingRange_; }
 
+	//viewMatrixを取得
+	Matrix4x4 GetMatView() { return matView_; };
+
+	//projectionMatrixを取得
+	Matrix4x4 GetMatProjection() { return matProjection_; };
+
 private:
 
 	void CreateCBuffer();
