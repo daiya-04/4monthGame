@@ -36,19 +36,19 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	}
 
 	//壊せないブロック
-	objects_[0]->SetColor({ 0.6f,0.6f,0.6f,1.0f });
+	objects_[0]->SetColor({ 0.4f,0.4f,0.4f,1.0f });
 	//極寒
-	objects_[1]->SetColor({ 0.4f,0.4f,0.6f,1.0f });
+	objects_[1]->SetColor({ 0.6f,0.3f,0.1f,1.0f });
 	//灼熱
-	objects_[2]->SetColor({ 0.6f,0.4f,0.4f,1.0f });
+	objects_[2]->SetColor({ 0.6f,0.2f,0.2f,1.0f });
 	//氷
 	objects_[3]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
 	//速度
-	objects_[4]->SetColor({ 0.3f,0.3f,0.5f,1.0f });
+	objects_[4]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
 	//採掘速度
-	objects_[5]->SetColor({ 0.3f,0.5f,0.3f,1.0f });
+	objects_[5]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
 	//パワーーー！！！
-	objects_[6]->SetColor({ 0.5f,0.3f,0.3f,1.0f });
+	objects_[6]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
 
 }
 
