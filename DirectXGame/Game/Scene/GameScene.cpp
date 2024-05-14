@@ -207,21 +207,21 @@ void GameScene::DrawUI(){
 }
 
 void GameScene::DebugGUI(){
-/*#ifdef _DEBUG
+#ifdef _DEBUG
 
-	ImGui::Begin("camera");
+	/*ImGui::Begin("camera");
 	ImGui::DragFloat3("translation", &camera_->translation_.x, 1.0f);
 	ImGui::DragFloat3("rotation", &camera_->rotation_.x, 0.01f);
-	ImGui::End();
+	ImGui::End();*/
 
 	player_->Debug();
 
 
-	if (Input::GetInstance()->TriggerKey(DIK_Z)) {
+	/*if (Input::GetInstance()->TriggerKey(DIK_Z)) {
 		isPlayGame_ = !isPlayGame_;
-	};
+	};*/
 
-#endif // _DEBUG*/
+#endif // _DEBUG
 }
 
 void GameScene::DrawCold(PostEffect* targetScene) {

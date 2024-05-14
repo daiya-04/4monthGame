@@ -687,6 +687,10 @@ void Player::Change() {
 		if (position_.x > Stage::kBasePosition.x - Block::kBlockHalfSize_ && 
 			position_.x < Stage::kBasePosition.x + Block::kBlockHalfSize_) {
 
+			//チャージジャンプ止め
+			parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
+			parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+
 			//プレイヤー切り替え
 			if (currentCharacters_ == kLeftPlayer) {
 				currentCharacters_ = kRightPlayer;

@@ -92,6 +92,9 @@
     <Filter Include="Game\Score">
       <UniqueIdentifier>{973a30e3-0065-4167-865e-ac4b5722ccb1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\System">
+      <UniqueIdentifier>{60fc29bd-16de-4211-b9a8-159bb3e0bf78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -252,6 +255,9 @@
     <ClCompile Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\Snow\SnowObstacle.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\MagmaDistortion.cpp" />
+    <ClCompile Include="Game\System\UpgradeSystem.cpp">
+      <Filter>Game\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -434,6 +440,9 @@
       <Filter>Game\Score</Filter>
     </ClInclude>
     <ClInclude Include="Game\EnvironmentEffects\MagmaDistortion.h" />
+    <ClInclude Include="Game\System\UpgradeSystem.h">
+      <Filter>Game\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">
