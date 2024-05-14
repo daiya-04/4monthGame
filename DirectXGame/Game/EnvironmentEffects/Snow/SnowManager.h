@@ -5,6 +5,7 @@
 #include "SnowEffectDrawer.h"
 #include "SnowObstacle.h"
 #include <memory>
+#include <vector>
 class SnowManager
 {
 public:
@@ -44,6 +45,8 @@ public:
 
 	void SetCameraSlide(const Vector2& vec) { cameraSlide_ = vec; };
 
+	void ClearEffect() { isClearEffect_ = true; };
+
 private:
 
 	SnowManager() { Init(); };
@@ -51,7 +54,8 @@ private:
 	std::unique_ptr<SnowObstacle> internalEffectTextures_[2];//加工後の水滴テクスチャ、書き込みごとに入れ替わる
 	size_t latestTextureNum_;//書き込み先のテクスチャ番号(0 or 1)
 	
-	std::unique_ptr<Object2d> originalSnow;//雪の位置
+	//std::unique_ptr<Object2d> originalSnow;//雪の位置
+	std::vector<std::unique_ptr<Object2d>> originalSnows_;//雪の位置
 	std::unique_ptr<PostEffect> snowPositionTexture_;//雪単体が書き込まれたテクスチャ
 	bool isDrawUpdate_;//エフェクトの更新を行うか
 	std::unique_ptr<SnowEffectDrawer> snowEffectDrawer_;//雪単体が書き込まれたテクスチャ
