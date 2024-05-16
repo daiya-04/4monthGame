@@ -77,11 +77,17 @@ public:
 	};
 
 	//プレイヤーのサイズ(当たり判定)
-	static const uint32_t kPlayerSize_ = 64;
-	//プレイヤーサイズの半分
-	static const uint32_t kPlayerHalfSize_ = kPlayerSize_ / 2;
+
+	//Xの大きさ
+	static const uint32_t kPlayerSizeX_ = 48;
+	//Yの大きさ
+	static const uint32_t kPlayerSizeY_ = 80;
+	//プレイヤーサイズの半分X
+	static const uint32_t kPlayerHalfSizeX_ = kPlayerSizeX_ / 2;
+	//プレイヤーサイズの半分Y
+	static const uint32_t kPlayerHalfSizeY_ = kPlayerSizeY_ / 2;
 	//画像上のプレイヤーサイズ
-	static const uint32_t kPlayerImageSize_ = 80;
+	static const uint32_t kPlayerImageSize_ = 96;
 
 	/// <summary>
 	/// 初期化
@@ -111,26 +117,26 @@ public:
 	void SetPosition(const Vector2& position) { 
 		position_ = position;
 		//4頂点の座標を更新
-		leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-		rightTop_ = { position_.x + kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-		leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
-		rightBottom_ = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
+		leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+		rightTop_ = { position_.x + kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+		leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeY_ };
+		rightBottom_ = { position_.x + kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeY_ };
 		//当たり判定更新
-		collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-		collision_.max = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
+		collision_.min = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+		collision_.max = { position_.x + kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeY_ };
 
 	}
 
 	void SetTmpPosition(const Vector2& position) {
 		tmpPosition_ = position;
 		//4頂点の座標を更新
-		leftTop_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
-		rightTop_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y - kPlayerHalfSize_ };
-		leftBottom_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y + kPlayerHalfSize_ - 1 };
-		rightBottom_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+		leftTop_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
+		rightTop_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y - kPlayerHalfSizeY_ };
+		leftBottom_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+		rightBottom_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
 		//当たり判定更新
-		collision_.min = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
-		collision_.max = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+		collision_.min = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
+		collision_.max = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
 
 	}
 
@@ -417,7 +423,7 @@ private:
 	int32_t animationTime_ = 0;
 
 	//切り替えフレーム
-	int32_t changeFrame_ = 10;
+	int32_t changeFrame_ = 4;
 
 	//UI関連
 	std::unique_ptr<Sprite> deadSprite_;

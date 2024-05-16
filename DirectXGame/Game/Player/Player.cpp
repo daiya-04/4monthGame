@@ -69,18 +69,18 @@ void Player::Initialize() {
 	tmpPosition_ = position_;
 	prePosition_ = position_;
 
-	collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-	collision_.max = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
+	collision_.min = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+	collision_.max = { position_.x + kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeY_ };
 
-	leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-	rightTop_ = { position_.x + kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-	leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
-	rightBottom_ = { position_.x + kPlayerHalfSize_, position_.y + kPlayerHalfSize_ };
+	leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+	rightTop_ = { position_.x + kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+	leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeY_ };
+	rightBottom_ = { position_.x + kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeY_ };
 
-	preLeftTop_ = { prePosition_.x - kPlayerHalfSize_, prePosition_.y - kPlayerHalfSize_ };
-	preRightTop_ = { prePosition_.x + kPlayerHalfSize_, prePosition_.y - kPlayerHalfSize_ };
-	preLeftBottom_ = { prePosition_.x - kPlayerHalfSize_, prePosition_.y + kPlayerHalfSize_ };
-	preRightBottom_ = { prePosition_.x + kPlayerHalfSize_, prePosition_.y + kPlayerHalfSize_ };
+	preLeftTop_ = { prePosition_.x - kPlayerHalfSizeX_, prePosition_.y - kPlayerHalfSizeY_ };
+	preRightTop_ = { prePosition_.x + kPlayerHalfSizeX_, prePosition_.y - kPlayerHalfSizeY_ };
+	preLeftBottom_ = { prePosition_.x - kPlayerHalfSizeX_, prePosition_.y + kPlayerHalfSizeY_ };
+	preRightBottom_ = { prePosition_.x + kPlayerHalfSizeX_, prePosition_.y + kPlayerHalfSizeY_ };
 
 	velocity_ = { 0.0f,0.0f };
 
@@ -274,8 +274,8 @@ void Player::Update() {
 	}
 
 	//最終的な当たり判定を更新
-	collision_.min = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-	collision_.max = { position_.x + kPlayerHalfSize_ - 1, position_.y + kPlayerHalfSize_ - 1 };
+	collision_.min = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+	collision_.max = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeY_ - 1 };
 
 }
 
@@ -400,17 +400,21 @@ void Player::Move() {
 		}
 
 		//入力方向に応じて画像変更
-		if (input_->TiltLStick(Input::Stick::Left) || input_->TiltLStick(Input::Stick::Right)) {
-			object_->SetTextureHandle(textureRun_[currentCharacters_]);
-		}
-		else if (input_->TiltLStick(Input::Stick::Up)) {
-			object_->SetTextureHandle(textureUp_[currentCharacters_]);
-		}
-		else if (input_->TiltLStick(Input::Stick::Down)) {
-			object_->SetTextureHandle(textureDown_[currentCharacters_]);
-		}
-		else {
-			object_->SetTextureHandle(texture_[currentCharacters_]);
+		if (parameters_[currentCharacters_]->dig_.digCount <= int32_t(parameters_[currentCharacters_]->dig_.digInterval * 0.5f)) {
+
+			if (input_->TiltLStick(Input::Stick::Left) || input_->TiltLStick(Input::Stick::Right)) {
+				object_->SetTextureHandle(textureRun_[currentCharacters_]);
+			}
+			else if (input_->TiltLStick(Input::Stick::Up)) {
+				object_->SetTextureHandle(textureUp_[currentCharacters_]);
+			}
+			else if (input_->TiltLStick(Input::Stick::Down)) {
+				object_->SetTextureHandle(textureDown_[currentCharacters_]);
+			}
+			else {
+				object_->SetTextureHandle(texture_[currentCharacters_]);
+			}
+
 		}
 
 		if (isFacingLeft_) {
@@ -855,10 +859,10 @@ void Player::Change() {
 	object_->position_ = position_;
 
 	//4頂点の座標を更新
-	leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-	rightTop_ = { position_.x + kPlayerHalfSize_ - 1, position_.y - kPlayerHalfSize_ };
-	leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ - 1 };
-	rightBottom_ = { position_.x + kPlayerHalfSize_ - 1, position_.y + kPlayerHalfSize_ - 1 };
+	leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+	rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeY_ };
+	leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeY_ - 1 };
+	rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeY_ - 1 };
 
 }
 
@@ -963,14 +967,14 @@ void Player::UpdatePosition() {
 	tmpPosition_ += velocity_ + wallJumpVelocity_;
 
 	//4頂点の座標を更新
-	leftTop_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
-	rightTop_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y - kPlayerHalfSize_ };
-	leftBottom_ = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y + kPlayerHalfSize_ - 1 };
-	rightBottom_ = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+	leftTop_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
+	rightTop_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y - kPlayerHalfSizeY_ };
+	leftBottom_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+	rightBottom_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
 
 	//仮の当たり判定更新
-	collision_.min = { tmpPosition_.x - kPlayerHalfSize_, tmpPosition_.y - kPlayerHalfSize_ };
-	collision_.max = { tmpPosition_.x + kPlayerHalfSize_ - 1, tmpPosition_.y + kPlayerHalfSize_ - 1 };
+	collision_.min = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
+	collision_.max = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
 
 	CheckCollision();
 
@@ -979,10 +983,10 @@ void Player::UpdatePosition() {
 	object_->position_ = position_;
 
 	//4頂点の座標を更新
-	leftTop_ = { position_.x - kPlayerHalfSize_, position_.y - kPlayerHalfSize_ };
-	rightTop_ = { position_.x + kPlayerHalfSize_ - 1, position_.y - kPlayerHalfSize_ };
-	leftBottom_ = { position_.x - kPlayerHalfSize_, position_.y + kPlayerHalfSize_ - 1 };
-	rightBottom_ = { position_.x + kPlayerHalfSize_ - 1, position_.y + kPlayerHalfSize_ - 1 };
+	leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeX_ };
+	rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
+	leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
+	rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
 
 }
 
@@ -1028,7 +1032,7 @@ void Player::CheckCollision() {
 								//プレイヤーが右側から侵入したなら右に押し戻し
 								if (preLeftTop_.y < (*blocksPtr_)[y][x]->GetPosition().y + Block::kBlockHalfSize_ - 1) {
 
-									SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+									SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSizeX_), tmpPosition_.y });
 
 									switch (moveType_)
 									{
@@ -1063,7 +1067,7 @@ void Player::CheckCollision() {
 									}
 									else {
 
-										SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+										SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSizeY_) });
 
 										switch (moveType_)
 										{
@@ -1102,7 +1106,7 @@ void Player::CheckCollision() {
 								//プレイヤーが左側から侵入したなら左に押し戻し
 								if (preRightTop_.y < (*blocksPtr_)[y][x]->GetPosition().y + Block::kBlockHalfSize_ - 1) {
 
-									SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+									SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSizeX_), tmpPosition_.y });
 
 									switch (moveType_)
 									{
@@ -1137,7 +1141,7 @@ void Player::CheckCollision() {
 									}
 									else {
 
-										SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+										SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y + (Block::kBlockHalfSize_ + kPlayerHalfSizeY_) });
 
 										switch (moveType_)
 										{
@@ -1171,7 +1175,7 @@ void Player::CheckCollision() {
 							//プレイヤーが右側から侵入したなら右に押し戻し
 							if (preLeftBottom_.y > (*blocksPtr_)[y][x]->GetPosition().y - Block::kBlockHalfSize_) {
 
-								SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+								SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x + (Block::kBlockHalfSize_ + kPlayerHalfSizeX_), tmpPosition_.y });
 
 								switch (moveType_)
 								{
@@ -1199,7 +1203,7 @@ void Player::CheckCollision() {
 							}
 							else {
 
-								SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+								SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSizeY_) });
 
 								switch (moveType_)
 								{
@@ -1231,7 +1235,7 @@ void Player::CheckCollision() {
 							//プレイヤーが右側から侵入したなら左に押し戻し
 							if (preRightBottom_.y > (*blocksPtr_)[y][x]->GetPosition().y - Block::kBlockHalfSize_) {
 
-								SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSize_), tmpPosition_.y });
+								SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSizeX_), tmpPosition_.y });
 
 								switch (moveType_)
 								{
@@ -1261,7 +1265,7 @@ void Player::CheckCollision() {
 
 								
 
-								SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSize_) });
+								SetTmpPosition({ tmpPosition_.x,(*blocksPtr_)[y][x]->GetPosition().y - (Block::kBlockHalfSize_ + kPlayerHalfSizeY_) });
 
 								switch (moveType_)
 								{

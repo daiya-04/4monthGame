@@ -61,7 +61,7 @@ public:
 	uint32_t blockPositions_[kMaxStageHeight_][kMaxStageWidth_]{};
 
 	static inline const Vector2 kBasePosition =
-	{ float(kMaxStageWidth_ * Block::kBlockSize_ / 2.0f - Block::kBlockHalfSize_),-80.0f };
+	{ float(kMaxStageWidth_ * Block::kBlockSize_ / 2.0f - Block::kBlockHalfSize_),-88.0f };
 
 	static inline const Vector2 kBorderLeft = { float(kBasePosition.x - 5.0f * Block::kBlockSize_), -48.0f };
 

@@ -7,7 +7,7 @@
                 "ChargeJump - ChargeTime": 40,
                 "ChargeJump - JumpValue": 5,
                 "ChargeJump - Velocity": -35.0,
-                "Dig - Interval": 5,
+                "Dig - Interval": 12,
                 "Jump - Velocity": -25.0,
                 "Move - AccelValue": 1.0,
                 "Move - MaxSpeed": 10.0,
