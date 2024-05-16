@@ -76,10 +76,12 @@ public:
 		int32_t digPower = 1;
 	};
 
-	//プレイヤーのサイズ
+	//プレイヤーのサイズ(当たり判定)
 	static const uint32_t kPlayerSize_ = 64;
 	//プレイヤーサイズの半分
 	static const uint32_t kPlayerHalfSize_ = kPlayerSize_ / 2;
+	//画像上のプレイヤーサイズ
+	static const uint32_t kPlayerImageSize_ = 80;
 
 	/// <summary>
 	/// 初期化

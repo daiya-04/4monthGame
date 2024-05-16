@@ -26,7 +26,7 @@ Player::Player()
 
 	deadSprite_.reset(Sprite::Create(deadTexture_, { 640.0f,360.0f }));
 	object_.reset(Object2d::Create(textureLeft_[kLeftPlayer], position_));
-	object_->SetSize({ kPlayerSize_, kPlayerSize_ });
+	object_->SetSize({ kPlayerImageSize_, kPlayerImageSize_ });
 
 	//数字リセット
 	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {

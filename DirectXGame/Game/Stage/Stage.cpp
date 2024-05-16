@@ -81,6 +81,8 @@ void Stage::Initialize() {
 
 	}
 
+	upgradeSystem_->SetPlayer(player_);
+
 	isClear_ = false;
 
 	magmaLine_ = maxMagmaLine_;
