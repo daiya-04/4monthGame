@@ -76,10 +76,12 @@ public:
 		int32_t digPower = 1;
 	};
 
-	//プレイヤーのサイズ
+	//プレイヤーのサイズ(当たり判定)
 	static const uint32_t kPlayerSize_ = 64;
 	//プレイヤーサイズの半分
 	static const uint32_t kPlayerHalfSize_ = kPlayerSize_ / 2;
+	//画像上のプレイヤーサイズ
+	static const uint32_t kPlayerImageSize_ = 80;
 
 	/// <summary>
 	/// 初期化
@@ -353,10 +355,13 @@ private:
 	Vector2 birdsEyePosition_{};
 
 	//プレイヤー画像
-	std::array<uint32_t, kMaxPlayer> textureLeft_;
-	std::array<uint32_t, kMaxPlayer> textureRight_;
+	std::array<uint32_t, kMaxPlayer> texture_;
 	std::array<uint32_t, kMaxPlayer> textureUp_;
 	std::array<uint32_t, kMaxPlayer> textureDown_;
+	std::array<uint32_t, kMaxPlayer> textureRun_;
+	std::array<uint32_t, kMaxPlayer> textureBreakUp_;
+	std::array<uint32_t, kMaxPlayer> textureBreakDown_;
+	std::array<uint32_t, kMaxPlayer> textureBreak_;
 
 	//デバッグフラグ
 	bool isDebug_ = false;
@@ -402,6 +407,17 @@ private:
 
 	//岩の必要数
 	/*int32_t needRockCount_ = 5;*/
+
+	//コマ最大数
+	int32_t maxAnimationNum_ = 8;
+	//現在のコマ
+	int32_t currentAnimationNum_ = 0;
+
+	//アニメーション時間
+	int32_t animationTime_ = 0;
+
+	//切り替えフレーム
+	int32_t changeFrame_ = 10;
 
 	//UI関連
 	std::unique_ptr<Sprite> deadSprite_;

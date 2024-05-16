@@ -18,11 +18,73 @@ UpgradeSystem::~UpgradeSystem()
 
 void UpgradeSystem::Initialize() {
 
+	input_ = Input::GetInstance();
 
+	isActive_ = false;
 
 }
 
 void UpgradeSystem::Update() {
+
+	preIsActive_ = isActive_;
+
+	if (isActive_ && preIsActive_) {
+
+		//選択したものによって処理を切り替え
+		if (isActiveUpgrade_) {
+
+
+
+		}
+		else {
+
+			if (input_->TriggerLStick(Input::Stick::Up)) {
+
+			}
+			else if (input_->TriggerLStick(Input::Stick::Down)) {
+
+			}
+
+			if (input_->TriggerButton(Input::Button::A)) {
+
+				switch (type_)
+				{
+				default:
+				case UpgradeSystem::kSendRock:
+
+
+
+					break;
+				
+				case UpgradeSystem::kUpgrade:
+
+
+
+					break;
+				
+				case UpgradeSystem::kReturn:
+
+					isActive_ = false;
+
+					break;
+				
+				}
+
+			}
+
+		}
+
+	}
+
+}
+
+void UpgradeSystem::SendRock() {
+
+
+
+}
+
+void UpgradeSystem::Upgrade() {
 
 
 
