@@ -16,6 +16,10 @@ void GameScene::Init(){
 	BlockTextureManager::GetInstance()->LoadAllBlockTexture();
 
 	scoreManager_ = ScoreManager::GetInstance();
+	score_.Init(scorePosition_, { 64.0f,64.0f });
+	BaseBlock::SetScore(&score_);
+
+	currentStageNumber_ = stageNumber_;
 
 	player_ = std::make_shared<Player>();
 	player_->Initialize();
@@ -202,7 +206,7 @@ void GameScene::DrawUI(){
 
 	stage_->DrawUI();
 
-	scoreManager_->DrawCurrentScore(scorePosition_);
+	score_.Draw();
 
 }
 

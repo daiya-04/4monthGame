@@ -54,7 +54,10 @@ private:
 	std::unique_ptr<Sprite> backGround_;
 
 	std::unordered_map<std::string, std::unique_ptr<Sprite>> uis_;
+	Score score_;
+	Rank rank_;
 	Vector2 scorePos_ = { 1000.0f,250.0f };
+	Vector2 rankPos_ = { 808.0f,186.0f };
 
 	uint32_t playerTex_ = 0;
 	std::unique_ptr<Object2d> player_;

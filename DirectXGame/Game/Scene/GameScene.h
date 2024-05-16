@@ -79,6 +79,7 @@ private:
 	void Reset();
 
 	ScoreManager* scoreManager_ = nullptr;
+	Score score_;
 
 	std::unique_ptr<Scroll> scroll_;
 
@@ -99,5 +100,7 @@ private:
 
 	bool isPlayGame_ = true;//ゲームを再生するかどうか
 	bool isFirstAllDraw_;
+
+	uint32_t currentStageNumber_ = 0;
 };
 
