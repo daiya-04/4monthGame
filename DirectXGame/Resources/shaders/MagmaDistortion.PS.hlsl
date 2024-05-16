@@ -36,8 +36,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	float32_t2 transformdTexcoord = input.texcoord;
 
 	float ty = sin(2.0f* 3.141592f * (input.texcoord.x + gHeatHazeData.offset)* gHeatHazeData.roop);
-	transformdTexcoord.y += ty * gHeatHazeData.width;
-
+	
 	//plus
 	float defLine = gHeatHazeData.border - input.texcoord.y;
 	float magmaborder = 1.0f+sin(2.0f* 3.141592f * (input.texcoord.x + gHeatHazeData.offset)* gHeatHazeData.roop) * gHeatHazeData.width*3.0f;
@@ -46,7 +45,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	}
 
 	output.color = gTexture.Sample(gSampler, transformdTexcoord);
-	
+	/*
 	float totalWeight = 0, sigma = 0.003, stepWidth = 0.001;
 	float32_t4 sampleColor = float32_t4(0.0, 0.0, 0.0, 0.0);
 
@@ -60,8 +59,8 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	}
 
 	sampleColor /= totalWeight;
-
 	output.color.rgb = sampleColor.rgb * 2;
+	*/
 	if(/*0<defLine &&*/ defLine < magmaborder){
 		//output.color.r -= 0.1f*(magmaborder-defLine);
 		output.color.g -= 0.2f*(magmaborder-defLine);
