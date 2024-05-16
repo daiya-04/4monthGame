@@ -1,7 +1,8 @@
 #include "Block.h"
 #include "AudioManager.h"
 #include "Player/Player.h"
-
+#include "BlockBreakParticle.h"
+#include "RandomEngine/RandomEngine.h"
 void BaseBlock::Break(int32_t power) {
 
 	//耐久値を減少
@@ -31,11 +32,14 @@ void BaseBlock::Break(int32_t power) {
 			}
 
 		}
-
+		int createNum = int(RandomEngine::GetRandom(3.0f,5.0f));
+		for (int i = 0; i < createNum;i++) {
+			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
+		}
 	isBreak_ = true;
 	type_ = kNone;
 	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
+	
 	}
 	else {
 		scoreManager_->AddScore(10);

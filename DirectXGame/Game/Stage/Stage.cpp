@@ -180,7 +180,7 @@ void Stage::Update() {
 	//マグマ更新
 	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
 	magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
-
+	BlockTextureManager::GetInstance()->UpdateParticle();
 }
 
 void Stage::CheckCollision() {
@@ -219,7 +219,7 @@ void Stage::Draw() {
 	}
 	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	BlockTextureManager::GetInstance()->DrawAll(*camera_);
-
+	BlockTextureManager::GetInstance()->DrawParticle(*camera_);
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);

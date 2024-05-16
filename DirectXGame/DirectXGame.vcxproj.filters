@@ -258,6 +258,7 @@
     <ClCompile Include="Game\System\UpgradeSystem.cpp">
       <Filter>Game\System</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Block\BlockBreakParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -444,6 +445,7 @@
       <Filter>Game\System</Filter>
     </ClInclude>
     <ClInclude Include="Game\Text\TextManager.h" />
+    <ClInclude Include="Game\Block\BlockBreakParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">
