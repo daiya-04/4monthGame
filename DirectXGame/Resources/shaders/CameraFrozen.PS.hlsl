@@ -40,30 +40,34 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		internalSeed.x *= 1280.0f;
 		internalSeed.y *= 720.0f;
 		int32_t2 internalSeedInt = int32_t2(internalSeed);
-		internalSeedInt /= 4;
+		internalSeedInt *= rcp(4);
 		internalSeed.x = float(internalSeedInt.x);
 		internalSeed.y = float(internalSeedInt.y);
-		internalSeed.x /= 1280.0f;
-		internalSeed.y /= 720.0f;
+		internalSeed.x *= rcp(1280.0f);
+		internalSeed.y *= rcp(720.0f);
 
 		if (gCameraFrozenData.mode == 0) {
 			output.color = float32_t4(1.0f, 1.0f, 1.0f, 1.0f);
-			if (gCameraFrozenData.radius + (rand(internalSeed) * 2.0f - 1.0f) / 4.0f > sqrt(dot(distance, distance))) {
+			if (gCameraFrozenData.radius + (rand(internalSeed) * 2.0f - 1.0f) * rcp(4.0f) > sqrt(dot(distance, distance))) {
 				output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
-				discard;
+				//discard;
 			}
 			if (gCameraFrozenData.border > rand(internalSeed + gCameraFrozenData.seed)) {
 				output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
 				discard;
 			}
+			/*if(gCameraFrozenData.radius >sqrt(dot(distance, distance))){
+				output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
+				discard;
+			}*/
 		}
 		else {
 			output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
-			if (gCameraFrozenData.radius + (rand(internalSeed) * 2.0f - 1.0f) / 4.0f > sqrt(dot(distance, distance))) {
+			if (gCameraFrozenData.radius + (rand(internalSeed) * 2.0f - 1.0f) * rcp(4.0f) > sqrt(dot(distance, distance))) {
 				output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
 				discard;
 			}
-			if (gCameraFrozenData.border / 1.25f > rand(internalSeed + gCameraFrozenData.seed)) {
+			if (gCameraFrozenData.border * rcp(1.25f) > rand(internalSeed + gCameraFrozenData.seed)) {
 				output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
 				discard;
 			}

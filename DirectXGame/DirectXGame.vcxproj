@@ -233,6 +233,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scroll\Scroll.h" />
     <ClInclude Include="Game\Stage\Stage.h" />
     <ClInclude Include="Game\System\UpgradeSystem.h" />
+    <ClInclude Include="Game\Text\TextManager.h" />
     <ClInclude Include="Game\WeightCircle\WeightCircle.h" />
     <ClInclude Include="Engine\Loader\LevelLoader.h" />
     <ClInclude Include="Engine\2d\Object2d.h" />

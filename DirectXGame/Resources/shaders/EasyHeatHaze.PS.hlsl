@@ -23,11 +23,11 @@ SamplerState gSampler : register(s0);
 
 float Gaussian(float32_t2 drawUV, float32_t2 pickUV, float sigma){
 	float d = distance(drawUV, pickUV);
-	return exp(-(d * d) / (2 * 	sigma * sigma));
+	return exp(-(d * d) * rcp(2 * 	sigma * sigma));
 }
 
 float smoothStep(float edge0, float edge1, float x) {
-    x = saturate((x - edge0) / (edge1 - edge0));
+    x = saturate((x - edge0) * rcp(edge1 - edge0));
     return x * x * (3.0 - 2.0 * x);
 }
 
@@ -59,7 +59,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		}
 	}
 
-	sampleColor /= totalWeight;
+	sampleColor *= rcp(totalWeight);
 
 	output.color.rgb = sampleColor.rgb * 2;
 	if(/*0<defLine &&*/ defLine < magmaborder){
