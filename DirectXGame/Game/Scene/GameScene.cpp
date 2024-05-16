@@ -234,13 +234,13 @@ void GameScene::DebugGUI(){
 
 void GameScene::DrawCold(PostEffect* targetScene) {
 	//エフェクトの描画
-	if (isPlayGame_) {
+	/*if (isPlayGame_) {
 		snowManager_->PreDrawUpdateEffect();
 		Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 		//testObject_->Draw(*camera_.get());
 		player_->Draw(*camera_.get());
 		snowManager_->PostDrawUpdateEffect(*(camera_.get()));
-	}
+	}*/
 
 	heatHazeManager_->PreDrawMagma(commandList_);
 	Sprite::preDraw(commandList_);
@@ -250,7 +250,7 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 	player_->Draw(*camera_.get());
 	stage_->Draw();
 
-	snowManager_->Draw();
+	//snowManager_->Draw();
 	heatHazeManager_->PostDrawMagma(commandList_);
 
 	//取得したシーンに対して描画
