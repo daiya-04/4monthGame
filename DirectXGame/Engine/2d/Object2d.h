@@ -8,7 +8,7 @@
 #include <string>
 #include <array>
 #include "Camera.h"
-
+#include "TextureManager.h"
 
 class Object2d {
 private:
