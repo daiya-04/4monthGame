@@ -8,14 +8,20 @@
 Player::Player()
 {
 
-	textureLeft_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlue.png");
-	textureRight_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlue.png");
+	texture_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueIdle.png");
 	textureUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookUp.png");
 	textureDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookDown.png");
-	textureLeft_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrange.png");
-	textureRight_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrange.png");
+	textureRun_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueRun.png");
+	textureBreakUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakUp.png");
+	textureBreakDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakDown.png");
+	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreak.png");
+	texture_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeIdle.png");
 	textureUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookUp.png");
 	textureDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookDown.png");
+	textureRun_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeRun.png");
+	textureBreakUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakUp.png");
+	textureBreakDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakDown.png");
+	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
 	rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
 	rockUITextures_[BringRocks::kSpeed] = TextureManager::GetInstance()->Load("UI/speedRock.png");
@@ -25,8 +31,9 @@ Player::Player()
 	deadTexture_ = TextureManager::GetInstance()->Load("UI/dead.png");
 
 	deadSprite_.reset(Sprite::Create(deadTexture_, { 640.0f,360.0f }));
-	object_.reset(Object2d::Create(textureLeft_[kLeftPlayer], position_));
+	object_.reset(Object2d::Create(texture_[kLeftPlayer], position_));
 	object_->SetSize({ kPlayerImageSize_, kPlayerImageSize_ });
+	object_->SetTextureArea({ 0.0f,0.0f }, { 160.0f,160.0f });
 
 	//数字リセット
 	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
@@ -147,6 +154,18 @@ void Player::Update() {
 		return;
 	}
 
+	//画像を動かす処理
+	if (++animationTime_ >= changeFrame_) {
+
+		animationTime_ = 0;
+
+		//設定した最大数に達したらリセット
+		if (++currentAnimationNum_ >= maxAnimationNum_) {
+			currentAnimationNum_ = 0;
+		}
+
+	}
+
 	//前フレームの位置をセット
 	prePosition_ = position_;
 
@@ -232,7 +251,8 @@ void Player::Update() {
 
 		}
 
-		
+		object_->SetSize({ kPlayerImageSize_, kPlayerImageSize_ });
+		object_->SetTextureArea({ 160.0f * currentAnimationNum_,0.0f }, { 160.0f,160.0f });
 		
 	}
 
@@ -380,18 +400,17 @@ void Player::Move() {
 		}
 
 		//入力方向に応じて画像変更
-		if (isFacingLeft_) {
-			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
+		if (input_->TiltLStick(Input::Stick::Left) || input_->TiltLStick(Input::Stick::Right)) {
+			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 		}
-		else {
-			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
-		}
-
-		if (input_->TiltLStick(Input::Stick::Up)) {
+		else if (input_->TiltLStick(Input::Stick::Up)) {
 			object_->SetTextureHandle(textureUp_[currentCharacters_]);
 		}
 		else if (input_->TiltLStick(Input::Stick::Down)) {
 			object_->SetTextureHandle(textureDown_[currentCharacters_]);
+		}
+		else {
+			object_->SetTextureHandle(texture_[currentCharacters_]);
 		}
 
 		if (isFacingLeft_) {
@@ -411,14 +430,14 @@ void Player::Move() {
 
 			velocity_.x = parameters_[currentCharacters_]->lineMoveSpeed_;
 			isFacingLeft_ = false;
-			object_->SetTextureHandle(textureRight_[currentCharacters_]);
+			object_->SetTextureHandle(texture_[currentCharacters_]);
 
 		}
 		else if (input_->TriggerLStick(Input::Stick::Left) && fabsf(velocity_.x) < 0.001f && fabsf(velocity_.y) < 0.001f) {
 
 			velocity_.x = -parameters_[currentCharacters_]->lineMoveSpeed_;
 			isFacingLeft_ = true;
-			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
+			object_->SetTextureHandle(texture_[currentCharacters_]);
 
 		}
 		else if (input_->TriggerLStick(Input::Stick::Up) && fabsf(velocity_.x) < 0.001f && fabsf(velocity_.y) < 0.001f) {
@@ -599,15 +618,27 @@ void Player::Dig() {
 
 			//上下左右どこを掘るか決める(左右優先)
 			if (input_->TiltLStick(Input::Stick::Right)) {
+				animationTime_ = 0;
+				currentAnimationNum_ = 0;
+				object_->SetTextureHandle(textureBreak_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x + Block::kBlockSize_, position_.y };
 			}
 			else if (input_->TiltLStick(Input::Stick::Left)) {
+				animationTime_ = 0;
+				currentAnimationNum_ = 0;
+				object_->SetTextureHandle(textureBreak_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x - Block::kBlockSize_, position_.y };
 			}
 			else if (input_->TiltLStick(Input::Stick::Up)) {
+				animationTime_ = 0;
+				currentAnimationNum_ = 0;
+				object_->SetTextureHandle(textureBreakUp_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x, position_.y - Block::kBlockSize_ };
 			}
 			else if (input_->TiltLStick(Input::Stick::Down)) {
+				animationTime_ = 0;
+				currentAnimationNum_ = 0;
+				object_->SetTextureHandle(textureBreakDown_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x, position_.y + Block::kBlockSize_ };
 			}
 
@@ -671,7 +702,7 @@ void Player::Change() {
 		//左側にいた場合
 		if (position_.x < Stage::kBasePosition.x) {
 
-			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
+			object_->SetTextureHandle(texture_[currentCharacters_]);
 
 			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -680,7 +711,7 @@ void Player::Change() {
 		}
 		else {
 
-			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
+			object_->SetTextureHandle(texture_[currentCharacters_]);
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -719,7 +750,7 @@ void Player::Change() {
 		default:
 		case Player::kLeftPlayer:
 
-			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
+			object_->SetTextureHandle(texture_[currentCharacters_]);
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -742,7 +773,7 @@ void Player::Change() {
 			break;
 		case Player::kRightPlayer:
 
-			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
+			object_->SetTextureHandle(texture_[currentCharacters_]);
 
 			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 
