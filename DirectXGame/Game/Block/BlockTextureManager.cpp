@@ -12,7 +12,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.clear();
 
 	uint32_t texture = 0;
-	texture = TextureManager::Load("blocks/blank.png");
+	texture = TextureManager::Load("blocks/defaultRocks.png");
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/testNormal.png");
 	blockTextures_.push_back(texture);
@@ -32,8 +32,24 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 
 	for (uint32_t index=1; index < BaseBlock::BlockType::kMaxBlock; index++) {
-		objects_[index-1]->SetTextureHandle(blockTextures_[index]);
+		objects_[index-1]->SetTextureHandle(blockTextures_[0]);
 	}
+
+	//壊せないブロック
+	objects_[0]->SetColor({ 0.4f,0.4f,0.4f,1.0f });
+	//極寒
+	objects_[1]->SetColor({ 0.6f,0.3f,0.1f,1.0f });
+	//灼熱
+	objects_[2]->SetColor({ 0.6f,0.2f,0.2f,1.0f });
+	//氷
+	objects_[3]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
+	//速度
+	objects_[4]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
+	//採掘速度
+	objects_[5]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
+	//パワーーー！！！
+	objects_[6]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+
 }
 
 BlockTextureManager::BlockTextureManager() {

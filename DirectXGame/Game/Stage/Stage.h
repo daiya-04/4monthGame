@@ -8,6 +8,7 @@
 #include <list>
 #include "Object2d.h"
 #include "Sprite.h"
+#include "System/UpgradeSystem.h"
 
 class Player;
 
@@ -110,6 +111,8 @@ private:
 
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Object2d> magma_;
+
+	std::unique_ptr<UpgradeSystem> upgradeSystem_;
 
 	//マップ
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;

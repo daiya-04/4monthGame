@@ -57,6 +57,8 @@ Stage::Stage()
 	returnArea_[1].max = { returnPosition_[1].x + Block::kBlockSize_, returnPosition_[1].y + Block::kBlockHalfSize_ };
 	returnArea_[1].min = { returnPosition_[1].x - Block::kBlockSize_, returnPosition_[1].y - Block::kBlockHalfSize_ };
 
+	upgradeSystem_ = std::make_unique<UpgradeSystem>();
+
 	CreateEntity();
 
 }
@@ -129,6 +131,8 @@ void Stage::Update() {
 		}
 
 	}
+
+	upgradeSystem_->Update();
 
 	//採掘中にマグマライン上昇
 	//if (player_->GetIsMine()) {
@@ -221,6 +225,8 @@ void Stage::Draw() {
 		borders_[i]->Draw(*camera_);
 		returnObjects_[i]->Draw(*camera_);
 	}
+
+	upgradeSystem_->Draw(*camera_);
 
 	magma_->Draw(*camera_);
 
