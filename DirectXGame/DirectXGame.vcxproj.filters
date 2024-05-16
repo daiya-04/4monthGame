@@ -434,6 +434,7 @@
       <Filter>Game\Score</Filter>
     </ClInclude>
     <ClInclude Include="Game\EnvironmentEffects\MagmaDistortion.h" />
+    <ClInclude Include="Game\Text\TextManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">
