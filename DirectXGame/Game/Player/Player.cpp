@@ -8,11 +8,14 @@
 Player::Player()
 {
 
-	texture_ = TextureManager::GetInstance()->Load("player/player.png");
-	textureLeft_ = TextureManager::GetInstance()->Load("player/playerLeft.png");
-	textureRight_ = TextureManager::GetInstance()->Load("player/playerRight.png");
-	textureUp_ = TextureManager::GetInstance()->Load("player/playerUp.png");
-	textureDown_ = TextureManager::GetInstance()->Load("player/playerDown.png");
+	textureLeft_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlue.png");
+	textureRight_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlue.png");
+	textureUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookUp.png");
+	textureDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookDown.png");
+	textureLeft_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrange.png");
+	textureRight_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrange.png");
+	textureUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookUp.png");
+	textureDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookDown.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
 	rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
 	rockUITextures_[BringRocks::kSpeed] = TextureManager::GetInstance()->Load("UI/speedRock.png");
@@ -22,7 +25,7 @@ Player::Player()
 	deadTexture_ = TextureManager::GetInstance()->Load("UI/dead.png");
 
 	deadSprite_.reset(Sprite::Create(deadTexture_, { 640.0f,360.0f }));
-	object_.reset(Object2d::Create(texture_, position_));
+	object_.reset(Object2d::Create(textureLeft_[kLeftPlayer], position_));
 	object_->SetSize({ kPlayerSize_, kPlayerSize_ });
 
 	//数字リセット
@@ -118,6 +121,7 @@ void Player::Initialize() {
 	GlobalVariables::GetInstance()->AddItem<float>(dataName, groupName, "ChargeJump - Velocity", defaultParameter_->chargeJump_.chargeJumpVelocity);
 	GlobalVariables::GetInstance()->AddItem<int32_t>(dataName, groupName, "ChargeJump - JumpValue", defaultParameter_->chargeJump_.jumpValue);
 
+	LoadParameter();
 
 }
 
@@ -141,14 +145,6 @@ void Player::Update() {
 	//範囲外参照を防ぐため、characters_の値がどちらでもない場合、return
 	if (currentCharacters_ < kLeftPlayer || currentCharacters_ > kRightPlayer) {
 		return;
-	}
-
-	//キャラクターによって画像の色変更
-	if (currentCharacters_ == kLeftPlayer) {
-		object_->SetColor({ 1.0f,0.0f,0.0f,1.0f });
-	}
-	else {
-		object_->SetColor({ 0.0f,0.0f,1.0f,1.0f });
 	}
 
 	//前フレームの位置をセット
@@ -385,17 +381,24 @@ void Player::Move() {
 
 		//入力方向に応じて画像変更
 		if (isFacingLeft_) {
-			object_->SetTextureHandle(textureLeft_);
+			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
 		}
 		else {
-			object_->SetTextureHandle(textureRight_);
+			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
 		}
 
 		if (input_->TiltLStick(Input::Stick::Up)) {
-			object_->SetTextureHandle(textureUp_);
+			object_->SetTextureHandle(textureUp_[currentCharacters_]);
 		}
 		else if (input_->TiltLStick(Input::Stick::Down)) {
-			object_->SetTextureHandle(textureDown_);
+			object_->SetTextureHandle(textureDown_[currentCharacters_]);
+		}
+
+		if (isFacingLeft_) {
+			object_->SetScale({ 1.0f,1.0f });
+		}
+		else {
+			object_->SetScale({ -1.0f,1.0f });
 		}
 
 		object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
@@ -408,26 +411,26 @@ void Player::Move() {
 
 			velocity_.x = parameters_[currentCharacters_]->lineMoveSpeed_;
 			isFacingLeft_ = false;
-			object_->SetTextureHandle(textureRight_);
+			object_->SetTextureHandle(textureRight_[currentCharacters_]);
 
 		}
 		else if (input_->TriggerLStick(Input::Stick::Left) && fabsf(velocity_.x) < 0.001f && fabsf(velocity_.y) < 0.001f) {
 
 			velocity_.x = -parameters_[currentCharacters_]->lineMoveSpeed_;
 			isFacingLeft_ = true;
-			object_->SetTextureHandle(textureLeft_);
+			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
 
 		}
 		else if (input_->TriggerLStick(Input::Stick::Up) && fabsf(velocity_.x) < 0.001f && fabsf(velocity_.y) < 0.001f) {
 
 			velocity_.y = -parameters_[currentCharacters_]->lineMoveSpeed_;
-			object_->SetTextureHandle(textureUp_);
+			object_->SetTextureHandle(textureUp_[currentCharacters_]);
 
 		}
 		else if (input_->TriggerLStick(Input::Stick::Down) && fabsf(velocity_.x) < 0.001f && fabsf(velocity_.y) < 0.001f) {
 
 			velocity_.y = parameters_[currentCharacters_]->lineMoveSpeed_;
-			object_->SetTextureHandle(textureDown_);
+			object_->SetTextureHandle(textureDown_[currentCharacters_]);
 
 		}
 
@@ -668,7 +671,7 @@ void Player::Change() {
 		//左側にいた場合
 		if (position_.x < Stage::kBasePosition.x) {
 
-			object_->SetTextureHandle(textureRight_);
+			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
 
 			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -677,7 +680,7 @@ void Player::Change() {
 		}
 		else {
 
-			object_->SetTextureHandle(textureLeft_);
+			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -716,7 +719,7 @@ void Player::Change() {
 		default:
 		case Player::kLeftPlayer:
 
-			object_->SetTextureHandle(textureLeft_);
+			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -739,7 +742,7 @@ void Player::Change() {
 			break;
 		case Player::kRightPlayer:
 
-			object_->SetTextureHandle(textureRight_);
+			object_->SetTextureHandle(textureLeft_[currentCharacters_]);
 
 			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -764,8 +767,6 @@ void Player::Change() {
 	}
 	//俯瞰視点時の行動
 	else if (isBirdsEye_) {
-
-		object_->SetColor({ 0.5f,1.0f,0.5f,1.0f });
 
 		//カメラのターゲット座標移動
 		if (input_->TiltLStick(Input::Stick::Right)) {
@@ -1358,5 +1359,24 @@ void Player::Debug() {
 	
 
 #endif // _DEBUG
+
+}
+
+void Player::LoadParameter() {
+
+	//プレイヤーパラメータ調整
+	std::string groupName = "DefaultParameter";
+
+	defaultParameter_->speed_ = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Move - AccelValue");
+	defaultParameter_->maxMoveSpeed_ = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Move - MaxSpeed");
+	defaultParameter_->Jump_.jumpVelocity = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "Jump - Velocity");
+	defaultParameter_->wallJump_.wallJumpVelocity = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "WallJump - JumpVelocity");
+	defaultParameter_->dig_.digInterval = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "Dig - Interval");
+	defaultParameter_->chargeJump_.maxChargeTime = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "ChargeJump - ChargeTime");
+	defaultParameter_->chargeJump_.chargeJumpVelocity = GlobalVariables::GetInstance()->GetValue<float>(dataName, groupName, "ChargeJump - Velocity");
+	defaultParameter_->chargeJump_.jumpValue = GlobalVariables::GetInstance()->GetValue<int32_t>(dataName, groupName, "ChargeJump - JumpValue");
+
+	parameters_[kLeftPlayer]->CopyParameter(*defaultParameter_);
+	parameters_[kRightPlayer]->CopyParameter(*defaultParameter_);
 
 }

@@ -29,13 +29,14 @@ void GameScene::Init(){
 	camera_ = std::make_shared<Camera>();
 	camera_->Init();
 	camera_->translation_ = { 0.0f,0.0f,0.0f };
+	camera_->ChangeDrawingRange({ 1600.0f,900.0f });
 	stage_->SetCamera(camera_.get());
 
 	scroll_ = std::make_unique<Scroll>();
 	scroll_->SetCamera(camera_.get());
 	scroll_->Initialize();
 	scroll_->SetTarget(player_->GetPositionPtr());
-	
+	scroll_->SetCameraOnTarget();
 
 	bgTexture_ = TextureManager::Load("backGround/backGround.png");
 
@@ -58,7 +59,7 @@ void GameScene::Init(){
 	snowManager_ = SnowManager::GetInstance();
 
 
-	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("playerBlue.png"), { 1.0f,0.5f }));
+	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("player/playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
 	isFirstAllDraw_ = true;
 }
@@ -69,6 +70,7 @@ void GameScene::Reset() {
 	stage_->Load(stageNumber_);
 	camera_->Init();
 	scroll_->Initialize();
+	scroll_->SetCameraOnTarget();
 
 }
 
@@ -100,13 +102,17 @@ void GameScene::Update() {
 
 		preCameraPosition_ = camera_->translation_;
 		if (player_->GetIsBirdsEye()) {
+			scroll_->SetScrollType(0, Scroll::kNomral);
+			scroll_->SetScrollType(1, Scroll::kNomral);
 			scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
-			camera_->ChangeDrawingRange({ 1920,1080.0f });
+			camera_->ChangeDrawingRange({ 2240,1260.0f });
 			snowManager_->ClearEffect();
 		}
 		else {
+			scroll_->SetScrollType(0, Scroll::kDelay);
+			scroll_->SetScrollType(1, Scroll::kDelay);
 			scroll_->SetTarget(player_->GetPositionPtr());
-			camera_->ChangeDrawingRange({ 1280.0f,720.0f });
+			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
 		}
 
 		stage_->Update();

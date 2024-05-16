@@ -28,7 +28,7 @@ void StageSelectScene::Init() {
 
 	bgTexture_ = TextureManager::Load("backGround/stageSelectBG.png");
 	saunaRoomTex_ = TextureManager::Load("saunaRoom.png");
-	playerTex_ = TextureManager::Load("playerBlue.png");
+	playerTex_ = TextureManager::Load("player/playerBlue.png");
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
 

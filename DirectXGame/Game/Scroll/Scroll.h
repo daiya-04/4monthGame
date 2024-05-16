@@ -2,6 +2,7 @@
 #include "Vec2.h"
 #include "Game/Stage/Stage.h"
 #include "Camera.h"
+#include <array>
 
 /// <summary>
 /// スクロール管理クラス
@@ -12,6 +13,12 @@ public:
 	Scroll();
 	~Scroll();
 
+	enum ScrollType {
+		kNomral, //完全追従
+		kDelay, //遅延
+		kMaxScrollType, //スクロールの種類
+	};
+
 	void Initialize();
 
 	void Update();
@@ -20,8 +27,20 @@ public:
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
+	void SetCameraOnTarget();
+
+	/// <summary>
+	/// スクロールの種類切り替え
+	/// </summary>
+	/// <param name="index">X座標なら0, Yなら1</param>
+	/// <param name="type">スクロールの種類</param>
+	void SetScrollType(int32_t index, ScrollType type) { 
+		index = std::clamp(index, 0, 1);
+		type_[index] = type;
+	}
+
 	//画面の中心座標
-	static inline Vector2 kWindowCenter_ = { 640.0f,360.0f };
+	static inline Vector2 kWindowCenter_ = { 800.0f,450.0f };
 
 	//スクロール制限始点
 	static inline Vector2 limitStart_{ 0.0f,-1000.0f };
@@ -43,5 +62,11 @@ private:
 
 	//スクロール開始座標
 	Vector2 startScroll_;
+
+	//スクロールの種類
+	std::array<ScrollType, 2> type_;
+
+	//カメラ補正のスピード
+	float stalkerSpeed_ = 0.2f;
 
 };

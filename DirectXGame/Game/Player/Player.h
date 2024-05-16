@@ -278,6 +278,9 @@ private:
 	//サウナ室にいる方の残り時間カウント
 	void CountSaunaTime();
 
+	//jsonファイルから読み取ったパラメータを適用
+	void LoadParameter();
+
 private:
 
 	Input* input_;
@@ -350,11 +353,10 @@ private:
 	Vector2 birdsEyePosition_{};
 
 	//プレイヤー画像
-	uint32_t texture_;
-	uint32_t textureLeft_;
-	uint32_t textureRight_;
-	uint32_t textureUp_;
-	uint32_t textureDown_;
+	std::array<uint32_t, kMaxPlayer> textureLeft_;
+	std::array<uint32_t, kMaxPlayer> textureRight_;
+	std::array<uint32_t, kMaxPlayer> textureUp_;
+	std::array<uint32_t, kMaxPlayer> textureDown_;
 
 	//デバッグフラグ
 	bool isDebug_ = false;
