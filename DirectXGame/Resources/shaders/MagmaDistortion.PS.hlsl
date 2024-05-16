@@ -34,16 +34,17 @@ float smoothStep(float edge0, float edge1, float x) {
 PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
 	float32_t2 transformdTexcoord = input.texcoord;
-
+	/*
 	float ty = sin(2.0f* 3.141592f * (input.texcoord.x + gHeatHazeData.offset)* gHeatHazeData.roop);
-	
+	*/
 	//plus
 	float defLine = gHeatHazeData.border - input.texcoord.y;
 	float magmaborder = 1.0f+sin(2.0f* 3.141592f * (input.texcoord.x + gHeatHazeData.offset)* gHeatHazeData.roop) * gHeatHazeData.width*3.0f;
-	if(/*0<defLine &&*/ defLine < magmaborder){
+	/*
+	if(defLine < magmaborder){
 		transformdTexcoord.x += ty * gHeatHazeData.width * 3.0f*(magmaborder-defLine);
 	}
-
+	*/
 	output.color = gTexture.Sample(gSampler, transformdTexcoord);
 	/*
 	float totalWeight = 0, sigma = 0.003, stepWidth = 0.001;
@@ -62,9 +63,9 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	output.color.rgb = sampleColor.rgb * 2;
 	*/
 	if(/*0<defLine &&*/ defLine < magmaborder){
-		output.color.r -= 0.2f*(magmaborder-defLine);
-		output.color.g -= 0.2f*(magmaborder-defLine);
-		//output.color.b -= 0.2f*(magmaborder-defLine);
+		//output.color.r += 0.05f*(magmaborder-defLine);
+		output.color.g += 0.05f*(magmaborder-defLine);
+		output.color.b += 0.2f*(magmaborder-defLine);
 	}
 	output.color.a = 1.0f;
 	return output;
