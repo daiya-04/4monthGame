@@ -32,6 +32,13 @@ public:
 
 	PostEffect* GetEffectTexture() { return cameraFrozen_.get(); };
 
+	void SetRadiusMin(float min) { radiusMin_ = min; };
+	/// <summary>
+	//凍結範囲の計算
+	/// </summary>
+	/// <param name="playerHeight">プレイヤーのy座標</param>
+	/// <param name="magmaBorder">マグマの上端位置</param>
+	void CulcFrozenArea(float playerHeight,float magmaBorder);
 private:
 	CameraFrozenManager() {
 		Init();
@@ -43,5 +50,7 @@ private:
 	float radiusMax_;
 	float radiusMin_;
 	float seed_;
+	float preRadius_;
+	float radiusMinTarget_;
 	std::unique_ptr<CameraFrozen> cameraFrozen_;
 };

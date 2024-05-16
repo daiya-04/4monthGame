@@ -29,31 +29,20 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	///effect
 	if (sourceColor.a > 0.001f) {
 		float32_t2 offset;
-		//sourceColor.x *= 1.0f * sourceColor.a;
-		//sourceColor.y *= 1.0f * sourceColor.a;
 		offset.x = sourceColor.x * 2.0f - 1.0f;
 		offset.y = sourceColor.y * 2.0f - 1.0f;
-		//offset.x *= 1.0f / sourceColor.a;
-		//offset.y *= 1.0f / sourceColor.a;
-		//offset.x = offset.x * offset.x * offset.x;
-		//offset.y = offset.y * offset.y * offset.y;
-		float32_t2 normalizedOffset = normalize(offset);
-		//offset = normalize(offset);
 		
-		normalizedOffset.x = 6.0f/1280.0f;
-		normalizedOffset.y = 6.0f/720.0f;
+		float32_t2 normalizedOffset = normalize(offset);
+		
+		normalizedOffset.x = 6.0f*rcp(1280.0f);
+		normalizedOffset.y = 6.0f*rcp(720.0f);
 		float32_t4 afterColor = gTextureNextScene.Sample(gSampler, (input.texcoord - normalizedOffset));
 		afterColor.x *= 2.0f;
 		afterColor.y *= 2.0f;
 		float32_t2 afterOffset;
 		afterOffset.x = afterColor.x * 2.0f - 1.0f;
 		afterOffset.y = afterColor.y * 2.0f - 1.0f;
-		//if (dot(normalize(offset),normalize(afterOffset))<0.0f) {
-		//	normalizedOffset*= offset/ afterOffset;
-			//normalizedOffset.x *= 6.0f / 1280.0f;
-			//normalizedOffset.y *= 6.0f / 720.0f;
-			//normalizedOffset.y = 0;
-		//}
+		
 
 		offset.x = input.texcoord.x - normalizedOffset.x;
 		offset.y = input.texcoord.y - normalizedOffset.y;
@@ -67,10 +56,10 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float32_t2 transformdL = input.texcoord;
 		float32_t2 transformdU = input.texcoord;
 		float32_t2 transformdD = input.texcoord;
-		transformdR.x += 1.0f / 1280.0f;
-		transformdL.x -= 1.0f / 1280.0f;
-		transformdU.y -= 1.0f / 720.0f;
-		transformdD.y += 1.0f / 720.0f;
+		transformdR.x += rcp(1280.0f);
+		transformdL.x -= rcp(1280.0f);
+		transformdU.y -= rcp(720.0f);
+		transformdD.y += rcp(720.0f);
 		if (gTextureNextScene.Sample(gSampler, transformdR).a != 0.0f ||
 			gTextureNextScene.Sample(gSampler, transformdL).a != 0.0f ||
 			gTextureNextScene.Sample(gSampler, transformdU).a != 0.0f ||

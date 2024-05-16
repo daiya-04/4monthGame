@@ -24,9 +24,9 @@ SamplerState gSampler : register(s0);
 PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
 	float32_t2 slide = gSlide.slide;
-	slide.x /= 1280;
+	slide.x *= rcp(1280);
 	//slide.y += 1.0f;
-	slide.y /= 720;
+	slide.y *= rcp(720);
 	output.color = gTexture.Sample(gSampler, input.texcoord+slide);
 	if (output.color.a <= 0.01f|| input.texcoord.x <= 0.001f || input.texcoord.x >= 0.999f) {
 		discard;
