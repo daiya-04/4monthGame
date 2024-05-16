@@ -118,6 +118,7 @@ void GameScene::Update() {
 		camera_->UpdateMatrix();
 		//湧き上がる温泉の熱風のエフェクト
 		float line = stage_->GetMagmaLine();
+		cameraFrozen_->CulcFrozenArea(player_->GetPosition(Player::kRightBottom).y, line);
 		heatHazeManager_->SetMagmaLineScreen(Transform(Vector3{ 0.0f,line,0.0f }, (camera_->GetMatView() * camera_->GetMatProjection())));
 		snowManager_->SetCameraSlide({ camera_->translation_.x - preCameraPosition_.x, camera_->translation_.y - preCameraPosition_.y });
 		environmentEffectsManager_->Update();

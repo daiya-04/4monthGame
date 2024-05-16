@@ -50,12 +50,16 @@ PixelShaderOutput main(VertexShaderOutput input) {
 			output.color = float32_t4(1.0f, 1.0f, 1.0f, 1.0f);
 			if (gCameraFrozenData.radius + (rand(internalSeed) * 2.0f - 1.0f) * rcp(4.0f) > sqrt(dot(distance, distance))) {
 				output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
-				discard;
+				//discard;
 			}
 			if (gCameraFrozenData.border > rand(internalSeed + gCameraFrozenData.seed)) {
 				output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
 				discard;
 			}
+			/*if(gCameraFrozenData.radius >sqrt(dot(distance, distance))){
+				output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
+				discard;
+			}*/
 		}
 		else {
 			output.color = float32_t4(0.0f, 0.0f, 0.0f, 0.0f);
