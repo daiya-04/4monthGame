@@ -108,7 +108,10 @@ public:
 
 	void SetColor(const Vector4& color);
 
-	void SetTextureHandle(uint32_t textureHandle) { textureHandle_ = textureHandle; }
+	void SetTextureHandle(uint32_t textureHandle) { 
+		textureHandle_ = textureHandle;
+		resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
+	}
 
 	void SetTextureArea(const Vector2& texBase, const Vector2& texSize);
 
