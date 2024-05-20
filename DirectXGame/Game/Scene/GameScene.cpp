@@ -229,7 +229,11 @@ void GameScene::DebugGUI(){
 	/*if (Input::GetInstance()->TriggerKey(DIK_Z)) {
 		isPlayGame_ = !isPlayGame_;
 	};*/
-
+	static int cCount;
+	ImGui::Begin("testText");
+	ImGui::DragInt("CharCount", &cCount, 1,0,100);
+	ImGui::End();
+	TextManager::GetInstance()->SetCharCount(uint32_t(cCount));
 #endif // _DEBUG
 }
 
