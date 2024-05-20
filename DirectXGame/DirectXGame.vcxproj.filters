@@ -259,6 +259,7 @@
       <Filter>Game\System</Filter>
     </ClCompile>
     <ClCompile Include="Game\Block\BlockBreakParticle.cpp" />
+    <ClCompile Include="Game\Text\TextManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">

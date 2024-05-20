@@ -152,6 +152,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scroll\Scroll.cpp" />
     <ClCompile Include="Game\Stage\Stage.cpp" />
     <ClCompile Include="Game\System\UpgradeSystem.cpp" />
+    <ClCompile Include="Game\Text\TextManager.cpp" />
     <ClCompile Include="Game\WeightCircle\WeightCircle.cpp" />
     <ClCompile Include="Engine\Loader\LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />

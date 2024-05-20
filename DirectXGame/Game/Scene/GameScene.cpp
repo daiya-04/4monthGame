@@ -8,7 +8,7 @@
 #include "Input.h"
 #include <random>
 #include "Game/Block/BlockTextureManager.h"
-
+#include "Text/TextManager.h"
 GameScene::~GameScene() {}
 
 void GameScene::Init(){
@@ -62,6 +62,7 @@ void GameScene::Init(){
 	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("player/playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
 	isFirstAllDraw_ = true;
+	TextManager::GetInstance()->Initialize();
 }
 
 void GameScene::Reset() {
@@ -211,7 +212,7 @@ void GameScene::DrawUI(){
 	stage_->DrawUI();
 
 	scoreManager_->DrawCurrentScore(scorePosition_);
-
+	TextManager::GetInstance()->TestDraw();
 }
 
 void GameScene::DebugGUI(){
