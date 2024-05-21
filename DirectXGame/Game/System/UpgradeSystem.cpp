@@ -50,7 +50,7 @@ void UpgradeSystem::Initialize(int32_t stageNum) {
 	}
 
 	sendRockCount_ = 0;
-	sendInterval_ = 180;
+	sendInterval_ = 150;
 	sendCoolTime_ = 0;
 
 	isActive_ = false;
@@ -82,6 +82,9 @@ void UpgradeSystem::Update() {
 				break;
 
 			}
+
+			sendRockSprite_->SetTextureHandle(sendIntervalTexture_);
+			powerSprite_->SetTextureHandle(powerTexture_);
 
 		}
 		else {
@@ -173,6 +176,9 @@ void UpgradeSystem::Update() {
 				break;
 
 			}
+
+			sendRockSprite_->SetTextureHandle(sendRockTexture_);
+			powerSprite_->SetTextureHandle(upgradeTexture_);
 
 		}
 

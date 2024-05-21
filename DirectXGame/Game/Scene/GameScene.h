@@ -99,5 +99,8 @@ private:
 
 	bool isPlayGame_ = true;//ゲームを再生するかどうか
 	bool isFirstAllDraw_;
+
+	Audio* magmaBGM_;
+
 };
 

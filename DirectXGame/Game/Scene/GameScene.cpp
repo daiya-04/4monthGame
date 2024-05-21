@@ -9,7 +9,11 @@
 #include <random>
 #include "Game/Block/BlockTextureManager.h"
 #include "Text/TextManager.h"
-GameScene::~GameScene() {}
+#include "AudioManager.h"
+
+GameScene::~GameScene() {
+	magmaBGM_->StopSound();
+}
 
 void GameScene::Init(){
 
@@ -63,6 +67,11 @@ void GameScene::Init(){
 	testObject_->SetSize({ 128.0f,128.0f });
 	isFirstAllDraw_ = true;
 	TextManager::GetInstance()->Initialize();
+
+	magmaBGM_ = AudioManager::GetInstance()->Load("BGM/magmaBGM.mp3");
+	
+	magmaBGM_->Play();
+
 }
 
 void GameScene::Reset() {

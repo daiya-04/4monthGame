@@ -79,7 +79,7 @@ private:
 	int32_t sendRockCount_ = 0;
 
 	//ブロックを送る時のインターバル
-	int32_t sendInterval_ = 180;
+	int32_t sendInterval_ = 150;
 
 	//岩送り強化量
 	int32_t  sendRockUpgradeValue_ = 10;
@@ -94,7 +94,7 @@ private:
 	std::vector<Vector2> positions_;
 
 	//ブロックの速度
-	float sendSpeed_ = 1.0f;
+	float sendSpeed_ = 3.0f;
 	
 	//最大レベル
 	static const int32_t kMaxLevel_ = 10;
