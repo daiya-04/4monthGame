@@ -24,9 +24,9 @@ Player::Player()
 	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
 	rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
-	rockUITextures_[BringRocks::kSpeed] = TextureManager::GetInstance()->Load("UI/speedRock.png");
-	rockUITextures_[BringRocks::kDigSpeed] = TextureManager::GetInstance()->Load("UI/digSpeedRock.png");
-	rockUITextures_[BringRocks::kPower] = TextureManager::GetInstance()->Load("UI/powerRock.png");
+	rockUITextures_[BringRocks::kBlue] = TextureManager::GetInstance()->Load("UI/speedRock.png");
+	rockUITextures_[BringRocks::kGreen] = TextureManager::GetInstance()->Load("UI/digSpeedRock.png");
+	rockUITextures_[BringRocks::kRed] = TextureManager::GetInstance()->Load("UI/powerRock.png");
 
 	deadTexture_ = TextureManager::GetInstance()->Load("UI/dead.png");
 
@@ -97,7 +97,7 @@ void Player::Initialize() {
 
 		for (int32_t k = 0; k < BringRocks::kMaxType; k++) {
 
-			addParameters_[i].rocks_[k] = 0;
+			rockParameters_[i].rocks_[k] = 0;
 
 		}
 
@@ -265,7 +265,7 @@ void Player::Update() {
 
 			int32_t divide = int32_t(std::pow(10, 5 - 1 - i));
 
-			num = addParameters_[currentCharacters_].rocks_[height] / divide;
+			num = rockParameters_[currentCharacters_].rocks_[height] / divide;
 
 			numbers_[height][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
 

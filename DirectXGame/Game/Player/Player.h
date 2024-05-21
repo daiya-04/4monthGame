@@ -56,9 +56,9 @@ public:
 
 		enum RockType {
 			kRock, //通常の岩
-			kSpeed, //移動速度
-			kDigSpeed, //採掘速度
-			kPower, //ダメージ量
+			kBlue, //移動速度
+			kGreen, //採掘速度
+			kRed, //ダメージ量
 			kMaxType, //種類
 		};
 
@@ -222,34 +222,40 @@ public:
 
 	bool GetIsMine() const { return isMining_; }
 
+	bool GetCanJump() const { return parameters_[currentCharacters_]->Jump_.canJump; }
+
 	//クリアフラグのセット
 	void SetIsClear(bool flag) { isClear_ = flag; }
 
 	bool GetIsClear() const { return isClear_; }
 
 	//岩の受け渡し
-	void HandOverRocks(int32_t& rockCount) {
-		rockCount += addParameters_[currentCharacters_].rocks_[BringRocks::kRock];
-		addParameters_[currentCharacters_].rocks_[BringRocks::kRock] = 0;
+	void SendRocks(int32_t& rockCount) {
+		rockCount += rockParameters_[currentCharacters_].rocks_[BringRocks::kRock];
+		rockParameters_[currentCharacters_].rocks_[BringRocks::kRock] = 0;
 	}
 
 	//スピードの岩を加算
-	void AddSpeedParameter(int32_t addNum = 1) { addParameters_[currentCharacters_].rocks_[BringRocks::kSpeed] += addNum; }
+	void AddBlueRock(int32_t addNum = 1) { rockParameters_[currentCharacters_].rocks_[BringRocks::kBlue] += addNum; }
 
 	//採掘速度の岩を加算
-	void AddDigIntervalParameter(int32_t addNum = 1){ addParameters_[currentCharacters_].rocks_[BringRocks::kDigSpeed] += addNum; }
+	void AddGreenRock(int32_t addNum = 1){ rockParameters_[currentCharacters_].rocks_[BringRocks::kGreen] += addNum; }
 
 	//採掘ダメージ量の岩を加算
-	void AddDigPowerParameter(int32_t addNum = 1) { addParameters_[currentCharacters_].rocks_[BringRocks::kPower] += addNum; }
+	void AddRedRock(int32_t addNum = 1) { rockParameters_[currentCharacters_].rocks_[BringRocks::kRed] += addNum; }
 
 	//岩カウント加算
-	void AddRockCount(int32_t addNum = 1) { addParameters_[currentCharacters_].rocks_[BringRocks::kRock] += addNum; }
+	void AddRockCount(int32_t addNum = 1) { rockParameters_[currentCharacters_].rocks_[BringRocks::kRock] += addNum; }
 
 	//ブロックの数取得
-	int32_t GetRockCount() const { return addParameters_[currentCharacters_].rocks_[BringRocks::kRock]; }
+	int32_t GetRockCount() const { return rockParameters_[currentCharacters_].rocks_[BringRocks::kRock]; }
 
 	//リフト関連処理
 	void MoveLift();
+
+	BringRocks& GetRockParameter() { return rockParameters_[currentCharacters_]; }
+
+	Characters GetCurrentCharacter() const { return currentCharacters_; }
 
 private:
 
@@ -310,7 +316,7 @@ private:
 	std::array<std::unique_ptr<PlayerParameter>, kMaxPlayer> parameters_;
 
 	//パラメータ値加算量を蓄積するもの
-	std::array<BringRocks, kMaxPlayer> addParameters_;
+	std::array<BringRocks, kMaxPlayer> rockParameters_;
 
 	//一ブロック毎の加算量
 	AddValue addValue_;

@@ -21,7 +21,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(uint32_t stageNumber);
 
 	/// <summary>
 	/// 更新
@@ -73,6 +73,8 @@ public:
 	//クリアフラグ取得
 	bool GetIsClear() const { return isClear_; }
 
+	bool GetIsActiveUpgrade() const { return upgradeSystem_->GetIsActive(); }
+
 private:
 
 	//実体生成
@@ -122,6 +124,8 @@ private:
 	float magmaLine_ = 12000.0f;
 	float magmaTexBaseX_ = 0.0f;
 	float magmaUnderLine_ = 10000.0f;
+	//マグマ制限
+	float magmaLimit_ = Block::kBlockSize_ * 7.0f;
 
 	int32_t rockCount_ = 0;
 
@@ -141,6 +145,10 @@ private:
 	std::array<std::unique_ptr<Object2d>, 2> returnObjects_;
 	std::array<Vector2, 2> returnPosition_;
 	std::array<AABB2D, 2> returnArea_;
+
+	//強化エリア
+	Vector2 upgradePosition_{};
+	AABB2D upgradeArea_{};
 
 	//テクスチャ
 	uint32_t numTex_;

@@ -57,7 +57,13 @@ Stage::Stage()
 	returnArea_[1].max = { returnPosition_[1].x + Block::kBlockSize_, returnPosition_[1].y + Block::kBlockHalfSize_ };
 	returnArea_[1].min = { returnPosition_[1].x - Block::kBlockSize_, returnPosition_[1].y - Block::kBlockHalfSize_ };
 
+	upgradePosition_ = { 19.5f * Block::kBlockSize_, 4.0f * Block::kBlockSize_ };
+
+	upgradeArea_.max = { upgradePosition_.x + Block::kBlockHalfSize_ * 3.0f, upgradePosition_.y + Block::kBlockHalfSize_ };
+	upgradeArea_.min = { upgradePosition_.x - Block::kBlockHalfSize_ * 3.0f, upgradePosition_.y - Block::kBlockHalfSize_ };
+
 	upgradeSystem_ = std::make_unique<UpgradeSystem>();
+	upgradeSystem_->SetGoalCount(&rockCount_);
 
 	CreateEntity();
 
@@ -67,7 +73,7 @@ Stage::~Stage()
 {
 }
 
-void Stage::Initialize() {
+void Stage::Initialize(uint32_t stageNumber) {
 
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
@@ -81,12 +87,16 @@ void Stage::Initialize() {
 
 	}
 
+	upgradeSystem_->Initialize(stageNumber);
 	upgradeSystem_->SetPlayer(player_);
 
 	isClear_ = false;
+	rockCount_ = 0;
 
 	magmaLine_ = maxMagmaLine_;
 	magmaTexBaseX_ = 0.0f;
+
+	Load(stageNumber);
 
 }
 
@@ -107,82 +117,93 @@ void Stage::Update() {
 		isClear_ = true;
 	}
 
-	if (Input::GetInstance()->TriggerKey(DIK_1)) {
-		CreateIceBlock();
-	}
+	if (!isClear_) {
 
-	if (Input::GetInstance()->TriggerKey(DIK_2)) {
-		BreakIceBlock();
-	}
-
-	if (Input::GetInstance()->TriggerKey(DIK_3)) {
-		SwitchBlock();
-	}
-
-	if (Input::GetInstance()->TriggerKey(DIK_4)) {
-		BreakAllBlock();
-	}
-
-	//ブロックの更新
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
-
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
-			blockPositions_[y][x] = map_[y][x]->GetType();
-			SetUV(map_[y][x].get());
-			map_[y][x]->Update();
+		if (Input::GetInstance()->TriggerKey(DIK_1)) {
+			CreateIceBlock();
 		}
 
-	}
-
-	upgradeSystem_->Update();
-
-	//採掘中にマグマライン上昇
-	//if (player_->GetIsMine()) {
-
-	//	if (magmaLine_ > 0.0f) {
-	//		magmaLine_ -= 1.0f;
-	//	}
-
-	//}
-	////サウナ室に戻った時にリセット
-	//else if (player_->GetIsHome() && magmaLine_ < maxMagmaLine_) {
-	//	ResetMagma();
-	//}
-
-	//当たり判定更新
-	CheckCollision();
-
-	//テクスチャの動きを付ける
-	magmaTexBaseX_++;
-	if (magmaTexBaseX_ > 256.0f) {
-		magmaTexBaseX_ = 0.0f;
-	}
-
-	//数字更新
-	for (int32_t i = 0; i < kMaxNumbers_; i++) {
-
-		int32_t num = 0;
-
-		int32_t divide = int32_t(std::pow(10, kMaxNumbers_ - 1 - i));
-		
-		num = rockCount_ / divide;
-
-		//割る数の方が大きい且つnumが0の状態で一桁でない時、数字を表示しない
-		if (num == 0 && rockCount_ < divide && divide != 1) {
-			isActiveNumber_[i] = false;
-		}
-		else {
-			isActiveNumber_[i] = true;
+		if (Input::GetInstance()->TriggerKey(DIK_2)) {
+			BreakIceBlock();
 		}
 
-		numbers_[i]->SetTextureArea({64.0f * num, 0.0f}, { 64.0f,64.0f });
+		if (Input::GetInstance()->TriggerKey(DIK_3)) {
+			SwitchBlock();
+		}
+
+		if (Input::GetInstance()->TriggerKey(DIK_4)) {
+			BreakAllBlock();
+		}
+
+		//ブロックの更新
+		for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+			for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+				blockPositions_[y][x] = map_[y][x]->GetType();
+				SetUV(map_[y][x].get());
+				map_[y][x]->Update();
+			}
+
+		}
+
+		upgradeSystem_->Update();
+
+		//強化中は上昇しない
+		if (!upgradeSystem_->GetIsActive()) {
+
+			//採掘中にマグマライン上昇
+			if (player_->GetIsMine()) {
+
+				if (magmaLine_ > magmaLimit_) {
+					magmaLine_ -= 1.0f;
+				}
+
+			}
+			//サウナ室に戻った時にリセット
+			else if (player_->GetIsHome() && magmaLine_ < maxMagmaLine_) {
+				ResetMagma();
+			}
+
+		}
+
+		//当たり判定更新
+		CheckCollision();
+
+		//テクスチャの動きを付ける
+		magmaTexBaseX_++;
+		if (magmaTexBaseX_ > 256.0f) {
+			magmaTexBaseX_ = 0.0f;
+		}
+
+		//数字更新
+		for (int32_t i = 0; i < kMaxNumbers_; i++) {
+
+			int32_t num = 0;
+
+			int32_t divide = int32_t(std::pow(10, kMaxNumbers_ - 1 - i));
+
+			num = rockCount_ / divide;
+
+			//割る数の方が大きい且つnumが0の状態で一桁でない時、数字を表示しない
+			if (num == 0 && rockCount_ < divide && divide != 1) {
+				isActiveNumber_[i] = false;
+			}
+			else {
+				isActiveNumber_[i] = true;
+			}
+
+			numbers_[i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
+
+		}
+
+		//マグマ更新
+		magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
+		magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
+		BlockTextureManager::GetInstance()->UpdateParticle();
 
 	}
 
-	//マグマ更新
-	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
-	magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
-	BlockTextureManager::GetInstance()->UpdateParticle();
+	
 }
 
 void Stage::CheckCollision() {
@@ -193,6 +214,16 @@ void Stage::CheckCollision() {
 
 			player_->MoveLift();
 
+		}
+
+	}
+
+	//特定エリアでボタンを押したら強化画面に移行
+	if (IsCollision(upgradeArea_, player_->GetCollision()) &&
+		player_->GetCanJump() && !upgradeSystem_->GetPreIsActive()) {
+
+		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+			upgradeSystem_->SetIsActive(true);
 		}
 
 	}
@@ -243,6 +274,8 @@ void Stage::DrawUI() {
 		}
 
 	}
+
+	upgradeSystem_->DrawUI();
 
 	if (isClear_) {
 		clearSprite_->Draw();

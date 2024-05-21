@@ -22,13 +22,13 @@ void BaseBlock::Break(int32_t power) {
 				player_->AddRockCount(defaultDurability_ / 3 + 1);
 			}
 			else if (type_ == kSpeedBlock) {
-				player_->AddSpeedParameter();
+				player_->AddBlueRock();
 			}
 			else if (type_ == kDigerBlock) {
-				player_->AddDigIntervalParameter();
+				player_->AddGreenRock();
 			}
 			else if (type_ == kDigPowerBlock) {
-				player_->AddDigPowerParameter();
+				player_->AddRedRock();
 			}
 
 		}
