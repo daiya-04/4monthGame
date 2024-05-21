@@ -189,8 +189,11 @@ void StageSelectScene::RootUpdate() {
 	preStageNum_ = stageNumber_;
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
-		//SceneManager::GetInstance()->ChangeScene("Game");
 		modeRequest_ = Mode::Enter;
+	}
+
+	if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
+		SceneManager::GetInstance()->ChangeScene("Title");
 	}
 
 #ifdef _DEBUG

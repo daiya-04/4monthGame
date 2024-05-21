@@ -252,6 +252,7 @@
     <ClCompile Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\Snow\SnowObstacle.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\MagmaDistortion.cpp" />
+    <ClCompile Include="Option.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -434,6 +435,7 @@
       <Filter>Game\Score</Filter>
     </ClInclude>
     <ClInclude Include="Game\EnvironmentEffects\MagmaDistortion.h" />
+    <ClInclude Include="Option.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">
