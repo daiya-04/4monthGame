@@ -28,7 +28,7 @@ float Gaussian(float32_t2 drawUV, float32_t2 pickUV, float sigma){
 
 float smoothStep(float edge0, float edge1, float x) {
     x = saturate((x - edge0) * rcp(edge1 - edge0));
-    return x * x * (3.0 - 2.0 * x);
+    return x * x * (2.0 - 1.0 * x);
 }
 
 PixelShaderOutput main(VertexShaderOutput input) {
@@ -46,8 +46,8 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	}
 
 	output.color = gTexture.Sample(gSampler, transformdTexcoord);
-	/*
-	float totalWeight = 0, sigma = 0.0015, stepWidth = 0.001;
+	
+	float totalWeight = 0, sigma = 0.001, stepWidth = 0.002;
 	float32_t4 sampleColor = float32_t4(0.0, 0.0, 0.0, 0.0);
 
 	for(float py = -sigma * 2; py <= sigma * 2; py += stepWidth){
@@ -59,9 +59,11 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		}
 	}
 
-	sampleColor *= rcp(totalWeight);*/
+	sampleColor *= rcp(totalWeight);
 
-	//output.color.rgb = sampleColor.rgb * 2;
+	output.color.rgb = sampleColor.rgb ;
+	output.color.r += 0.025f;
+	output.color.g += 0.00625f;
 	if(/*0<defLine &&*/ defLine < magmaborder){
 		//output.color.r -= 0.1f*(magmaborder-defLine);
 		output.color.g -= 0.2f*(magmaborder-defLine);
