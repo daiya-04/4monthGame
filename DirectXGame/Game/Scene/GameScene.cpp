@@ -94,6 +94,8 @@ void GameScene::Update() {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_2)) {
+		scoreManager_->SetNewScore(stageNumber_ - 1);
+		scoreManager_->SaveScore();
 		SceneManager::GetInstance()->ChangeScene("StageSelect");
 	}
 
@@ -104,6 +106,7 @@ void GameScene::Update() {
 	if (stage_->GetIsClear()) {
 
 		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+			ClearProcess();
 			SceneManager::GetInstance()->ChangeScene("StageSelect");
 		}
 
@@ -160,6 +163,18 @@ void GameScene::Update() {
 	
 	
 }
+
+void GameScene::ClearProcess() {
+
+	//ハイスコア更新で記録を塗り替える
+	if (scoreManager_->GetScore(stageNumber_ - 1) <= scoreManager_->GetCurrentScore()) {
+
+		scoreManager_->SetNewScore(stageNumber_ - 1);
+
+	}
+
+}
+
 void GameScene::DrawNotSetPipeline() {
 
 	//ゲーム中のオーバーヘッドを回避するため最初に一度すべて描画する

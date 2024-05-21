@@ -154,7 +154,7 @@ void UpgradeSystem::Update() {
 			case UpgradeSystem::kSendRock:
 
 				backSprite_->SetPosition({ 1000.0f,600.0f });
-				sendRockSprite_->SetPosition({ 900.0f,200.0f });
+				sendRockSprite_->SetPosition({ 950.0f,200.0f });
 				powerSprite_->SetPosition({ 1000.0f,400.0f });
 
 				break;
@@ -163,13 +163,13 @@ void UpgradeSystem::Update() {
 
 				backSprite_->SetPosition({ 1000.0f,600.0f });
 				sendRockSprite_->SetPosition({ 1000.0f,200.0f });
-				powerSprite_->SetPosition({ 900.0f,400.0f });
+				powerSprite_->SetPosition({ 950.0f,400.0f });
 
 				break;
 
 			case UpgradeSystem::kReturn:
 
-				backSprite_->SetPosition({ 900.0f,600.0f });
+				backSprite_->SetPosition({ 950.0f,600.0f });
 				sendRockSprite_->SetPosition({ 1000.0f,200.0f });
 				powerSprite_->SetPosition({ 1000.0f,400.0f });
 
@@ -308,7 +308,7 @@ void UpgradeSystem::Upgrade() {
 	case UpgradeSystem::kSendRock:
 
 		backSprite_->SetPosition({ 1000.0f,600.0f });
-		sendRockSprite_->SetPosition({ 900.0f,200.0f });
+		sendRockSprite_->SetPosition({ 950.0f,200.0f });
 		powerSprite_->SetPosition({ 1000.0f,400.0f });
 
 		break;
@@ -317,13 +317,13 @@ void UpgradeSystem::Upgrade() {
 
 		backSprite_->SetPosition({ 1000.0f,600.0f });
 		sendRockSprite_->SetPosition({ 1000.0f,200.0f });
-		powerSprite_->SetPosition({ 900.0f,400.0f });
+		powerSprite_->SetPosition({ 950.0f,400.0f });
 
 		break;
 
 	case UpgradeSystem::kReturn:
 
-		backSprite_->SetPosition({ 900.0f,600.0f });
+		backSprite_->SetPosition({ 950.0f,600.0f });
 		sendRockSprite_->SetPosition({ 1000.0f,200.0f });
 		powerSprite_->SetPosition({ 1000.0f,400.0f });
 

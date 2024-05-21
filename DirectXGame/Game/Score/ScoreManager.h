@@ -37,6 +37,8 @@ public:
 
 	int32_t GetBaseScore(int32_t stageNum, Rank rank) { return baseScores_[stageNum][rank]; }
 
+	int32_t GetCurrentScore() const { return currentScore_; }
+
 	void AddScore(int32_t value) {
 
 		currentScore_ += value;
@@ -59,6 +61,9 @@ public:
 	//ステージ毎のベストスコア表示
 	void DrawBestScore(int32_t stageNum, const Vector2& position);
 
+	//スコアの書き込み
+	void SaveScore();
+
 private:
 
 	int32_t currentScore_ = 0;
@@ -74,9 +79,6 @@ private:
 
 	//スコアデータの読み込み
 	void Load();
-
-	//スコアの書き込み
-	void SaveScore();
 
 	uint32_t numTex_;
 

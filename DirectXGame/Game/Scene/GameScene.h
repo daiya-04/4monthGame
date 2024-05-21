@@ -78,6 +78,9 @@ private:
 
 	void Reset();
 
+	//クリア時の処理
+	void ClearProcess();
+
 	ScoreManager* scoreManager_ = nullptr;
 
 	std::unique_ptr<Scroll> scroll_;
