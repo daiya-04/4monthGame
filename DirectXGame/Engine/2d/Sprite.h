@@ -74,6 +74,8 @@ private: //メンバ変数
 	D3D12_RESOURCE_DESC resourceDesc_;
 	//座標
 	Vector2 position_{};
+	//倍率
+	Vector2 scale_{ 1.0f,1.0f };
 	//サイズ
 	Vector2 size_ = { 100.0f,100.0f };
 	//回転

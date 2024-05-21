@@ -91,6 +91,8 @@ public:
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
 
+	static void SetScore(Score* score) { score_ = score; }
+
 	void SetUVPosition(uint32_t xPosition, uint32_t yPosition) { 
 		uvPositionX_ = xPosition;
 		uvPositionY_ = yPosition;
@@ -133,7 +135,7 @@ public:
 
 protected:
 
-	ScoreManager* scoreManager_ = nullptr;
+	static Score* score_;
 
 	Player* player_;
 

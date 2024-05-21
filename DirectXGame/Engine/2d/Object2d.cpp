@@ -220,7 +220,8 @@ Object2d::Object2d(uint32_t textureHandle, Vector2 position, float scale, Vector
 	textureHandle_ = textureHandle;
 	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
 	position_ = position;
-	size_ = { (float)resourceDesc_.Width * scale,(float)resourceDesc_.Height * scale };
+	size_ = { (float)resourceDesc_.Width,(float)resourceDesc_.Height };
+	scale_ = { scale,scale };
 	rotate_ = 0.0f;
 	anchorpoint_ = { 0.5f,0.5f };
 	color_ = color;

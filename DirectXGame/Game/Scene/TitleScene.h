@@ -4,6 +4,7 @@
 #include <list>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 
 #include "Sprite.h"
 #include "Object2d.h"
@@ -12,6 +13,8 @@
 #include "WorldTransform.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+
+#include "Option.h"
 
 
 class TitleScene : public DefaultScene {
@@ -51,5 +54,30 @@ private:
 	std::unique_ptr<Sprite> backGround_;
 
 	std::unordered_map<std::string, std::unique_ptr<Sprite>> uis_;
+
+	std::unique_ptr<Option> option_;
+
+private:
+
+	enum class Select {
+		Start,
+		Option,
+		Exit,
+	};
+
+	Select select_ = Select::Start;
+	std::optional<Select> selectRequest_ = Select::Start;
+
+private:
+
+	void StartInit();
+	void StartUpdate();
+
+	void OptionInit();
+	void OptionUpdate();
+
+	void ExitInit();
+	void ExitUpdate();
+	
 
 };

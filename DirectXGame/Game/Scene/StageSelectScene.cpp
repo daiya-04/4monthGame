@@ -59,6 +59,9 @@ void StageSelectScene::Init() {
 
 	///
 
+	score_.Init(scorePos_, { 48.0f,48.0f });
+	rank_.Init(rankPos_, { 64.0f,64.0f });
+
 }
 
 void StageSelectScene::Update() {
@@ -134,7 +137,8 @@ void StageSelectScene::DrawUI() {
 	}
 
 	if (mode_ == Mode::Root) {
-		ScoreManager::GetInstance()->DrawBestScore(stageNumber_ - 1, scorePos_);
+		score_.Draw();
+		rank_.Draw();
 	}
 	
 
@@ -175,7 +179,8 @@ void StageSelectScene::DebugGUI() {
 
 void StageSelectScene::RootInit() {
 
-
+	score_.SetScore(ScoreManager::GetInstance()->GetBestScore(stageNumber_ - 1));
+	rank_.SetRank(ScoreManager::GetInstance()->GetBestRank(stageNumber_ - 1));
 
 }
 
@@ -184,8 +189,11 @@ void StageSelectScene::RootUpdate() {
 	preStageNum_ = stageNumber_;
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
-		//SceneManager::GetInstance()->ChangeScene("Game");
 		modeRequest_ = Mode::Enter;
+	}
+
+	if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
+		SceneManager::GetInstance()->ChangeScene("Title");
 	}
 
 #ifdef _DEBUG

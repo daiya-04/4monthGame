@@ -20,7 +20,10 @@ void GameScene::Init(){
 	BlockTextureManager::GetInstance()->LoadAllBlockTexture();
 
 	scoreManager_ = ScoreManager::GetInstance();
-	scoreManager_->ResetScore();
+	score_.Init(scorePosition_, { 64.0f,64.0f });
+	BaseBlock::SetScore(&score_);
+
+	currentStageNumber_ = stageNumber_;
 
 	player_ = std::make_shared<Player>();
 	player_->Initialize();
@@ -94,7 +97,7 @@ void GameScene::Update() {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_2)) {
-		scoreManager_->SetNewScore(stageNumber_ - 1);
+		scoreManager_->SetScore(stageNumber_, score_);
 		scoreManager_->SaveScore();
 		SceneManager::GetInstance()->ChangeScene("StageSelect");
 	}
@@ -167,11 +170,7 @@ void GameScene::Update() {
 void GameScene::ClearProcess() {
 
 	//ハイスコア更新で記録を塗り替える
-	if (scoreManager_->GetScore(stageNumber_ - 1) <= scoreManager_->GetCurrentScore()) {
-
-		scoreManager_->SetNewScore(stageNumber_ - 1);
-
-	}
+	scoreManager_->SetScore(stageNumber_, score_);
 
 }
 
@@ -238,7 +237,8 @@ void GameScene::DrawUI(){
 
 	stage_->DrawUI();
 
-	scoreManager_->DrawCurrentScore(scorePosition_);
+	score_.Draw();
+
 	TextManager::GetInstance()->TestDraw();
 }
 

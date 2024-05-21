@@ -82,6 +82,7 @@ private:
 	void ClearProcess();
 
 	ScoreManager* scoreManager_ = nullptr;
+	Score score_;
 
 	std::unique_ptr<Scroll> scroll_;
 
@@ -105,5 +106,7 @@ private:
 
 	Audio* magmaBGM_;
 
+
+	uint32_t currentStageNumber_ = 0;
 };
 

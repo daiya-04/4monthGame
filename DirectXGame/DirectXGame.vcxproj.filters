@@ -260,6 +260,7 @@
     </ClCompile>
     <ClCompile Include="Game\Block\BlockBreakParticle.cpp" />
     <ClCompile Include="Game\Text\TextManager.cpp" />
+    <ClCompile Include="Option.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -447,6 +448,7 @@
     </ClInclude>
     <ClInclude Include="Game\Text\TextManager.h" />
     <ClInclude Include="Game\Block\BlockBreakParticle.h" />
+    <ClInclude Include="Option.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">

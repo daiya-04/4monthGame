@@ -3,9 +3,10 @@
 #include <array>
 #include "Sprite.h"
 #include <memory>
+#include <map>
 
 //表示ランク(仮)。SSの目標スコアを10000で設定したとして、10000取れたらSS表示、9999ならS表示する仕様
-enum Rank : int32_t {
+enum Rate : int32_t {
 	R_SS, //SSランク, 基準高めで設定、やり込む人向けの裏ランク的な
 	R_S, //Sランク, これ取れたら上手いって言えるくらいの設定
 	R_A, //Aランク, ちょっとミスしてもとれる難易度で
@@ -15,72 +16,109 @@ enum Rank : int32_t {
 	R_N, //未プレイ時用のランク判定。基本0
 
 	kRankCount, //ランクの最大数, 配列とかの変数でのみ使用
+};
+
+class Score {
+private:
+	friend class ScoreManager;
+
+public:
+	//最大桁数
+	static const int32_t kMaxDigits_ = 8;
+
+public:
+
+	void Init(const Vector2& pos, const Vector2& size);
+
+	void AddScore(int32_t value) {
+		value_ += value;
+		value_ = std::clamp(value_, 0, 99999999);
+	}
+
+	int32_t GetScore() const { return value_; }
+
+	void SetScore(const Score& score);
+
+	void Draw();
+
+private:
+	int32_t value_ = 0;
+
+	//スコアの数字
+	uint32_t numTex_ = 0;
+	std::array<std::unique_ptr<Sprite>, kMaxDigits_> numbers_;
+
+public:
+
+	Vector2 pos_{};
+	Vector2 size_{};
 
 };
 
-class ScoreManager
-{
+class Rank {
+private:
+	friend class ScoreManager;
 public:
 
-	static const int32_t kMaxStage_ = 10;
+	void Init(const Vector2& pos, const Vector2& size);
 
-	//最大桁数
-	static const int32_t kMaxDigits_ = 8;
+	void SetRank(const Rank& rank);
+
+	void Draw();
+
+private:
+
+	Rate value_ = R_N;
+
+	//スコアのランク
+	uint32_t rankTex_ = 0;
+	std::unique_ptr<Sprite> rankImage_;
+
+public:
+
+	Vector2 pos_{};
+	Vector2 size_{};
+
+};
+
+class ScoreManager {
+public:
+
+	struct Result {
+		Rank rank_;
+		Score score_;
+	};
+
+	static const int32_t kMaxStage_ = 10;
 
 	static ScoreManager* GetInstance();
 
 	void Initialize();
 
-	void SetNewScore(int32_t stageNum) { scores_[stageNum] = currentScore_; }
+	//基本的にゲームシーンからクリアシーンに切り替える直前に使う
+	void SetScore(int32_t stageNum, const Score& score);
 
-	int32_t GetScore(int32_t stageNum) { return scores_[stageNum]; }
+	Score& GetBestScore(int32_t stageIndex) { return bestScores_[stageIndex].score_; }
+	Rank& GetBestRank(int32_t stageIndex) { return bestScores_[stageIndex].rank_; }
 
-	int32_t GetBaseScore(int32_t stageNum, Rank rank) { return baseScores_[stageNum][rank]; }
+	//クリア時にこれから値取得して
+	Result& GetResult() { return result_; }
 
-	int32_t GetCurrentScore() const { return currentScore_; }
+	void Load();
 
-	void AddScore(int32_t value) {
-
-		currentScore_ += value;
-
-		//スコアは0で止める
-		if (currentScore_ < 0) {
-			currentScore_ = 0;
-		}
-
-	}
-
-	void ResetScore() { currentScore_ = 0; }
-
-	//ステージのスコアに応じてランク判定
-	Rank JudgeRank(int32_t stageNum);
-
-	//ゲーム中のスコア表示
-	void DrawCurrentScore(const Vector2& position);
-
-	//ステージ毎のベストスコア表示
-	void DrawBestScore(int32_t stageNum, const Vector2& position);
-
-	//スコアの書き込み
 	void SaveScore();
 
 private:
 
-	int32_t currentScore_ = 0;
-
 	//ステージ毎のスコア記録
-	std::array<int32_t, kMaxStage_> scores_;
+	//std::array<int32_t, kMaxStage_> bestScores_;
+	std::array<Result, kMaxStage_> bestScores_;
+
+	//インゲーム中のスコア、クリア時の表示にもこれ使う
+	Result result_;
 
 	//ステージ毎に決められた目標スコア
-	std::array<std::array<int32_t, kRankCount>, kMaxStage_> baseScores_;
-
-	//スコアの数字
-	std::array<std::unique_ptr<Sprite>, kMaxDigits_> numbers_;
-
-	//スコアデータの読み込み
-	void Load();
-
-	uint32_t numTex_;
+	std::array<std::array<int32_t, kRankCount>, kMaxStage_> goalScores_;
 
 private:
 
