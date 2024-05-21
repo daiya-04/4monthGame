@@ -62,7 +62,7 @@ void GameScene::Init(){
 	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("player/playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
 	isFirstAllDraw_ = true;
-	TextManager::GetInstance()->Initialize();
+	TextManager::GetInstance();
 }
 
 void GameScene::Reset() {

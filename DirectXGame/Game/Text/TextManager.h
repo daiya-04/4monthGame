@@ -21,7 +21,8 @@ public:
 		return &instancee;
 	};
 
-
+	TextManager() { Initialize(); };
+	~TextManager() {};
 
 	void Initialize();
 	void TestDraw();

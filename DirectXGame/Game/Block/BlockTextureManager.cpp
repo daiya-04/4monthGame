@@ -74,8 +74,8 @@ BlockTextureManager::BlockTextureManager() {
 		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 512));
 		object->SetSize({float(BaseBlock::kBlockSize_),float(BaseBlock::kBlockSize_) });
 		objects_.push_back(std::move(object));
-		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 32));
-		object->SetSize({ float(BaseBlock::kBlockSize_/2),float(BaseBlock::kBlockSize_/2) });
+		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 128));
+		object->SetSize({ float(BaseBlock::kBlockSize_/3),float(BaseBlock::kBlockSize_/3) });
 		breakParticles_.push_back(std::move(object));
 	}
 }

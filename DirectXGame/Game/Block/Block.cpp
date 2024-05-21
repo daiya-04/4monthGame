@@ -32,7 +32,7 @@ void BaseBlock::Break(int32_t power) {
 			}
 
 		}
-		int createNum = int(RandomEngine::GetRandom(3.0f,5.0f));
+		int createNum = int(RandomEngine::GetRandom(8.0f,12.0f));
 		for (int i = 0; i < createNum;i++) {
 			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
 		}
