@@ -34,7 +34,7 @@ public:
 
 	void Update()override;
 
-	void DrawNotSetPipeline()override;//�p�C�v���C�����ݒ�(�ŏ��ɌĂяo�����)
+	void DrawNotSetPipeline()override;//
 
 	void DrawBackGround()override;
 
@@ -49,15 +49,15 @@ public:
 	~GameScene()override;
 	
 	/// <summary>
-	/// �ܔM��Ԃ̃V�[���`��
+	/// 灼熱状態のシーン描画
 	/// </summary>
-	/// <param name="targetScene">�������ݐ�</param>
+	/// <param name="targetScene">書き込み先</param>
 	void DrawHeat(PostEffect* targetScene);
 
 	/// <summary>
-	/// �Ɋ���Ԃ̃V�[���`��
+	/// 極寒状態のシーン描画
 	/// </summary>
-	/// <param name="targetScene">�������ݐ�</param>
+	/// <param name="targetScene">書き込み先</param>
 	void DrawCold(PostEffect* targetScene);
 
 private:
