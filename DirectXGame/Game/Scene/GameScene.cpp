@@ -63,6 +63,8 @@ void GameScene::Init(){
 	testObject_->SetSize({ 128.0f,128.0f });
 	isFirstAllDraw_ = true;
 	TextManager::GetInstance();
+	testText_.reset(new Text);
+	testText_->Initialize();
 }
 
 void GameScene::Reset() {
@@ -213,7 +215,10 @@ void GameScene::DrawUI(){
 	stage_->DrawUI();
 
 	scoreManager_->DrawCurrentScore(scorePosition_);
-	TextManager::GetInstance()->TestDraw();
+	//TextManager::GetInstance()->TestDraw();
+	TextManager::GetInstance()->ClearText();
+	testText_->SetText();
+	TextManager::GetInstance()->Draw();
 }
 
 void GameScene::DebugGUI(){
@@ -231,10 +236,14 @@ void GameScene::DebugGUI(){
 		isPlayGame_ = !isPlayGame_;
 	};*/
 	static int cCount;
+	static Vector2 position;
 	ImGui::Begin("testText");
 	ImGui::DragInt("CharCount", &cCount, 1,0,100);
+	ImGui::DragFloat2("originPosition", &position.x,1.0f);
 	ImGui::End();
-	TextManager::GetInstance()->SetCharCount(uint32_t(cCount));
+	testText_->SetCharCount(uint32_t(cCount));
+	testText_->SetPosition(position);
+	//TextManager::GetInstance()->SetCharCount(uint32_t(cCount));
 #endif // _DEBUG
 }
 

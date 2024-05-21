@@ -27,6 +27,9 @@
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
 #include "EnvironmentEffects/WaterDrop/WaterDropManager.h"
 #include "EnvironmentEffects/Snow/SnowManager.h"
+
+#include "Text/Text.h"
+
 class GameScene : public DefaultScene {
 public:
 
@@ -99,5 +102,7 @@ private:
 
 	bool isPlayGame_ = true;//ゲームを再生するかどうか
 	bool isFirstAllDraw_;
+
+	std::unique_ptr<Text> testText_;
 };
 

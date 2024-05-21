@@ -25,7 +25,20 @@ public:
 	~TextManager() {};
 
 	void Initialize();
+	
+	//文字追加
+	void AppendChar(const Vector2& position,const std::wstring& str);
+	
+	//フレームの先頭で一回クリアする
+	void ClearText() { drawObject_->ClearUseCount(); };
+
+	//描画
+	void Draw();
+
+	//テスト用直接操作
 	void TestDraw();
+
+
 	//表示文字数変更
 	void SetCharCount(uint32_t count) { showCharCount_ = count; };
 private:
