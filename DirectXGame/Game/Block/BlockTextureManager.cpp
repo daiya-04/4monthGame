@@ -101,6 +101,22 @@ void BlockTextureManager::DrawAll(const Camera& camera) {
 	}
 }
 
+void BlockTextureManager::DrawHeat(const Camera& camera) {
+	for (uint32_t index = 1; index < BaseBlock::BlockType::kMaxBlock; index++) {
+		if (index != BaseBlock::BlockType::kSnow) {
+			objects_[index - 1]->Draw(camera);
+		}
+	}
+}
+
+void BlockTextureManager::DrawCold(const Camera& camera) {
+	for (uint32_t index = 1; index < BaseBlock::BlockType::kMaxBlock; index++) {
+		if (index != BaseBlock::BlockType::kMagma) {
+			objects_[index - 1]->Draw(camera);
+		}
+	}
+}
+
 void BlockTextureManager::AppendParticle(const Vector2& position, uint32_t type) {
 	BaseBlock::BlockType bType = BaseBlock::BlockType(type);
 	if (bType == BaseBlock::BlockType::kNone) {

@@ -36,6 +36,12 @@ public:
 	//全オブジェクト描画
 	void DrawAll(const Camera& camera);
 
+	//灼熱描画
+	void DrawHeat(const Camera& camera);
+
+	//極寒描画
+	void DrawCold(const Camera& camera);
+
 	//描画オブジェクト追加
 	void AppendParticle(const Vector2& position, uint32_t type);
 

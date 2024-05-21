@@ -219,8 +219,45 @@ void Stage::Draw() {
 		}
 
 	}
+	/*
 	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	BlockTextureManager::GetInstance()->DrawAll(*camera_);
+	BlockTextureManager::GetInstance()->DrawParticle(*camera_);
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (uint32_t i = 0; i < 2; i++) {
+		borders_[i]->Draw(*camera_);
+		returnObjects_[i]->Draw(*camera_);
+	}
+
+	upgradeSystem_->Draw(*camera_);
+
+	magma_->Draw(*camera_);
+	*/
+}
+
+void Stage::DrawHeat() {
+
+	
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	BlockTextureManager::GetInstance()->DrawHeat(*camera_);
+	BlockTextureManager::GetInstance()->DrawParticle(*camera_);
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (uint32_t i = 0; i < 2; i++) {
+		borders_[i]->Draw(*camera_);
+		returnObjects_[i]->Draw(*camera_);
+	}
+
+	upgradeSystem_->Draw(*camera_);
+
+	magma_->Draw(*camera_);
+
+}
+
+void Stage::DrawCold() {
+
+
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	BlockTextureManager::GetInstance()->DrawCold(*camera_);
 	BlockTextureManager::GetInstance()->DrawParticle(*camera_);
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {

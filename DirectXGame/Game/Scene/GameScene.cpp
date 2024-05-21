@@ -164,6 +164,7 @@ void GameScene::DrawNotSetPipeline() {
 		cameraFrozen_->DrawInternal(commandList_);
 		waterDropManager_->DrawEffectUpdate(cameraFrozen_->GetEffectTexture());
 	}
+	stage_->Draw();
 	//極寒状態だったら
 	if (!environmentEffectsManager_->GetIsNowScene()) {
 		DrawCold(environmentEffectsManager_->GetPrevScene());
@@ -253,7 +254,7 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	player_->Draw(*camera_.get());
-	stage_->Draw();
+	stage_->DrawCold();
 
 	//snowManager_->Draw();
 	heatHazeManager_->PostDrawMagma(commandList_);
@@ -272,7 +273,7 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	player_->Draw(*camera_.get());
-	stage_->Draw();
+	stage_->DrawHeat();
 	heatHazeManager_->PostDraw(commandList_);
 
 	//取得したシーンに対して描画

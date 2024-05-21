@@ -33,6 +33,11 @@ public:
 	/// </summary>
 	void Draw();
 
+	//灼熱描画
+	void DrawHeat();
+	//極寒描画
+	void DrawCold();
+
 	/// <summary>
 	/// UI描画
 	/// </summary>
@@ -72,6 +77,8 @@ public:
 
 	//クリアフラグ取得
 	bool GetIsClear() const { return isClear_; }
+
+
 
 private:
 
