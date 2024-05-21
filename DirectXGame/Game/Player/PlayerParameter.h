@@ -24,7 +24,7 @@ struct WorkWallJump {
 	//ギリ壁キックの猶予フレーム
 	int32_t graceTime = 0;
 	//壁キックの移動量
-	Vector2 wallJumpVelocity = { 10.0f,-30.0f };
+	Vector2 wallJumpVelocity = { 5.0f,-20.0f };
 };
 
 //ヒップドロップ関連の構造体

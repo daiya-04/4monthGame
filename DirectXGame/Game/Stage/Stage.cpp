@@ -119,7 +119,7 @@ void Stage::Update() {
 
 	if (!isClear_) {
 
-		if (Input::GetInstance()->TriggerKey(DIK_1)) {
+		/*if (Input::GetInstance()->TriggerKey(DIK_1)) {
 			CreateIceBlock();
 		}
 
@@ -133,7 +133,7 @@ void Stage::Update() {
 
 		if (Input::GetInstance()->TriggerKey(DIK_4)) {
 			BreakAllBlock();
-		}
+		}*/
 
 		//ブロックの更新
 		for (uint32_t y = 0; y < kMaxStageHeight_; y++) {

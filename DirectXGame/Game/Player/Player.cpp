@@ -962,6 +962,8 @@ void Player::UpdatePosition() {
 		break;
 	}
 
+	position_.x = std::clamp(position_.x, float(Block::kBlockHalfSize_ * 0.0f), float(Block::kBlockSize_ * (Stage::kMaxStageWidth_ - 1)));
+
 	tmpPosition_ = position_;
 
 	tmpPosition_ += velocity_ + wallJumpVelocity_;
