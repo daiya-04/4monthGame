@@ -46,7 +46,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	}
 
 	output.color = gTexture.Sample(gSampler, transformdTexcoord);
-	
+	/*
 	float totalWeight = 0, sigma = 0.0015, stepWidth = 0.001;
 	float32_t4 sampleColor = float32_t4(0.0, 0.0, 0.0, 0.0);
 
@@ -59,9 +59,9 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		}
 	}
 
-	sampleColor *= rcp(totalWeight);
+	sampleColor *= rcp(totalWeight);*/
 
-	output.color.rgb = sampleColor.rgb * 2;
+	//output.color.rgb = sampleColor.rgb * 2;
 	if(/*0<defLine &&*/ defLine < magmaborder){
 		//output.color.r -= 0.1f*(magmaborder-defLine);
 		output.color.g -= 0.2f*(magmaborder-defLine);
