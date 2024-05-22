@@ -3,6 +3,7 @@
 struct InstancingGPU {
 	float32_t4x4 world;
 	float32_t2 texcoord[4];
+	float32_t4 color;
 };
 
 StructuredBuffer<InstancingGPU> gInstancing : register(t1);
@@ -25,5 +26,6 @@ VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_Instan
 	output.position = mul(input.position, mul(gInstancing[instanceId].world, mul(gCamera.view, gCamera.projection)));
 	output.texcoord = gInstancing[instanceId].texcoord[vertexId];
 	//output.normal = normalize(mul(input.normal, (float32_t3x3)gTransformationMatrix.World));
+	output.color = gInstancing[instanceId].color;
 	return output;
 }

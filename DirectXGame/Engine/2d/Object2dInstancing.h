@@ -42,6 +42,7 @@ public:
 	struct InstancingForVSData {
 		Matrix4x4 worldMat_;
 		Vector2 texcoord_[4];
+		Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 	};
 
 	//CPU内で処理に使うデータ
@@ -52,6 +53,8 @@ public:
 		Vector2 texBase_{};
 		//テクスチャサイズ
 		Vector2 texSize_ = { 100.0f,100.0f };
+
+		Vector4 color_ = {1.0f,1.0f,1.0f,1.0f};
 	};
 
 private: //静的メンバ変数
@@ -155,6 +158,21 @@ public:
 		data.position_ = position;
 		data.texBase_ = texBase;
 		data.texSize_ = texSize;
+		data.color_ = {1.0f,1.0f,1.0f,1.0f};
+		instancingCPUData_.push_back(data);
+		instanceCount_++;
+	};
+
+	//描画オブジェクトを追加する
+	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize,const Vector4& color) {
+		if (instanceCount_ >= instanceMax_) {
+			return;
+		}
+		InstancingCPUData data;
+		data.position_ = position;
+		data.texBase_ = texBase;
+		data.texSize_ = texSize;
+		data.color_ = color;
 		instancingCPUData_.push_back(data);
 		instanceCount_++;
 	};
