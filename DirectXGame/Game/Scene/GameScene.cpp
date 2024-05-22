@@ -46,6 +46,9 @@ void GameScene::Init(){
 	commandList_ = DirectXCommon::GetInstance()->GetCommandList();
 
 	environmentEffectsManager_ = EnvironmentEffectsManager::GetInstance();
+	//stageに現在のシーンモードを適応する
+	AppryMode();
+
 	cameraFrozen_ = CameraFrozenManager::GetInstance();
 	heatHazeManager_ = HeatHazeManager::GetInstance();
 
@@ -231,6 +234,9 @@ void GameScene::DebugGUI(){
 
 	player_->Debug();
 
+	if (Input::GetInstance()->TriggerKey(DIK_9)) {
+		ChangeMode();
+	}
 
 	/*if (Input::GetInstance()->TriggerKey(DIK_Z)) {
 		isPlayGame_ = !isPlayGame_;
@@ -292,4 +298,20 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	cameraFrozen_->Draw(commandList_);
 	targetScene->PostDrawScene(commandList_);
 
+}
+
+
+void GameScene::ChangeMode() {
+	environmentEffectsManager_->ChangeSceneMode();
+	AppryMode();
+}
+
+void GameScene::AppryMode() {
+	bool sceneMode = environmentEffectsManager_->GetIsNowScene();
+	if ((sceneMode) ^ environmentEffectsManager_->GetIsPlaySceneChangeAnimation() ) {
+		stage_->ChangeSnow2Magma();
+	}
+	else {
+		stage_->ChangeMagma2Snow();
+	}
 }

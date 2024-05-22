@@ -63,6 +63,12 @@ public:
 	/// <param name="targetScene">書き込み先</param>
 	void DrawCold(PostEffect* targetScene);
 
+	//極寒,灼熱モードを切り替える
+	void ChangeMode();
+
+	//stage側にeffectManagerが持つモードを適応する
+	void AppryMode();
+
 private:
 	ID3D12GraphicsCommandList* commandList_;
 	

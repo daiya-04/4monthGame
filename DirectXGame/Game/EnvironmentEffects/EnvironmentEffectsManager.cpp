@@ -15,9 +15,12 @@ EnvironmentEffectsManager::EnvironmentEffectsManager() {
 }
 
 void EnvironmentEffectsManager::Update() {
-	if (Input::GetInstance()->TriggerKey(DIK_3)) {
+#ifdef _DEBUG
+	/*if (Input::GetInstance()->TriggerKey(DIK_3)) {
 		weightCircle_->Start();
-	}
+	}*/
+#endif // _DEBUG
+
 	weightCircle_->Update();
 	isChangeComplete_ = false;
 	if (weightCircle_->GetIsEnd()) {
@@ -36,4 +39,8 @@ void EnvironmentEffectsManager::Draw(ID3D12GraphicsCommandList* cmdList) {
 		//通常時の描画
 		prevScene->Draw(cmdList);
 	}
+}
+
+void EnvironmentEffectsManager::ChangeSceneMode() {
+	weightCircle_->Start();
 }

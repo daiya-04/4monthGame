@@ -78,7 +78,11 @@ public:
 	//クリアフラグ取得
 	bool GetIsClear() const { return isClear_; }
 
+	//極寒ブロックを灼熱ブロックに変える
+	void ChangeSnow2Magma();
 
+	//灼熱ブロックを極寒ブロックに変える
+	void ChangeMagma2Snow();
 
 private:
 
