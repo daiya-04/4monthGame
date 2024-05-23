@@ -18,15 +18,41 @@ public:
 private:
 
 	bool isWindow_ = false;
-	bool isFullScreen_ = true;
+	bool isFullScreen_;
 
 	uint32_t windowTex_ = 0;
 	std::unique_ptr<Sprite> window_;
 
+	uint32_t gaugeTex_ = 0;
+	std::unique_ptr<Sprite> bgmGauge_;
+	std::unique_ptr<Sprite> seGauge_;
+
+	uint32_t gaugeFrameTex_ = 0;
+	std::unique_ptr<Sprite> gaugeFrame_;
+
+	uint32_t bgmTextImage_ = 0;
+	uint32_t seTextImage_ = 0;
+	std::unique_ptr<Sprite> bgmText_;
+	std::unique_ptr<Sprite> seText_;
+
+	uint32_t fullScreenImage_ = 0;
+	std::unique_ptr<Sprite> fullScreenText_;
+
+	uint32_t checkBoxTex_ = 0;
+	uint32_t checkBoxFrameTex_ = 0;
+	uint32_t checkTex_ = 0;
+
+	std::unique_ptr<Sprite> checkBox_;
+	std::unique_ptr<Sprite> checkBoxFrame_;
+	std::unique_ptr<Sprite> check_;
+
+	uint32_t bButtonTex_ = 0;
+	std::unique_ptr<Sprite> bButton_;
+
 	float param_ = 0.0f;
 
-	uint32_t bgmVolume_ = 5;
-	uint32_t seVolume_ = 5;
+	static uint32_t bgmVolume_;
+	static uint32_t seVolume_;
 
 private:
 

@@ -48,12 +48,12 @@ void DSFramework::Update(){
 
 	if (WinApp::GetInstance()->ProcessMessage() || Input::GetInstance()->TriggerKey(DIK_ESCAPE)) { WinApp::GetInstance()->GameEnd(); }
 
-	if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_9)) {
+	/*if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_9)) {
 		WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
 	}
 	if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_0)) {
 		WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kWindow);
-	}
+	}*/
 
 	ImGuiManager::GetInstance()->Begin();
 
