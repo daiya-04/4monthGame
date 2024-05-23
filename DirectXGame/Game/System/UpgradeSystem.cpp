@@ -25,6 +25,11 @@ UpgradeSystem::UpgradeSystem()
 	upgradeTexture_ = TextureManager::GetInstance()->Load("UI/upgrade.png");
 	sendIntervalTexture_ = TextureManager::GetInstance()->Load("UI/sendInterval.png");
 	powerTexture_ = TextureManager::GetInstance()->Load("UI/power.png");
+	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
+	rockUITextures_[0] = TextureManager::GetInstance()->Load("UI/rock.png");
+	rockUITextures_[1] = TextureManager::GetInstance()->Load("UI/speedRock.png");
+	rockUITextures_[2] = TextureManager::GetInstance()->Load("UI/digSpeedRock.png");
+	rockUITextures_[3] = TextureManager::GetInstance()->Load("UI/powerRock.png");
 
 	furnace_.reset(Object2d::Create(furnaceTexture_, {Block::kBlockSize_ * 19.5f, Block::kBlockSize_ * 2.5f}));
 	furnace_->SetSize({ Block::kBlockSize_ * 2.0f,Block::kBlockSize_ * 4.0f });
@@ -32,6 +37,44 @@ UpgradeSystem::UpgradeSystem()
 	sendRockSprite_.reset(Sprite::Create(sendRockTexture_, UITopPosition_));
 	powerSprite_.reset(Sprite::Create(upgradeTexture_, UIMiddlePosition_));
 
+	//数字リセット
+	for (int32_t y = 0; y < 2; y++) {
+
+		for (int32_t x = 0; x < 4; x++) {
+
+			float xPosition = 0.0f;
+			float yPosition = 0.0f;
+
+			if (x % 2 == 0) {
+				xPosition = 900.0f;
+			}
+			else {
+				xPosition = 1000.0f;
+			}
+
+			if (x < 2) {
+				yPosition = 50.0f + 200 * (y + 1);
+			}
+			else {
+				yPosition = 100.0f + 200 * (y + 1);
+			}
+
+			for (int32_t i = 0; i < 2; i++) {
+
+				numbers_[y][x][i].reset(Sprite::Create(numberTexture_, { xPosition + 24.0f * i , yPosition }));
+				numbers_[y][x][i]->SetSize({ 32.0f,32.0f });
+				numbers_[y][x][i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
+
+			}
+
+			//岩UIリセット
+			rocksUI_[y][x].reset(Sprite::Create(rockUITextures_[x], { xPosition - 32.0f, yPosition }));
+			rocksUI_[y][x]->SetSize({ 32.0f,32.0f });
+
+		}
+
+	}
+	
 }
 
 UpgradeSystem::~UpgradeSystem()
@@ -44,8 +87,9 @@ void UpgradeSystem::Initialize(int32_t stageNum) {
 
 	LoadData(stageNum);
 
+	sendRockLevel_ = 0;
+
 	for (int32_t i = 0; i < 2; i++) {
-		sendRockLevel_[i] = 0;
 		powerLevel_[i] = 0;
 	}
 
@@ -179,6 +223,40 @@ void UpgradeSystem::Update() {
 
 			sendRockSprite_->SetTextureHandle(sendRockTexture_);
 			powerSprite_->SetTextureHandle(upgradeTexture_);
+
+		}
+
+		//数字の更新
+		for (int32_t y = 0; y < 2; y++) {
+
+			for (int32_t x = 0; x < 4; x++) {
+
+				for (int32_t i = 0; i < 2; i++) {
+
+					int32_t num = 0;
+
+					int32_t divide = int32_t(std::pow(10, 2 - 1 - i));
+
+					//岩送りの数字
+					if (y == 0) {
+
+						num = sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kRock] / divide;
+
+						numbers_[y][x][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
+
+					}
+					////採掘力の数字
+					else {
+
+						num = powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRock] / divide;
+
+						numbers_[y][x][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
+
+					}
+
+				}
+
+			}
 
 		}
 
@@ -340,25 +418,26 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 	default:
 	case UpgradeSystem::kSendRock:
 
-		if (sendRockLevel_[player_->GetCurrentCharacter()] < kMaxLevel_) {
+		if (sendRockLevel_ < kMaxLevel_) {
 
 			//条件を満たしていたらブロックを消費して強化
 			if (player_->GetRockParameter().rocks_[Player::BringRocks::kRock] >=
-				sendRockUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRock] &&
+				sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kRock] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kBlue] >=
-				sendRockUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kBlue] &&
+				sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kBlue] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kGreen] >=
-				sendRockUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kGreen] &&
+				sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kGreen] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kRed] >=
-				sendRockUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRed]) {
+				sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kRed]) {
 
 				for (int32_t i = 0; i < Player::BringRocks::kMaxType; i++) {
 
-					player_->GetRockParameter().rocks_[i] -= sendRockUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][i];
+					player_->GetRockParameter().rocks_[i] -= sendRockUpgradeNeeds_[sendRockLevel_][i];
 
 				}
 
 				sendInterval_ -= sendRockUpgradeValue_;
+				sendRockLevel_++;
 
 			}
 			else {
@@ -377,21 +456,22 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 
 			//条件を満たしていたらブロックを消費して強化
 			if (player_->GetRockParameter().rocks_[Player::BringRocks::kRock] >=
-				powerUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRock] &&
+				powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRock] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kBlue] >=
-				powerUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kBlue] &&
+				powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kBlue] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kGreen] >=
-				powerUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kGreen] &&
+				powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kGreen] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kRed] >=
-				powerUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRed]) {
+				powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRed]) {
 
 				for (int32_t i = 0; i < Player::BringRocks::kMaxType; i++) {
 
-					player_->GetRockParameter().rocks_[i] -= powerUpgradeNeeds_[sendRockLevel_[player_->GetCurrentCharacter()]][i];
+					player_->GetRockParameter().rocks_[i] -= powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][i];
 
 				}
 
-				player_->AddRedRock(powerUpgradeValue_);
+				player_->UpgradePower(powerUpgradeValue_);
+				powerLevel_[player_->GetCurrentCharacter()]++;
 
 			}
 			else {
@@ -475,6 +555,25 @@ void UpgradeSystem::DrawUI() {
 		powerSprite_->Draw();
 
 		backSprite_->Draw();
+
+		if (isActiveUpgrade_) {
+
+			//数字描画
+			for (int32_t y = 0; y < 2; y++) {
+
+				for (int32_t x = 0; x < 4; x++) {
+
+					for (int32_t i = 0; i < 2; i++) {
+						numbers_[y][x][i]->Draw();
+					}
+
+					rocksUI_[y][x]->Draw();
+
+				}
+
+			}
+
+		}
 
 	}
 

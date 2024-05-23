@@ -247,6 +247,9 @@ public:
 	//岩カウント加算
 	void AddRockCount(int32_t addNum = 1) { rockParameters_[currentCharacters_].rocks_[BringRocks::kRock] += addNum; }
 
+	//パワーーー！！！を強化
+	void UpgradePower(int32_t addNum) { parameters_[currentCharacters_]->dig_.digPower += addNum; }
+
 	//ブロックの数取得
 	int32_t GetRockCount() const { return rockParameters_[currentCharacters_].rocks_[BringRocks::kRock]; }
 
@@ -256,6 +259,11 @@ public:
 	BringRocks& GetRockParameter() { return rockParameters_[currentCharacters_]; }
 
 	Characters GetCurrentCharacter() const { return currentCharacters_; }
+
+	//岩落とし処理
+	void DamageUpdate();
+
+	void HealUpdate();
 
 private:
 
@@ -417,8 +425,8 @@ private:
 	//移動タイプ
 	MoveType moveType_ = kNormal;
 
-	//岩の必要数
-	/*int32_t needRockCount_ = 5;*/
+	//ダメージ間隔
+	int32_t damageTimer_ = 120;
 
 	//コマ最大数
 	int32_t maxAnimationNum_ = 8;

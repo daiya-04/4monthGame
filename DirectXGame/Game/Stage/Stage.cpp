@@ -119,22 +119,6 @@ void Stage::Update() {
 
 	if (!isClear_) {
 
-		/*if (Input::GetInstance()->TriggerKey(DIK_1)) {
-			CreateIceBlock();
-		}
-
-		if (Input::GetInstance()->TriggerKey(DIK_2)) {
-			BreakIceBlock();
-		}
-
-		if (Input::GetInstance()->TriggerKey(DIK_3)) {
-			SwitchBlock();
-		}
-
-		if (Input::GetInstance()->TriggerKey(DIK_4)) {
-			BreakAllBlock();
-		}*/
-
 		//ブロックの更新
 		for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
@@ -155,13 +139,21 @@ void Stage::Update() {
 			if (player_->GetIsMine()) {
 
 				if (magmaLine_ > magmaLimit_) {
-					magmaLine_ -= 1.0f;
+					magmaLine_ -= 1.5f;
 				}
 
 			}
 			//サウナ室に戻った時にリセット
 			else if (player_->GetIsHome() && magmaLine_ < maxMagmaLine_) {
 				ResetMagma();
+			}
+
+			//温泉より下にいたら石を定期的に落としてしまう
+			if (player_->GetPosition().y >= magmaLine_) {
+				player_->DamageUpdate();
+			}
+			else {
+				player_->HealUpdate();
 			}
 
 		}
@@ -200,6 +192,10 @@ void Stage::Update() {
 		magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
 		magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
 		BlockTextureManager::GetInstance()->UpdateParticle();
+
+	}
+	//クリアした時
+	else {
 
 	}
 
@@ -462,7 +458,7 @@ void Stage::Load(uint32_t stageNumber) {
 
 	std::string RockNum;
 
-	//ブロックの必要数を読み取り。描かれていなかったら100に固定
+	//ブロックの必要数を読み取り。描かれていなかったら30に固定
 	if (std::getline(newFile, RockNum, ',')) {
 
 		goalRockCount_ = std::stoi(RockNum);
@@ -470,7 +466,7 @@ void Stage::Load(uint32_t stageNumber) {
 	}
 	else {
 
-		goalRockCount_ = 100;
+		goalRockCount_ = 30;
 
 	}
 

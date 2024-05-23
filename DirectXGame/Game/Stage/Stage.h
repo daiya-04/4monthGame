@@ -120,12 +120,12 @@ private:
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
 
 	//マグマのライン
-	float maxMagmaLine_ = 12000.0f;
-	float magmaLine_ = 12000.0f;
+	float maxMagmaLine_ = 5000.0f;
+	float magmaLine_ = 5000.0f;
 	float magmaTexBaseX_ = 0.0f;
 	float magmaUnderLine_ = 10000.0f;
 	//マグマ制限
-	float magmaLimit_ = Block::kBlockSize_ * 7.0f;
+	float magmaLimit_ = Block::kBlockSize_ * 0.0f;
 
 	int32_t rockCount_ = 0;
 

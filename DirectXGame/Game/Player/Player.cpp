@@ -144,6 +144,7 @@ void Player::SetOnBase() {
 	position_ = Stage::kBasePosition;
 	birdsEyePosition_ = position_;
 	isDead_ = false;
+	damageTimer_ = 120;
 
 }
 
@@ -989,6 +990,42 @@ void Player::UpdatePosition() {
 	rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
 	leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
 	rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
+
+}
+
+void Player::DamageUpdate() {
+
+	//一定間隔ごとにダメージを受ける
+	if (--damageTimer_ <= 0) {
+
+		damageTimer_ = 120;
+
+		for (int32_t i = 0; i < BringRocks::kMaxType; i++) {
+
+			//1つ以上持っていたら約10%減少させる
+			if (rockParameters_[currentCharacters_].rocks_[i] > 1) {
+
+				rockParameters_[currentCharacters_].rocks_[i] -= (rockParameters_[currentCharacters_].rocks_[i] / 10) + 1;
+
+				//0未満になってしまったら調整
+				if (rockParameters_[currentCharacters_].rocks_[i] < 0) {
+					rockParameters_[currentCharacters_].rocks_[i] = 0;
+				}
+
+			}
+
+		}
+
+	}
+
+}
+
+void Player::HealUpdate() {
+
+	//ダメージを受ける間隔を回復させる
+	if (damageTimer_ < 120) {
+		damageTimer_++;
+	}
 
 }
 

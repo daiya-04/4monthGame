@@ -104,7 +104,7 @@ private:
 	std::array<std::array<int32_t, 4>, kMaxLevel_> powerUpgradeNeeds_;
 
 	//強化レベル
-	std::array<int32_t, 2> sendRockLevel_ = { 0,0 };
+	int32_t sendRockLevel_ = 0;
 
 	std::array<int32_t, 2> powerLevel_ = { 0,0 };
 
@@ -118,16 +118,23 @@ private:
 	std::unique_ptr<Sprite> sendRockSprite_;
 	std::unique_ptr<Sprite> powerSprite_;
 
+	std::array<std::array<std::array<std::unique_ptr<Sprite>, 2>, 4>, 2> numbers_;
+
+	std::array<std::array<std::unique_ptr<Sprite>, 4>, 2> rocksUI_;
+
 	uint32_t furnaceTexture_;
 	uint32_t backTexture_;
 	uint32_t sendRockTexture_;
 	uint32_t upgradeTexture_;
 	uint32_t sendIntervalTexture_;
 	uint32_t powerTexture_;
+	uint32_t numberTexture_;
+	std::array<uint32_t, 4> rockUITextures_;
 
 	Vector2 UITopPosition_{ 1000.0f,200.0f };
 	Vector2 UIMiddlePosition_{ 1000.0f,400.0f };
 	Vector2 UIBottomPosition_{ 1000.0f,600.0f };
+	std::array<Vector2, 4> numbersPosition_;
 
 };
 
