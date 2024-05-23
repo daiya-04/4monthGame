@@ -42,8 +42,11 @@ public:
 	//表示文字数変更
 	void SetCharCount(uint32_t count) { showCharCount_ = count; };
 
-	//フォントのオフセットデータを登録する
+	//フォントのオフセットデータを読み込む
 	void LoadFontOffset();
+
+	//フォントのオフセットデータをファイルに保存する
+	void SaveFontOffset();
 
 	//オフセットエディタの描画
 	void OffsetEditorDraw();

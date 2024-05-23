@@ -4,12 +4,18 @@
 #include "Sprite.h"
 #include "ImGuiManager.h"
 #include "Log.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <locale>
 void TextManager::Initialize() {
+    std::locale::global(std::locale(""));
     fontOffsets_.clear();
-    fontOffsets_.emplace(L"互", Vector2{ 1.0f,0});
-    fontOffsets_.emplace(L"サ", Vector2{ 2.0f,0 });
-    fontOffsets_.emplace(L"道", Vector2{ 3.0f,0 });
-    fontOffsets_.emplace(L"ぁ", Vector2{ 3.0f,0 });
+    LoadFontOffset();
+   // fontOffsets_.emplace(L"互", Vector2{ 1.0f,0});
+   // fontOffsets_.emplace(L"サ", Vector2{ 2.0f,0 });
+   // fontOffsets_.emplace(L"道", Vector2{ 3.0f,0 });
+   // fontOffsets_.emplace(L"ぁ", Vector2{ 3.0f,0 });
     drawObject_.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 512));
     //drawObject_->Init(1024);
     drawObject_->SetTextureHandle(TextureManager::Load("gameTextFont.png"));
@@ -57,7 +63,45 @@ void TextManager::AppendChar(const Vector2& position,const std::wstring& str) {
 }
 
 void TextManager::LoadFontOffset() {
+    std::string fileName = "./Resources/FontData/offsetData.fontOffset";
+    std::wstring line;
+    std::wifstream file(fileName);
+    std::wstring key;
+    Vector2 position;
+    //ファイル読み込みが出来なかったら処理を止める
+    if (!file.is_open()) {
+        MessageBox(nullptr, L"ファイルを読み込めませんでした。", L"FontOffsets", 0);
+        return;
+    }
+    fontOffsets_.clear();
+    while (std::getline(file, line)) {
+        std::wistringstream s(line);
+        s >> key >> position.x >> position.y;
+        fontOffsets_.emplace(key,position);
+    }
+    file.close();
+}
 
+void TextManager::SaveFontOffset() {
+    std::string fileName = "./Resources/FontData/offsetData.fontOffset";
+    std::wstring line;
+    std::wofstream file(fileName);
+    //ファイル読み込みが出来なかったら処理を止める
+    if (file.fail()) {
+        MessageBox(nullptr, L"ファイルを読み込めませんでした。", L"FontOffsets", 0);
+        return;
+    }
+
+  //  auto Loc = std::locale(Locale.c_str());
+   // auto L = file.imbue(Loc);
+
+    for (auto & offset : fontOffsets_) {
+        file << offset.first << " " << offset.second.x << " " << offset.second.y << std::endl;
+    }
+
+    file.close();
+    std::string message = "Saved FontOffsets !";
+    MessageBoxA(nullptr, message.c_str(), "TextManager", 0);
 }
 
 void TextManager::OffsetEditorDraw() {
@@ -67,10 +111,7 @@ void TextManager::OffsetEditorDraw() {
 
     if (ImGui::Button("SaveFile")) {
         //セーブする
-
-
-        std::string message = "Saved FontOffsets !";
-        MessageBoxA(nullptr, message.c_str(), "TextManager", 0);
+        SaveFontOffset();
     }
     static char text[8] = "";
     ImGui::InputText("key", text, sizeof(text), 8);
