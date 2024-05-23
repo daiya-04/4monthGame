@@ -5,6 +5,8 @@
 #include "Audio.h"
 #include "WinApp.h"
 
+uint32_t Option::bgmVolume_ = 5;
+uint32_t Option::seVolume_ = 5;
 
 Option::Option() {
 	

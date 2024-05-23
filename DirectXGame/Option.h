@@ -51,8 +51,8 @@ private:
 
 	float param_ = 0.0f;
 
-	uint32_t bgmVolume_ = 5;
-	uint32_t seVolume_ = 5;
+	static uint32_t bgmVolume_;
+	static uint32_t seVolume_;
 
 private:
 
