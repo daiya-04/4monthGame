@@ -96,7 +96,7 @@ void ScoreManager::Initialize() {
 	//目標スコアの設定
 	for (int32_t index = 0; index < kMaxStage_; index++) {
 		bestScores_[index].score_.value_ = 0;
-		bestScores_[index].rank_.value_ = R_SS;
+		bestScores_[index].rank_.value_ = R_N;
 		goalScores_[index][R_SS] = 10000;
 		goalScores_[index][R_S] = 8000;
 		goalScores_[index][R_A] = 6000;
@@ -148,8 +148,15 @@ void ScoreManager::Load() {
 			std::getline(file, line, ',');
 
 			bestScores_[i].score_.value_ = std::stoi(line);
+			for (int32_t index = R_SS; index < kRankCount; index++) {
+				if (goalScores_[i][index] <= bestScores_[i].score_.value_) {
+					bestScores_[i].rank_.value_ = Rate(index);
+					break;
+				}
+			}
 
 		}
+
 
 	}
 
@@ -196,7 +203,7 @@ void ScoreManager::SetScore(int32_t stageNum, const Score& score) {
 	result_.score_.value_ = score.value_;
 
 	for (int32_t index = R_SS; index < kRankCount; index++) {
-		if (goalScores_[stageIndex][index] < score.value_) {
+		if (goalScores_[stageIndex][index] <= score.value_) {
 			if (bestScores_[stageIndex].rank_.value_ < Rate(index)) {
 				bestScores_[stageIndex].rank_.value_ = Rate(index);
 				break;
