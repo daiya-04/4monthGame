@@ -625,6 +625,9 @@ void Player::Dig() {
 
 			parameters_[currentCharacters_]->dig_.isDig = true;
 
+			//穴掘りクールタイムを設定
+			parameters_[currentCharacters_]->dig_.digCount = parameters_[currentCharacters_]->dig_.digInterval;
+
 			//上下左右どこを掘るか決める(左右優先)
 			if (input_->TiltLStick(Input::Stick::Right)) {
 				animationTime_ = 0;

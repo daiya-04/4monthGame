@@ -43,7 +43,7 @@ Stage::Stage()
 	borders_[1]->SetAnchorpoint({ 0.5f,1.0f });
 
 	magma_.reset(Object2d::Create(magmaTex_, { kBasePosition.x,magmaUnderLine_ }));
-	magma_->SetColor({ 1.0f,1.0f,1.0f,0.8f });
+	magma_->SetColor({ 1.0f,1.0f,1.0f,0.3f });
 	magma_->SetAnchorpoint({ 0.5f,1.0f });
 	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 64.0f });
 	magma_->SetTextureArea({ 0.0f,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 32.0f });
@@ -149,7 +149,7 @@ void Stage::Update() {
 
 			}
 			//サウナ室に戻った時にリセット
-			else if (player_->GetIsHome() && magmaLine_ < maxMagmaLine_) {
+			else if (magmaLine_ < maxMagmaLine_) {
 				ResetMagma();
 			}
 

@@ -556,7 +556,7 @@ void UpgradeSystem::DrawUI() {
 
 		backSprite_->Draw();
 
-		if (isActiveUpgrade_) {
+		if (isActiveUpgrade_ && type_ == kUpgrade) {
 
 			//数字描画
 			for (int32_t y = 0; y < 2; y++) {
