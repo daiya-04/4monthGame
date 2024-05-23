@@ -113,6 +113,7 @@ private:
 
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Object2d> magma_;
+	std::unique_ptr<Object2d> saunaRoom_;
 
 	std::unique_ptr<UpgradeSystem> upgradeSystem_;
 
@@ -140,6 +141,7 @@ private:
 	//岩の数を表示する数字
 	std::array<std::unique_ptr<Sprite>, kMaxNumbers_> numbers_;
 	std::unique_ptr<Sprite> clearSprite_;
+	std::unique_ptr<Sprite> purposeSprite_;
 
 	//帰還エリア
 	std::array<std::unique_ptr<Object2d>, 2> returnObjects_;
@@ -156,6 +158,8 @@ private:
 	uint32_t borderTex_;
 	uint32_t magmaTex_;
 	uint32_t returnTex_;
+	uint32_t saunaRoomTex_;
+	uint32_t purposeTex_;
 
 };
 

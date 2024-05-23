@@ -21,6 +21,8 @@ Stage::Stage()
 	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
 	magmaTex_ = TextureManager::GetInstance()->Load("stageObject/magmaLine.png");
 	returnTex_ = TextureManager::GetInstance()->Load("stageObject/returnArea.png");
+	saunaRoomTex_ = TextureManager::GetInstance()->Load("stageObject/saunaRoom.png");
+	purposeTex_ = TextureManager::GetInstance()->Load("UI/mokuteki.png");
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
@@ -30,7 +32,10 @@ Stage::Stage()
 
 	}
 
+	saunaRoom_.reset(Object2d::Create(saunaRoomTex_, kBasePosition - Vector2{0.0f, 18.0f}));
+
 	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
+	purposeSprite_.reset(Sprite::Create(purposeTex_, { 640.0f,200.0f }));
 
 	borders_[0].reset(Object2d::Create(borderTex_, kBorderLeft));
 	borders_[0]->SetAnchorpoint({ 0.5f,1.0f });
@@ -259,6 +264,8 @@ void Stage::Draw() {
 
 	magma_->Draw(*camera_);
 
+	saunaRoom_->Draw(*camera_);
+
 }
 
 void Stage::DrawUI() {
@@ -272,6 +279,10 @@ void Stage::DrawUI() {
 	}
 
 	upgradeSystem_->DrawUI();
+
+	if (player_->GetIsHome()) {
+		purposeSprite_->Draw();
+	}
 
 	if (isClear_) {
 		clearSprite_->Draw();
@@ -466,7 +477,7 @@ void Stage::Load(uint32_t stageNumber) {
 	}
 	else {
 
-		goalRockCount_ = 30;
+		goalRockCount_ = 100;
 
 	}
 

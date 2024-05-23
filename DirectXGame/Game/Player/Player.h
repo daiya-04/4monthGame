@@ -100,6 +100,11 @@ public:
 	void Update();
 	
 	/// <summary>
+	/// UI更新
+	/// </summary>
+	void UpdateUI();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw(const Camera& camera);

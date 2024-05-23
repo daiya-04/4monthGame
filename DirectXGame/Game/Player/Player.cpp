@@ -257,6 +257,14 @@ void Player::Update() {
 		
 	}
 
+	//最終的な当たり判定を更新
+	collision_.min = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+	collision_.max = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeY_ - 1 };
+
+}
+
+void Player::UpdateUI() {
+
 	//数字の更新
 	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
 
@@ -273,10 +281,6 @@ void Player::Update() {
 		}
 
 	}
-
-	//最終的な当たり判定を更新
-	collision_.min = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
-	collision_.max = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeY_ - 1 };
 
 }
 
