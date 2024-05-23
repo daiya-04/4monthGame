@@ -250,6 +250,8 @@ void GameScene::DebugGUI(){
 	testText_->SetCharCount(uint32_t(cCount));
 	testText_->SetPosition(position);
 	//TextManager::GetInstance()->SetCharCount(uint32_t(cCount));
+	TextManager::GetInstance()->OffsetEditorDraw();
+
 #endif // _DEBUG
 }
 

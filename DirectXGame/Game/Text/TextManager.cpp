@@ -2,6 +2,8 @@
 #include "TextureManager.h"
 #include "DirectXCommon.h"
 #include "Sprite.h"
+#include "ImGuiManager.h"
+#include "Log.h"
 void TextManager::Initialize() {
     fontOffsets_.clear();
     fontOffsets_.emplace(L"互", Vector2{ 1.0f,0});
@@ -52,4 +54,54 @@ void TextManager::AppendChar(const Vector2& position,const std::wstring& str) {
         col = {1.0f,0.0f,0.0f,1.0f};
     }
     drawObject_->AppendObject(position, kCharStride_ * texturePosition_, { kCharStride_ ,kCharStride_ },col);
+}
+
+void TextManager::LoadFontOffset() {
+
+}
+
+void TextManager::OffsetEditorDraw() {
+#ifdef _DEBUG
+
+    ImGui::Begin("FontOffset");
+
+    if (ImGui::Button("SaveFile")) {
+        //セーブする
+
+
+        std::string message = "Saved FontOffsets !";
+        MessageBoxA(nullptr, message.c_str(), "TextManager", 0);
+    }
+    static char text[8] = "";
+    ImGui::InputText("key", text, sizeof(text), 8);
+    static Vector2 offset;
+    ImGui::DragFloat2("position", &offset.x, 1.0f);
+    if (ImGui::Button("Add")) {
+        //文字オフセット追加
+        auto it = fontOffsets_.find(ConvertString(text));
+        //既存のkeyだったら値を変更
+        if (it != fontOffsets_.end()) {
+            fontOffsets_[it->first] = offset;
+        }
+        //無ければ追加する
+        else {
+            fontOffsets_.emplace(ConvertString(text), offset);
+        }
+    }
+    ImGui::SameLine();
+    //キー削除
+    if (ImGui::Button("Remove")) {
+        auto it = fontOffsets_.find(ConvertString(text));
+        if (it != fontOffsets_.end()) {
+            fontOffsets_.erase(it->first);
+        }
+    }
+    ImGui::Text(" ");
+    //一覧表示
+    for (auto& offset : fontOffsets_) {
+        ImGui::DragFloat2(ConvertString(offset.first).c_str(), &offset.second.x);
+    }
+
+    ImGui::End();
+#endif // _DEBUG
 }

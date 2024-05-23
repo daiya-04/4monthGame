@@ -41,6 +41,13 @@ public:
 
 	//表示文字数変更
 	void SetCharCount(uint32_t count) { showCharCount_ = count; };
+
+	//フォントのオフセットデータを登録する
+	void LoadFontOffset();
+
+	//オフセットエディタの描画
+	void OffsetEditorDraw();
+
 private:
 	//first:文字 second:テクスチャ左上座標
 	std::map<std::wstring, Vector2> fontOffsets_;
