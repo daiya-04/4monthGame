@@ -68,7 +68,7 @@ public:
 	static inline const Vector2 kBorderRight = { float(kBasePosition.x + 5.0f * Block::kBlockSize_), -48.0f };
 
 	//マグマライン取得
-	float GetMagmaLine() const { return magmaLine_; }
+	float GetMagmaLine() const { return currentMagmaLine_; }
 
 	//クリアフラグ取得
 	bool GetIsClear() const { return isClear_; }
@@ -122,11 +122,16 @@ private:
 
 	//マグマのライン
 	float maxMagmaLine_ = 5000.0f;
-	float magmaLine_ = 5000.0f;
+	//基準のライン
+	float baseMagmaLine_ = 5000.0f;
+	//描画で適用するライン
+	float currentMagmaLine_ = 5000.0f;
 	float magmaTexBaseX_ = 0.0f;
 	float magmaUnderLine_ = 10000.0f;
 	//マグマ制限
 	float magmaLimit_ = Block::kBlockSize_ * 0.0f;
+	//マグマ速度
+	float magmaSpeed_ = 15.5f;
 
 	int32_t rockCount_ = 0;
 

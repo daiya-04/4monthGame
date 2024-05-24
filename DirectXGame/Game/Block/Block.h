@@ -40,6 +40,8 @@ public:
 		kDigerBlock,
 		//破壊力が上昇するブロック
 		kDigPowerBlock,
+		//マグマを下降させるブロック
+		kDownMagma,
 		//ブロックの最大種類
 		kMaxBlock
 

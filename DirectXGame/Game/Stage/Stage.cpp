@@ -98,7 +98,8 @@ void Stage::Initialize(uint32_t stageNumber) {
 	isClear_ = false;
 	rockCount_ = 0;
 
-	magmaLine_ = maxMagmaLine_;
+	baseMagmaLine_ = maxMagmaLine_;
+	currentMagmaLine_ = baseMagmaLine_;
 	magmaTexBaseX_ = 0.0f;
 
 	Load(stageNumber);
@@ -110,7 +111,7 @@ void Stage::Update() {
 #ifdef _DEBUG
 
 	ImGui::Begin("magma");
-	ImGui::DragFloat("line", &magmaLine_, 1.0f);
+	ImGui::DragFloat("line", &baseMagmaLine_, 1.0f);
 	ImGui::End();
 
 #endif // _DEBUG
@@ -143,22 +144,32 @@ void Stage::Update() {
 			//採掘中にマグマライン上昇
 			if (player_->GetIsMine()) {
 
-				if (magmaLine_ > magmaLimit_) {
-					magmaLine_ -= 1.5f;
+				if (baseMagmaLine_ > magmaLimit_) {
+					baseMagmaLine_ -= magmaSpeed_;
 				}
 
 			}
 			//サウナ室に戻った時にリセット
-			else if (magmaLine_ < maxMagmaLine_) {
+			else if (baseMagmaLine_ < maxMagmaLine_) {
 				ResetMagma();
 			}
 
 			//温泉より下にいたら石を定期的に落としてしまう
-			if (player_->GetPosition().y >= magmaLine_) {
+			if (player_->GetPosition().y >= currentMagmaLine_) {
 				player_->DamageUpdate();
 			}
 			else {
 				player_->HealUpdate();
+			}
+
+			//採掘中と帰還中でストーカー速度を変更
+			if (player_->GetIsMine()) {
+
+				currentMagmaLine_ += (baseMagmaLine_ - currentMagmaLine_) * 0.05f;
+
+			}
+			else {
+				currentMagmaLine_ += (baseMagmaLine_ - currentMagmaLine_) * 0.005f;
 			}
 
 		}
@@ -194,8 +205,8 @@ void Stage::Update() {
 		}
 
 		//マグマ更新
-		magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
-		magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
+		magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - currentMagmaLine_ });
+		magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - currentMagmaLine_ });
 		BlockTextureManager::GetInstance()->UpdateParticle();
 
 	}
@@ -292,7 +303,7 @@ void Stage::DrawUI() {
 
 void Stage::ResetMagma() {
 
-	magmaLine_ = maxMagmaLine_;
+	baseMagmaLine_ = maxMagmaLine_;
 
 }
 
