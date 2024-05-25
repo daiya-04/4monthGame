@@ -24,7 +24,10 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 	phase_ = OPEN;
 	parametric_ = 0.0f;
 	//文字列ロード処理入れる
-	mainText_->SetWString(testText);
+	textList_.push_back(L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ");
+	textList_.push_back(L"互サ道互サ道互サ道互サ道互サ道互サ道互サ道互サ道");
+	listIndex_ = 0;
+	mainText_->SetWString(textList_[listIndex_]);
 	mainText_->SetCharCount(0);
 	mainText_->SetCompleteDrawText(false);
 	mainText_->SetPosition({200.0f,550.0f});
@@ -94,7 +97,16 @@ void GameTextManager::View() {
 	}
 	//終了
 	else if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
-		phase_ = CLOSE;
+		//リストが残っていたらtextを差し替えてリセット
+		if (listIndex_ < textList_.size()-1) {
+			listIndex_++;
+			mainText_->SetWString(textList_[listIndex_]);
+			mainText_->SetCharCount(0);
+			mainText_->SetCompleteDrawText(false);
+		}
+		else {
+			phase_ = CLOSE;
+		}
 	}
 	mainText_->SetText();
 	next_->SetText();

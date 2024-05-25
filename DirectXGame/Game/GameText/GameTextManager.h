@@ -73,8 +73,10 @@ private:
 
 	std::unique_ptr<Text> next_;//次へボタン
 
-	std::wstring testText = L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ";
+	//std::wstring testText = L"";
 
+	std::vector<std::wstring> textList_;//現在ステージで表示するテキストのリスト
+	size_t listIndex_;
 	Phase phase_;
 
 	float parametric_;//イージング用媒介変数
