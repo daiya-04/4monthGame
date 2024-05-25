@@ -356,7 +356,7 @@ void Player::Move() {
 	case Player::kNormal:
 
 		//移動
-		if (input_->TiltLStick(Input::Stick::Right)/* && wallJumpVelocity_.x >= -1.0f*/) {
+		if (input_->TiltLStick(Input::Stick::Right) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
 
 			if (velocity_.x < -2.0f) {
 				velocity_.x = 0.0f;
@@ -367,7 +367,7 @@ void Player::Move() {
 			isFacingLeft_ = false;
 
 		}
-		else if (input_->TiltLStick(Input::Stick::Left)/* && wallJumpVelocity_.x <= 1.0f*/) {
+		else if (input_->TiltLStick(Input::Stick::Left) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
 
 			if (velocity_.x > 2.0f) {
 				velocity_.x = 0.0f;
@@ -393,9 +393,9 @@ void Player::Move() {
 
 		}
 
-		//スティック入力で上方向のみの入力の場合にチャージジャンプをできるようにする
+		//スティック入力で上方向のみの入力の場合且つ横移動の値が小さい場合チャージジャンプをできるようにする
 		if (parameters_[currentCharacters_]->Jump_.canJump && input_->TiltLStick(Input::Stick::Up) &&
-			!input_->TiltLStick(Input::Stick::Left) && !input_->TiltLStick(Input::Stick::Right)) {
+			fabsf(input_->GetLX()) < fabsf(input_->GetLY())) {
 
 			parameters_[currentCharacters_]->chargeJump_.isCharge = true;
 
@@ -407,7 +407,8 @@ void Player::Move() {
 		//入力方向に応じて画像変更
 		if (parameters_[currentCharacters_]->dig_.digCount <= int32_t(parameters_[currentCharacters_]->dig_.digInterval * 0.5f)) {
 
-			if (input_->TiltLStick(Input::Stick::Left) || input_->TiltLStick(Input::Stick::Right)) {
+			if ((input_->TiltLStick(Input::Stick::Left) || input_->TiltLStick(Input::Stick::Right)) &&
+				!parameters_[currentCharacters_]->chargeJump_.isCharge) {
 				object_->SetTextureHandle(textureRun_[currentCharacters_]);
 			}
 			else if (input_->TiltLStick(Input::Stick::Up)) {
