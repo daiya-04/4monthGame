@@ -15,31 +15,60 @@ public:
 	};
 
 	void Initialize();
+
+	//文字送りを実行する(毎フレーム呼び出し)
+	void CountUp();
+
 	//表示文章をセット(毎フレーム呼ぶ)
 	void SetText();
 	//表示文字数変更
-	void SetCharCount(uint32_t count) { showCharCount_ = count; };
+	void SetCharCount(size_t count) { showCharCount_ = count; };
+
+	//文字を全部表示する
+	void CharCountMax() {
+		showCharCount_ = text_.size();
+		isCompleteDrawText_ = true;
+	};
+
 	//改行するかどうか
 	//void SetIsChangeLine(bool is) { isChangeLine_ = is; };
 	//座標セット
 	void SetPosition(const Vector2& pos) { origenPosition_ = pos; };
+
+	//文章をセットする
+	void SetText(const std::wstring& newStr) { text_ = newStr; };
+
+	void SetCountUpFrame_(int32_t s) { countUpFrame_ = s; };
+
+	void SetCompleteDrawText(bool is) { isCompleteDrawText_ = is; };
+
+	bool GetCompleteDrawText() { return isCompleteDrawText_; };
+
 private:
 	
 	//表示文章上の各文字の幅
 	float textStride_ = 64.0f;
-	std::wstring text_ = L"互サ道サ道\nササぁあ道";
+	std::wstring text_;
 
 	//表示文字数
-	uint32_t showCharCount_ = 0;
+	size_t showCharCount_ = 0;
 
 	//改行するか
 	bool isChangeLine_ = false;
 	//改行文字数
-	uint32_t changeLineBorder_=32;
+	size_t changeLineBorder_=32;
 
 	ARRANGETYPE arrangeType_=kLeft;
 
 	//文章の原点
 	Vector2 origenPosition_ = {640.0f,360.0f};
 
+	//何フレームで文字送りするか
+	int32_t countUpFrame_;
+
+	//内部カウント
+	int32_t count_;
+
+	//文字送りが完了したか
+	bool isCompleteDrawText_;
 };

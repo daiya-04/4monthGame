@@ -9,6 +9,7 @@
 #include <random>
 #include "Game/Block/BlockTextureManager.h"
 #include "Text/TextManager.h"
+#include "GameText/GameTextManager.h"
 GameScene::~GameScene() {}
 
 void GameScene::Init(){
@@ -68,6 +69,7 @@ void GameScene::Init(){
 	TextManager::GetInstance();
 	testText_.reset(new Text);
 	testText_->Initialize();
+	GameTextManager::GetInstance();
 }
 
 void GameScene::Reset() {
@@ -219,6 +221,7 @@ void GameScene::DrawUI(){
 
 	scoreManager_->DrawCurrentScore(scorePosition_);
 	//TextManager::GetInstance()->TestDraw();
+	GameTextManager::GetInstance()->Draw();
 	TextManager::GetInstance()->ClearText();
 	testText_->SetText();
 	TextManager::GetInstance()->Draw();
@@ -238,9 +241,8 @@ void GameScene::DebugGUI(){
 		ChangeMode();
 	}
 
-	/*if (Input::GetInstance()->TriggerKey(DIK_Z)) {
-		isPlayGame_ = !isPlayGame_;
-	};*/
+	GameTextManager::GetInstance()->TestUpdate();
+
 	static int cCount;
 	static Vector2 position;
 	ImGui::Begin("testText");

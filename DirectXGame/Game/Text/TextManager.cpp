@@ -56,9 +56,7 @@ void TextManager::AppendChar(const Vector2& position,const std::wstring& str) {
         texturePosition_ = (it->second);
     }
     Vector4 col = {1.0f,1.0f,1.0f,1.0f};
-    if (str == L"サ") {
-        col = {1.0f,0.0f,0.0f,1.0f};
-    }
+    
     drawObject_->AppendObject(position, kCharStride_ * texturePosition_, { kCharStride_ ,kCharStride_ },col);
 }
 

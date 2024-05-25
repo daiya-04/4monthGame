@@ -1,8 +1,27 @@
 #include "Text.h"
 #include "TextManager.h"
 void Text::Initialize() {
-
+    count_ = 0;
 }
+
+void Text::CountUp() {
+    if (!isCompleteDrawText_) {
+        count_++;
+        if (count_ > countUpFrame_) {
+            count_ = 0;
+            showCharCount_++;
+        }
+        //文字数が最大になったら止める
+        if (showCharCount_ >= text_.size()) {
+            showCharCount_ = uint32_t(text_.size());
+            isCompleteDrawText_ = true;
+        }
+        else {
+            isCompleteDrawText_ = false;
+        }
+    }
+}
+
 
 void Text::SetText() {
     //改行カウント
