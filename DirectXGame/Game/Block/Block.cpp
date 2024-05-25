@@ -33,6 +33,9 @@ void BaseBlock::Break(int32_t power) {
 			else if (type_ == kDigPowerBlock) {
 				player_->AddRedRock();
 			}
+			else if (type_ == kDownMagma) {
+
+			}
 
 		}
 		int createNum = int(RandomEngine::GetRandom(3.0f,5.0f));

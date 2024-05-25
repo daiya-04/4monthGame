@@ -9,6 +9,7 @@
 #include "Object2d.h"
 #include "Sprite.h"
 #include "System/UpgradeSystem.h"
+#include "Magma.h"
 
 class Player;
 
@@ -68,7 +69,7 @@ public:
 	static inline const Vector2 kBorderRight = { float(kBasePosition.x + 5.0f * Block::kBlockSize_), -48.0f };
 
 	//マグマライン取得
-	float GetMagmaLine() const { return currentMagmaLine_; }
+	float GetMagmaLine() const { return magma_->currentMagmaLine_; }
 
 	//クリアフラグ取得
 	bool GetIsClear() const { return isClear_; }
@@ -92,9 +93,6 @@ private:
 	//壊せないブロック以外の破壊(デバッグ)
 	void BreakAllBlock();
 
-	//マグマリセット
-	void ResetMagma();
-
 	void SetUV(Block* block);
 
 	//当たり判定関連
@@ -112,26 +110,13 @@ private:
 	static const int32_t kMaxNumbers_ = 5;
 
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
-	std::unique_ptr<Object2d> magma_;
+	std::unique_ptr<Magma> magma_;
 	std::unique_ptr<Object2d> saunaRoom_;
 
 	std::unique_ptr<UpgradeSystem> upgradeSystem_;
 
 	//マップ
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
-
-	//マグマのライン
-	float maxMagmaLine_ = 5000.0f;
-	//基準のライン
-	float baseMagmaLine_ = 5000.0f;
-	//描画で適用するライン
-	float currentMagmaLine_ = 5000.0f;
-	float magmaTexBaseX_ = 0.0f;
-	float magmaUnderLine_ = 10000.0f;
-	//マグマ制限
-	float magmaLimit_ = Block::kBlockSize_ * 0.0f;
-	//マグマ速度
-	float magmaSpeed_ = 15.5f;
 
 	int32_t rockCount_ = 0;
 
@@ -161,7 +146,6 @@ private:
 	uint32_t numTex_;
 	uint32_t clearTex_;
 	uint32_t borderTex_;
-	uint32_t magmaTex_;
 	uint32_t returnTex_;
 	uint32_t saunaRoomTex_;
 	uint32_t purposeTex_;

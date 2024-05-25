@@ -150,6 +150,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
     <ClCompile Include="Game\Score\ScoreManager.cpp" />
     <ClCompile Include="Game\Scroll\Scroll.cpp" />
+    <ClCompile Include="Game\Stage\Magma.cpp" />
     <ClCompile Include="Game\Stage\Stage.cpp" />
     <ClCompile Include="Game\System\UpgradeSystem.cpp" />
     <ClCompile Include="Game\Text\TextManager.cpp" />
@@ -235,6 +236,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\TitleScene.h" />
     <ClInclude Include="Game\Score\ScoreManager.h" />
     <ClInclude Include="Game\Scroll\Scroll.h" />
+    <ClInclude Include="Game\Stage\Magma.h" />
     <ClInclude Include="Game\Stage\Stage.h" />
     <ClInclude Include="Game\System\UpgradeSystem.h" />
     <ClInclude Include="Game\Text\TextManager.h" />

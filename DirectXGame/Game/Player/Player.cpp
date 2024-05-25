@@ -653,6 +653,19 @@ void Player::Dig() {
 				object_->SetTextureHandle(textureBreakDown_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x, position_.y + Block::kBlockSize_ };
 			}
+			//入力が無ければどっちを向いてるかで決める
+			else if (isFacingLeft_) {
+				animationTime_ = 0;
+				currentAnimationNum_ = 0;
+				object_->SetTextureHandle(textureBreak_[currentCharacters_]);
+				parameters_[currentCharacters_]->dig_.digPosition = { position_.x - Block::kBlockSize_, position_.y };
+			}
+			else {
+				animationTime_ = 0;
+				currentAnimationNum_ = 0;
+				object_->SetTextureHandle(textureBreak_[currentCharacters_]);
+				parameters_[currentCharacters_]->dig_.digPosition = { position_.x + Block::kBlockSize_, position_.y };
+			}
 
 		}
 		else {

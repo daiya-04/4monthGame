@@ -19,7 +19,6 @@ Stage::Stage()
 	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
 	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
 	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
-	magmaTex_ = TextureManager::GetInstance()->Load("stageObject/magmaLine.png");
 	returnTex_ = TextureManager::GetInstance()->Load("stageObject/returnArea.png");
 	saunaRoomTex_ = TextureManager::GetInstance()->Load("stageObject/saunaRoom.png");
 	purposeTex_ = TextureManager::GetInstance()->Load("UI/mokuteki.png");
@@ -42,11 +41,7 @@ Stage::Stage()
 	borders_[1].reset(Object2d::Create(borderTex_, kBorderRight));
 	borders_[1]->SetAnchorpoint({ 0.5f,1.0f });
 
-	magma_.reset(Object2d::Create(magmaTex_, { kBasePosition.x,magmaUnderLine_ }));
-	magma_->SetColor({ 1.0f,1.0f,1.0f,0.3f });
-	magma_->SetAnchorpoint({ 0.5f,1.0f });
-	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 64.0f });
-	magma_->SetTextureArea({ 0.0f,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 32.0f });
+	magma_ = std::make_unique<Magma>();
 
 	returnPosition_[0] = { 10.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
 	returnPosition_[1] = { 28.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
@@ -97,10 +92,8 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	isClear_ = false;
 	rockCount_ = 0;
-
-	baseMagmaLine_ = maxMagmaLine_;
-	currentMagmaLine_ = baseMagmaLine_;
-	magmaTexBaseX_ = 0.0f;
+	magma_->Initialize();
+	magma_->SetPlayer(player_);
 
 	Load(stageNumber);
 
@@ -110,9 +103,7 @@ void Stage::Update() {
 
 #ifdef _DEBUG
 
-	ImGui::Begin("magma");
-	ImGui::DragFloat("line", &baseMagmaLine_, 1.0f);
-	ImGui::End();
+	
 
 #endif // _DEBUG
 
@@ -141,47 +132,12 @@ void Stage::Update() {
 		//強化中は上昇しない
 		if (!upgradeSystem_->GetIsActive()) {
 
-			//採掘中にマグマライン上昇
-			if (player_->GetIsMine()) {
-
-				if (baseMagmaLine_ > magmaLimit_) {
-					baseMagmaLine_ -= magmaSpeed_;
-				}
-
-			}
-			//サウナ室に戻った時にリセット
-			else if (baseMagmaLine_ < maxMagmaLine_) {
-				ResetMagma();
-			}
-
-			//温泉より下にいたら石を定期的に落としてしまう
-			if (player_->GetPosition().y >= currentMagmaLine_) {
-				player_->DamageUpdate();
-			}
-			else {
-				player_->HealUpdate();
-			}
-
-			//採掘中と帰還中でストーカー速度を変更
-			if (player_->GetIsMine()) {
-
-				currentMagmaLine_ += (baseMagmaLine_ - currentMagmaLine_) * 0.05f;
-
-			}
-			else {
-				currentMagmaLine_ += (baseMagmaLine_ - currentMagmaLine_) * 0.005f;
-			}
+			magma_->Update();
 
 		}
 
 		//当たり判定更新
 		CheckCollision();
-
-		//テクスチャの動きを付ける
-		magmaTexBaseX_++;
-		if (magmaTexBaseX_ > 256.0f) {
-			magmaTexBaseX_ = 0.0f;
-		}
 
 		//数字更新
 		for (int32_t i = 0; i < kMaxNumbers_; i++) {
@@ -204,9 +160,6 @@ void Stage::Update() {
 
 		}
 
-		//マグマ更新
-		magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - currentMagmaLine_ });
-		magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - currentMagmaLine_ });
 		BlockTextureManager::GetInstance()->UpdateParticle();
 
 	}
@@ -298,12 +251,6 @@ void Stage::DrawUI() {
 	if (isClear_) {
 		clearSprite_->Draw();
 	}
-
-}
-
-void Stage::ResetMagma() {
-
-	baseMagmaLine_ = maxMagmaLine_;
 
 }
 
