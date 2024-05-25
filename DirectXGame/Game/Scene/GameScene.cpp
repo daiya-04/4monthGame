@@ -69,7 +69,7 @@ void GameScene::Init(){
 	TextManager::GetInstance();
 	testText_.reset(new Text);
 	testText_->Initialize();
-	GameTextManager::GetInstance();
+	GameTextManager::GetInstance()->InitializeStage(stageNumber_);
 }
 
 void GameScene::Reset() {
@@ -84,8 +84,8 @@ void GameScene::Reset() {
 
 void GameScene::Update() {
 	DebugGUI();
-
-	
+	TextManager::GetInstance()->ClearText();
+	GameTextManager::GetInstance()->Update();
 #ifdef _DEBUG
 
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
@@ -222,7 +222,6 @@ void GameScene::DrawUI(){
 	scoreManager_->DrawCurrentScore(scorePosition_);
 	//TextManager::GetInstance()->TestDraw();
 	GameTextManager::GetInstance()->Draw();
-	TextManager::GetInstance()->ClearText();
 	testText_->SetText();
 	TextManager::GetInstance()->Draw();
 }
@@ -241,7 +240,7 @@ void GameScene::DebugGUI(){
 		ChangeMode();
 	}
 
-	GameTextManager::GetInstance()->TestUpdate();
+	//GameTextManager::GetInstance()->TestUpdate();
 
 	static int cCount;
 	static Vector2 position;

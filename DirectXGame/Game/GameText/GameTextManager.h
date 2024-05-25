@@ -10,6 +10,13 @@ class GameTextManager
 {
 public:
 
+	enum Phase {
+		OPEN,
+		VIEW,
+		CLOSE,
+		END
+	};
+
 	struct NineSliceData
 	{
 		Vector2 position;//中心座標
@@ -26,7 +33,7 @@ public:
 	};
 
 	//gameSceneのInitializeで呼び出す
-	//void InitializeStage(uint32_t stageNum);
+	void InitializeStage(uint32_t stageNum);
 
 	~GameTextManager() {};
 
@@ -36,9 +43,16 @@ public:
 	//テストでimguiから値を操作する
 	void TestUpdate();
 
+	void Update();
+
 	void Draw();
 
 private:
+
+	void Open();
+	void View();
+	void Close();
+	
 
 	void Initialize();
 
@@ -52,4 +66,13 @@ private:
 
 	std::array<std::unique_ptr<Sprite>,9> nineSliceTextureBox_;
 
+	std::unique_ptr<Text> mainText_;//本文
+
+	std::unique_ptr<Text> next_;//次へボタン
+
+	std::wstring testText = L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ";
+
+	Phase phase_;
+
+	float parametric_;//イージング用媒介変数
 };

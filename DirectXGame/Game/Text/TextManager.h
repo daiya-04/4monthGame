@@ -58,7 +58,7 @@ private:
 	//画像上の各文字の幅
 	const float kCharStride_ = 32.0f;
 	//表示文章上の各文字の幅
-	const float kTextStride_ = 64.0f;
+	const float kTextStride_ = 32.0f;
 	std::wstring text_ = L"互サ道サ道ササあ道";
 
 	std::unique_ptr<Camera> testCamera_;//spriteをinstancing対応させるまでの仮カメラ

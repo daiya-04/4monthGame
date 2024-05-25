@@ -36,7 +36,7 @@ public:
 	void SetPosition(const Vector2& pos) { origenPosition_ = pos; };
 
 	//文章をセットする
-	void SetText(const std::wstring& newStr) { text_ = newStr; };
+	void SetWString(const std::wstring& newStr) { text_ = newStr; };
 
 	void SetCountUpFrame_(int32_t s) { countUpFrame_ = s; };
 
@@ -47,7 +47,7 @@ public:
 private:
 	
 	//表示文章上の各文字の幅
-	float textStride_ = 64.0f;
+	float textStride_ = 32.0f;
 	std::wstring text_;
 
 	//表示文字数

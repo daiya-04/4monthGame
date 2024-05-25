@@ -2,13 +2,35 @@
 #include "TextureManager.h"
 #include "ImGuiManager.h"
 #include "DirectXCommon.h"
+#include "Easing.h"
+#include "Input.h"
 void GameTextManager::Initialize() {
 	for (size_t i = 0; i < 9;i++) {
 		nineSliceTextureBox_[i].reset(Sprite::Create(TextureManager::GetInstance()->Load("textBox.png"), Vector2{ 0,0 }, 9));
 		nineSliceTextureBox_[i]->SetAnchorpoint({0.0f,0.0f});
 	}
 	nineSliceData_.position = {640.0f,600.0f};
+	textBoxOriginSize_ = {1000.0f,150.0f};
+	phase_ = OPEN;
+	parametric_ = 0.0f;
 
+	mainText_.reset(new Text);
+	mainText_->Initialize();
+	next_.reset(new Text);
+	next_->Initialize();
+}
+
+void GameTextManager::InitializeStage(uint32_t stageNum) {
+	phase_ = OPEN;
+	parametric_ = 0.0f;
+	//文字列ロード処理入れる
+	mainText_->SetWString(testText);
+	mainText_->SetCharCount(0);
+	mainText_->SetCompleteDrawText(false);
+	mainText_->SetPosition({200.0f,550.0f});
+	next_->SetWString(L"A");
+	next_->SetPosition({ 1100.0f,650.0f });
+	next_->SetCharCount(1);
 }
 
 void GameTextManager::TestUpdate() {
@@ -25,10 +47,73 @@ void GameTextManager::TestUpdate() {
 	SetNineSliceData();
 }
 
+void GameTextManager::Update() {
+
+	switch (phase_)
+	{
+	case GameTextManager::OPEN:
+		Open();
+		break;
+	case GameTextManager::VIEW:
+		View();
+		break;
+	case GameTextManager::CLOSE:
+		Close();
+		break;
+	case GameTextManager::END:
+		break;
+	default:
+		break;
+	}
+	//座標セット
+	SetNineSliceData();
+}
+
+void GameTextManager::Open() {
+	nineSliceData_.size = textBoxOriginSize_ * Easing::easeOutBack(parametric_);
+	parametric_ += 0.05f;
+	if (parametric_ >= 1.0f) {
+		parametric_ = 1.0f;
+		phase_ = VIEW;
+	}
+}
+
+void GameTextManager::View() {
+	nineSliceData_.size = textBoxOriginSize_;
+	if (!mainText_->GetCompleteDrawText()) {
+		//長押しで早送り
+		if (Input::GetInstance()->PushButton(Input::Button::A)) {
+			mainText_->SetCountUpFrame_(0);
+		}
+		else {
+			mainText_->SetCountUpFrame_(5);
+		}
+		mainText_->CountUp();
+	}
+	//終了
+	else if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+		phase_ = CLOSE;
+	}
+	mainText_->SetText();
+	next_->SetText();
+}
+
+void GameTextManager::Close() {
+	nineSliceData_.size = textBoxOriginSize_ * Easing::easeOutBack(parametric_);
+	parametric_ -= 0.05f;
+	if (parametric_ < 0.0f) {
+		parametric_ = 0.0f;
+		nineSliceData_.size = { 0.0f,0.0f };
+		phase_ = END;
+	}
+}
+
 void GameTextManager::Draw() {
-	Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	for (size_t i = 0; i < 9; i++) {
-		nineSliceTextureBox_[i]->Draw();
+	if (phase_ != END && nineSliceData_.size != Vector2{0.0f,0.0f}) {
+		Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+		for (size_t i = 0; i < 9; i++) {
+			nineSliceTextureBox_[i]->Draw();
+		}
 	}
 }
 
