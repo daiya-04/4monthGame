@@ -31,6 +31,7 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 	next_->SetWString(L"A");
 	next_->SetPosition({ 1100.0f,650.0f });
 	next_->SetCharCount(1);
+	isEnd_ = false;
 }
 
 void GameTextManager::TestUpdate() {
@@ -61,6 +62,7 @@ void GameTextManager::Update() {
 		Close();
 		break;
 	case GameTextManager::END:
+		isEnd_ = true;
 		break;
 	default:
 		break;

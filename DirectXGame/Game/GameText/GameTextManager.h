@@ -47,8 +47,11 @@ public:
 
 	void Draw();
 
+	bool GetIsEnd() { return isEnd_; };
+
 private:
 
+	//各フェーズ処理
 	void Open();
 	void View();
 	void Close();
@@ -75,4 +78,6 @@ private:
 	Phase phase_;
 
 	float parametric_;//イージング用媒介変数
+
+	bool isEnd_;//終了したか
 };
