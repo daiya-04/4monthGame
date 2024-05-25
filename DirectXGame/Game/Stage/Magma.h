@@ -30,7 +30,7 @@ public:
 	float magmaTexBaseX_ = 0.0f;
 	float magmaUnderLine_ = 10000.0f;
 	//マグマ制限
-	float magmaLimit_ = Block::kBlockSize_ * 0.0f;
+	float magmaLimit_ = Block::kBlockSize_ * 6.0f;
 	//マグマ速度
 	float magmaSpeed_ = 1.5f;
 	//硬直時間
