@@ -3,6 +3,7 @@
 #include "Player/Player.h"
 #include "BlockBreakParticle.h"
 #include "RandomEngine/RandomEngine.h"
+#include "Stage/Magma.h"
 
 Score* BaseBlock::score_;
 
@@ -34,7 +35,9 @@ void BaseBlock::Break(int32_t power) {
 				player_->AddRedRock();
 			}
 			else if (type_ == kDownMagma) {
-
+				//ラインを1000下げ、300フレーム止める
+				magma_->baseMagmaLine_ += 1000.0f;
+				magma_->freezeTime_ = 300;
 			}
 
 		}

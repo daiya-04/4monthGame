@@ -349,6 +349,7 @@ void Stage::CreateEntity() {
 				map_[y][x].reset(new Block({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, Block::BlockType::kNone));
 				map_[y][x]->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, Block::BlockType::kNone);
 				map_[y][x]->SetPlayer(player_);
+				map_[y][x]->SetMagma(magma_.get());
 				map_[y][x]->SetBlockPosition(x, y);
 
 			}

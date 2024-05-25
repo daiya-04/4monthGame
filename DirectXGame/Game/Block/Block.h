@@ -9,6 +9,8 @@
 
 class Player;
 
+class Magma;
+
 /// <summary>
 /// ブロック全体の基底クラス
 /// </summary>
@@ -93,6 +95,8 @@ public:
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
 
+	void SetMagma(Magma* magma) { magma_ = magma; }
+
 	static void SetScore(Score* score) { score_ = score; }
 
 	void SetUVPosition(uint32_t xPosition, uint32_t yPosition) { 
@@ -140,6 +144,8 @@ protected:
 	static Score* score_;
 
 	Player* player_;
+
+	Magma* magma_ = nullptr;
 
 	BlockType type_ = kUnbreakable;
 

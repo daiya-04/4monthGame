@@ -38,34 +38,39 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	}
 
 	//壊せないブロック
-	objects_[0]->SetColor({ 0.4f,0.4f,0.4f,1.0f });
+	objects_[Block::kUnbreakable - 1]->SetColor({ 0.4f,0.4f,0.4f,1.0f });
 	//極寒
-	objects_[1]->SetColor({ 0.6f,0.3f,0.1f,1.0f });
+	objects_[Block::kSnow - 1]->SetColor({ 0.6f,0.3f,0.1f,1.0f });
 	//灼熱
-	objects_[2]->SetColor({ 0.6f,0.2f,0.2f,1.0f });
+	objects_[Block::kMagma - 1]->SetColor({ 0.6f,0.2f,0.2f,1.0f });
 	//氷
-	objects_[3]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
+	objects_[Block::kIceBlock - 1]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
 	//速度
-	objects_[4]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
+	objects_[Block::kSpeedBlock - 1]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
 	//採掘速度
-	objects_[5]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
+	objects_[Block::kDigerBlock - 1]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
 	//パワーーー！！！
-	objects_[6]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	objects_[Block::kDigPowerBlock - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	//パワーーー！！！
+	objects_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
 
 	//壊せないブロック
-	breakParticles_[0]->SetColor({ 0.4f,0.4f,0.4f,1.0f });
+	breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.4f,0.4f,0.4f,1.0f });
 	//極寒
-	breakParticles_[1]->SetColor({ 0.6f,0.3f,0.1f,1.0f });
+	breakParticles_[Block::kSnow - 1]->SetColor({ 0.6f,0.3f,0.1f,1.0f });
 	//灼熱
-	breakParticles_[2]->SetColor({ 0.6f,0.2f,0.2f,1.0f });
+	breakParticles_[Block::kMagma - 1]->SetColor({ 0.6f,0.2f,0.2f,1.0f });
 	//氷
-	breakParticles_[3]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
+	breakParticles_[Block::kIceBlock - 1]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
 	//速度
-	breakParticles_[4]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
+	breakParticles_[Block::kSpeedBlock - 1]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
 	//採掘速度
-	breakParticles_[5]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
+	breakParticles_[Block::kDigerBlock - 1]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
 	//パワーーー！！！
-	breakParticles_[6]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	breakParticles_[Block::kDigPowerBlock - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	//パワーーー！！！
+	breakParticles_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+
 }
 
 BlockTextureManager::BlockTextureManager() {

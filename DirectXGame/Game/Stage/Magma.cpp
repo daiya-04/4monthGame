@@ -33,6 +33,8 @@ void Magma::Update() {
 
 	ImGui::Begin("magma");
 	ImGui::DragFloat("line", &baseMagmaLine_, 1.0f);
+	ImGui::DragFloat("speed", &magmaSpeed_, 0.1f);
+	ImGui::Text("freezeTime : %d", freezeTime_);
 	ImGui::End();
 
 #endif // _DEBUG
@@ -40,7 +42,13 @@ void Magma::Update() {
 	//採掘中にマグマライン上昇
 	if (player_->GetIsMine()) {
 
-		if (baseMagmaLine_ > magmaLimit_) {
+		//硬直時間中は動かない
+		if (freezeTime_ > 0) {
+
+			freezeTime_--;
+
+		}
+		else if (baseMagmaLine_ > magmaLimit_) {
 			baseMagmaLine_ -= magmaSpeed_;
 		}
 

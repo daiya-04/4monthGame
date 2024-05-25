@@ -32,7 +32,9 @@ public:
 	//マグマ制限
 	float magmaLimit_ = Block::kBlockSize_ * 0.0f;
 	//マグマ速度
-	float magmaSpeed_ = 15.5f;
+	float magmaSpeed_ = 1.5f;
+	//硬直時間
+	int32_t freezeTime_ = 0;
 
 private:
 
