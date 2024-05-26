@@ -61,9 +61,9 @@ void Magma::Update() {
 
 	}
 	//サウナ室に戻った時にリセット
-	else if (baseMagmaLine_ < maxMagmaLine_) {
+	/*else if (baseMagmaLine_ < maxMagmaLine_) {
 		ResetMagma();
-	}
+	}*/
 
 	//温泉より下にいたら石を定期的に落としてしまう
 	if (player_->GetPosition().y >= currentMagmaLine_) {

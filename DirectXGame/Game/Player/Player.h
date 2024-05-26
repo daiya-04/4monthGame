@@ -236,32 +236,32 @@ public:
 
 	//岩の受け渡し
 	void SendRocks(int32_t& rockCount) {
-		rockCount += rockParameters_[currentCharacters_].rocks_[BringRocks::kRock];
-		rockParameters_[currentCharacters_].rocks_[BringRocks::kRock] = 0;
+		rockCount += rockParameter_.rocks_[BringRocks::kRock];
+		rockParameter_.rocks_[BringRocks::kRock] = 0;
 	}
 
 	//スピードの岩を加算
-	void AddBlueRock(int32_t addNum = 1) { rockParameters_[currentCharacters_].rocks_[BringRocks::kBlue] += addNum; }
+	void AddBlueRock(int32_t addNum = 1) { rockParameter_.rocks_[BringRocks::kBlue] += addNum; }
 
 	//採掘速度の岩を加算
-	void AddGreenRock(int32_t addNum = 1){ rockParameters_[currentCharacters_].rocks_[BringRocks::kGreen] += addNum; }
+	void AddGreenRock(int32_t addNum = 1){ rockParameter_.rocks_[BringRocks::kGreen] += addNum; }
 
 	//採掘ダメージ量の岩を加算
-	void AddRedRock(int32_t addNum = 1) { rockParameters_[currentCharacters_].rocks_[BringRocks::kRed] += addNum; }
+	void AddRedRock(int32_t addNum = 1) { rockParameter_.rocks_[BringRocks::kRed] += addNum; }
 
 	//岩カウント加算
-	void AddRockCount(int32_t addNum = 1) { rockParameters_[currentCharacters_].rocks_[BringRocks::kRock] += addNum; }
+	void AddRockCount(int32_t addNum = 1) { rockParameter_.rocks_[BringRocks::kRock] += addNum; }
 
 	//パワーーー！！！を強化
 	void UpgradePower(int32_t addNum) { parameters_[currentCharacters_]->dig_.digPower += addNum; }
 
 	//ブロックの数取得
-	int32_t GetRockCount() const { return rockParameters_[currentCharacters_].rocks_[BringRocks::kRock]; }
+	int32_t GetRockCount() const { return rockParameter_.rocks_[BringRocks::kRock]; }
 
 	//リフト関連処理
 	void MoveLift();
 
-	BringRocks& GetRockParameter() { return rockParameters_[currentCharacters_]; }
+	BringRocks& GetRockParameter() { return rockParameter_; }
 
 	Characters GetCurrentCharacter() const { return currentCharacters_; }
 
@@ -329,7 +329,9 @@ private:
 	std::array<std::unique_ptr<PlayerParameter>, kMaxPlayer> parameters_;
 
 	//パラメータ値加算量を蓄積するもの
-	std::array<BringRocks, kMaxPlayer> rockParameters_;
+	/*std::array<BringRocks, kMaxPlayer> rockParameters_;*/
+	//共有に変更
+	BringRocks rockParameter_;
 
 	//一ブロック毎の加算量
 	AddValue addValue_;

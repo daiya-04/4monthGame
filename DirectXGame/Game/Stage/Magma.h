@@ -22,11 +22,11 @@ public:
 	void SetPlayer(Player* player) { player_ = player; }
 
 	//マグマのライン
-	float maxMagmaLine_ = 5000.0f;
+	float maxMagmaLine_ = Block::kBlockSize_ * 6.0f;
 	//基準のライン
-	float baseMagmaLine_ = 5000.0f;
+	float baseMagmaLine_ = Block::kBlockSize_ * 6.0f;
 	//描画で適用するライン
-	float currentMagmaLine_ = 5000.0f;
+	float currentMagmaLine_ = Block::kBlockSize_ * 6.0f;
 	float magmaTexBaseX_ = 0.0f;
 	float magmaUnderLine_ = 10000.0f;
 	//マグマ制限

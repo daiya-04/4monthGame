@@ -184,6 +184,7 @@ void UpgradeSystem::Update() {
 				case UpgradeSystem::kReturn:
 
 					isActive_ = false;
+					type_ = kSendRock;
 
 					break;
 				
@@ -374,6 +375,7 @@ void UpgradeSystem::Upgrade() {
 		case UpgradeSystem::kReturn:
 
 			isActiveUpgrade_ = false;
+			upgradeType_ = kSendRock;
 
 			break;
 		}

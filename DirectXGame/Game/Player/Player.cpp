@@ -93,11 +93,12 @@ void Player::Initialize() {
 	parameters_[kRightPlayer]->Initialize();
 
 	//岩の保有数リセット
-	for (int32_t i = 0; i < kMaxPlayer; i++) {
+	for (int32_t i = 0; i < 1; i++) {
 
 		for (int32_t k = 0; k < BringRocks::kMaxType; k++) {
 
-			rockParameters_[i].rocks_[k] = 0;
+			/*rockParameters_[i].rocks_[k] = 0;*/
+			rockParameter_.rocks_[k] = 0;
 
 		}
 
@@ -274,7 +275,7 @@ void Player::UpdateUI() {
 
 			int32_t divide = int32_t(std::pow(10, 5 - 1 - i));
 
-			num = rockParameters_[currentCharacters_].rocks_[height] / divide;
+			num = rockParameter_.rocks_[height] / divide;
 
 			numbers_[height][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
 
@@ -694,7 +695,7 @@ void Player::Enhance() {
 void Player::MoveLift() {
 
 	//地面についている時のみ反応する
-	if (input_->TriggerButton(Input::Button::A) && parameters_[currentCharacters_]->Jump_.canJump) {
+	if (input_->TriggerButton(Input::Button::DPAD_UP) && parameters_[currentCharacters_]->Jump_.canJump) {
 
 		//左側の場合
 		if (position_.x < Stage::kBasePosition.x) {
@@ -1024,13 +1025,13 @@ void Player::DamageUpdate() {
 		for (int32_t i = 0; i < BringRocks::kMaxType; i++) {
 
 			//1つ以上持っていたら約10%減少させる
-			if (rockParameters_[currentCharacters_].rocks_[i] > 1) {
+			if (rockParameter_.rocks_[i] > 1) {
 
-				rockParameters_[currentCharacters_].rocks_[i] -= (rockParameters_[currentCharacters_].rocks_[i] / 10) + 1;
+				rockParameter_.rocks_[i] -= (rockParameter_.rocks_[i] / 10) + 1;
 
 				//0未満になってしまったら調整
-				if (rockParameters_[currentCharacters_].rocks_[i] < 0) {
-					rockParameters_[currentCharacters_].rocks_[i] = 0;
+				if (rockParameter_.rocks_[i] < 0) {
+					rockParameter_.rocks_[i] = 0;
 				}
 
 			}
