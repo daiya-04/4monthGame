@@ -34,8 +34,8 @@ UpgradeSystem::UpgradeSystem()
 	furnace_.reset(Object2d::Create(furnaceTexture_, {Block::kBlockSize_ * 19.5f, Block::kBlockSize_ * 2.5f}));
 	furnace_->SetSize({ Block::kBlockSize_ * 2.0f,Block::kBlockSize_ * 4.0f });
 	backSprite_.reset(Sprite::Create(backTexture_, UIBottomPosition_));
-	sendRockSprite_.reset(Sprite::Create(sendRockTexture_, UITopPosition_));
-	powerSprite_.reset(Sprite::Create(upgradeTexture_, UIMiddlePosition_));
+	sendRockSprite_.reset(Sprite::Create(sendIntervalTexture_, UITopPosition_));
+	powerSprite_.reset(Sprite::Create(powerTexture_, UIMiddlePosition_));
 
 	//数字リセット
 	for (int32_t y = 0; y < 2; y++) {
@@ -49,7 +49,7 @@ UpgradeSystem::UpgradeSystem()
 				xPosition = 900.0f;
 			}
 			else {
-				xPosition = 1000.0f;
+				xPosition = 1050.0f;
 			}
 
 			if (x < 2) {
@@ -59,7 +59,7 @@ UpgradeSystem::UpgradeSystem()
 				yPosition = 100.0f + 200 * (y + 1);
 			}
 
-			for (int32_t i = 0; i < 2; i++) {
+			for (int32_t i = 0; i < kMaxDigits_; i++) {
 
 				numbers_[y][x][i].reset(Sprite::Create(numberTexture_, { xPosition + 24.0f * i , yPosition }));
 				numbers_[y][x][i]->SetSize({ 32.0f,32.0f });
@@ -74,7 +74,7 @@ UpgradeSystem::UpgradeSystem()
 		}
 
 	}
-	
+
 }
 
 UpgradeSystem::~UpgradeSystem()
@@ -87,15 +87,11 @@ void UpgradeSystem::Initialize(int32_t stageNum) {
 
 	LoadData(stageNum);
 
-	sendRockLevel_ = 0;
+	saunaLevel_ = 0;
 
 	for (int32_t i = 0; i < 2; i++) {
 		powerLevel_[i] = 0;
 	}
-
-	sendRockCount_ = 0;
-	sendInterval_ = 150;
-	sendCoolTime_ = 0;
 
 	isActive_ = false;
 
@@ -107,141 +103,146 @@ void UpgradeSystem::Update() {
 
 	if (isActive_ && preIsActive_) {
 
+		Upgrade();
+
+		sendRockSprite_->SetTextureHandle(sendIntervalTexture_);
+		powerSprite_->SetTextureHandle(powerTexture_);
+
 		//選択したものによって処理を切り替え
-		if (isActiveUpgrade_) {
+		//if (isActiveUpgrade_) {
 
-			switch (type_)
-			{
-			default:
-			case UpgradeSystem::kSendRock:
+		//	switch (type_)
+		//	{
+		//	default:
+		//	case UpgradeSystem::kSendRock:
 
-				SendRock();
+		//		SendRock();
 
-				break;
+		//		break;
 
-			case UpgradeSystem::kUpgrade:
+		//	case UpgradeSystem::kUpgrade:
 
-				Upgrade();
+		//		Upgrade();
 
-				break;
+		//		break;
 
-			}
+		//	}
 
-			sendRockSprite_->SetTextureHandle(sendIntervalTexture_);
-			powerSprite_->SetTextureHandle(powerTexture_);
+		//	sendRockSprite_->SetTextureHandle(sendIntervalTexture_);
+		//	powerSprite_->SetTextureHandle(powerTexture_);
 
-		}
-		else {
+		//}
+		//else {
 
-			if (input_->TriggerLStick(Input::Stick::Up)) {
+		//	if (input_->TriggerLStick(Input::Stick::Up)) {
 
-				switch (type_)
-				{
-				case UpgradeSystem::kUpgrade:
-					type_ = kSendRock;
-					break;
-				case UpgradeSystem::kReturn:
-					type_ = kUpgrade;
-					break;
-				default:
-					break;
-				}
+		//		switch (type_)
+		//		{
+		//		case UpgradeSystem::kUpgrade:
+		//			type_ = kSendRock;
+		//			break;
+		//		case UpgradeSystem::kReturn:
+		//			type_ = kUpgrade;
+		//			break;
+		//		default:
+		//			break;
+		//		}
 
-			}
-			else if (input_->TriggerLStick(Input::Stick::Down)) {
+		//	}
+		//	else if (input_->TriggerLStick(Input::Stick::Down)) {
 
-				switch (type_)
-				{
-				case UpgradeSystem::kSendRock:
-					type_ = kUpgrade;
-					break;
-				case UpgradeSystem::kUpgrade:
-					type_ = kReturn;
-					break;
-				default:
-					break;
-				}
+		//		switch (type_)
+		//		{
+		//		case UpgradeSystem::kSendRock:
+		//			type_ = kUpgrade;
+		//			break;
+		//		case UpgradeSystem::kUpgrade:
+		//			type_ = kReturn;
+		//			break;
+		//		default:
+		//			break;
+		//		}
 
-			}
+		//	}
 
-			if (input_->TriggerButton(Input::Button::A)) {
+		//	if (input_->TriggerButton(Input::Button::A)) {
 
-				switch (type_)
-				{
-				default:
-				case UpgradeSystem::kSendRock:
+		//		switch (type_)
+		//		{
+		//		default:
+		//		case UpgradeSystem::kSendRock:
 
-					isActiveUpgrade_ = true;
+		//			isActiveUpgrade_ = true;
 
-					break;
-				
-				case UpgradeSystem::kUpgrade:
+		//			break;
+		//		
+		//		case UpgradeSystem::kUpgrade:
 
-					isActiveUpgrade_ = true;
+		//			isActiveUpgrade_ = true;
 
-					break;
-				
-				case UpgradeSystem::kReturn:
+		//			break;
+		//		
+		//		case UpgradeSystem::kReturn:
 
-					isActive_ = false;
-					type_ = kSendRock;
+		//			isActive_ = false;
+		//			type_ = kSendRock;
 
-					break;
-				
-				}
+		//			break;
+		//		
+		//		}
 
-			}
+		//	}
 
-			//UIの動き付け
-			switch (type_)
-			{
-			default:
-			case UpgradeSystem::kSendRock:
+		//	//UIの動き付け
+		//	switch (type_)
+		//	{
+		//	default:
+		//	case UpgradeSystem::kSendRock:
 
-				backSprite_->SetPosition({ 1000.0f,600.0f });
-				sendRockSprite_->SetPosition({ 950.0f,200.0f });
-				powerSprite_->SetPosition({ 1000.0f,400.0f });
+		//		backSprite_->SetPosition({ 1000.0f,600.0f });
+		//		sendRockSprite_->SetPosition({ 950.0f,200.0f });
+		//		powerSprite_->SetPosition({ 1000.0f,400.0f });
 
-				break;
+		//		break;
 
-			case UpgradeSystem::kUpgrade:
+		//	case UpgradeSystem::kUpgrade:
 
-				backSprite_->SetPosition({ 1000.0f,600.0f });
-				sendRockSprite_->SetPosition({ 1000.0f,200.0f });
-				powerSprite_->SetPosition({ 950.0f,400.0f });
+		//		backSprite_->SetPosition({ 1000.0f,600.0f });
+		//		sendRockSprite_->SetPosition({ 1000.0f,200.0f });
+		//		powerSprite_->SetPosition({ 950.0f,400.0f });
 
-				break;
+		//		break;
 
-			case UpgradeSystem::kReturn:
+		//	case UpgradeSystem::kReturn:
 
-				backSprite_->SetPosition({ 950.0f,600.0f });
-				sendRockSprite_->SetPosition({ 1000.0f,200.0f });
-				powerSprite_->SetPosition({ 1000.0f,400.0f });
+		//		backSprite_->SetPosition({ 950.0f,600.0f });
+		//		sendRockSprite_->SetPosition({ 1000.0f,200.0f });
+		//		powerSprite_->SetPosition({ 1000.0f,400.0f });
 
-				break;
+		//		break;
 
-			}
+		//	}
 
-			sendRockSprite_->SetTextureHandle(sendRockTexture_);
-			powerSprite_->SetTextureHandle(upgradeTexture_);
+		//	sendRockSprite_->SetTextureHandle(sendRockTexture_);
+		//	powerSprite_->SetTextureHandle(upgradeTexture_);
 
-		}
+		//}
 
 		//数字の更新
 		for (int32_t y = 0; y < 2; y++) {
 
 			for (int32_t x = 0; x < 4; x++) {
 
-				for (int32_t i = 0; i < 2; i++) {
+				for (int32_t i = 0; i < kMaxDigits_; i++) {
 
 					int32_t num = 0;
 
-					int32_t divide = int32_t(std::pow(10, 2 - 1 - i));
+					int32_t divide = int32_t(std::pow(10, kMaxDigits_ - 1 - i));
 
 					//岩送りの数字
 					if (y == 0) {
 
-						num = sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kRock] / divide;
+						num = saunaUpgradeNeeds_[saunaLevel_][x] / divide;
 
 						numbers_[y][x][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
 
@@ -249,7 +250,7 @@ void UpgradeSystem::Update() {
 					////採掘力の数字
 					else {
 
-						num = powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRock] / divide;
+						num = powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][x] / divide;
 
 						numbers_[y][x][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
 
@@ -265,49 +266,49 @@ void UpgradeSystem::Update() {
 	//強化画面を開いていない時はゲームの更新をする
 	else {
 
-		sendRocks_->ClearUseCount();
+		//sendRocks_->ClearUseCount();
 
-		if (sendRockCount_ > 0) {
+		//if (sendRockCount_ > 0) {
 
-			if (--sendCoolTime_ <= 0) {
+		//	if (--sendCoolTime_ <= 0) {
 
-				positions_.push_back(furnace_->position_);
+		//		positions_.push_back(furnace_->position_);
 
-				sendCoolTime_ = sendInterval_;
-				sendRockCount_--;
+		//		sendCoolTime_ = sendInterval_;
+		//		sendRockCount_--;
 
-			}
+		//	}
 
-		}
-		else {
+		//}
+		//else {
 
-			if (sendCoolTime_ > 0) {
-				sendCoolTime_--;
-			}
+		//	if (sendCoolTime_ > 0) {
+		//		sendCoolTime_--;
+		//	}
 
-		}
+		//}
 
-		int32_t popCount = 0;
+		//int32_t popCount = 0;
 
-		for (int32_t i = 0; i < positions_.size(); i++) {
+		//for (int32_t i = 0; i < positions_.size(); i++) {
 
-			positions_[i].y -= sendSpeed_;
-			sendRocks_->AppendObject(positions_[i], { 0.0f,0.0f }, { 32.0f,32.0f });
+		//	positions_[i].y -= sendSpeed_;
+		//	sendRocks_->AppendObject(positions_[i], { 0.0f,0.0f }, { 32.0f,32.0f });
 
-			//一定ラインを超えたら削除カウント追加
-			if (positions_[i].y <= Block::kBlockSize_) {
-				popCount++;
-			}
+		//	//一定ラインを超えたら削除カウント追加
+		//	if (positions_[i].y <= Block::kBlockSize_) {
+		//		popCount++;
+		//	}
 
-		}
+		//}
 
-		for (int32_t i = 0; i < popCount; i++) {
+		//for (int32_t i = 0; i < popCount; i++) {
 
-			//先頭のポジション削除、ゴールカウント増加
-			positions_.erase(positions_.begin());
-			(*goalCount_)++;
+		//	//先頭のポジション削除、ゴールカウント増加
+		//	positions_.erase(positions_.begin());
+		//	(*goalCount_)++;
 
-		}
+		//}
 
 
 
@@ -316,8 +317,6 @@ void UpgradeSystem::Update() {
 }
 
 void UpgradeSystem::SendRock() {
-
-	player_->SendRocks(sendRockCount_);
 
 	isActiveUpgrade_ = false;
 	isActive_ = false;
@@ -331,7 +330,7 @@ void UpgradeSystem::Upgrade() {
 		switch (upgradeType_)
 		{
 		case UpgradeSystem::kUpgrade:
-			upgradeType_ = kSendRock;
+			upgradeType_ = kSauna;
 			break;
 		case UpgradeSystem::kReturn:
 			upgradeType_ = kUpgrade;
@@ -345,7 +344,7 @@ void UpgradeSystem::Upgrade() {
 
 		switch (upgradeType_)
 		{
-		case UpgradeSystem::kSendRock:
+		case UpgradeSystem::kSauna:
 			upgradeType_ = kUpgrade;
 			break;
 		case UpgradeSystem::kUpgrade:
@@ -357,14 +356,23 @@ void UpgradeSystem::Upgrade() {
 
 	}
 
+	//Bボタンで戻れる
+	if (input_->TriggerButton(Input::Button::B)) {
+
+		isActiveUpgrade_ = false;
+		isActive_ = false;
+		upgradeType_ = kSauna;
+
+	}
+
 	if (input_->TriggerButton(Input::Button::A)) {
 
 		switch (upgradeType_)
 		{
 		default:
-		case UpgradeSystem::kSendRock:
+		case UpgradeSystem::kSauna:
 
-			CheckCanUpgrade(kSendRock);
+			CheckCanUpgrade(kSauna);
 
 			break;
 		case UpgradeSystem::kUpgrade:
@@ -375,7 +383,8 @@ void UpgradeSystem::Upgrade() {
 		case UpgradeSystem::kReturn:
 
 			isActiveUpgrade_ = false;
-			upgradeType_ = kSendRock;
+			isActive_ = false;
+			upgradeType_ = kSauna;
 
 			break;
 		}
@@ -385,7 +394,7 @@ void UpgradeSystem::Upgrade() {
 	switch (upgradeType_)
 	{
 	default:
-	case UpgradeSystem::kSendRock:
+	case UpgradeSystem::kSauna:
 
 		backSprite_->SetPosition({ 1000.0f,600.0f });
 		sendRockSprite_->SetPosition({ 950.0f,200.0f });
@@ -418,28 +427,29 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 	switch (type)
 	{
 	default:
-	case UpgradeSystem::kSendRock:
+	case UpgradeSystem::kSauna:
 
-		if (sendRockLevel_ < kMaxLevel_) {
+		if (saunaLevel_ < kMaxLevel_) {
 
 			//条件を満たしていたらブロックを消費して強化
 			if (player_->GetRockParameter().rocks_[Player::BringRocks::kRock] >=
-				sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kRock] &&
+				saunaUpgradeNeeds_[saunaLevel_][Player::BringRocks::kRock] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kBlue] >=
-				sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kBlue] &&
+				saunaUpgradeNeeds_[saunaLevel_][Player::BringRocks::kBlue] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kGreen] >=
-				sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kGreen] &&
+				saunaUpgradeNeeds_[saunaLevel_][Player::BringRocks::kGreen] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kRed] >=
-				sendRockUpgradeNeeds_[sendRockLevel_][Player::BringRocks::kRed]) {
+				saunaUpgradeNeeds_[saunaLevel_][Player::BringRocks::kRed]) {
 
 				for (int32_t i = 0; i < Player::BringRocks::kMaxType; i++) {
 
-					player_->GetRockParameter().rocks_[i] -= sendRockUpgradeNeeds_[sendRockLevel_][i];
+					player_->GetRockParameter().rocks_[i] -= saunaUpgradeNeeds_[saunaLevel_][i];
 
 				}
 
-				sendInterval_ -= sendRockUpgradeValue_;
-				sendRockLevel_++;
+				player_->UpgradeSpeed(speedUpgradeValue_);
+				player_->UpgradeDigSpeed(digSpeedUpgradeValue_);
+				saunaLevel_++;
 
 			}
 			else {
@@ -521,7 +531,7 @@ void UpgradeSystem::LoadData(int32_t stageNum) {
 			std::getline(iss, sNum, ',');
 
 			if (k < 4) {
-				sendRockUpgradeNeeds_[i][k] = std::stoi(sNum);
+				saunaUpgradeNeeds_[i][k] = std::stoi(sNum);
 			}
 			else {
 				powerUpgradeNeeds_[i][k - 4] = std::stoi(sNum);
@@ -558,20 +568,16 @@ void UpgradeSystem::DrawUI() {
 
 		backSprite_->Draw();
 
-		if (isActiveUpgrade_ && type_ == kUpgrade) {
+		//数字描画
+		for (int32_t y = 0; y < 2; y++) {
 
-			//数字描画
-			for (int32_t y = 0; y < 2; y++) {
+			for (int32_t x = 0; x < 4; x++) {
 
-				for (int32_t x = 0; x < 4; x++) {
-
-					for (int32_t i = 0; i < 2; i++) {
-						numbers_[y][x][i]->Draw();
-					}
-
-					rocksUI_[y][x]->Draw();
-
+				for (int32_t i = 0; i < kMaxDigits_; i++) {
+					numbers_[y][x][i]->Draw();
 				}
+
+				rocksUI_[y][x]->Draw();
 
 			}
 

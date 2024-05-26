@@ -17,7 +17,7 @@ public:
 	~UpgradeSystem();
 
 	enum SelectType : int32_t {
-		kSendRock, //岩送り
+		kSauna, //岩送り
 		kUpgrade, //強化
 		kReturn, //遊びに戻る
 
@@ -70,43 +70,37 @@ private:
 	bool isActiveUpgrade_ = false;
 
 	//選択画面でどれを選んでいるか
-	SelectType type_ = kSendRock;
+	SelectType type_ = kSauna;
 
 	//強化画面でどれを選んでいるか
-	SelectType upgradeType_ = kSendRock;
+	SelectType upgradeType_ = kSauna;
 
-	//ブロックを送る数
-	int32_t sendRockCount_ = 0;
+	//スピード強化量
+	float speedUpgradeValue_ = 0.2f;
 
-	//ブロックを送る時のインターバル
-	int32_t sendInterval_ = 150;
-
-	//岩送り強化量
-	int32_t  sendRockUpgradeValue_ = 10;
+	//採掘速度強化量
+	int32_t digSpeedUpgradeValue_ = 1;
 
 	//パワー強化量
 	int32_t powerUpgradeValue_ = 1;
 
-	//クールタイム
-	int32_t sendCoolTime_ = 0;
-
 	//ブロック座標
 	std::vector<Vector2> positions_;
-
-	//ブロックの速度
-	float sendSpeed_ = 3.0f;
 	
 	//最大レベル
 	static const int32_t kMaxLevel_ = 10;
 
 	//強化に必要な岩数
-	std::array<std::array<int32_t, 4>, kMaxLevel_> sendRockUpgradeNeeds_;
+	std::array<std::array<int32_t, 4>, kMaxLevel_> saunaUpgradeNeeds_;
 	std::array<std::array<int32_t, 4>, kMaxLevel_> powerUpgradeNeeds_;
 
 	//強化レベル
-	int32_t sendRockLevel_ = 0;
+	int32_t saunaLevel_ = 0;
 
 	std::array<int32_t, 2> powerLevel_ = { 0,0 };
+
+	//有効桁
+	static const int32_t kMaxDigits_ = 3;
 
 	//--------------UI関連---------------------
 
@@ -118,7 +112,7 @@ private:
 	std::unique_ptr<Sprite> sendRockSprite_;
 	std::unique_ptr<Sprite> powerSprite_;
 
-	std::array<std::array<std::array<std::unique_ptr<Sprite>, 2>, 4>, 2> numbers_;
+	std::array<std::array<std::array<std::unique_ptr<Sprite>, kMaxDigits_>, 4>, 2> numbers_;
 
 	std::array<std::array<std::unique_ptr<Sprite>, 4>, 2> rocksUI_;
 

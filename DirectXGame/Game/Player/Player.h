@@ -252,6 +252,22 @@ public:
 	//岩カウント加算
 	void AddRockCount(int32_t addNum = 1) { rockParameter_.rocks_[BringRocks::kRock] += addNum; }
 
+	//速度強化
+	void UpgradeSpeed(float addNum) { 
+
+		parameters_[currentCharacters_]->speed_ += addNum;
+		parameters_[currentCharacters_]->maxMoveSpeed_ += addNum * 1.0f;
+
+		parameters_[currentCharacters_]->maxMoveSpeed_ = std::clamp(parameters_[currentCharacters_]->maxMoveSpeed_, 0.0f, 30.0f);
+
+	}
+
+	//採掘速度強化
+	void UpgradeDigSpeed(int32_t addNum) { 
+		parameters_[currentCharacters_]->dig_.digInterval -= addNum;
+		parameters_[currentCharacters_]->dig_.digInterval = std::clamp(parameters_[currentCharacters_]->dig_.digInterval, 1, 60);
+	}
+
 	//パワーーー！！！を強化
 	void UpgradePower(int32_t addNum) { parameters_[currentCharacters_]->dig_.digPower += addNum; }
 
