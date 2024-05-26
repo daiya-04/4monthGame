@@ -91,6 +91,8 @@ private: //メンバ変数
 
 	Vector2 texSize_ = { 100.0f,100.0f };
 
+	bool isDraw_ = true;
+
 public: //メンバ関数
 	
 	Sprite(uint32_t textureHandle, Vector2 position, float scale = 1.0f, Vector2 anchorpoint = {0.5f,0.5f}, Vector4 color = {1.0f,1.0f,1.0f,1.0f}, float rotate = 0.0f);
@@ -116,6 +118,10 @@ public: //メンバ関数
 	void SetTextureArea(const Vector2& texBase, const Vector2& texSize);
 	//
 	void SetTextureHandle(uint32_t textureHandle) { textureHandle_ = textureHandle; }
+	//描画on
+	void DrawOn() { isDraw_ = true; }
+	//描画off
+	void DrawOff() { isDraw_ = false; }
 
 	//座標の取得
 	const Vector2& GetPosition() const { return position_; }

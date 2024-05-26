@@ -57,6 +57,8 @@ void StageSelectScene::Init() {
 	uis_["LArrow"]->SetSize({ 64.0f,64.0f });
 	uis_["LArrow"]->SetTextureArea({}, { 64.0f,64.0f });
 
+	uis_["BButton"]->SetScale(0.6f);
+
 	///
 
 	score_.Init(scorePos_, { 48.0f,48.0f });

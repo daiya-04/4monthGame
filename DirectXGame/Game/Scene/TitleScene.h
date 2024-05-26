@@ -42,6 +42,14 @@ public:
 
 	void ApplyGlobalVariables();
 
+	void FloatingGimmickInit();
+
+	void FloatingGimmickUpdate();
+
+	void ButtonEffectInit();
+
+	void ButtonEffectUpdate();
+
 private:
 
 	const std::string dataName = "TitleUI";
@@ -55,7 +63,31 @@ private:
 
 	std::unordered_map<std::string, std::unique_ptr<Sprite>> uis_;
 
+	uint32_t circleTex_ = 0;
+	std::unique_ptr<Sprite> circle_;
+
 	std::unique_ptr<Option> option_;
+
+	Vector2 titlePos_{};
+
+	struct WorkFloating {
+		float param_ = 0.0f;
+		//振幅
+		float amplitude_ = 1.0f;
+		//サイクル<frame>
+		int32_t cycle_ = 60;
+	};
+
+	struct WorkButtonEffect {
+		float param_ = 0.0f;
+		float alpha_ = 1.0f;
+		float scale_ = 1.0f;
+	};
+
+	WorkFloating workFloating_;
+	WorkButtonEffect buttonEffect_;
+
+	bool isOpening_ = true;
 
 private:
 
