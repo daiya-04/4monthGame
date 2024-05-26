@@ -381,6 +381,11 @@ private:
 	//俯瞰視点のターゲット座標
 	Vector2 birdsEyePosition_{};
 
+	//死んだ場所
+	Vector2 deadPosition_{};
+	//再開地点
+	Vector2 restartPosition_{};
+
 	//プレイヤー画像
 	std::array<uint32_t, kMaxPlayer> texture_;
 	std::array<uint32_t, kMaxPlayer> textureUp_;
@@ -425,6 +430,10 @@ private:
 
 	//死亡フラグ
 	bool isDead_ = false;
+	//再スタートまでのタイマー
+	int32_t respwanTimer_ = 0;
+	//再スタートにかかる時間
+	int32_t respawnCoolTime_ = 60;
 
 	//クリアフラグ
 	bool isClear_ = false;

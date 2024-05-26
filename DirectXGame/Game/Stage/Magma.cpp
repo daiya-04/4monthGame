@@ -65,14 +65,11 @@ void Magma::Update() {
 		ResetMagma();
 	}*/
 
-	//温泉より下にいたら石を定期的に落としてしまう
-	if (player_->GetPosition().y >= currentMagmaLine_) {
+	//マグマに当たったらスタートに戻る
+	if (player_->GetPosition(Player::kLeftBottom).y >= currentMagmaLine_) {
 		player_->DamageUpdate();
 	}
-	else {
-		player_->HealUpdate();
-	}
-
+	
 	//採掘中と帰還中でストーカー速度を変更
 	if (player_->GetIsMine()) {
 

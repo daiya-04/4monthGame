@@ -281,8 +281,15 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 	backGround_->Draw();
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	player_->Draw(*camera_.get());
+
+	//
+	if (!player_->GetIsDead()) {
+		player_->Draw(*camera_.get());
+	}
 	stage_->Draw();
+	if (player_->GetIsDead()) {
+		player_->Draw(*camera_.get());
+	}
 
 	//snowManager_->Draw();
 	heatHazeManager_->PostDrawMagma(commandList_);
@@ -300,8 +307,15 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	backGround_->Draw();
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	player_->Draw(*camera_.get());
+	
+	if (!player_->GetIsDead()) {
+		player_->Draw(*camera_.get());
+	}
 	stage_->Draw();
+	if (player_->GetIsDead()) {
+		player_->Draw(*camera_.get());
+	}
+
 	heatHazeManager_->PostDraw(commandList_);
 
 	//取得したシーンに対して描画

@@ -4,6 +4,7 @@
 #include "Game/Block/Block.h"
 #include "Scroll/Scroll.h"
 #include "GlobalVariables.h"
+#include "Easing.h"
 
 Player::Player()
 {
@@ -145,7 +146,10 @@ void Player::SetOnBase() {
 	position_ = Stage::kBasePosition;
 	birdsEyePosition_ = position_;
 	isDead_ = false;
+	currentAnimationNum_ = 0;
+	animationTime_ = 0;
 	damageTimer_ = 120;
+	respwanTimer_ = 0;
 
 }
 
@@ -241,6 +245,19 @@ void Player::Update() {
 		//死亡時処理
 		else if (isDead_ && !isClear_) {
 
+			float t = Easing::easeInSine((float(respawnCoolTime_) - float(respwanTimer_)) / float(respawnCoolTime_));
+
+			//座標の更新
+			position_.x = Lerp(t, deadPosition_.x, restartPosition_.x);
+			position_.y = Lerp(t, deadPosition_.y, restartPosition_.y);
+
+			UpdatePosition();
+
+			if (--respwanTimer_ <= 0) {
+				isDead_ = false;
+				position_ = restartPosition_;
+			}
+
 		}
 		//拠点待機中の処理
 		else {
@@ -306,9 +323,9 @@ void Player::DrawUI() {
 
 	}
 
-	if (isDead_) {
+	/*if (isDead_) {
 		deadSprite_->Draw();
-	}
+	}*/
 
 }
 
@@ -695,7 +712,7 @@ void Player::Enhance() {
 void Player::MoveLift() {
 
 	//地面についている時のみ反応する
-	if (input_->TriggerButton(Input::Button::DPAD_UP) && parameters_[currentCharacters_]->Jump_.canJump) {
+	if (input_->TriggerLStick(Input::Stick::Up) && parameters_[currentCharacters_]->Jump_.canJump) {
 
 		//左側の場合
 		if (position_.x < Stage::kBasePosition.x) {
@@ -909,145 +926,190 @@ void Player::UpdatePosition() {
 		return;
 	}
 
-	switch (moveType_)
-	{
-	default:
-	case Player::kNormal:
+	//死んでる時は当たり判定を無視
+	if (isDead_) {
 
-		//左右速度の制限
-		if (std::fabsf(velocity_.x) > parameters_[currentCharacters_]->maxMoveSpeed_) {
+		object_->position_ = position_;
 
-			if (velocity_.x > 0.0f) {
-				velocity_.x = parameters_[currentCharacters_]->maxMoveSpeed_;
-			}
-			else {
-				velocity_.x = -parameters_[currentCharacters_]->maxMoveSpeed_;
-			}
+		//4頂点の座標を更新
+		leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeX_ };
+		rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
+		leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
+		rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
 
-		}
-
-		//壁キックの左右速度調整
-		if (std::fabsf(wallJumpVelocity_.x) > 1.0f) {
-
-			if (wallJumpVelocity_.x > 0.0f) {
-				wallJumpVelocity_.x -= 0.3f;
-			}
-			else {
-				wallJumpVelocity_.x += 0.3f;
-			}
-
-		}
-		else {
-			wallJumpVelocity_.x = 0.0f;
-		}
-
-		//左右移動の合計速度が上限を超えないように制限
-		if (std::fabsf(wallJumpVelocity_.x + velocity_.x) > parameters_[currentCharacters_]->maxMoveSpeed_) {
-
-			if (wallJumpVelocity_.x + velocity_.x > 0.0f) {
-				velocity_.x = parameters_[currentCharacters_]->maxMoveSpeed_ - wallJumpVelocity_.x;
-			}
-			else {
-				velocity_.x = -parameters_[currentCharacters_]->maxMoveSpeed_ - wallJumpVelocity_.x;
-			}
-
-		}
-
-		//落下処理
-		if (velocity_.y < kMaxFallSpeed_) {
-
-			velocity_.y += kGravityFallSpeed_;
-
-			//下限値を超えないように調整
-			if (velocity_.y > kMaxFallSpeed_) {
-				velocity_.y = kMaxFallSpeed_;
-			}
-
-		}
-
-		//壁キック可能時(壁ずりしている時)、下方向の落下速度を減少させる
-		if (parameters_[currentCharacters_]->wallJump_.canWallJump) {
-
-			velocity_.y *= 0.6f;
-
-		}
-
-		break;
-	case Player::kLine:
-
-		//規定の高さを超えると強制的に解除
-		if (position_.y < Block::kBlockSize_ * 5.0f) {
-			velocity_ = { 0.0f,0.0f };
-			wallJumpVelocity_ = { 0.0f,0.0f };
-			moveType_ = kNormal;
-		}
-
-		break;
 	}
+	else {
 
-	position_.x = std::clamp(position_.x, float(Block::kBlockHalfSize_ * 0.0f), float(Block::kBlockSize_ * (Stage::kMaxStageWidth_ - 1)));
+		switch (moveType_)
+		{
+		default:
+		case Player::kNormal:
 
-	tmpPosition_ = position_;
+			//左右速度の制限
+			if (std::fabsf(velocity_.x) > parameters_[currentCharacters_]->maxMoveSpeed_) {
 
-	tmpPosition_ += velocity_ + wallJumpVelocity_;
+				if (velocity_.x > 0.0f) {
+					velocity_.x = parameters_[currentCharacters_]->maxMoveSpeed_;
+				}
+				else {
+					velocity_.x = -parameters_[currentCharacters_]->maxMoveSpeed_;
+				}
 
-	//4頂点の座標を更新
-	leftTop_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
-	rightTop_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y - kPlayerHalfSizeY_ };
-	leftBottom_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
-	rightBottom_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+			}
 
-	//仮の当たり判定更新
-	collision_.min = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
-	collision_.max = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+			//壁キックの左右速度調整
+			if (std::fabsf(wallJumpVelocity_.x) > 1.0f) {
 
-	CheckCollision();
+				if (wallJumpVelocity_.x > 0.0f) {
+					wallJumpVelocity_.x -= 0.3f;
+				}
+				else {
+					wallJumpVelocity_.x += 0.3f;
+				}
 
-	position_ = tmpPosition_;
+			}
+			else {
+				wallJumpVelocity_.x = 0.0f;
+			}
 
-	object_->position_ = position_;
+			//左右移動の合計速度が上限を超えないように制限
+			if (std::fabsf(wallJumpVelocity_.x + velocity_.x) > parameters_[currentCharacters_]->maxMoveSpeed_) {
 
-	//4頂点の座標を更新
-	leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeX_ };
-	rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
-	leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
-	rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
+				if (wallJumpVelocity_.x + velocity_.x > 0.0f) {
+					velocity_.x = parameters_[currentCharacters_]->maxMoveSpeed_ - wallJumpVelocity_.x;
+				}
+				else {
+					velocity_.x = -parameters_[currentCharacters_]->maxMoveSpeed_ - wallJumpVelocity_.x;
+				}
+
+			}
+
+			//落下処理
+			if (velocity_.y < kMaxFallSpeed_) {
+
+				velocity_.y += kGravityFallSpeed_;
+
+				//下限値を超えないように調整
+				if (velocity_.y > kMaxFallSpeed_) {
+					velocity_.y = kMaxFallSpeed_;
+				}
+
+			}
+
+			//壁キック可能時(壁ずりしている時)、下方向の落下速度を減少させる
+			if (parameters_[currentCharacters_]->wallJump_.canWallJump) {
+
+				velocity_.y *= 0.6f;
+
+			}
+
+			break;
+		case Player::kLine:
+
+			//規定の高さを超えると強制的に解除
+			if (position_.y < Block::kBlockSize_ * 5.0f) {
+				velocity_ = { 0.0f,0.0f };
+				wallJumpVelocity_ = { 0.0f,0.0f };
+				moveType_ = kNormal;
+			}
+
+			break;
+		}
+
+		position_.x = std::clamp(position_.x, float(Block::kBlockHalfSize_ * 0.0f), float(Block::kBlockSize_ * (Stage::kMaxStageWidth_ - 1)));
+
+		tmpPosition_ = position_;
+
+		tmpPosition_ += velocity_ + wallJumpVelocity_;
+
+		//4頂点の座標を更新
+		leftTop_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
+		rightTop_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y - kPlayerHalfSizeY_ };
+		leftBottom_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+		rightBottom_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+
+		//仮の当たり判定更新
+		collision_.min = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
+		collision_.max = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+
+		CheckCollision();
+
+		position_ = tmpPosition_;
+
+		object_->position_ = position_;
+
+		//4頂点の座標を更新
+		leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeX_ };
+		rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
+		leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
+		rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
+
+	}
 
 }
 
 void Player::DamageUpdate() {
 
-	//一定間隔ごとにダメージを受ける
-	if (--damageTimer_ <= 0) {
+	if (!isDead_) {
 
-		damageTimer_ = 120;
+		//死に場所記録
+		deadPosition_ = position_;
 
-		for (int32_t i = 0; i < BringRocks::kMaxType; i++) {
+		//スタート地点に戻る
 
-			//1つ以上持っていたら約10%減少させる
-			if (rockParameter_.rocks_[i] > 1) {
 
-				rockParameter_.rocks_[i] -= (rockParameter_.rocks_[i] / 10) + 1;
+		//左側の場合
+		if (position_.x < Stage::kBasePosition.x) {
 
-				//0未満になってしまったら調整
-				if (rockParameter_.rocks_[i] < 0) {
-					rockParameter_.rocks_[i] = 0;
-				}
+			restartPosition_.x = 10.5f * Block::kBlockSize_;
+			restartPosition_.y = 4.0f * Block::kBlockSize_;
 
-			}
+		}
+		//右側の場合
+		else {
+
+			restartPosition_.x = 28.5f * Block::kBlockSize_;
+			restartPosition_.y = 4.0f * Block::kBlockSize_;
 
 		}
 
+		isDead_ = true;
+		//タイマー設定
+		respwanTimer_ = respawnCoolTime_;
+
+
 	}
+	//一定間隔ごとにダメージを受ける
+	//if (--damageTimer_ <= 0) {
+
+	//	damageTimer_ = 120;
+
+	//	for (int32_t i = 0; i < BringRocks::kMaxType; i++) {
+
+	//		//1つ以上持っていたら約10%減少させる
+	//		if (rockParameter_.rocks_[i] > 1) {
+
+	//			rockParameter_.rocks_[i] -= (rockParameter_.rocks_[i] / 10) + 1;
+
+	//			//0未満になってしまったら調整
+	//			if (rockParameter_.rocks_[i] < 0) {
+	//				rockParameter_.rocks_[i] = 0;
+	//			}
+
+	//		}
+
+	//	}
+
+	//}
 
 }
 
 void Player::HealUpdate() {
 
 	//ダメージを受ける間隔を回復させる
-	if (damageTimer_ < 120) {
+	/*if (damageTimer_ < 120) {
 		damageTimer_++;
-	}
+	}*/
 
 }
 
