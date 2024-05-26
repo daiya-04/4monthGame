@@ -25,13 +25,13 @@ void BaseBlock::Break(int32_t power) {
 			if (type_ == kMagma || type_ == kSnow) {
 				player_->AddRockCount(defaultDurability_ / 3 + 1);
 			}
-			else if (type_ == kSpeedBlock) {
+			else if (type_ == kBlueBlock) {
 				player_->AddBlueRock();
 			}
-			else if (type_ == kDigerBlock) {
+			else if (type_ == kGreenBlock) {
 				player_->AddGreenRock();
 			}
-			else if (type_ == kDigPowerBlock) {
+			else if (type_ == kRedBlock) {
 				player_->AddRedRock();
 			}
 			else if (type_ == kDownMagma) {
@@ -71,7 +71,6 @@ Block::Block(const Vector2& position, BlockType type)
 {	
 
 	type_ = type;
-	texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
 	position_ = position;
 	/*object_.reset(Object2d::Create(texture_, position_));*/
 	digSE_ = AudioManager::GetInstance()->Load("SE/dig.wav");
@@ -85,7 +84,6 @@ Block::~Block()
 void Block::Initialize(const Vector2& position, BlockType type) {
 
 	type_ = type;
-	texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
 	position_ = position;
 
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };

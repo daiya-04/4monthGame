@@ -243,7 +243,7 @@ void Player::Update() {
 
 		}
 		//死亡時処理
-		else if (isDead_ && !isClear_) {
+		else if (isDead_) {
 
 			float t = Easing::easeInSine((float(respawnCoolTime_) - float(respwanTimer_)) / float(respawnCoolTime_));
 

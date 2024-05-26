@@ -37,13 +37,15 @@ public:
 		//連続して壊せる氷ブロック
 		kIceBlock,
 		//速度が速くなるブロック
-		kSpeedBlock,
+		kBlueBlock,
 		//採掘速度が上がるブロック
-		kDigerBlock,
+		kGreenBlock,
 		//破壊力が上昇するブロック
-		kDigPowerBlock,
+		kRedBlock,
 		//マグマを下降させるブロック
 		kDownMagma,
+		//黄金ブロック(クリア条件)
+		kGoldBlock,
 		//ブロックの最大種類
 		kMaxBlock
 
@@ -86,7 +88,6 @@ public:
 	/// <param name="type">変更先のブロックの種類</param>
 	void ChangeType(BlockType type) { 
 		type_ = type;
-		texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
 		//object_->SetTextureHandle(texture_);
 	}
 
