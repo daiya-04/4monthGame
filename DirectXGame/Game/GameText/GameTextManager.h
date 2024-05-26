@@ -51,6 +51,8 @@ public:
 
 private:
 
+	void AppryGlobalVariables();
+
 	//各フェーズ処理
 	void Open();
 	void View();
@@ -66,8 +68,13 @@ private:
 	NineSliceData nineSliceData_;
 	//scale1が1のときのサイズ
 	Vector2 textBoxOriginSize_ = {1000.0f,200.0f};
+	Vector2 nameBackSize_ = {0,0};
+	Vector2 nameBackPosition_ = {0,0};
+
 
 	std::array<std::unique_ptr<Sprite>,9> nineSliceTextureBox_;
+
+	std::unique_ptr<Sprite> nameBack_;//名前ひょうじの背景
 
 	std::unique_ptr<Text> mainText_;//本文
 
@@ -82,4 +89,6 @@ private:
 	float parametric_;//イージング用媒介変数
 
 	bool isEnd_;//終了したか
+
+	const std::string dataName = "GameText";
 };

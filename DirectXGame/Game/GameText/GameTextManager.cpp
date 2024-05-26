@@ -4,11 +4,16 @@
 #include "DirectXCommon.h"
 #include "Easing.h"
 #include "Input.h"
+#include "GlobalVariables.h"
 void GameTextManager::Initialize() {
 	for (size_t i = 0; i < 9;i++) {
 		nineSliceTextureBox_[i].reset(Sprite::Create(TextureManager::GetInstance()->Load("textBox.png"), Vector2{ 0,0 }, 9));
 		nineSliceTextureBox_[i]->SetAnchorpoint({0.0f,0.0f});
 	}
+
+	nameBack_.reset(Sprite::Create(TextureManager::GetInstance()->Load("nameBack.png"), Vector2{ 0,0 }));
+
+
 	nineSliceData_.position = {640.0f,600.0f};
 	textBoxOriginSize_ = {1000.0f,150.0f};
 	phase_ = OPEN;
@@ -18,6 +23,28 @@ void GameTextManager::Initialize() {
 	mainText_->Initialize();
 	next_.reset(new Text);
 	next_->Initialize();
+
+	std::string groupName = "TextLayout";
+
+	GlobalVariables::GetInstance()->CreateGroup(dataName, groupName);
+
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "TextBox-Position", nineSliceData_.position);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "TextBox-Size", textBoxOriginSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "NameBack-Position", nameBackPosition_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "NameBack-Size", nameBackSize_);
+
+	AppryGlobalVariables();
+	nameBack_->SetPosition(nameBackPosition_);
+	nameBack_->SetSize(nameBackSize_);
+}
+
+void GameTextManager::AppryGlobalVariables() {
+	std::string groupName = "TextLayout";
+
+	nineSliceData_.position = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "TextBox-Position");
+	textBoxOriginSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "TextBox-Size");
+	nameBackPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "NameBack-Position");
+	nameBackSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "NameBack-Size");
 }
 
 void GameTextManager::InitializeStage(uint32_t stageNum) {
@@ -52,6 +79,11 @@ void GameTextManager::TestUpdate() {
 }
 
 void GameTextManager::Update() {
+#ifdef _DEBUG
+	AppryGlobalVariables();
+	nameBack_->SetPosition(nameBackPosition_);
+	nameBack_->SetSize(nameBackSize_);
+#endif // _DEBUG
 
 	switch (phase_)
 	{
@@ -127,6 +159,9 @@ void GameTextManager::Draw() {
 		Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 		for (size_t i = 0; i < 9; i++) {
 			nineSliceTextureBox_[i]->Draw();
+		}
+		if (phase_ == VIEW) {
+			nameBack_->Draw();
 		}
 	}
 }
