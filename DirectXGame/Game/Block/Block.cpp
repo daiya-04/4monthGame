@@ -38,6 +38,7 @@ void BaseBlock::Break(int32_t power) {
 				//ラインを1000下げ、300フレーム止める
 				magma_->baseMagmaLine_ += 1000.0f;
 				magma_->freezeTime_ = 300;
+				magma_->easingT_ = 0.0f;
 			}
 			else if (type_ == kGoldBlock) {
 				player_->SetIsClear(true);

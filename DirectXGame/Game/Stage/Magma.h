@@ -35,6 +35,8 @@ public:
 	float magmaSpeed_ = 1.5f;
 	//硬直時間
 	int32_t freezeTime_ = 0;
+	//イージング変数
+	float easingT_ = 0.0f;
 
 private:
 

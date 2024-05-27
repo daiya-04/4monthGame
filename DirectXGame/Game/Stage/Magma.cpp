@@ -2,6 +2,7 @@
 #include "Player/Player.h"
 #include "Stage.h"
 #include "ImGuiManager.h"
+#include "Easing.h"
 
 Magma::Magma()
 {
@@ -24,6 +25,7 @@ void Magma::Initialize() {
 	baseMagmaLine_ = maxMagmaLine_;
 	currentMagmaLine_ = baseMagmaLine_;
 	magmaTexBaseX_ = 0.0f;
+	easingT_ = 0.0f;
 
 }
 
@@ -42,24 +44,25 @@ void Magma::Update() {
 	//採掘中にマグマライン上昇
 	if (player_->GetIsMine()) {
 
-		//硬直時間中は動かない
-		if (freezeTime_ > 0) {
+	}
 
-			freezeTime_--;
+	//硬直時間中は動かない
+	if (freezeTime_ > 0) {
 
-		}
-		else if (baseMagmaLine_ > magmaLimit_) {
-			
-			baseMagmaLine_ -= magmaSpeed_;
+		freezeTime_--;
 
-			//ラインが限界値を超えたら限界値に調整
-			if (baseMagmaLine_ < magmaLimit_) {
-				baseMagmaLine_ = magmaLimit_;
-			}
+	}
+	else if (baseMagmaLine_ > magmaLimit_) {
 
+		baseMagmaLine_ -= magmaSpeed_;
+
+		//ラインが限界値を超えたら限界値に調整
+		if (baseMagmaLine_ < magmaLimit_) {
+			baseMagmaLine_ = magmaLimit_;
 		}
 
 	}
+
 	//サウナ室に戻った時にリセット
 	/*else if (baseMagmaLine_ < maxMagmaLine_) {
 		ResetMagma();
@@ -73,11 +76,41 @@ void Magma::Update() {
 	//採掘中と帰還中でストーカー速度を変更
 	if (player_->GetIsMine()) {
 
-		currentMagmaLine_ += (baseMagmaLine_ - currentMagmaLine_) * 0.05f;
+		if (easingT_ < 1.0f) {
+			
+			easingT_ += 0.05f;
+			
+			if (easingT_ > 1.0f) {
+				easingT_ = 1.0f;
+			}
+
+		}
+
+		float t = Easing::easeOutBack(easingT_);
+
+		currentMagmaLine_ = Lerp(t, currentMagmaLine_, baseMagmaLine_);
+
+		/*currentMagmaLine_ += (baseMagmaLine_ - currentMagmaLine_) * 0.05f;*/
 
 	}
 	else {
-		currentMagmaLine_ += (baseMagmaLine_ - currentMagmaLine_) * 0.005f;
+
+		if (easingT_ < 1.0f) {
+
+			easingT_ += 0.05f;
+
+			if (easingT_ > 1.0f) {
+				easingT_ = 1.0f;
+			}
+
+		}
+
+		float t = Easing::easeOutBack(easingT_);
+
+		currentMagmaLine_ = Lerp(t, currentMagmaLine_, baseMagmaLine_);
+
+		/*currentMagmaLine_ += (baseMagmaLine_ - currentMagmaLine_) * 0.05f;*/
+
 	}
 
 	//テクスチャの動きを付ける
