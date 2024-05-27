@@ -28,12 +28,14 @@ void StageSelectScene::Init() {
 
 	bgTexture_ = TextureManager::Load("backGround/stageSelectBG.png");
 	saunaRoomTex_ = TextureManager::Load("saunaRoom.png");
-	playerTex_ = TextureManager::Load("player/playerBlue.png");
+	playerTex_ = TextureManager::Load("player/playerBlueIdle.png");
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
 
-	player_.reset(Object2d::Create(playerTex_, { 282.0f,586.0f }));
-	player_->SetScale(0.5f);
+	player_.reset(Object2d::Create(playerTex_, { 282.0f,570.0f }));
+	player_->SetSize({ 160.0f,160.0f });
+	player_->SetTextureArea({ 0.0f,0.0f }, { 160.0f,160.0f });
+	player_->SetScale({ -1.0f,1.0f });
 
 	for (size_t index = 0; index < kMaxStage_; index++) {
 		saunaRooms_.emplace_back(Object2d::Create(saunaRoomTex_, {640.0f + 640.0f * index, 650.0f}));
@@ -57,6 +59,8 @@ void StageSelectScene::Init() {
 	uis_["LArrow"]->SetSize({ 64.0f,64.0f });
 	uis_["LArrow"]->SetTextureArea({}, { 64.0f,64.0f });
 
+	uis_["BButton"]->SetScale(0.6f);
+
 	///
 
 	score_.Init(scorePos_, { 48.0f,48.0f });
@@ -67,6 +71,18 @@ void StageSelectScene::Init() {
 void StageSelectScene::Update() {
 	DebugGUI();
 	ApplyGlobalVariables();
+
+	if (mode_ != Mode::Enter) {
+		if (++animationTime_ >= changeFrame_) {
+
+			animationTime_ = 0;
+
+			if (++animationNum_ > 4) {
+				animationNum_ = 0;
+			}
+		}
+	}
+	
 
 	if (modeRequest_) {
 
@@ -98,6 +114,8 @@ void StageSelectScene::Update() {
 			EnterUpdate();
 			break;
 	}
+
+	player_->SetTextureArea({ 160.0f * animationNum_,160.0f }, { 160.0f,160.0f });
 
 	camera_.UpdateViewMatrix();
 }
@@ -282,6 +300,7 @@ void StageSelectScene::EnterInit() {
 
 	moveStartPos_ = player_->position_.x;
 	moveEndPos_ = moveStartPos_ + 400.0f;
+	animationNum_ = 0;
 
 }
 

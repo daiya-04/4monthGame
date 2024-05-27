@@ -62,6 +62,11 @@ private:
 	uint32_t playerTex_ = 0;
 	std::unique_ptr<Object2d> player_;
 
+	int32_t animationTime_ = 0;
+	int32_t changeFrame_ = 4;
+
+	int32_t animationNum_ = 0;
+
 	uint32_t saunaRoomTex_;
 	std::vector<std::unique_ptr<Object2d>> saunaRooms_;
 

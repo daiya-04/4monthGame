@@ -1,6 +1,15 @@
 {
     "StageSelectUI": [
         {
+            "BButton": {
+                "filePath": "BButton.png",
+                "position": [
+                    60.0,
+                    60.0
+                ]
+            }
+        },
+        {
             "LArrow": {
                 "filePath": "RLArrow.png",
                 "position": [
@@ -22,8 +31,8 @@
             "ToTitle": {
                 "filePath": "ToTitle.png",
                 "position": [
-                    193.0,
-                    61.0
+                    250.0,
+                    56.0
                 ]
             }
         },

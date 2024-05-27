@@ -10,6 +10,7 @@
 #include "Input.h"
 #include <random>
 #include <format>
+#include <numbers>
 
 TitleScene::~TitleScene() {}
 
@@ -23,15 +24,47 @@ void TitleScene::Init() {
 	LoadData();
 
 	bgTexture_ = TextureManager::Load("backGround/titleBG.png");
+	circleTex_ = TextureManager::Load("circle.png");
+	saunaRoomTex_ = TextureManager::Load("saunaRoom.png");
+	playerTexes_[0] = TextureManager::Load("player/playerBlueRun.png");
+	playerTexes_[1] = TextureManager::Load("player/playerOrangeRun.png");
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
 
 	option_ = std::make_unique<Option>();
 
+	circle_.reset(Sprite::Create(circleTex_, {}));
+
+	for (size_t index = 0; index < 2; index++) {
+		players_[index].reset(Sprite::Create(playerTexes_[index], {}));
+		players_[index]->SetSize({ 160.0f,160.0f });
+		players_[index]->SetTextureArea({ 0.0f,0.0f }, { 160.0f,160.0f });
+		players_[index]->SetScale(0.9f);
+	}
+
+	players_[0]->SetPosition({ 250.0f,648.0f });
+	players_[1]->SetPosition({ 845.0f,648.0f });
+
+	saunaRoom_.reset(Sprite::Create(saunaRoomTex_, {640.0f,720.0f}));
+	saunaRoom_->SetAnchorpoint({ 0.5f,1.0f });
+	saunaRoom_->SetScale(1.0f);
+
 	uis_["Arrow"]->SetSize({ 64.0f,64.0f });
 	uis_["Arrow"]->SetTextureArea({ 64.0f,64.0f }, { 64.0f,64.0f });
 
+	if (isOpening_) {
+		uis_["Arrow"]->DrawOff();
+		uis_["Exit"]->DrawOff();
+		uis_["Start"]->DrawOff();
+		uis_["Option"]->DrawOff();
+	}
 
+	titlePos_ = uis_["TitleLogo"]->GetPosition();
+
+	circle_->SetPosition(uis_["AButton"]->GetPosition());
+
+	FloatingGimmickInit();
+	ButtonEffectInit();
 }
 
 void TitleScene::Update() {
@@ -69,6 +102,11 @@ void TitleScene::Update() {
 			break;
 	}
 	
+	FloatingGimmickUpdate();
+	if (isOpening_) {
+		ButtonEffectUpdate();
+	}
+	
 
 #ifdef _DEBUG
 
@@ -104,10 +142,15 @@ void TitleScene::DrawParticle() {
 void TitleScene::DrawUI() {
 
 	if (!option_->IsWindow()) {
+		circle_->Draw();
 		for (const auto& ui : uis_) {
 			ui.second->Draw();
 		}
 	}
+
+	players_[0]->Draw();
+	players_[1]->Draw();
+	saunaRoom_->Draw();
 
 	option_->Draw();
 
@@ -121,26 +164,58 @@ void TitleScene::StartInit() {
 
 void TitleScene::StartUpdate() {
 
-	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Start"]->GetPosition().y });
+	
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
-		SceneManager::GetInstance()->ChangeScene("StageSelect");
+		if (isOpening_) {
+			isOpening_ = false;
+			uis_["Arrow"]->DrawOn();
+			uis_["Exit"]->DrawOn();
+			uis_["Start"]->DrawOn();
+			uis_["Option"]->DrawOn();
+			uis_["AButton"]->DrawOff();
+			circle_->DrawOff();
+		}else {
+			SceneManager::GetInstance()->ChangeScene("StageSelect");
+		}
 	}
+
+#ifdef _DEBUG
+
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		if (isOpening_) {
+			isOpening_ = false;
+			uis_["Arrow"]->DrawOn();
+			uis_["Exit"]->DrawOn();
+			uis_["Start"]->DrawOn();
+			uis_["Option"]->DrawOn();
+			uis_["AButton"]->DrawOff();
+			circle_->DrawOff();
+		}
+		else {
+			SceneManager::GetInstance()->ChangeScene("StageSelect");
+		}
+	}
+
+#endif // _DEBUG
+
+	if (isOpening_) { return; }
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Down) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN)) {
 		selectRequest_ = Select::Option;
 	}
 
 #ifdef _DEBUG
-
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		SceneManager::GetInstance()->ChangeScene("StageSelect");
-	}
+	
 	if (Input::GetInstance()->TriggerKey(DIK_DOWN)) {
 		selectRequest_ = Select::Option;
 	}
 
 #endif // _DEBUG
+
+	
+
+	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Start"]->GetPosition().y });
 
 }
 
@@ -268,10 +343,52 @@ void TitleScene::LoadData() {
 }
 
 void TitleScene::ApplyGlobalVariables() {
+#ifdef _DEBUG
+
 	GlobalVariables* gb = GlobalVariables::GetInstance();
 
 	for (const auto& ui : uis_) {
 		ui.second->SetPosition(gb->GetValue<Vector2>(dataName, ui.first, "position"));
 	}
 
+#endif // _DEBUG
+}
+
+void TitleScene::FloatingGimmickInit() {
+
+	workFloating_.param_ = 0.0f;
+
+}
+
+void TitleScene::FloatingGimmickUpdate() {
+
+	const float step = 2.0f * std::numbers::pi_v<float> / (float)workFloating_.cycle_;
+
+	workFloating_.param_ += step;
+
+	workFloating_.param_ = std::fmod(workFloating_.param_, 2.0f * std::numbers::pi_v<float>);
+
+	titlePos_.y += std::sinf(workFloating_.param_) * workFloating_.amplitude_;
+
+	uis_["TitleLogo"]->SetPosition(titlePos_);
+}
+
+void TitleScene::ButtonEffectInit() {
+
+	buttonEffect_.param_ = 0.0f;
+	buttonEffect_.alpha_ = 1.0f;
+
+}
+
+void TitleScene::ButtonEffectUpdate() {
+
+	buttonEffect_.param_ += 0.04f;
+
+	buttonEffect_.param_ = std::fmod(buttonEffect_.param_, 1.0f);
+
+	buttonEffect_.alpha_ = Lerp(buttonEffect_.param_, 1.0f, 0.0f);
+	buttonEffect_.scale_ = Lerp(buttonEffect_.param_, 0.9f, 1.2f);
+
+	circle_->SetColor({ 1.0f,1.0f,1.0f,buttonEffect_.alpha_ });
+	circle_->SetScale(buttonEffect_.scale_);
 }
