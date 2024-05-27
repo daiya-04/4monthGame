@@ -145,6 +145,8 @@ private:
 	std::array<std::unique_ptr<Object2d>, 2> returnObjects_;
 	std::array<Vector2, 2> returnPosition_;
 	std::array<AABB2D, 2> returnArea_;
+	std::unique_ptr<Object2d> returnUI_;
+	bool canReturn_ = false;
 
 	//強化エリア
 	Vector2 upgradePosition_{};
@@ -157,6 +159,7 @@ private:
 	uint32_t returnTex_;
 	uint32_t saunaRoomTex_;
 	uint32_t purposeTex_;
+	uint32_t upTex_;
 
 };
 

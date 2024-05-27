@@ -22,6 +22,7 @@ Stage::Stage()
 	returnTex_ = TextureManager::GetInstance()->Load("stageObject/returnArea.png");
 	saunaRoomTex_ = TextureManager::GetInstance()->Load("stageObject/saunaRoom.png");
 	purposeTex_ = TextureManager::GetInstance()->Load("UI/mokuteki.png");
+	upTex_ = TextureManager::GetInstance()->Load("UI/up.png");
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
@@ -50,6 +51,7 @@ Stage::Stage()
 	returnObjects_[0]->SetSize({ 96.0f * 2.0f, 96.0f });
 	returnObjects_[1].reset(Object2d::Create(returnTex_, returnPosition_[1]));
 	returnObjects_[1]->SetSize({ 96.0f * 2.0f, 96.0f });
+	returnUI_.reset(Object2d::Create(upTex_, returnPosition_[0] + Vector2{ 0.0f,-100.0f }));
 
 	returnArea_[0].max = { returnPosition_[0].x + Block::kBlockSize_, returnPosition_[0].y + Block::kBlockHalfSize_ };
 	returnArea_[0].min = { returnPosition_[0].x - Block::kBlockSize_, returnPosition_[0].y - Block::kBlockHalfSize_ };
@@ -189,14 +191,24 @@ void Stage::Update() {
 
 void Stage::CheckCollision() {
 
-	for (int32_t i = 0; i < 2; i++) {
+	if (IsCollision(returnArea_[0], player_->GetCollision())) {
 
-		if (IsCollision(returnArea_[i], player_->GetCollision())) {
+		player_->MoveLift();
+		canReturn_ = true;
 
-			player_->MoveLift();
+		returnUI_->position_ = returnPosition_[0] + Vector2{ 0.0f,-100.0f };
 
-		}
+	}
+	else if (IsCollision(returnArea_[1], player_->GetCollision())) {
 
+		player_->MoveLift();
+		canReturn_ = true;
+
+		returnUI_->position_ = returnPosition_[1] + Vector2{ 0.0f,-100.0f };
+
+	}
+	else {
+		canReturn_ = false;
 	}
 
 	//特定エリアでボタンを押したら強化画面に移行
@@ -238,6 +250,10 @@ void Stage::Draw() {
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
 		returnObjects_[i]->Draw(*camera_);
+	}
+
+	if (canReturn_) {
+		returnUI_->Draw(*camera_);
 	}
 
 	upgradeSystem_->Draw(*camera_);
