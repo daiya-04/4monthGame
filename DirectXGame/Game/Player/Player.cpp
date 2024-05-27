@@ -1064,7 +1064,7 @@ void Player::DamageUpdate() {
 
 
 		//左側の場合
-		if (position_.x < Stage::kBasePosition.x) {
+		if (currentCharacters_ == kLeftPlayer) {
 
 			restartPosition_.x = 10.5f * Block::kBlockSize_;
 			restartPosition_.y = 4.0f * Block::kBlockSize_;
