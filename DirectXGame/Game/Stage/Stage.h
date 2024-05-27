@@ -98,6 +98,8 @@ private:
 	//当たり判定関連
 	void CheckCollision();
 
+	void RespawnBlock(Block::BlockType type);
+
 private:
 
 	Player* player_;
@@ -115,6 +117,9 @@ private:
 
 	std::unique_ptr<UpgradeSystem> upgradeSystem_;
 
+	//再生成するブロックを纏めたもの
+	std::vector<std::array<uint32_t, 2>> respawnBlocks_;
+
 	//マップ
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
 
@@ -124,6 +129,9 @@ private:
 	int32_t goalRockCount_ = 100;
 
 	bool isClear_ = false;
+
+	//再生成フラグ
+	bool isRespawn_ = false;
 
 	//数字の表示フラグ
 	std::array<bool, kMaxNumbers_> isActiveNumber_{};

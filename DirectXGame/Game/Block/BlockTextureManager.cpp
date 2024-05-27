@@ -21,6 +21,8 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/red.png");
 	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/down.png");
+	blockTextures_.push_back(texture);
 
 	for (uint32_t index=1; index < BaseBlock::BlockType::kMaxBlock; index++) {
 
@@ -35,6 +37,10 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		else if (index == Block::kRedBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[3]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[3]);
+		}
+		else if (index == Block::kDownMagma) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[4]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[4]);
 		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
@@ -58,16 +64,16 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	////パワーーー！！！
 	//objects_[Block::kRedBlock - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
 	//マグマ下降
-	objects_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	/*objects_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });*/
 	//黄金ブロック
 	objects_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
 
 	//壊せないブロック
-	breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.2f,0.3f,0.6f,1.0f });
+	breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });
 	//極寒
-	breakParticles_[Block::kSnow - 1]->SetColor({ 0.6f,0.3f,0.1f,1.0f });
+	breakParticles_[Block::kSnow - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	//灼熱
-	breakParticles_[Block::kMagma - 1]->SetColor({ 0.6f,0.2f,0.2f,1.0f });
+	breakParticles_[Block::kMagma - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	////氷
 	//breakParticles_[Block::kIceBlock - 1]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
 	////速度
@@ -77,7 +83,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	////パワーーー！！！
 	//breakParticles_[Block::kRedBlock - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
 	//マグマ下降
-	breakParticles_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	/*breakParticles_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });*/
 	//黄金ブロック
 	breakParticles_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
 

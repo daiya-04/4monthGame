@@ -87,6 +87,7 @@ public:
 	/// </summary>
 	/// <param name="type">変更先のブロックの種類</param>
 	void ChangeType(BlockType type) { 
+		defaultType_ = type;
 		type_ = type;
 		//object_->SetTextureHandle(texture_);
 	}
@@ -109,6 +110,8 @@ public:
 	void SetBlockPosition(uint32_t px, uint32_t py) { blockPositionX_ = px; blockPositionY_ = py; }
 
 	const BlockType& GetType() { return type_; }
+
+	const BlockType& GetDefaultType() { return defaultType_; }
 
 	const Vector2& GetPosition() { return position_; }
 
@@ -149,6 +152,8 @@ protected:
 	Magma* magma_ = nullptr;
 
 	BlockType type_ = kUnbreakable;
+
+	BlockType defaultType_ = kUnbreakable;
 
 	//std::unique_ptr<Object2d> object_;
 

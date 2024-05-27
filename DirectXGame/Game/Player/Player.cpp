@@ -204,7 +204,7 @@ void Player::Update() {
 		useCollision_ = true;
 
 		//採掘中の行動処理
-		if (isMining_ && !isDead_ && !isClear_) {
+		if (isMining_ && !isDead_) {
 
 			//帰還ボーダーに触れたら動きを止める
 			if ((position_.y < Stage::kBorderLeft.y || position_.y < Stage::kBorderRight.y) &&
@@ -245,7 +245,7 @@ void Player::Update() {
 		//死亡時処理
 		else if (isDead_) {
 
-			float t = Easing::easeInSine((float(respawnCoolTime_) - float(respwanTimer_)) / float(respawnCoolTime_));
+			float t = Easing::easeOutCirc((float(respawnCoolTime_) - float(respwanTimer_)) / float(respawnCoolTime_));
 
 			//座標の更新
 			position_.x = Lerp(t, deadPosition_.x, restartPosition_.x);
@@ -341,32 +341,32 @@ void Player::Move() {
 	}
 
 	//モード切替
-	if (input_->TriggerButton(Input::Button::X)) {
+	//if (input_->TriggerButton(Input::Button::X)) {
 
-		//速度をリセットしてモード切替
-		if (moveType_ == kNormal) {
+	//	//速度をリセットしてモード切替
+	//	if (moveType_ == kNormal) {
 
-			//地面についている時のみ可能にする
-			if (parameters_[currentCharacters_]->Jump_.canJump) {
-				parameters_[currentCharacters_]->Jump_.canJump = false;
-				velocity_ = { 0.0f,0.0f };
-				wallJumpVelocity_ = { 0.0f,0.0f };
-				moveType_ = kLine;
-			}
+	//		//地面についている時のみ可能にする
+	//		if (parameters_[currentCharacters_]->Jump_.canJump) {
+	//			parameters_[currentCharacters_]->Jump_.canJump = false;
+	//			velocity_ = { 0.0f,0.0f };
+	//			wallJumpVelocity_ = { 0.0f,0.0f };
+	//			moveType_ = kLine;
+	//		}
 
-		}
-		else {
+	//	}
+	//	else {
 
-			//止まっている時のみ可能にする
-			if (fabsf(velocity_.x) < 0.001f && fabsf(velocity_.y) < 0.001f) {
-				velocity_ = { 0.0f,0.0f };
-				wallJumpVelocity_ = { 0.0f,0.0f };
-				moveType_ = kNormal;
-			}
+	//		//止まっている時のみ可能にする
+	//		if (fabsf(velocity_.x) < 0.001f && fabsf(velocity_.y) < 0.001f) {
+	//			velocity_ = { 0.0f,0.0f };
+	//			wallJumpVelocity_ = { 0.0f,0.0f };
+	//			moveType_ = kNormal;
+	//		}
 
-		}
+	//	}
 
-	}
+	//}
 
 	switch (moveType_)
 	{
@@ -448,7 +448,12 @@ void Player::Move() {
 			object_->SetScale({ -1.0f,1.0f });
 		}
 
-		object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		if (isClear_) {
+			object_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
+		}
+		else {
+			object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		}
 
 		break;
 	case Player::kLine:
@@ -574,7 +579,7 @@ void Player::ChargeJump() {
 
 	//チャージできたら画像の色変更
 	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
-		object_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
+		object_->SetColor({ 1.0f,0.5f,0.0f,1.0f });
 	}
 
 	//ジャンプボタンを押している間チャージカウント増加
@@ -1076,7 +1081,8 @@ void Player::DamageUpdate() {
 		isDead_ = true;
 		//タイマー設定
 		respwanTimer_ = respawnCoolTime_;
-
+		//クリアフラグへし折り
+		isClear_ = false;
 
 	}
 	//一定間隔ごとにダメージを受ける

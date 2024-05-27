@@ -39,6 +39,9 @@ void BaseBlock::Break(int32_t power) {
 				magma_->baseMagmaLine_ += 1000.0f;
 				magma_->freezeTime_ = 300;
 			}
+			else if (type_ == kGoldBlock) {
+				player_->SetIsClear(true);
+			}
 
 		}
 		int createNum = int(RandomEngine::GetRandom(3.0f,5.0f));
@@ -70,6 +73,7 @@ void BaseBlock::Reset() {
 Block::Block(const Vector2& position, BlockType type)
 {	
 
+	defaultType_ = type;
 	type_ = type;
 	position_ = position;
 	/*object_.reset(Object2d::Create(texture_, position_));*/
@@ -83,6 +87,7 @@ Block::~Block()
 
 void Block::Initialize(const Vector2& position, BlockType type) {
 
+	defaultType_ = type;
 	type_ = type;
 	position_ = position;
 

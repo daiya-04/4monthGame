@@ -81,6 +81,7 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 			blockPositions_[y][x] = 0;
 			map_[y][x]->SetPlayer(player_);
+			map_[y][x]->SetMagma(magma_.get());
 			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
 
 		}
@@ -91,6 +92,7 @@ void Stage::Initialize(uint32_t stageNumber) {
 	upgradeSystem_->SetPlayer(player_);
 
 	isClear_ = false;
+	isRespawn_ = false;
 	rockCount_ = 0;
 	magma_->Initialize();
 	magma_->SetPlayer(player_);
@@ -108,11 +110,13 @@ void Stage::Update() {
 #endif // _DEBUG
 
 
-	//岩が規定数でクリアフラグをセット
-	if (rockCount_ >= goalRockCount_ && !player_->GetIsClear()) {
-		player_->SetIsClear(true);
+	//プレイヤーがクリアフラグを持った状態でサウナ室に帰ったらクリアフラグ立てる
+	if (player_->GetIsClear() && player_->GetIsHome()) {
+
 		isClear_ = true;
+
 	}
+
 
 	if (!isClear_) {
 
@@ -125,6 +129,18 @@ void Stage::Update() {
 				map_[y][x]->Update();
 			}
 
+		}
+
+		//家に戻ったら再生成
+		if (player_->GetIsHome() && !isRespawn_) {
+			RespawnBlock(Block::kDownMagma);
+			isRespawn_ = true;
+		}
+		else if (player_->GetIsDead()) {
+			RespawnBlock(Block::kGoldBlock);
+		}
+		else if (player_->GetIsMine()) {
+			isRespawn_ = false;
 		}
 
 		upgradeSystem_->Update();
@@ -234,18 +250,18 @@ void Stage::Draw() {
 
 void Stage::DrawUI() {
 
-	for (uint32_t i = 0; i < kMaxNumbers_; i++) {
+	/*for (uint32_t i = 0; i < kMaxNumbers_; i++) {
 
 		if (isActiveNumber_[i]) {
 			numbers_[i]->Draw();
 		}
 
-	}
+	}*/
 
 	upgradeSystem_->DrawUI();
 
 	if (player_->GetIsHome()) {
-		purposeSprite_->Draw();
+		/*purposeSprite_->Draw();*/
 	}
 
 	if (isClear_) {
@@ -336,6 +352,24 @@ void Stage::BreakAllBlock() {
 
 }
 
+void Stage::RespawnBlock(Block::BlockType type) {
+
+	//再生成可能なブロックの中から対応した要素を再生成させる
+	for (int32_t i = 0; i < respawnBlocks_.size(); i++) {
+
+		if (map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->GetDefaultType() == type) {
+
+			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->ChangeType(type);
+			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->Reset();
+			//高さに応じて耐久値を調整
+			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(int32_t(respawnBlocks_[i][1] / 5 + 3));
+
+		}
+
+	}
+
+}
+
 void Stage::CreateEntity() {
 
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
@@ -364,6 +398,8 @@ void Stage::Load(uint32_t stageNumber) {
 
 	//パーツの残り数をリセット
 	rockCount_ = 0;
+	//再生成できるブロックの要素リセット
+	respawnBlocks_.clear();
 
 	std::string fileName = "./Resources/Maps/stage";
 
@@ -418,7 +454,12 @@ void Stage::Load(uint32_t stageNumber) {
 			//高さに応じて耐久値を調整
 			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
 
-			
+			//タイプが再生成可能なものなら配列に追加
+			if (type == Block::kDownMagma || type == Block::kGoldBlock) {
+				//書き換え場所を保存
+				std::array<uint32_t, 2> nums = { x,y };
+				respawnBlocks_.push_back(nums);
+			}
 
 			blockPositions_[y][x] = num;
 

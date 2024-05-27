@@ -65,6 +65,13 @@ void GameScene::Init(){
 
 	snowManager_ = SnowManager::GetInstance();
 
+	backGameTex_ = TextureManager::Load("UI/tmpMenu.png");
+	menuButtonTex_ = TextureManager::Load("UI/menu.png");
+
+	backSprite_.reset(Sprite::Create(backGameTex_, { 640.0f, 360.0f }));
+	/*restartSprite_.reset(Sprite::Create(restartTex_, { 640.0f, 350.0f }));
+	toStageSelectSprite_.reset(Sprite::Create(toStageSelectTex_, { 640.0f, 550.0f }));*/
+	menuButtonSprite_.reset(Sprite::Create(menuButtonTex_, { 1150.0f, 690.0f }));
 
 	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("player/playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
@@ -104,7 +111,7 @@ void GameScene::Update() {
 
 #endif // _DEBUG
 
-	stage_->Update();
+	isPreOpenMenu_ = isOpenMenu_;
 
 	if (stage_->GetIsClear()) {
 
@@ -114,7 +121,40 @@ void GameScene::Update() {
 		}
 
 	}
+	else if (isOpenMenu_ && isPreOpenMenu_) {
+
+		if (Input::GetInstance()->TriggerButton(Input::Button::B) ||
+			Input::GetInstance()->TriggerButton(Input::Button::START)) {
+			isOpenMenu_ = false;
+		}
+
+		/*if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+
+			switch (menu_)
+			{
+			default:
+			case GameScene::kBack:
+				isOpenMenu_ = false;
+				menu_ = kBack;
+				break;
+			case GameScene::kRestart:
+				SceneManager::GetInstance()->ChangeScene("Game");
+				break;
+			case GameScene::kStageSelect:
+				SceneManager::GetInstance()->ChangeScene("StageSelect");
+				break;
+			}
+
+		}*/
+
+	}
 	else {
+
+		if (Input::GetInstance()->TriggerButton(Input::Button::START)) {
+			isOpenMenu_ = true;
+		}
+
+		stage_->Update();
 
 		preCameraPosition_ = camera_->translation_;
 		if (player_->GetIsBirdsEye()) {
@@ -240,6 +280,15 @@ void GameScene::DrawUI(){
 	stage_->DrawUI();
 
 	score_.Draw();
+
+	if (isOpenMenu_) {
+
+		backSprite_->Draw();
+
+	}
+	else {
+		menuButtonSprite_->Draw();
+	}
 
 	TextManager::GetInstance()->TestDraw();
 }
