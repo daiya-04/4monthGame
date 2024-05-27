@@ -51,6 +51,9 @@ public:
 
 private:
 
+	//テキスト読み込み
+	void LoadText(uint32_t stageNum);
+
 	void AppryGlobalVariables();
 
 	//各フェーズ処理
@@ -70,7 +73,7 @@ private:
 	Vector2 textBoxOriginSize_ = {1000.0f,200.0f};
 	Vector2 nameBackSize_ = {0,0};
 	Vector2 nameBackPosition_ = {0,0};
-
+	Vector2 namePosition_ = { 0,0 };
 
 	std::array<std::unique_ptr<Sprite>,9> nineSliceTextureBox_;
 
@@ -78,11 +81,14 @@ private:
 
 	std::unique_ptr<Text> mainText_;//本文
 
+	std::unique_ptr<Text> nameText_;//名前表示
+
 	std::unique_ptr<Text> next_;//次へボタン
 
 	//std::wstring testText = L"";
 
 	std::vector<std::wstring> textList_;//現在ステージで表示するテキストのリスト
+	std::vector<std::wstring> nameList_;//現在ステージで表示するなまえのリスト
 	size_t listIndex_;
 	Phase phase_;
 

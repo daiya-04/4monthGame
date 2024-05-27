@@ -2,6 +2,10 @@
     "GameText": [
         {
             "TextLayout": {
+                "Name-Position": [
+                    181.0,
+                    520.0
+                ],
                 "NameBack-Position": [
                     261.0,
                     520.0

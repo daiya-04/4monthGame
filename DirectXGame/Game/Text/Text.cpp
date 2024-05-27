@@ -37,13 +37,13 @@ void Text::SetText() {
             txtPosition.y += textStride_ * float(lineCount);
             break;
         case Text::kCenter:
-            txtPosition.x -= textStride_ * float(text_.size() < showCharCount_ ? text_.size() : showCharCount_)*0.5f + (textStride_ * float(index));
+            txtPosition.x += textStride_ * float(text_.size() < showCharCount_ ? text_.size() : showCharCount_)*0.5f + (textStride_ * float(index));
             break;
         default:
             break;
         }
        
-        if (arrangeType_ == kLeft && text_.substr(index, 1) == L"\n") {
+        if (arrangeType_ == kLeft && (text_.substr(index, 1) == L"\n" || text_.substr(index, 1) == L"＊")) {
             lineCount++;
             widthCount = 0;
         }

@@ -44,6 +44,8 @@ public:
 
 	bool GetCompleteDrawText() { return isCompleteDrawText_; };
 
+	void SetArrangeType(ARRANGETYPE t) { arrangeType_ = t; };
+
 private:
 	
 	//表示文章上の各文字の幅

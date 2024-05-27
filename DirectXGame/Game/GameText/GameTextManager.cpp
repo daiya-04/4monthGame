@@ -5,6 +5,11 @@
 #include "Easing.h"
 #include "Input.h"
 #include "GlobalVariables.h"
+#include "Log.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <locale>
 void GameTextManager::Initialize() {
 	for (size_t i = 0; i < 9;i++) {
 		nineSliceTextureBox_[i].reset(Sprite::Create(TextureManager::GetInstance()->Load("textBox.png"), Vector2{ 0,0 }, 9));
@@ -21,6 +26,8 @@ void GameTextManager::Initialize() {
 
 	mainText_.reset(new Text);
 	mainText_->Initialize();
+	nameText_.reset(new Text);
+	nameText_->Initialize();
 	next_.reset(new Text);
 	next_->Initialize();
 
@@ -32,10 +39,12 @@ void GameTextManager::Initialize() {
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "TextBox-Size", textBoxOriginSize_);
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "NameBack-Position", nameBackPosition_);
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "NameBack-Size", nameBackSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "Name-Position", namePosition_);
 
 	AppryGlobalVariables();
 	nameBack_->SetPosition(nameBackPosition_);
 	nameBack_->SetSize(nameBackSize_);
+	nameText_->SetPosition(namePosition_);
 }
 
 void GameTextManager::AppryGlobalVariables() {
@@ -45,23 +54,55 @@ void GameTextManager::AppryGlobalVariables() {
 	textBoxOriginSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "TextBox-Size");
 	nameBackPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "NameBack-Position");
 	nameBackSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "NameBack-Size");
+	namePosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Name-Position");
 }
 
 void GameTextManager::InitializeStage(uint32_t stageNum) {
 	phase_ = OPEN;
 	parametric_ = 0.0f;
 	//文字列ロード処理入れる
-	textList_.push_back(L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ");
-	textList_.push_back(L"互サ道互サ道互サ道互サ道互サ道互サ道互サ道互サ道");
+	LoadText(stageNum);
+	//textList_.push_back(L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ");
+	//textList_.push_back(L"互サ道互サ道互サ道互サ道互サ道互サ道互サ道互サ道");
 	listIndex_ = 0;
 	mainText_->SetWString(textList_[listIndex_]);
 	mainText_->SetCharCount(0);
 	mainText_->SetCompleteDrawText(false);
-	mainText_->SetPosition({200.0f,550.0f});
+	mainText_->SetPosition({200.0f,562.0f});
+	
+	nameText_->SetWString(nameList_[listIndex_]);
+	nameText_->CharCountMax();
+	nameText_->SetArrangeType(Text::kCenter);
+
 	next_->SetWString(L"A");
 	next_->SetPosition({ 1100.0f,650.0f });
 	next_->SetCharCount(1);
 	isEnd_ = false;
+}
+
+void GameTextManager::LoadText(uint32_t stageNum) {
+
+	std::string fileName = "./Resources/TextData/";
+	fileName += "text";
+	fileName += std::to_string(stageNum);
+	fileName += ".text";
+	std::wstring line;
+	std::wifstream file(fileName);
+	std::wstring name;
+	std::wstring text;
+	//ファイル読み込みが出来なかったら処理を止める
+	if (!file.is_open()) {
+		MessageBox(nullptr, L"ファイルを読み込めませんでした。", L"FontOffsets", 0);
+		return;
+	}
+	
+	while (std::getline(file, line)) {
+		std::wistringstream s(line);
+		s >> text >> name;
+		nameList_.push_back(name);
+		textList_.push_back(text);
+	}
+	file.close();
 }
 
 void GameTextManager::TestUpdate() {
@@ -83,6 +124,7 @@ void GameTextManager::Update() {
 	AppryGlobalVariables();
 	nameBack_->SetPosition(nameBackPosition_);
 	nameBack_->SetSize(nameBackSize_);
+	nameText_->SetPosition(namePosition_);
 #endif // _DEBUG
 
 	switch (phase_)
@@ -135,12 +177,17 @@ void GameTextManager::View() {
 			mainText_->SetWString(textList_[listIndex_]);
 			mainText_->SetCharCount(0);
 			mainText_->SetCompleteDrawText(false);
+
+			nameText_->SetWString(nameList_[listIndex_]);
+			nameText_->CharCountMax();
+			nameText_->SetArrangeType(Text::kCenter);
 		}
 		else {
 			phase_ = CLOSE;
 		}
 	}
 	mainText_->SetText();
+	nameText_->SetText();
 	next_->SetText();
 }
 
