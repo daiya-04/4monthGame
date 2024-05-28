@@ -69,6 +69,7 @@ void GameScene::Init(){
 	TextManager::GetInstance();
 	testText_.reset(new Text);
 	testText_->Initialize();
+	testText_->SetWString(L"AAAAA");
 	GameTextManager::GetInstance()->InitializeStage(stageNumber_);
 }
 
@@ -248,6 +249,7 @@ void GameScene::DebugGUI(){
 	ImGui::DragInt("CharCount", &cCount, 1,0,100);
 	ImGui::DragFloat2("originPosition", &position.x,1.0f);
 	ImGui::End();
+	testText_->SetArrangeType(Text::kCenter);
 	testText_->SetCharCount(uint32_t(cCount));
 	testText_->SetPosition(position);
 	//TextManager::GetInstance()->SetCharCount(uint32_t(cCount));

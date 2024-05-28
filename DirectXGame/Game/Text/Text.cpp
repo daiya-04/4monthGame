@@ -37,7 +37,7 @@ void Text::SetText() {
             txtPosition.y += textStride_ * float(lineCount);
             break;
         case Text::kCenter:
-            txtPosition.x += textStride_ * float(text_.size() < showCharCount_ ? text_.size() : showCharCount_)*0.5f + (textStride_ * float(index));
+            txtPosition.x += - textStride_ * float(text_.size() < showCharCount_ ? text_.size() : showCharCount_)*0.5f + (textStride_ * float(index));
             break;
         default:
             break;
