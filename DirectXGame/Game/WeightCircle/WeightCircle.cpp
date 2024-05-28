@@ -9,6 +9,7 @@ void WeightCircle::Init() {
 
 	circle_.reset(new Sprite(TextureManager::GetInstance()->Load("weightCircle.png"), { 640.0f,360.0f }, 1.0f/64.0f));
 	circle_->Initialize();
+	circle_->SetScale(1.0f);
 	position_ = { 640.0f,360.0f};
 	radius_ = 0.0f;
 	weightColor_ = 1.0f;
