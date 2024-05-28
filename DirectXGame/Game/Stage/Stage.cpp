@@ -19,10 +19,10 @@ Stage::Stage()
 	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
 	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
 	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
-	returnTex_ = TextureManager::GetInstance()->Load("stageObject/returnArea.png");
 	saunaRoomTex_ = TextureManager::GetInstance()->Load("stageObject/saunaRoom.png");
 	purposeTex_ = TextureManager::GetInstance()->Load("UI/mokuteki.png");
 	upTex_ = TextureManager::GetInstance()->Load("UI/up.png");
+	ropeTex_ = TextureManager::GetInstance()->Load("stageObject/rope.png");
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
@@ -33,6 +33,10 @@ Stage::Stage()
 	}
 
 	saunaRoom_.reset(Object2d::Create(saunaRoomTex_, kBasePosition - Vector2{0.0f, 18.0f}));
+	rope_[0].reset(Object2d::Create(ropeTex_, Vector2{ 10.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
+	rope_[0]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
+	rope_[1].reset(Object2d::Create(ropeTex_, Vector2{ 28.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
+	rope_[1]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
 
 	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
 	purposeSprite_.reset(Sprite::Create(purposeTex_, { 640.0f,200.0f }));
@@ -47,10 +51,6 @@ Stage::Stage()
 	returnPosition_[0] = { 10.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
 	returnPosition_[1] = { 28.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
 
-	returnObjects_[0].reset(Object2d::Create(returnTex_, returnPosition_[0]));
-	returnObjects_[0]->SetSize({ 96.0f * 2.0f, 96.0f });
-	returnObjects_[1].reset(Object2d::Create(returnTex_, returnPosition_[1]));
-	returnObjects_[1]->SetSize({ 96.0f * 2.0f, 96.0f });
 	returnUI_.reset(Object2d::Create(upTex_, returnPosition_[0] + Vector2{ 0.0f,-100.0f }));
 
 	returnArea_[0].max = { returnPosition_[0].x + Block::kBlockSize_, returnPosition_[0].y + Block::kBlockHalfSize_ };
@@ -272,7 +272,7 @@ void Stage::DrawHeat() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
-		returnObjects_[i]->Draw(*camera_);
+		rope_[i]->Draw(*camera_);
 	}
 
 	if (canReturn_) {
@@ -295,7 +295,7 @@ void Stage::DrawCold() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
-		returnObjects_[i]->Draw(*camera_);
+		rope_[i]->Draw(*camera_);
 	}
 
 	if (canReturn_) {

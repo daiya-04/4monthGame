@@ -126,6 +126,8 @@ private:
 	std::unique_ptr<Magma> magma_;
 	std::unique_ptr<Object2d> saunaRoom_;
 
+	std::array<std::unique_ptr<Object2d>, 2> rope_;
+
 	std::unique_ptr<UpgradeSystem> upgradeSystem_;
 
 	//再生成するブロックを纏めたもの
@@ -153,7 +155,6 @@ private:
 	std::unique_ptr<Sprite> purposeSprite_;
 
 	//帰還エリア
-	std::array<std::unique_ptr<Object2d>, 2> returnObjects_;
 	std::array<Vector2, 2> returnPosition_;
 	std::array<AABB2D, 2> returnArea_;
 	std::unique_ptr<Object2d> returnUI_;
@@ -171,6 +172,7 @@ private:
 	uint32_t saunaRoomTex_;
 	uint32_t purposeTex_;
 	uint32_t upTex_;
+	uint32_t ropeTex_;
 
 };
 

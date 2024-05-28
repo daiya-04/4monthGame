@@ -21,6 +21,8 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; }
 
+	void SetColor(Vector4 color) { magma_->SetColor(color); }
+
 	//マグマのライン
 	float maxMagmaLine_ = Block::kBlockSize_ * 6.0f;
 	//基準のライン

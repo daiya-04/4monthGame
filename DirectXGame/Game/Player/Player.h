@@ -56,9 +56,9 @@ public:
 
 		enum RockType {
 			kRock, //通常の岩
-			kBlue, //移動速度
+			kRed, //移動速度
 			kGreen, //採掘速度
-			kRed, //ダメージ量
+			kBlue, //ダメージ量
 			kMaxType, //種類
 		};
 
@@ -471,10 +471,14 @@ private:
 	//切り替えフレーム
 	int32_t changeFrame_ = 4;
 
+	//最大桁数
+	static const int32_t kMaxDigits_ = 3;
+
 	//UI関連
 	std::unique_ptr<Sprite> deadSprite_;
-	std::array<std::array<std::unique_ptr<Sprite>, 5>, BringRocks::RockType::kMaxType> numbers_;
+	std::array<std::array<std::unique_ptr<Sprite>, kMaxDigits_>, BringRocks::RockType::kMaxType> numbers_;
 	std::array<std::unique_ptr<Sprite>, BringRocks::RockType::kMaxType> rocksUI_;
+	std::unique_ptr<Sprite> bag_;
 
 	uint32_t lifeLeftGageTexture_;
 	uint32_t lifeLeftFrameTexture_;
@@ -482,6 +486,7 @@ private:
 	uint32_t lifeRightFrameTexture_;
 	uint32_t deadTexture_;
 	uint32_t numberTexture_;
+	uint32_t bagTexture_;
 	std::array<uint32_t, BringRocks::kMaxType> rockUITextures_;
 
 	const std::string dataName = "Player";

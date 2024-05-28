@@ -24,10 +24,11 @@ Player::Player()
 	textureBreakDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakDown.png");
 	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
-	rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
+	/*rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
 	rockUITextures_[BringRocks::kBlue] = TextureManager::GetInstance()->Load("UI/speedRock.png");
 	rockUITextures_[BringRocks::kGreen] = TextureManager::GetInstance()->Load("UI/digSpeedRock.png");
-	rockUITextures_[BringRocks::kRed] = TextureManager::GetInstance()->Load("UI/powerRock.png");
+	rockUITextures_[BringRocks::kRed] = TextureManager::GetInstance()->Load("UI/powerRock.png");*/
+	bagTexture_ = TextureManager::GetInstance()->Load("UI/bag.png");
 
 	deadTexture_ = TextureManager::GetInstance()->Load("UI/dead.png");
 
@@ -39,19 +40,21 @@ Player::Player()
 	//数字リセット
 	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
 
-		for (int32_t i = 0; i < 5; i++) {
+		for (int32_t i = 0; i < kMaxDigits_; i++) {
 
-			numbers_[height][i].reset(Sprite::Create(numberTexture_, { 1100.0f + 32.0f * i , 30.0f + 64.0f * height }));
-			numbers_[height][i]->SetSize({ 48.0f,48.0f });
+			numbers_[height][i].reset(Sprite::Create(numberTexture_, { 1170.0f + 24.0f * i , 96.0f + 56.0f * height }));
+			numbers_[height][i]->SetSize({ 32.0f,32.0f });
 			numbers_[height][i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
 
 		}
 
 		//岩UIリセット
-		rocksUI_[height].reset(Sprite::Create(rockUITextures_[height], { 1050.0f, 30.0f + 64.0f * height }));
-		rocksUI_[height]->SetSize({ 48.0f,48.0f });
+		/*rocksUI_[height].reset(Sprite::Create(rockUITextures_[height], { 1050.0f, 30.0f + 64.0f * height }));
+		rocksUI_[height]->SetSize({ 48.0f,48.0f });*/
 
 	}
+
+	bag_.reset(Sprite::Create(bagTexture_, { 1150.0f, 30.0f + 128.0f }));
 
 }
 
@@ -286,11 +289,11 @@ void Player::UpdateUI() {
 	//数字の更新
 	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
 
-		for (int32_t i = 0; i < 5; i++) {
+		for (int32_t i = 0; i < kMaxDigits_; i++) {
 
 			int32_t num = 0;
 
-			int32_t divide = int32_t(std::pow(10, 5 - 1 - i));
+			int32_t divide = int32_t(std::pow(10, kMaxDigits_ - 1 - i));
 
 			num = rockParameter_.rocks_[height] / divide;
 
@@ -310,16 +313,16 @@ void Player::Draw(const Camera& camera) {
 
 void Player::DrawUI() {
 
+	bag_->Draw();
+
 	//持っているブロック数の表示
 	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
 
-		for (int32_t i = 0; i < 5; i++) {
+		for (int32_t i = 0; i < kMaxDigits_; i++) {
 
 			numbers_[height][i]->Draw();
 
 		}
-
-		rocksUI_[height]->Draw();
 
 	}
 

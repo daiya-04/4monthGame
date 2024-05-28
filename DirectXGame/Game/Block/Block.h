@@ -37,11 +37,11 @@ public:
 		//連続して壊せる氷ブロック
 		kIceBlock,
 		//速度が速くなるブロック
-		kBlueBlock,
+		kRedBlock,
 		//採掘速度が上がるブロック
 		kGreenBlock,
 		//破壊力が上昇するブロック
-		kRedBlock,
+		kBlueBlock,
 		//マグマを下降させるブロック
 		kDownMagma,
 		//黄金ブロック(クリア条件)
