@@ -58,7 +58,7 @@ public:
 
 	void CreateParticle(const Vector2& position, uint32_t type);
 
-	void CreateStarParticle(const Vector2& position);
+	void CreateStarParticle(const Vector2& position, int32_t type);
 
 	void UpdateParticle();
 

@@ -102,7 +102,7 @@ BlockTextureManager::BlockTextureManager() {
 	}
 
 	//particle
-	starParticles_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 128));
+	starParticles_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 256));
 	starParticles_->SetScale({ 1.0f, 1.0f });
 	starParticles_->SetSize({ float(BaseBlock::kBlockSize_/2),float(BaseBlock::kBlockSize_) });
 }
@@ -186,12 +186,12 @@ void BlockTextureManager::CreateParticle(const Vector2& position, uint32_t type)
 	breakParticleDatas_.push_back(std::move(particle));
 }
 
-void BlockTextureManager::CreateStarParticle(const Vector2& position) {
+void BlockTextureManager::CreateStarParticle(const Vector2& position,int32_t type) {
 	StarParticle::response--;
 	if (StarParticle::response<0) {
 		std::unique_ptr<StarParticle> particle;
 		particle.reset(new StarParticle);
-		particle->Initialize(position);
+		particle->Initialize(position,type);
 		starParticleDatas_.push_back(std::move(particle));
 	}
 }
