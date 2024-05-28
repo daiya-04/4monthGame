@@ -224,7 +224,8 @@ Sprite::Sprite(uint32_t textureHandle, Vector2 position, float scale, Vector2 an
 	textureHandle_ = textureHandle;
 	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
 	position_ = position;
-	size_ = { (float)resourceDesc_.Width * scale,(float)resourceDesc_.Height * scale};
+	size_ = { (float)resourceDesc_.Width, (float)resourceDesc_.Height };
+	scale_ = { scale,scale };
 	rotate_ = rotate;
 	anchorpoint_ = anchorpoint;
 	color_ = color;
@@ -280,6 +281,7 @@ void Sprite::Initialize() {
 
 void Sprite::Draw(){
 
+	if (!isDraw_) { return; }
 	
 	Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,rotate_ }, { position_.x,position_.y,0.0f });
 	Matrix4x4 viewMatrix = MakeIdentity44();
@@ -315,14 +317,14 @@ void Sprite::SetSize(const Vector2& size) {
 
 void Sprite::SetScale(float scale) {
 
-	size_ *= scale;
+	scale_ = { scale,scale };
 
 	TransferVertex();
 }
 
 void Sprite::SetScale(Vector2 scale) {
 
-	size_ = { size_.x * scale.x,size_.y * scale.y };
+	scale_ = scale;
 
 	TransferVertex();
 }
@@ -416,10 +418,10 @@ ComPtr<IDxcBlob> Sprite::CompileShader(const std::wstring& filePath,const wchar_
 
 void Sprite::TransferVertex(){
 
-	float left = (0.0f - anchorpoint_.x) * size_.x;
-	float right = (1.0f - anchorpoint_.x) * size_.x;
-	float top = (0.0f - anchorpoint_.y) * size_.y;
-	float bottom = (1.0f - anchorpoint_.y) * size_.y;
+	float left = (0.0f - anchorpoint_.x) * size_.x * scale_.x;
+	float right = (1.0f - anchorpoint_.x) * size_.x * scale_.x;
+	float top = (0.0f - anchorpoint_.y) * size_.y * scale_.y;
+	float bottom = (1.0f - anchorpoint_.y) * size_.y * scale_.y;
 
 	float uvLeft = texBase_.x / (float)resourceDesc_.Width;
 	float uvRight = (texBase_.x + texSize_.x) / (float)resourceDesc_.Width;

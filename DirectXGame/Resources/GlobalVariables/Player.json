@@ -12,8 +12,8 @@
                 "Move - AccelValue": 1.0,
                 "Move - MaxSpeed": 10.0,
                 "WallJump - JumpVelocity": [
-                    10.0,
-                    -30.0
+                    8.0,
+                    -20.0
                 ]
             }
         }

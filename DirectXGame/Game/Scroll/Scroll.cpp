@@ -49,7 +49,12 @@ void Scroll::Update() {
 
 				stalkerSpeed_ = std::clamp(stalkerSpeed_, 0.00001f, 1.0f);
 
-				camera_->translation_.x += (limitStart_.x - camera_->translation_.x) * stalkerSpeed_;
+				if (isSlow_) {
+					camera_->translation_.x += (limitStart_.x - camera_->translation_.x) * respawnStalkerSpeed_;
+				}
+				else {
+					camera_->translation_.x += (limitStart_.x - camera_->translation_.x) * stalkerSpeed_;
+				}
 
 				break;
 
@@ -74,7 +79,12 @@ void Scroll::Update() {
 
 				stalkerSpeed_ = std::clamp(stalkerSpeed_, 0.00001f, 1.0f);
 
-				camera_->translation_.x += (limitEnd_.x - camera_->center_.x - camera_->translation_.x) * stalkerSpeed_;
+				if (isSlow_) {
+					camera_->translation_.x += (limitEnd_.x - camera_->center_.x - camera_->translation_.x) * respawnStalkerSpeed_;
+				}
+				else {
+					camera_->translation_.x += (limitEnd_.x - camera_->center_.x - camera_->translation_.x) * stalkerSpeed_;
+				}
 
 				break;
 
@@ -97,7 +107,12 @@ void Scroll::Update() {
 
 				stalkerSpeed_ = std::clamp(stalkerSpeed_, 0.00001f, 1.0f);
 
-				camera_->translation_.x += (target_->x - camera_->center_.x - camera_->translation_.x) * stalkerSpeed_;
+				if (isSlow_) {
+					camera_->translation_.x += (target_->x - camera_->center_.x - camera_->translation_.x) * respawnStalkerSpeed_;
+				}
+				else {
+					camera_->translation_.x += (target_->x - camera_->center_.x - camera_->translation_.x) * stalkerSpeed_;
+				}
 
 				break;
 
@@ -122,7 +137,12 @@ void Scroll::Update() {
 
 				stalkerSpeed_ = std::clamp(stalkerSpeed_, 0.00001f, 1.0f);
 
-				camera_->translation_.y += (limitStart_.y - camera_->translation_.y) * stalkerSpeed_;
+				if (isSlow_) {
+					camera_->translation_.y += (limitStart_.y - camera_->translation_.y) * respawnStalkerSpeed_;
+				}
+				else {
+					camera_->translation_.y += (limitStart_.y - camera_->translation_.y) * stalkerSpeed_;
+				}
 
 				break;
 
@@ -146,7 +166,12 @@ void Scroll::Update() {
 
 				stalkerSpeed_ = std::clamp(stalkerSpeed_, 0.00001f, 1.0f);
 
-				camera_->translation_.y += (limitEnd_.y - camera_->center_.y - camera_->translation_.y) * stalkerSpeed_;
+				if (isSlow_) {
+					camera_->translation_.y += (limitEnd_.y - camera_->center_.y - camera_->translation_.y) * respawnStalkerSpeed_;
+				}
+				else {
+					camera_->translation_.y += (limitEnd_.y - camera_->center_.y - camera_->translation_.y) * stalkerSpeed_;
+				}
 
 				break;
 
@@ -169,7 +194,12 @@ void Scroll::Update() {
 
 				stalkerSpeed_ = std::clamp(stalkerSpeed_, 0.00001f, 1.0f);
 
-				camera_->translation_.y += (target_->y - camera_->center_.y - camera_->translation_.y) * stalkerSpeed_;
+				if (isSlow_) {
+					camera_->translation_.y += (target_->y - camera_->center_.y - camera_->translation_.y) * respawnStalkerSpeed_;
+				}
+				else {
+					camera_->translation_.y += (target_->y - camera_->center_.y - camera_->translation_.y) * stalkerSpeed_;
+				}
 
 				break;
 

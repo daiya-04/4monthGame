@@ -74,6 +74,8 @@ private: //メンバ変数
 	D3D12_RESOURCE_DESC resourceDesc_;
 	//座標
 	Vector2 position_{};
+	//倍率
+	Vector2 scale_{ 1.0f,1.0f };
 	//サイズ
 	Vector2 size_ = { 100.0f,100.0f };
 	//回転
@@ -88,6 +90,8 @@ private: //メンバ変数
 	Vector2 texBase_{};
 
 	Vector2 texSize_ = { 100.0f,100.0f };
+
+	bool isDraw_ = true;
 
 public: //メンバ関数
 	
@@ -114,6 +118,10 @@ public: //メンバ関数
 	void SetTextureArea(const Vector2& texBase, const Vector2& texSize);
 	//
 	void SetTextureHandle(uint32_t textureHandle) { textureHandle_ = textureHandle; }
+	//描画on
+	void DrawOn() { isDraw_ = true; }
+	//描画off
+	void DrawOff() { isDraw_ = false; }
 
 	//座標の取得
 	const Vector2& GetPosition() const { return position_; }

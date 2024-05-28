@@ -9,6 +9,8 @@
 
 class Player;
 
+class Magma;
+
 /// <summary>
 /// ブロック全体の基底クラス
 /// </summary>
@@ -35,11 +37,15 @@ public:
 		//連続して壊せる氷ブロック
 		kIceBlock,
 		//速度が速くなるブロック
-		kSpeedBlock,
+		kBlueBlock,
 		//採掘速度が上がるブロック
-		kDigerBlock,
+		kGreenBlock,
 		//破壊力が上昇するブロック
-		kDigPowerBlock,
+		kRedBlock,
+		//マグマを下降させるブロック
+		kDownMagma,
+		//黄金ブロック(クリア条件)
+		kGoldBlock,
 		//ブロックの最大種類
 		kMaxBlock
 
@@ -81,8 +87,8 @@ public:
 	/// </summary>
 	/// <param name="type">変更先のブロックの種類</param>
 	void ChangeType(BlockType type) { 
+		defaultType_ = type;
 		type_ = type;
-		texture_ = BlockTextureManager::GetInstance()->GetBlockTexture(type_);
 		//object_->SetTextureHandle(texture_);
 	}
 
@@ -90,6 +96,10 @@ public:
 	/// プレイヤーをセット
 	/// </summary>
 	void SetPlayer(Player* player) { player_ = player; }
+
+	void SetMagma(Magma* magma) { magma_ = magma; }
+
+	static void SetScore(Score* score) { score_ = score; }
 
 	void SetUVPosition(uint32_t xPosition, uint32_t yPosition) { 
 		uvPositionX_ = xPosition;
@@ -100,6 +110,8 @@ public:
 	void SetBlockPosition(uint32_t px, uint32_t py) { blockPositionX_ = px; blockPositionY_ = py; }
 
 	const BlockType& GetType() { return type_; }
+
+	const BlockType& GetDefaultType() { return defaultType_; }
 
 	const Vector2& GetPosition() { return position_; }
 
@@ -133,11 +145,15 @@ public:
 
 protected:
 
-	ScoreManager* scoreManager_ = nullptr;
+	static Score* score_;
 
 	Player* player_;
 
+	Magma* magma_ = nullptr;
+
 	BlockType type_ = kUnbreakable;
+
+	BlockType defaultType_ = kUnbreakable;
 
 	//std::unique_ptr<Object2d> object_;
 

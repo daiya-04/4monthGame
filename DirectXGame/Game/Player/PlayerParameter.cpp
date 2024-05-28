@@ -8,7 +8,7 @@ void PlayerParameter::Initialize() {
 
 	wallJump_.canWallJump = false;
 	wallJump_.graceTime = 0;
-	wallJump_.wallJumpVelocity = { 10.0f,-30.0f };
+	wallJump_.wallJumpVelocity = { 5.0f,-20.0f };
 
 	dig_.isDig = false;
 	dig_.digInterval = 42;

@@ -5,10 +5,6 @@
 #include <memory>
 
 class DSFramework{
-private:
-
-	bool endRequest_ = false;
-
 public:
 
 	virtual ~DSFramework() = default;
@@ -22,8 +18,6 @@ public:
 	virtual void Finalize();
 
 	void Run();
-
-	virtual bool IsEndRequest() { return endRequest_; }
 
 };
 

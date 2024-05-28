@@ -9,6 +9,7 @@
 #include "Object2d.h"
 #include "Sprite.h"
 #include "System/UpgradeSystem.h"
+#include "Magma.h"
 
 class Player;
 
@@ -21,7 +22,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(uint32_t stageNumber);
 
 	/// <summary>
 	/// 更新
@@ -73,7 +74,7 @@ public:
 	static inline const Vector2 kBorderRight = { float(kBasePosition.x + 5.0f * Block::kBlockSize_), -48.0f };
 
 	//マグマライン取得
-	float GetMagmaLine() const { return magmaLine_; }
+	float GetMagmaLine() const { return magma_->currentMagmaLine_; }
 
 	//クリアフラグ取得
 	bool GetIsClear() const { return isClear_; }
@@ -83,6 +84,8 @@ public:
 
 	//灼熱ブロックを極寒ブロックに変える
 	void ChangeMagma2Snow();
+
+	bool GetIsActiveUpgrade() const { return upgradeSystem_->GetIsActive(); }
 
 private:
 
@@ -101,13 +104,12 @@ private:
 	//壊せないブロック以外の破壊(デバッグ)
 	void BreakAllBlock();
 
-	//マグマリセット
-	void ResetMagma();
-
 	void SetUV(Block* block);
 
 	//当たり判定関連
 	void CheckCollision();
+
+	void RespawnBlock(Block::BlockType type);
 
 private:
 
@@ -121,18 +123,16 @@ private:
 	static const int32_t kMaxNumbers_ = 5;
 
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
-	std::unique_ptr<Object2d> magma_;
+	std::unique_ptr<Magma> magma_;
+	std::unique_ptr<Object2d> saunaRoom_;
 
 	std::unique_ptr<UpgradeSystem> upgradeSystem_;
 
+	//再生成するブロックを纏めたもの
+	std::vector<std::array<uint32_t, 2>> respawnBlocks_;
+
 	//マップ
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
-
-	//マグマのライン
-	float maxMagmaLine_ = 12000.0f;
-	float magmaLine_ = 12000.0f;
-	float magmaTexBaseX_ = 0.0f;
-	float magmaUnderLine_ = 10000.0f;
 
 	int32_t rockCount_ = 0;
 
@@ -141,24 +141,36 @@ private:
 
 	bool isClear_ = false;
 
+	//再生成フラグ
+	bool isRespawn_ = false;
+
 	//数字の表示フラグ
 	std::array<bool, kMaxNumbers_> isActiveNumber_{};
 
 	//岩の数を表示する数字
 	std::array<std::unique_ptr<Sprite>, kMaxNumbers_> numbers_;
 	std::unique_ptr<Sprite> clearSprite_;
+	std::unique_ptr<Sprite> purposeSprite_;
 
 	//帰還エリア
 	std::array<std::unique_ptr<Object2d>, 2> returnObjects_;
 	std::array<Vector2, 2> returnPosition_;
 	std::array<AABB2D, 2> returnArea_;
+	std::unique_ptr<Object2d> returnUI_;
+	bool canReturn_ = false;
+
+	//強化エリア
+	Vector2 upgradePosition_{};
+	AABB2D upgradeArea_{};
 
 	//テクスチャ
 	uint32_t numTex_;
 	uint32_t clearTex_;
 	uint32_t borderTex_;
-	uint32_t magmaTex_;
 	uint32_t returnTex_;
+	uint32_t saunaRoomTex_;
+	uint32_t purposeTex_;
+	uint32_t upTex_;
 
 };
 

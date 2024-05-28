@@ -1,6 +1,51 @@
 {
     "TitleUI": [
         {
+            "Arrow": {
+                "filePath": "RLArrow.png",
+                "position": [
+                    500.0,
+                    400.0
+                ]
+            }
+        },
+        {
+            "AButton": {
+                "filePath": "AButton.png",
+                "position": [
+                    1160.0,
+                    621.0
+                ]
+            }
+        },
+        {
+            "Exit": {
+                "filePath": "Exit.png",
+                "position": [
+                    640.0,
+                    530.0
+                ]
+            }
+        },
+        {
+            "Option": {
+                "filePath": "Option.png",
+                "position": [
+                    640.0,
+                    450.0
+                ]
+            }
+        },
+        {
+            "Start": {
+                "filePath": "Start.png",
+                "position": [
+                    640.0,
+                    370.0
+                ]
+            }
+        },
+        {
             "TitleLogo": {
                 "filePath": "TitleLogo.png",
                 "position": [

@@ -76,6 +76,14 @@ private:
 	CameraFrozenManager* cameraFrozen_;
 	EnvironmentEffectsManager* environmentEffectsManager_;
 
+	enum MenuType {
+		kBack, //ゲームに戻る
+		kRestart, //リスタート
+		kStageSelect, //ステージ選択へ
+
+		kMaxMenu, 
+	};
+
 	std::unique_ptr<Sprite> sample0;
 	std::unique_ptr<Sprite> sample1;
 
@@ -87,7 +95,11 @@ private:
 
 	void Reset();
 
+	//クリア時の処理
+	void ClearProcess();
+
 	ScoreManager* scoreManager_ = nullptr;
+	Score score_;
 
 	std::unique_ptr<Scroll> scroll_;
 
@@ -108,6 +120,33 @@ private:
 
 	bool isPlayGame_ = true;//ゲームを再生するかどうか
 	bool isFirstAllDraw_;
+
+///メニュー関係--------------------------------
+
+	//メニューを開いているか
+	bool isOpenMenu_ = false;
+	//入力受付調整用
+	bool isPreOpenMenu_ = false;
+
+	MenuType menu_ = kBack;
+
+	std::unique_ptr<Sprite> backSprite_;
+	std::unique_ptr<Sprite> restartSprite_;
+	std::unique_ptr<Sprite> toStageSelectSprite_;
+
+	std::unique_ptr<Sprite> menuButtonSprite_;
+
+	uint32_t backGameTex_;
+	uint32_t restartTex_;
+	uint32_t toStageSelectTex_;
+	uint32_t menuButtonTex_;
+
+///-------------------------------------------
+
+	Audio* magmaBGM_;
+
+
+	uint32_t currentStageNumber_ = 0;
 
 	std::unique_ptr<Text> testText_;
 };

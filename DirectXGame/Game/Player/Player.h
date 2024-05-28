@@ -56,9 +56,9 @@ public:
 
 		enum RockType {
 			kRock, //通常の岩
-			kSpeed, //移動速度
-			kDigSpeed, //採掘速度
-			kPower, //ダメージ量
+			kBlue, //移動速度
+			kGreen, //採掘速度
+			kRed, //ダメージ量
 			kMaxType, //種類
 		};
 
@@ -99,6 +99,11 @@ public:
 	/// </summary>
 	void Update();
 	
+	/// <summary>
+	/// UI更新
+	/// </summary>
+	void UpdateUI();
+
 	/// <summary>
 	/// 描画
 	/// </summary>
@@ -222,34 +227,64 @@ public:
 
 	bool GetIsMine() const { return isMining_; }
 
+	bool GetCanJump() const { return parameters_[currentCharacters_]->Jump_.canJump; }
+
 	//クリアフラグのセット
 	void SetIsClear(bool flag) { isClear_ = flag; }
 
 	bool GetIsClear() const { return isClear_; }
 
 	//岩の受け渡し
-	void HandOverRocks(int32_t& rockCount) {
-		rockCount += addParameters_[currentCharacters_].rocks_[BringRocks::kRock];
-		addParameters_[currentCharacters_].rocks_[BringRocks::kRock] = 0;
+	void SendRocks(int32_t& rockCount) {
+		rockCount += rockParameter_.rocks_[BringRocks::kRock];
+		rockParameter_.rocks_[BringRocks::kRock] = 0;
 	}
 
 	//スピードの岩を加算
-	void AddSpeedParameter(int32_t addNum = 1) { addParameters_[currentCharacters_].rocks_[BringRocks::kSpeed] += addNum; }
+	void AddBlueRock(int32_t addNum = 1) { rockParameter_.rocks_[BringRocks::kBlue] += addNum; }
 
 	//採掘速度の岩を加算
-	void AddDigIntervalParameter(int32_t addNum = 1){ addParameters_[currentCharacters_].rocks_[BringRocks::kDigSpeed] += addNum; }
+	void AddGreenRock(int32_t addNum = 1){ rockParameter_.rocks_[BringRocks::kGreen] += addNum; }
 
 	//採掘ダメージ量の岩を加算
-	void AddDigPowerParameter(int32_t addNum = 1) { addParameters_[currentCharacters_].rocks_[BringRocks::kPower] += addNum; }
+	void AddRedRock(int32_t addNum = 1) { rockParameter_.rocks_[BringRocks::kRed] += addNum; }
 
 	//岩カウント加算
-	void AddRockCount(int32_t addNum = 1) { addParameters_[currentCharacters_].rocks_[BringRocks::kRock] += addNum; }
+	void AddRockCount(int32_t addNum = 1) { rockParameter_.rocks_[BringRocks::kRock] += addNum; }
+
+	//速度強化
+	void UpgradeSpeed(float addNum) { 
+
+		parameters_[currentCharacters_]->speed_ += addNum;
+		parameters_[currentCharacters_]->maxMoveSpeed_ += addNum * 1.0f;
+
+		parameters_[currentCharacters_]->maxMoveSpeed_ = std::clamp(parameters_[currentCharacters_]->maxMoveSpeed_, 0.0f, 30.0f);
+
+	}
+
+	//採掘速度強化
+	void UpgradeDigSpeed(int32_t addNum) { 
+		parameters_[currentCharacters_]->dig_.digInterval -= addNum;
+		parameters_[currentCharacters_]->dig_.digInterval = std::clamp(parameters_[currentCharacters_]->dig_.digInterval, 1, 60);
+	}
+
+	//パワーーー！！！を強化
+	void UpgradePower(int32_t addNum) { parameters_[currentCharacters_]->dig_.digPower += addNum; }
 
 	//ブロックの数取得
-	int32_t GetRockCount() const { return addParameters_[currentCharacters_].rocks_[BringRocks::kRock]; }
+	int32_t GetRockCount() const { return rockParameter_.rocks_[BringRocks::kRock]; }
 
 	//リフト関連処理
 	void MoveLift();
+
+	BringRocks& GetRockParameter() { return rockParameter_; }
+
+	Characters GetCurrentCharacter() const { return currentCharacters_; }
+
+	//岩落とし処理
+	void DamageUpdate();
+
+	void HealUpdate();
 
 private:
 
@@ -310,7 +345,9 @@ private:
 	std::array<std::unique_ptr<PlayerParameter>, kMaxPlayer> parameters_;
 
 	//パラメータ値加算量を蓄積するもの
-	std::array<BringRocks, kMaxPlayer> addParameters_;
+	/*std::array<BringRocks, kMaxPlayer> rockParameters_;*/
+	//共有に変更
+	BringRocks rockParameter_;
 
 	//一ブロック毎の加算量
 	AddValue addValue_;
@@ -360,6 +397,11 @@ private:
 	//俯瞰視点のターゲット座標
 	Vector2 birdsEyePosition_{};
 
+	//死んだ場所
+	Vector2 deadPosition_{};
+	//再開地点
+	Vector2 restartPosition_{};
+
 	//プレイヤー画像
 	std::array<uint32_t, kMaxPlayer> texture_;
 	std::array<uint32_t, kMaxPlayer> textureUp_;
@@ -404,6 +446,10 @@ private:
 
 	//死亡フラグ
 	bool isDead_ = false;
+	//再スタートまでのタイマー
+	int32_t respwanTimer_ = 0;
+	//再スタートにかかる時間
+	int32_t respawnCoolTime_ = 60;
 
 	//クリアフラグ
 	bool isClear_ = false;
@@ -411,8 +457,8 @@ private:
 	//移動タイプ
 	MoveType moveType_ = kNormal;
 
-	//岩の必要数
-	/*int32_t needRockCount_ = 5;*/
+	//ダメージ間隔
+	int32_t damageTimer_ = 120;
 
 	//コマ最大数
 	int32_t maxAnimationNum_ = 8;

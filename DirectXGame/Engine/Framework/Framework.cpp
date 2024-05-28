@@ -46,14 +46,14 @@ void DSFramework::Init(){
 
 void DSFramework::Update(){
 
-	if (WinApp::GetInstance()->ProcessMessage() || Input::GetInstance()->TriggerKey(DIK_ESCAPE)) { endRequest_ = true; }
+	if (WinApp::GetInstance()->ProcessMessage() || Input::GetInstance()->TriggerKey(DIK_ESCAPE)) { WinApp::GetInstance()->GameEnd(); }
 
-	if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_9)) {
+	/*if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_9)) {
 		WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
 	}
 	if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_0)) {
 		WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kWindow);
-	}
+	}*/
 
 	ImGuiManager::GetInstance()->Begin();
 
@@ -87,7 +87,7 @@ void DSFramework::Run(){
 		Update();
 
 		//終了リクエストが来たら抜ける
-		if (IsEndRequest()) { break; }
+		if (WinApp::GetInstance()->IsEndRequest()) { break; }
 
 		//描画
 		Draw();

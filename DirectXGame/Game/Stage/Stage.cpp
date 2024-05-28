@@ -19,8 +19,10 @@ Stage::Stage()
 	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
 	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
 	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
-	magmaTex_ = TextureManager::GetInstance()->Load("stageObject/magmaLine.png");
 	returnTex_ = TextureManager::GetInstance()->Load("stageObject/returnArea.png");
+	saunaRoomTex_ = TextureManager::GetInstance()->Load("stageObject/saunaRoom.png");
+	purposeTex_ = TextureManager::GetInstance()->Load("UI/mokuteki.png");
+	upTex_ = TextureManager::GetInstance()->Load("UI/up.png");
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
@@ -30,18 +32,17 @@ Stage::Stage()
 
 	}
 
+	saunaRoom_.reset(Object2d::Create(saunaRoomTex_, kBasePosition - Vector2{0.0f, 18.0f}));
+
 	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
+	purposeSprite_.reset(Sprite::Create(purposeTex_, { 640.0f,200.0f }));
 
 	borders_[0].reset(Object2d::Create(borderTex_, kBorderLeft));
 	borders_[0]->SetAnchorpoint({ 0.5f,1.0f });
 	borders_[1].reset(Object2d::Create(borderTex_, kBorderRight));
 	borders_[1]->SetAnchorpoint({ 0.5f,1.0f });
 
-	magma_.reset(Object2d::Create(magmaTex_, { kBasePosition.x,magmaUnderLine_ }));
-	magma_->SetColor({ 1.0f,1.0f,1.0f,0.8f });
-	magma_->SetAnchorpoint({ 0.5f,1.0f });
-	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), 64.0f });
-	magma_->SetTextureArea({ 0.0f,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), 32.0f });
+	magma_ = std::make_unique<Magma>();
 
 	returnPosition_[0] = { 10.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
 	returnPosition_[1] = { 28.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
@@ -50,6 +51,7 @@ Stage::Stage()
 	returnObjects_[0]->SetSize({ 96.0f * 2.0f, 96.0f });
 	returnObjects_[1].reset(Object2d::Create(returnTex_, returnPosition_[1]));
 	returnObjects_[1]->SetSize({ 96.0f * 2.0f, 96.0f });
+	returnUI_.reset(Object2d::Create(upTex_, returnPosition_[0] + Vector2{ 0.0f,-100.0f }));
 
 	returnArea_[0].max = { returnPosition_[0].x + Block::kBlockSize_, returnPosition_[0].y + Block::kBlockHalfSize_ };
 	returnArea_[0].min = { returnPosition_[0].x - Block::kBlockSize_, returnPosition_[0].y - Block::kBlockHalfSize_ };
@@ -57,7 +59,13 @@ Stage::Stage()
 	returnArea_[1].max = { returnPosition_[1].x + Block::kBlockSize_, returnPosition_[1].y + Block::kBlockHalfSize_ };
 	returnArea_[1].min = { returnPosition_[1].x - Block::kBlockSize_, returnPosition_[1].y - Block::kBlockHalfSize_ };
 
+	upgradePosition_ = { 19.5f * Block::kBlockSize_, 4.0f * Block::kBlockSize_ };
+
+	upgradeArea_.max = { upgradePosition_.x + Block::kBlockHalfSize_ * 3.0f, upgradePosition_.y + Block::kBlockHalfSize_ };
+	upgradeArea_.min = { upgradePosition_.x - Block::kBlockHalfSize_ * 3.0f, upgradePosition_.y - Block::kBlockHalfSize_ };
+
 	upgradeSystem_ = std::make_unique<UpgradeSystem>();
+	upgradeSystem_->SetGoalCount(&rockCount_);
 
 	CreateEntity();
 
@@ -67,7 +75,7 @@ Stage::~Stage()
 {
 }
 
-void Stage::Initialize() {
+void Stage::Initialize(uint32_t stageNumber) {
 
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
@@ -75,18 +83,23 @@ void Stage::Initialize() {
 
 			blockPositions_[y][x] = 0;
 			map_[y][x]->SetPlayer(player_);
+			map_[y][x]->SetMagma(magma_.get());
 			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
 
 		}
 
 	}
 
+	upgradeSystem_->Initialize(stageNumber);
 	upgradeSystem_->SetPlayer(player_);
 
 	isClear_ = false;
+	isRespawn_ = false;
+	rockCount_ = 0;
+	magma_->Initialize();
+	magma_->SetPlayer(player_);
 
-	magmaLine_ = maxMagmaLine_;
-	magmaTexBaseX_ = 0.0f;
+	Load(stageNumber);
 
 }
 
@@ -94,105 +107,116 @@ void Stage::Update() {
 
 #ifdef _DEBUG
 
-	ImGui::Begin("magma");
-	ImGui::DragFloat("line", &magmaLine_, 1.0f);
-	ImGui::End();
+	
 
 #endif // _DEBUG
 
 
-	//岩が規定数でクリアフラグをセット
-	if (rockCount_ >= goalRockCount_ && !player_->GetIsClear()) {
-		player_->SetIsClear(true);
+	//プレイヤーがクリアフラグを持った状態でサウナ室に帰ったらクリアフラグ立てる
+	if (player_->GetIsClear() && player_->GetIsHome()) {
+
 		isClear_ = true;
+
 	}
 
-	if (Input::GetInstance()->TriggerKey(DIK_1)) {
-		CreateIceBlock();
-	}
 
-	if (Input::GetInstance()->TriggerKey(DIK_2)) {
-		BreakIceBlock();
-	}
+	if (!isClear_) {
 
-	if (Input::GetInstance()->TriggerKey(DIK_3)) {
-		SwitchBlock();
-	}
+		//ブロックの更新
+		for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
-	if (Input::GetInstance()->TriggerKey(DIK_4)) {
-		BreakAllBlock();
-	}
+			for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+				blockPositions_[y][x] = map_[y][x]->GetType();
+				SetUV(map_[y][x].get());
+				map_[y][x]->Update();
+			}
 
-	//ブロックの更新
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
-
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
-			blockPositions_[y][x] = map_[y][x]->GetType();
-			SetUV(map_[y][x].get());
-			map_[y][x]->Update();
 		}
 
-	}
-
-	upgradeSystem_->Update();
-
-	//採掘中にマグマライン上昇
-	//if (player_->GetIsMine()) {
-
-	//	if (magmaLine_ > 0.0f) {
-	//		magmaLine_ -= 1.0f;
-	//	}
-
-	//}
-	////サウナ室に戻った時にリセット
-	//else if (player_->GetIsHome() && magmaLine_ < maxMagmaLine_) {
-	//	ResetMagma();
-	//}
-
-	//当たり判定更新
-	CheckCollision();
-
-	//テクスチャの動きを付ける
-	magmaTexBaseX_++;
-	if (magmaTexBaseX_ > 256.0f) {
-		magmaTexBaseX_ = 0.0f;
-	}
-
-	//数字更新
-	for (int32_t i = 0; i < kMaxNumbers_; i++) {
-
-		int32_t num = 0;
-
-		int32_t divide = int32_t(std::pow(10, kMaxNumbers_ - 1 - i));
-		
-		num = rockCount_ / divide;
-
-		//割る数の方が大きい且つnumが0の状態で一桁でない時、数字を表示しない
-		if (num == 0 && rockCount_ < divide && divide != 1) {
-			isActiveNumber_[i] = false;
+		//家に戻ったら再生成
+		if (player_->GetIsHome() && !isRespawn_) {
+			RespawnBlock(Block::kDownMagma);
+			isRespawn_ = true;
 		}
-		else {
-			isActiveNumber_[i] = true;
+		else if (player_->GetIsDead()) {
+			RespawnBlock(Block::kGoldBlock);
+		}
+		else if (player_->GetIsMine()) {
+			isRespawn_ = false;
 		}
 
-		numbers_[i]->SetTextureArea({64.0f * num, 0.0f}, { 64.0f,64.0f });
+		upgradeSystem_->Update();
+
+		//強化中は上昇しない
+		if (!upgradeSystem_->GetIsActive()) {
+
+			magma_->Update();
+
+		}
+
+		//当たり判定更新
+		CheckCollision();
+
+		//数字更新
+		for (int32_t i = 0; i < kMaxNumbers_; i++) {
+
+			int32_t num = 0;
+
+			int32_t divide = int32_t(std::pow(10, kMaxNumbers_ - 1 - i));
+
+			num = rockCount_ / divide;
+
+			//割る数の方が大きい且つnumが0の状態で一桁でない時、数字を表示しない
+			if (num == 0 && rockCount_ < divide && divide != 1) {
+				isActiveNumber_[i] = false;
+			}
+			else {
+				isActiveNumber_[i] = true;
+			}
+
+			numbers_[i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
+
+		}
+
+		BlockTextureManager::GetInstance()->UpdateParticle();
+
+	}
+	//クリアした時
+	else {
 
 	}
 
-	//マグマ更新
-	magma_->SetSize({ float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
-	magma_->SetTextureArea({ magmaTexBaseX_,0.0f }, { float(Block::kBlockSize_ * kMaxStageWidth_), magmaUnderLine_ - magmaLine_ });
-	BlockTextureManager::GetInstance()->UpdateParticle();
+	
 }
 
 void Stage::CheckCollision() {
 
-	for (int32_t i = 0; i < 2; i++) {
+	if (IsCollision(returnArea_[0], player_->GetCollision())) {
 
-		if (IsCollision(returnArea_[i], player_->GetCollision())) {
+		player_->MoveLift();
+		canReturn_ = true;
 
-			player_->MoveLift();
+		returnUI_->position_ = returnPosition_[0] + Vector2{ 0.0f,-100.0f };
 
+	}
+	else if (IsCollision(returnArea_[1], player_->GetCollision())) {
+
+		player_->MoveLift();
+		canReturn_ = true;
+
+		returnUI_->position_ = returnPosition_[1] + Vector2{ 0.0f,-100.0f };
+
+	}
+	else {
+		canReturn_ = false;
+	}
+
+	//特定エリアでボタンを押したら強化画面に移行
+	if (IsCollision(upgradeArea_, player_->GetCollision()) &&
+		player_->GetCanJump() && !upgradeSystem_->GetPreIsActive()) {
+
+		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+			upgradeSystem_->SetIsActive(true);
 		}
 
 	}
@@ -227,6 +251,10 @@ void Stage::Draw() {
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
 		returnObjects_[i]->Draw(*camera_);
+	}
+
+	if (canReturn_) {
+		returnUI_->Draw(*camera_);
 	}
 
 	upgradeSystem_->Draw(*camera_);
@@ -269,27 +297,29 @@ void Stage::DrawCold() {
 
 	magma_->Draw(*camera_);
 
+	saunaRoom_->Draw(*camera_);
+
 }
 
 void Stage::DrawUI() {
 
-	for (uint32_t i = 0; i < kMaxNumbers_; i++) {
+	/*for (uint32_t i = 0; i < kMaxNumbers_; i++) {
 
 		if (isActiveNumber_[i]) {
 			numbers_[i]->Draw();
 		}
 
+	}*/
+
+	upgradeSystem_->DrawUI();
+
+	if (player_->GetIsHome()) {
+		/*purposeSprite_->Draw();*/
 	}
 
 	if (isClear_) {
 		clearSprite_->Draw();
 	}
-
-}
-
-void Stage::ResetMagma() {
-
-	magmaLine_ = maxMagmaLine_;
 
 }
 
@@ -375,6 +405,24 @@ void Stage::BreakAllBlock() {
 
 }
 
+void Stage::RespawnBlock(Block::BlockType type) {
+
+	//再生成可能なブロックの中から対応した要素を再生成させる
+	for (int32_t i = 0; i < respawnBlocks_.size(); i++) {
+
+		if (map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->GetDefaultType() == type) {
+
+			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->ChangeType(type);
+			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->Reset();
+			//高さに応じて耐久値を調整
+			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(int32_t(respawnBlocks_[i][1] / 5 + 3));
+
+		}
+
+	}
+
+}
+
 void Stage::CreateEntity() {
 
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
@@ -388,6 +436,7 @@ void Stage::CreateEntity() {
 				map_[y][x].reset(new Block({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, Block::BlockType::kNone));
 				map_[y][x]->Initialize({ x * float(Block::kBlockSize_), y * float(Block::kBlockSize_) }, Block::BlockType::kNone);
 				map_[y][x]->SetPlayer(player_);
+				map_[y][x]->SetMagma(magma_.get());
 				map_[y][x]->SetBlockPosition(x, y);
 
 			}
@@ -402,6 +451,8 @@ void Stage::Load(uint32_t stageNumber) {
 
 	//パーツの残り数をリセット
 	rockCount_ = 0;
+	//再生成できるブロックの要素リセット
+	respawnBlocks_.clear();
 
 	std::string fileName = "./Resources/Maps/stage";
 
@@ -456,7 +507,12 @@ void Stage::Load(uint32_t stageNumber) {
 			//高さに応じて耐久値を調整
 			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
 
-			
+			//タイプが再生成可能なものなら配列に追加
+			if (type == Block::kDownMagma || type == Block::kGoldBlock) {
+				//書き換え場所を保存
+				std::array<uint32_t, 2> nums = { x,y };
+				respawnBlocks_.push_back(nums);
+			}
 
 			blockPositions_[y][x] = num;
 
@@ -466,7 +522,7 @@ void Stage::Load(uint32_t stageNumber) {
 
 	std::string RockNum;
 
-	//ブロックの必要数を読み取り。描かれていなかったら100に固定
+	//ブロックの必要数を読み取り。描かれていなかったら30に固定
 	if (std::getline(newFile, RockNum, ',')) {
 
 		goalRockCount_ = std::stoi(RockNum);

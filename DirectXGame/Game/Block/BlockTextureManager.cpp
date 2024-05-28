@@ -13,59 +13,80 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.clear();
 
 	uint32_t texture = 0;
-	texture = TextureManager::Load("blocks/defaultRocks.png");
+	texture = TextureManager::Load("blocks/rocks.png");
 	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/testNormal.png");
+	texture = TextureManager::Load("blocks/blue.png");
 	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/testBlue.png");
+	texture = TextureManager::Load("blocks/green.png");
 	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/testRed.png");
+	texture = TextureManager::Load("blocks/red.png");
 	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/testIce.png");
-	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/testItem_01.png");
-	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/testItem_02.png");
-	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/testItem_03.png");
-	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/parts.png");
+	texture = TextureManager::Load("blocks/down.png");
 	blockTextures_.push_back(texture);
 
 	for (uint32_t index=1; index < BaseBlock::BlockType::kMaxBlock; index++) {
-		objects_[index-1]->SetTextureHandle(blockTextures_[0]);
-		breakParticles_[index - 1]->SetTextureHandle(blockTextures_[0]);
+
+		if (index == Block::kBlueBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[1]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[1]);
+		}
+		else if (index == Block::kGreenBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[2]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[2]);
+		}
+		else if (index == Block::kRedBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[3]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[3]);
+		}
+		else if (index == Block::kDownMagma) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[4]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[4]);
+		}
+		else {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[0]);
+		}
+
 	}
 
 	//壊せないブロック
-	objects_[0]->SetColor({ 0.4f,0.4f,0.4f,1.0f });
+	objects_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });
 	//極寒
-	objects_[1]->SetColor({ 0.6f,0.3f,0.1f,1.0f });
+	objects_[Block::kSnow - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	//灼熱
-	objects_[2]->SetColor({ 0.6f,0.2f,0.2f,1.0f });
-	//氷
-	objects_[3]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
-	//速度
-	objects_[4]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
-	//採掘速度
-	objects_[5]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
-	//パワーーー！！！
-	objects_[6]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	objects_[Block::kMagma - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	////氷
+	//objects_[Block::kIceBlock - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	////速度
+	//objects_[Block::kBlueBlock - 1]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
+	////採掘速度
+	//objects_[Block::kGreenBlock - 1]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
+	////パワーーー！！！
+	//objects_[Block::kRedBlock - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	//マグマ下降
+	/*objects_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });*/
+	//黄金ブロック
+	objects_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
 
 	//壊せないブロック
-	breakParticles_[0]->SetColor({ 0.4f,0.4f,0.4f,1.0f });
+	breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });
 	//極寒
-	breakParticles_[1]->SetColor({ 0.6f,0.3f,0.1f,1.0f });
+	breakParticles_[Block::kSnow - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	//灼熱
-	breakParticles_[2]->SetColor({ 0.6f,0.2f,0.2f,1.0f });
-	//氷
-	breakParticles_[3]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
-	//速度
-	breakParticles_[4]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
-	//採掘速度
-	breakParticles_[5]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
-	//パワーーー！！！
-	breakParticles_[6]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	breakParticles_[Block::kMagma - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	////氷
+	//breakParticles_[Block::kIceBlock - 1]->SetColor({ 0.7f,0.7f,1.0f,1.0f });
+	////速度
+	//breakParticles_[Block::kBlueBlock - 1]->SetColor({ 0.1f,0.1f,0.3f,1.0f });
+	////採掘速度
+	//breakParticles_[Block::kGreenBlock - 1]->SetColor({ 0.1f,0.3f,0.1f,1.0f });
+	////パワーーー！！！
+	//breakParticles_[Block::kRedBlock - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });
+	//マグマ下降
+	/*breakParticles_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });*/
+	//黄金ブロック
+	breakParticles_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
+
 }
 
 BlockTextureManager::BlockTextureManager() {

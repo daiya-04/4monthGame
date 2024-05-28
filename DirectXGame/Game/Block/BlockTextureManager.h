@@ -20,7 +20,7 @@ public:
 	/// </summary>
 	/// <param name="type">ブロックの種類</param>
 	/// <returns></returns>
-	uint32_t GetBlockTexture(uint32_t type) { return blockTextures_[type]; }
+	/*uint32_t GetBlockTexture(uint32_t type) { return blockTextures_[type]; }*/
 
 	/// <summary>
 	/// 全ブロック画像をロード

@@ -68,8 +68,8 @@ void WinApp::CreateGameWindow(const wchar_t* title, int32_t clientWidth, int32_t
 		wc_.lpszClassName,
 		title_,
 		WS_OVERLAPPEDWINDOW,
+		120,
 		50,
-		30,
 		windowRect_.right - windowRect_.left,
 		windowRect_.bottom - windowRect_.top,
 		nullptr,
@@ -111,7 +111,7 @@ void WinApp::ChangeScreenMode(ScreenMode screenMode) {
 			SetWindowPos(
 				hwnd_,
 				NULL,
-				50, 30,
+				120, 50,
 				windowRect_.right - windowRect_.left,
 				windowRect_.bottom - windowRect_.top,
 				SWP_FRAMECHANGED | SWP_SHOWWINDOW

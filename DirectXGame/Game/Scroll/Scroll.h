@@ -27,6 +27,8 @@ public:
 
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
+	void SetIsSlow(bool flag) { isSlow_ = flag; }
+
 	void SetCameraOnTarget();
 
 	/// <summary>
@@ -68,5 +70,9 @@ private:
 
 	//カメラ補正のスピード
 	float stalkerSpeed_ = 0.2f;
+	//リスに戻るまでのカメラスピード
+	float respawnStalkerSpeed_ = 0.04f;
+	//ストーカースピードの切り替え
+	bool isSlow_ = false;
 
 };

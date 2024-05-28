@@ -1,11 +1,86 @@
 #include "ScoreManager.h"
 #include "TextureManager.h"
 #include <cmath>
+#include <filesystem>
+#include <iostream>
+#include <string>
+#include <fstream>
+
+void Score::Init(const Vector2& pos, const Vector2& size) {
+
+	//テクスチャ読み込み
+	numTex_ = TextureManager::Load("UI/number.png");
+
+	pos_ = pos;
+	size_ = size;
+
+	//スプライト生成
+	for (uint32_t i = 0; i < kMaxDigits_; i++) {
+		numbers_[i].reset(Sprite::Create(numTex_, pos_));
+		numbers_[i]->SetSize(size_);
+		numbers_[i]->SetTextureArea({ 0.0f,0.0f }, size_);
+	}
+
+}
+
+void Score::Draw() {
+
+	int32_t digitNum = 0;
+
+	int32_t divideNum = int32_t(std::pow(10, kMaxDigits_ - 1));
+
+	int32_t judgeScore = value_;
+
+	for (int32_t i = 0; i < kMaxDigits_; i++) {
+
+		digitNum = judgeScore / divideNum;
+
+		numbers_[i]->SetPosition({ pos_.x + float(i - kMaxDigits_ / 2) * 48.0f, pos_.y });
+
+		numbers_[i]->SetTextureArea({ float(digitNum * 64.0f), 0.0f }, { 64.0f,64.0f });
+
+		numbers_[i]->Draw();
+
+		judgeScore = judgeScore % divideNum;
+
+		divideNum = int32_t(divideNum * 0.1f);
+	}
+
+}
+
+void Score::SetScore(const Score& score) {
+	value_ = score.value_;
+}
+
+void Rank::Init(const Vector2& pos, const Vector2& size) {
+
+	rankTex_ = TextureManager::Load("rank.png");
+
+	pos_ = pos;
+	size_ = size;
+
+	rankImage_.reset(Sprite::Create(rankTex_, pos_));
+	rankImage_->SetSize(size_);
+	rankImage_->SetTextureArea({}, { 32.0f,32.0f });
+
+}
+
+void Rank::Draw() {
+
+	rankImage_->SetPosition(pos_);
+	rankImage_->SetSize(size_);
+	rankImage_->SetTextureArea({ float(value_) * 32.0f,0.0f }, { 32.0f,32.0f });
+
+	rankImage_->Draw();
+
+}
+
+void Rank::SetRank(const Rank& rank) {
+	value_ = rank.value_;
+}
 
 ScoreManager::ScoreManager() {
-
 	Initialize();
-
 }
 
 ScoreManager* ScoreManager::GetInstance() {
@@ -16,115 +91,127 @@ ScoreManager* ScoreManager::GetInstance() {
 
 void ScoreManager::Initialize() {
 
+	
+
 	//目標スコアの設定
-
-	//stage1
-	baseScores_[0][R_SS] = 10000;
-	baseScores_[0][R_S] = 8000;
-	baseScores_[0][R_A] = 6000;
-	baseScores_[0][R_B] = 4000;
-	baseScores_[0][R_C] = 2000;
-	baseScores_[0][R_D] = 1;
-	baseScores_[0][R_N] = 0;
-	//stage2
-	baseScores_[1][R_SS] = 10000;
-	baseScores_[1][R_S] = 8000;
-	baseScores_[1][R_A] = 6000;
-	baseScores_[1][R_B] = 4000;
-	baseScores_[1][R_C] = 2000;
-	baseScores_[1][R_D] = 1;
-	baseScores_[1][R_N] = 0;
-
-	//テクスチャ読み込み
-	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
-
-	//スプライト生成
-	for (uint32_t i = 0; i < kMaxDigits_; i++) {
-
-		numbers_[i].reset(Sprite::Create(numTex_, { 0.0f,0.0f }));
-		numbers_[i]->SetSize({ 64.0f,64.0f });
-		numbers_[i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
-
+	for (int32_t index = 0; index < kMaxStage_; index++) {
+		bestScores_[index].score_.value_ = 0;
+		bestScores_[index].rank_.value_ = R_N;
+		goalScores_[index][R_SS] = 10000;
+		goalScores_[index][R_S] = 8000;
+		goalScores_[index][R_A] = 6000;
+		goalScores_[index][R_B] = 4000;
+		goalScores_[index][R_C] = 2000;
+		goalScores_[index][R_D] = 1;
+		goalScores_[index][R_N] = 0;
 	}
+	
+	Load();
 
 }
 
 void ScoreManager::Load() {
 
+	std::string name = "./Resources/Data/Score/bestScore.csv";
 
+	std::ifstream file(name);
+
+	//ファイルが無かったら新規作成
+	if (!file) {
+
+		std::ofstream newFile(name);
+
+		if (newFile.fail()) {
+			assert(false);
+			return;
+		}
+
+		for (int32_t i = 0; i < kMaxStage_; i++) {
+
+			newFile << "0,\n";
+
+		}
+
+		newFile.close();
+
+	}
+	//既にあるなら読み込み処理
+	else {
+
+		//一行分の文字を格納する文字列
+		std::string line;
+
+		//データを読んでスコアに格納
+		for (int32_t i = 0; i < kMaxStage_; i++) {
+
+			//一行取得
+			std::getline(file, line, ',');
+
+			bestScores_[i].score_.value_ = std::stoi(line);
+			for (int32_t index = R_SS; index < kRankCount; index++) {
+				if (goalScores_[i][index] <= bestScores_[i].score_.value_) {
+					bestScores_[i].rank_.value_ = Rate(index);
+					break;
+				}
+			}
+
+		}
+
+
+	}
 
 }
 
 void ScoreManager::SaveScore() {
 
-}
+	std::string name = "./Resources/Data/Score/bestScore.csv";
 
-Rank ScoreManager::JudgeRank(int32_t stageNum) {
+	std::ofstream newFile(name);
 
-	for (int32_t i = 0; i < kRankCount; i++) {
+	//ファイルが開けなかったら処理中止
+	if (!newFile) {
 
-		if (scores_[stageNum] >= baseScores_[stageNum][i]) {
-
-			return Rank(i);
-
-		}
-
-	}
-
-	return R_N;
-
-}
-
-void ScoreManager::DrawCurrentScore(const Vector2& position) {
-
-	int32_t digitNum = 0;
-
-	int32_t divideNum = int32_t(std::pow(10, kMaxDigits_ - 1));
-
-	int32_t judgeScore = currentScore_;
-
-	for (int32_t i = 0; i < kMaxDigits_; i++) {
-
-		digitNum = judgeScore / divideNum;
-
-		numbers_[i]->SetPosition({ position.x + float(i - kMaxDigits_ / 2) * 48.0f, position.y});
-
-		numbers_[i]->SetTextureArea({ float(digitNum * 64.0f), 0.0f }, { 64.0f,64.0f });
-
-		numbers_[i]->Draw();
-
-		judgeScore = judgeScore % divideNum;
-
-		divideNum = int32_t(divideNum * 0.1f);
-
-	}
-
-}
-
-void ScoreManager::DrawBestScore(int32_t stageNum, const Vector2& position) {
-
-	if (stageNum >= kMaxStage_) {
 		return;
-	}
-
-	int32_t digitNum = 0;
-
-	int32_t divideNum = int32_t(std::pow(10, kMaxDigits_ - 1));
-
-	int32_t judgeScore = scores_[stageNum];
-
-	for (int32_t i = 0; i < kMaxDigits_; i++) {
-
-		digitNum = judgeScore / divideNum;
-
-		numbers_[i]->SetPosition({ position.x - float(i - kMaxDigits_ / 2) * 48.0f, position.y });
-
-		numbers_[i]->SetTextureArea({ float(digitNum * 64.0f), 0.0f }, { 64.0f,64.0f });
-
-		numbers_[i]->Draw();
-
-		judgeScore = judgeScore % divideNum;
 
 	}
+
+	for (int32_t i = 0; i < kMaxStage_; i++) {
+
+		std::string num;
+
+		num = std::to_string(bestScores_[i].score_.value_);
+
+		newFile << num << ",\n";
+
+	}
+
+	newFile.close();
+
+}
+
+void ScoreManager::SetScore(int32_t stageNum, const Score& score) {
+
+	int32_t stageIndex = stageNum - 1;
+
+	//範囲外参照防ぐ
+	stageIndex = std::clamp(stageIndex, 0, kMaxStage_ - 1);
+
+	if (bestScores_[stageIndex].score_.value_ < score.value_) {
+		bestScores_[stageIndex].score_.value_ = score.value_;
+	}
+
+	result_.score_.value_ = score.value_;
+
+	for (int32_t index = R_SS; index < kRankCount; index++) {
+		if (goalScores_[stageIndex][index] <= score.value_) {
+			if (bestScores_[stageIndex].rank_.value_ < Rate(index)) {
+				bestScores_[stageIndex].rank_.value_ = Rate(index);
+				break;
+			}
+			result_.rank_.value_ = Rate(index);
+			break;
+		}
+	}
+	
 
 }
