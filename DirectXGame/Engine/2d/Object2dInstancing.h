@@ -50,7 +50,7 @@ public:
 		//座標
 		Vector2 position_{};
 		//テクスチャ左上座標
-		Vector2 texBase_{};
+		Vector2 texBase_{0.0f,0.0f};
 		//テクスチャサイズ
 		Vector2 texSize_ = { 100.0f,100.0f };
 
@@ -156,8 +156,8 @@ public:
 		}
 		InstancingCPUData data;
 		data.position_ = position;
-		data.texBase_ = texBase;
-		data.texSize_ = texSize;
+		data.texBase_ = texBase + Vector2({ 0.0f,0.5f });
+		data.texSize_ = texSize - Vector2({ 1.0f,1.0f });
 		data.color_ = {1.0f,1.0f,1.0f,1.0f};
 		instancingCPUData_.push_back(data);
 		instanceCount_++;
@@ -170,8 +170,8 @@ public:
 		}
 		InstancingCPUData data;
 		data.position_ = position;
-		data.texBase_ = texBase;
-		data.texSize_ = texSize;
+		data.texBase_ = texBase + Vector2({ 0.0f,0.5f });
+		data.texSize_ = texSize - Vector2({ 1.0f,1.0f });
 		data.color_ = color;
 		instancingCPUData_.push_back(data);
 		instanceCount_++;
