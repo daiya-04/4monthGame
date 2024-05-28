@@ -41,12 +41,12 @@ void GameScene::Init(){
 	camera_->ChangeDrawingRange({ 1600.0f,900.0f });
 	stage_->SetCamera(camera_.get());
 
+	scrollHomePoint_ = Stage::kBasePosition + Vector2{ 0.0f,-200.0f };
 	scroll_ = std::make_unique<Scroll>();
 	scroll_->SetCamera(camera_.get());
 	scroll_->Initialize();
-	scroll_->SetTarget(player_->GetPositionPtr());
+	scroll_->SetTarget(&scrollHomePoint_);
 	scroll_->SetCameraOnTarget();
-	scrollHomePoint_ = Stage::kBasePosition + Vector2{ 0.0f,-200.0f };
 
 	bgTexture_ = TextureManager::Load("backGround/backGround.png");
 
@@ -165,35 +165,39 @@ void GameScene::Update() {
 			isOpenMenu_ = true;
 		}
 
-		stage_->Update();
+		if (GameTextManager::GetInstance()->GetIsEnd()) {
 
-		preCameraPosition_ = camera_->translation_;
-		if (player_->GetIsBirdsEye()) {
-			scroll_->SetScrollType(0, Scroll::kNomral);
-			scroll_->SetScrollType(1, Scroll::kNomral);
-			scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
-			camera_->ChangeDrawingRange({ 2240,1260.0f });
-			snowManager_->ClearEffect();
-		}
-		else if (player_->GetIsHome()) {
-			scroll_->SetScrollType(0, Scroll::kDelay);
-			scroll_->SetScrollType(1, Scroll::kDelay);
-			scroll_->SetTarget(&scrollHomePoint_);
-			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
-		}
-		else {
-			scroll_->SetScrollType(0, Scroll::kDelay);
-			scroll_->SetScrollType(1, Scroll::kDelay);
-			scroll_->SetTarget(player_->GetPositionPtr());
-			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
-		}
+			stage_->Update();
 
-		//アップグレード中は動けない
-		if (!stage_->GetIsActiveUpgrade()) {
-			player_->Update();
-		}
+			preCameraPosition_ = camera_->translation_;
+			if (player_->GetIsBirdsEye()) {
+				scroll_->SetScrollType(0, Scroll::kNomral);
+				scroll_->SetScrollType(1, Scroll::kNomral);
+				scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
+				camera_->ChangeDrawingRange({ 2240,1260.0f });
+				snowManager_->ClearEffect();
+			}
+			else if (player_->GetIsHome()) {
+				scroll_->SetScrollType(0, Scroll::kDelay);
+				scroll_->SetScrollType(1, Scroll::kDelay);
+				scroll_->SetTarget(&scrollHomePoint_);
+				camera_->ChangeDrawingRange({ 1600.0f,900.0f });
+			}
+			else {
+				scroll_->SetScrollType(0, Scroll::kDelay);
+				scroll_->SetScrollType(1, Scroll::kDelay);
+				scroll_->SetTarget(player_->GetPositionPtr());
+				camera_->ChangeDrawingRange({ 1600.0f,900.0f });
+			}
 
-		player_->UpdateUI();
+			//アップグレード中は動けない
+			if (!stage_->GetIsActiveUpgrade()) {
+				player_->Update();
+			}
+
+			player_->UpdateUI();
+
+		}
 
 	}
 

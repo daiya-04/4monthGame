@@ -275,6 +275,10 @@ void Stage::DrawHeat() {
 		returnObjects_[i]->Draw(*camera_);
 	}
 
+	if (canReturn_) {
+		returnUI_->Draw(*camera_);
+	}
+
 	upgradeSystem_->Draw(*camera_);
 
 	magma_->Draw(*camera_);
@@ -292,6 +296,10 @@ void Stage::DrawCold() {
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
 		returnObjects_[i]->Draw(*camera_);
+	}
+
+	if (canReturn_) {
+		returnUI_->Draw(*camera_);
 	}
 
 	upgradeSystem_->Draw(*camera_);
