@@ -279,6 +279,7 @@ void Stage::DrawHeat() {
 
 	magma_->Draw(*camera_);
 
+	saunaRoom_->Draw(*camera_);
 }
 
 void Stage::DrawCold() {
