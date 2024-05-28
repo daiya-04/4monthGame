@@ -225,7 +225,8 @@ Object2d::Object2d(uint32_t textureHandle, Vector2 position, float scale, Vector
 	rotate_ = 0.0f;
 	anchorpoint_ = { 0.5f,0.5f };
 	color_ = color;
-	texSize_ = { (float)resourceDesc_.Width,(float)resourceDesc_.Height };
+	texBase_ = { 0.5f,0.5f };
+	texSize_ = { (float)resourceDesc_.Width - 0.5f,(float)resourceDesc_.Height - 0.5f};
 
 }
 
@@ -326,8 +327,8 @@ void Object2d::SetColor(const Vector4& color) {
 }
 
 void Object2d::SetTextureArea(const Vector2& texBase, const Vector2& texSize) {
-	texBase_ = texBase;
-	texSize_ = texSize;
+	texBase_ = texBase + Vector2({ 0.5f,0.5f });
+	texSize_ = texSize - Vector2({ 0.5f,0.5f });
 
 	TransferVertex();
 }
@@ -348,14 +349,14 @@ void Object2d::TransferVertex() {
 	VertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//1枚目の三角形
-	vertexData[0].pos_ = { left,top,0.0f,1.0f };//左上
+	vertexData[0].pos_ = { std::round(left),std::round(top),0.0f,1.0f };//左上
 	vertexData[0].uv_ = { uvLeft,uvTop };
-	vertexData[1].pos_ = { left,bottom,0.0f,1.0f };//左下
+	vertexData[1].pos_ = { std::round(left),std::round(bottom),0.0f,1.0f };//左下
 	vertexData[1].uv_ = { uvLeft,uvBottom };
-	vertexData[2].pos_ = { right,bottom,0.0f,1.0f };//右下
+	vertexData[2].pos_ = { std::round(right),std::round(bottom),0.0f,1.0f };//右下
 	vertexData[2].uv_ = { uvRight,uvBottom };
 	//2枚目の三角形
-	vertexData[3].pos_ = { right,top,0.0f,1.0f };//右上
+	vertexData[3].pos_ = { std::round(right),std::round(top),0.0f,1.0f };//右上
 	vertexData[3].uv_ = { uvRight,uvTop };
 
 }
