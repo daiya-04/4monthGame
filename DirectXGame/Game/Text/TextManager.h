@@ -21,12 +21,36 @@ public:
 		return &instancee;
 	};
 
-
+	TextManager() { Initialize(); };
+	~TextManager() {};
 
 	void Initialize();
+	
+	//文字追加
+	void AppendChar(const Vector2& position,const std::wstring& str);
+	
+	//フレームの先頭で一回クリアする
+	void ClearText() { drawObject_->ClearUseCount(); };
+
+	//描画
+	void Draw();
+
+	//テスト用直接操作
 	void TestDraw();
+
+
 	//表示文字数変更
 	void SetCharCount(uint32_t count) { showCharCount_ = count; };
+
+	//フォントのオフセットデータを読み込む
+	void LoadFontOffset();
+
+	//フォントのオフセットデータをファイルに保存する
+	void SaveFontOffset();
+
+	//オフセットエディタの描画
+	void OffsetEditorDraw();
+
 private:
 	//first:文字 second:テクスチャ左上座標
 	std::map<std::wstring, Vector2> fontOffsets_;
@@ -34,8 +58,8 @@ private:
 	//画像上の各文字の幅
 	const float kCharStride_ = 32.0f;
 	//表示文章上の各文字の幅
-	const float kTextStride_ = 64.0f;
-	std::wstring text_ = L"互サ道サ道サササあ道";
+	const float kTextStride_ = 32.0f;
+	std::wstring text_ = L"互サ道サ道ササあ道";
 
 	std::unique_ptr<Camera> testCamera_;//spriteをinstancing対応させるまでの仮カメラ
 	

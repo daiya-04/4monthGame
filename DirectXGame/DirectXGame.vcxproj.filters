@@ -260,6 +260,8 @@
     </ClCompile>
     <ClCompile Include="Game\Block\BlockBreakParticle.cpp" />
     <ClCompile Include="Game\Text\TextManager.cpp" />
+    <ClCompile Include="Game\Text\Text.cpp" />
+    <ClCompile Include="Game\GameText\GameTextManager.cpp" />
     <ClCompile Include="Option.cpp" />
     <ClCompile Include="Game\Stage\Magma.cpp">
       <Filter>Game\Stage</Filter>
@@ -451,6 +453,8 @@
     </ClInclude>
     <ClInclude Include="Game\Text\TextManager.h" />
     <ClInclude Include="Game\Block\BlockBreakParticle.h" />
+    <ClInclude Include="Game\Text\Text.h" />
+    <ClInclude Include="Game\GameText\GameTextManager.h" />
     <ClInclude Include="Option.h" />
     <ClInclude Include="Game\Stage\Magma.h">
       <Filter>Game\Stage</Filter>

@@ -45,7 +45,7 @@ void BaseBlock::Break(int32_t power) {
 			}
 
 		}
-		int createNum = int(RandomEngine::GetRandom(3.0f,5.0f));
+		int createNum = int(RandomEngine::GetRandom(8.0f,12.0f));
 		for (int i = 0; i < createNum;i++) {
 			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
 		}
@@ -119,7 +119,14 @@ void Block::Draw(const Camera& camera) {
 
 	if (!isBreak_) {
 		//object_->Draw(camera);
-		BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ },type_);
+		//切り替わるタイプのブロックだったら両方入れる
+		if (type_ == BlockType::kSnow || type_ == BlockType::kMagma) {
+			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kMagma);
+			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kSnow);
+		}
+		else {
+			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_);
+		}
 	}
 
 }

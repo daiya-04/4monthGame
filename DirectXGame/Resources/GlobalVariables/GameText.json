@@ -1,0 +1,28 @@
+{
+    "GameText": [
+        {
+            "TextLayout": {
+                "Name-Position": [
+                    268.0,
+                    520.0
+                ],
+                "NameBack-Position": [
+                    261.0,
+                    520.0
+                ],
+                "NameBack-Size": [
+                    196.0,
+                    36.0
+                ],
+                "TextBox-Position": [
+                    640.0,
+                    600.0
+                ],
+                "TextBox-Size": [
+                    1000.0,
+                    150.0
+                ]
+            }
+        }
+    ]
+}

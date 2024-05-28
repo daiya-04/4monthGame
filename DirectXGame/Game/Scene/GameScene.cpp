@@ -9,6 +9,7 @@
 #include <random>
 #include "Game/Block/BlockTextureManager.h"
 #include "Text/TextManager.h"
+#include "GameText/GameTextManager.h"
 #include "AudioManager.h"
 
 GameScene::~GameScene() {
@@ -26,6 +27,7 @@ void GameScene::Init(){
 	currentStageNumber_ = stageNumber_;
 
 	player_ = std::make_shared<Player>();
+	player_->Initialize();
 	player_->Initialize();
 
 	stage_ = std::make_unique<Stage>();
@@ -54,6 +56,9 @@ void GameScene::Init(){
 	commandList_ = DirectXCommon::GetInstance()->GetCommandList();
 
 	environmentEffectsManager_ = EnvironmentEffectsManager::GetInstance();
+	//stageに現在のシーンモードを適応する
+	AppryMode();
+
 	cameraFrozen_ = CameraFrozenManager::GetInstance();
 	heatHazeManager_ = HeatHazeManager::GetInstance();
 
@@ -77,12 +82,17 @@ void GameScene::Init(){
 	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("player/playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
 	isFirstAllDraw_ = true;
-	TextManager::GetInstance()->Initialize();
+	TextManager::GetInstance();
 
 	magmaBGM_ = AudioManager::GetInstance()->Load("BGM/magmaBGM.mp3");
 	
 	magmaBGM_->Play();
 
+	TextManager::GetInstance();
+	testText_.reset(new Text);
+	testText_->Initialize();
+	testText_->SetWString(L"AAAAA");
+	GameTextManager::GetInstance()->InitializeStage(stageNumber_);
 }
 
 void GameScene::Reset() {
@@ -97,8 +107,8 @@ void GameScene::Reset() {
 
 void GameScene::Update() {
 	DebugGUI();
-
-	
+	TextManager::GetInstance()->ClearText();
+	GameTextManager::GetInstance()->Update();
 #ifdef _DEBUG
 
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_1)) {
@@ -239,6 +249,7 @@ void GameScene::DrawNotSetPipeline() {
 		cameraFrozen_->DrawInternal(commandList_);
 		waterDropManager_->DrawEffectUpdate(cameraFrozen_->GetEffectTexture());
 	}
+	stage_->Draw();
 	//極寒状態だったら
 	if (!environmentEffectsManager_->GetIsNowScene()) {
 		DrawCold(environmentEffectsManager_->GetPrevScene());
@@ -297,7 +308,11 @@ void GameScene::DrawUI(){
 		menuButtonSprite_->Draw();
 	}
 
-	TextManager::GetInstance()->TestDraw();
+	//TextManager::GetInstance()->TestDraw();
+	//TextManager::GetInstance()->TestDraw();
+	GameTextManager::GetInstance()->Draw();
+	testText_->SetText();
+	TextManager::GetInstance()->Draw();
 }
 
 void GameScene::DebugGUI(){
@@ -310,15 +325,24 @@ void GameScene::DebugGUI(){
 
 	player_->Debug();
 
+	if (Input::GetInstance()->TriggerKey(DIK_9)) {
+		ChangeMode();
+	}
 
-	/*if (Input::GetInstance()->TriggerKey(DIK_Z)) {
-		isPlayGame_ = !isPlayGame_;
-	};*/
+	//GameTextManager::GetInstance()->TestUpdate();
+
 	static int cCount;
+	static Vector2 position;
 	ImGui::Begin("testText");
 	ImGui::DragInt("CharCount", &cCount, 1,0,100);
+	ImGui::DragFloat2("originPosition", &position.x,1.0f);
 	ImGui::End();
-	TextManager::GetInstance()->SetCharCount(uint32_t(cCount));
+	testText_->SetArrangeType(Text::kCenter);
+	testText_->SetCharCount(uint32_t(cCount));
+	testText_->SetPosition(position);
+	//TextManager::GetInstance()->SetCharCount(uint32_t(cCount));
+	TextManager::GetInstance()->OffsetEditorDraw();
+
 #endif // _DEBUG
 }
 
@@ -342,7 +366,7 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 	if (!player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
-	stage_->Draw();
+	stage_->DrawCold();
 	if (player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
@@ -367,7 +391,7 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	if (!player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
-	stage_->Draw();
+	stage_->DrawHeat();
 	if (player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
@@ -381,4 +405,20 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	cameraFrozen_->Draw(commandList_);
 	targetScene->PostDrawScene(commandList_);
 
+}
+
+
+void GameScene::ChangeMode() {
+	environmentEffectsManager_->ChangeSceneMode();
+	AppryMode();
+}
+
+void GameScene::AppryMode() {
+	bool sceneMode = environmentEffectsManager_->GetIsNowScene();
+	if ((sceneMode) ^ environmentEffectsManager_->GetIsPlaySceneChangeAnimation() ) {
+		stage_->ChangeSnow2Magma();
+	}
+	else {
+		stage_->ChangeMagma2Snow();
+	}
 }

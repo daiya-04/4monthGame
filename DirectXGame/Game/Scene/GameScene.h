@@ -27,6 +27,9 @@
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
 #include "EnvironmentEffects/WaterDrop/WaterDropManager.h"
 #include "EnvironmentEffects/Snow/SnowManager.h"
+
+#include "Text/Text.h"
+
 class GameScene : public DefaultScene {
 public:
 
@@ -59,6 +62,12 @@ public:
 	/// </summary>
 	/// <param name="targetScene">書き込み先</param>
 	void DrawCold(PostEffect* targetScene);
+
+	//極寒,灼熱モードを切り替える
+	void ChangeMode();
+
+	//stage側にeffectManagerが持つモードを適応する
+	void AppryMode();
 
 private:
 	ID3D12GraphicsCommandList* commandList_;
@@ -139,5 +148,7 @@ private:
 
 
 	uint32_t currentStageNumber_ = 0;
+
+	std::unique_ptr<Text> testText_;
 };
 

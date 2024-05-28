@@ -243,6 +243,7 @@ void Stage::Draw() {
 		}
 
 	}
+	/*
 	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	BlockTextureManager::GetInstance()->DrawAll(*camera_);
 	BlockTextureManager::GetInstance()->DrawParticle(*camera_);
@@ -254,6 +255,43 @@ void Stage::Draw() {
 
 	if (canReturn_) {
 		returnUI_->Draw(*camera_);
+	}
+
+	upgradeSystem_->Draw(*camera_);
+
+	magma_->Draw(*camera_);
+	*/
+}
+
+void Stage::DrawHeat() {
+
+	
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	BlockTextureManager::GetInstance()->DrawHeat(*camera_);
+	BlockTextureManager::GetInstance()->DrawParticle(*camera_);
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (uint32_t i = 0; i < 2; i++) {
+		borders_[i]->Draw(*camera_);
+		returnObjects_[i]->Draw(*camera_);
+	}
+
+	upgradeSystem_->Draw(*camera_);
+
+	magma_->Draw(*camera_);
+
+	saunaRoom_->Draw(*camera_);
+}
+
+void Stage::DrawCold() {
+
+
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	BlockTextureManager::GetInstance()->DrawCold(*camera_);
+	BlockTextureManager::GetInstance()->DrawParticle(*camera_);
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (uint32_t i = 0; i < 2; i++) {
+		borders_[i]->Draw(*camera_);
+		returnObjects_[i]->Draw(*camera_);
 	}
 
 	upgradeSystem_->Draw(*camera_);
@@ -906,4 +944,26 @@ void Stage::SetUV(Block* block) {
 		block->SetUVPosition(3, 5);
 	}
 
+}
+
+void Stage::ChangeSnow2Magma() {
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			if (map_[y][x]->GetType() == Block::BlockType::kSnow) {
+				map_[y][x]->ChangeType(Block::BlockType::kMagma);
+			}
+			blockPositions_[y][x] = map_[y][x]->GetType();
+		}
+	}
+}
+
+void Stage::ChangeMagma2Snow() {
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			if (map_[y][x]->GetType() == Block::BlockType::kMagma) {
+				map_[y][x]->ChangeType(Block::BlockType::kSnow);
+			}
+			blockPositions_[y][x] = map_[y][x]->GetType();
+		}
+	}
 }

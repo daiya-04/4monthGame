@@ -34,6 +34,11 @@ public:
 	/// </summary>
 	void Draw();
 
+	//灼熱描画
+	void DrawHeat();
+	//極寒描画
+	void DrawCold();
+
 	/// <summary>
 	/// UI描画
 	/// </summary>
@@ -73,6 +78,12 @@ public:
 
 	//クリアフラグ取得
 	bool GetIsClear() const { return isClear_; }
+
+	//極寒ブロックを灼熱ブロックに変える
+	void ChangeSnow2Magma();
+
+	//灼熱ブロックを極寒ブロックに変える
+	void ChangeMagma2Snow();
 
 	bool GetIsActiveUpgrade() const { return upgradeSystem_->GetIsActive(); }
 

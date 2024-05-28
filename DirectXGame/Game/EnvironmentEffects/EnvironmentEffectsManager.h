@@ -29,6 +29,9 @@ public:
 	void WeightCircleDraw() { weightCircle_->Draw(); };
 	//シーン遷移が完了したフレームか
 	bool GetIsChangeComplete() { return isChangeComplete_; };
+
+	//シーンモードを切り替える
+	void ChangeSceneMode();
 private:
 	std::unique_ptr<PostEffect> prevScene;
 	std::unique_ptr<PostEffect> nextScene;

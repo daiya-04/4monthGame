@@ -68,9 +68,9 @@ void Object2dInstancing::StaticInitialize(ID3D12Device* device, int windowWidth,
 	rootParameters[RootParameter::kMaterial].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;   //PixelShaderで使う
 	rootParameters[RootParameter::kMaterial].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
 
-	rootParameters[RootParameter::kForVS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
-	rootParameters[RootParameter::kForVS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;   //VertexShaderで使う
-	rootParameters[RootParameter::kForVS].Descriptor.ShaderRegister = 1;   //レジスタ番号0を使う
+	//rootParameters[RootParameter::kForVS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
+	//rootParameters[RootParameter::kForVS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;   //VertexShaderで使う
+	//rootParameters[RootParameter::kForVS].Descriptor.ShaderRegister = 1;   //レジスタ番号0を使う
 
 
 	rootParameters[RootParameter::kForVS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
@@ -317,6 +317,7 @@ void Object2dInstancing::Draw(const Camera& camera) {
 		instancingForVSMap_[index].texcoord_[2] = { uvRight,uvBottom };
 		instancingForVSMap_[index].texcoord_[3] = { uvRight,uvTop };
 		
+		instancingForVSMap_[index].color_ = instancingCPUData_[index].color_;
 	}
 
 
