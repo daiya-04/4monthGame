@@ -3,7 +3,9 @@
 #include <memory>
 #include "Object2dInstancing.h"
 #include <list>
+#include "Vec4.h"
 class BlockBreakParticle;
+class StarParticle;
 
 /// <summary>
 /// ブロックに使うテクスチャ一括管理
@@ -33,6 +35,9 @@ public:
 	//描画オブジェクト追加
 	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize,uint32_t type);
 
+	//描画オブジェクト追加
+	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type,const Vector4& color);
+
 	//全オブジェクト描画
 	void DrawAll(const Camera& camera);
 
@@ -45,10 +50,15 @@ public:
 	//描画オブジェクト追加
 	void AppendParticle(const Vector2& position, uint32_t type);
 
+	//描画オブジェクト追加
+	void AppendStarParticle(const Vector2& position,const Vector4& color);
+
 	//全オブジェクト描画
 	void DrawParticle(const Camera& camera);
 
 	void CreateParticle(const Vector2& position, uint32_t type);
+
+	void CreateStarParticle(const Vector2& position);
 
 	void UpdateParticle();
 
@@ -61,6 +71,9 @@ private:
 	std::vector<std::unique_ptr<Object2dInstancing>> breakParticles_;
 
 	std::list<std::unique_ptr<BlockBreakParticle>> breakParticleDatas_;
+
+	std::list<std::unique_ptr<StarParticle>> starParticleDatas_;
+	std::unique_ptr<Object2dInstancing> starParticles_;
 
 private:
 

@@ -113,6 +113,9 @@ void Block::Update() {
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
 
+	if (type_ == kGoldBlock) {
+		BlockTextureManager::GetInstance()->CreateStarParticle(position_);
+	}
 }
 
 void Block::Draw(const Camera& camera) {
