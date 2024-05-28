@@ -95,7 +95,7 @@ private:
 	std::array<std::array<int32_t, 4>, kMaxLevel_> powerUpgradeNeeds_;
 
 	//強化レベル
-	int32_t saunaLevel_ = 0;
+	std::array<int32_t, 2> saunaLevel_ = { 0,0 };
 
 	std::array<int32_t, 2> powerLevel_ = { 0,0 };
 

@@ -1,4 +1,5 @@
 #include "Scroll.h"
+#include "ImGuiManager.h"
 
 Scroll::Scroll()
 {

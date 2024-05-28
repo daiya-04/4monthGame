@@ -41,14 +41,14 @@ Player::Player()
 
 		for (int32_t i = 0; i < 5; i++) {
 
-			numbers_[height][i].reset(Sprite::Create(numberTexture_, { 100.0f + 32.0f * i , 500.0f + 64.0f * height }));
+			numbers_[height][i].reset(Sprite::Create(numberTexture_, { 1100.0f + 32.0f * i , 30.0f + 64.0f * height }));
 			numbers_[height][i]->SetSize({ 48.0f,48.0f });
 			numbers_[height][i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
 
 		}
 
 		//岩UIリセット
-		rocksUI_[height].reset(Sprite::Create(rockUITextures_[height], { 50.0f, 500.0f + 64.0f * height }));
+		rocksUI_[height].reset(Sprite::Create(rockUITextures_[height], { 1050.0f, 30.0f + 64.0f * height }));
 		rocksUI_[height]->SetSize({ 48.0f,48.0f });
 
 	}

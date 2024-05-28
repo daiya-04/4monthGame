@@ -44,6 +44,7 @@ void GameScene::Init(){
 	scroll_->Initialize();
 	scroll_->SetTarget(player_->GetPositionPtr());
 	scroll_->SetCameraOnTarget();
+	scrollHomePoint_ = Stage::kBasePosition + Vector2{ 0.0f,-200.0f };
 
 	bgTexture_ = TextureManager::Load("backGround/backGround.png");
 
@@ -163,6 +164,12 @@ void GameScene::Update() {
 			scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
 			camera_->ChangeDrawingRange({ 2240,1260.0f });
 			snowManager_->ClearEffect();
+		}
+		else if (player_->GetIsHome()) {
+			scroll_->SetScrollType(0, Scroll::kDelay);
+			scroll_->SetScrollType(1, Scroll::kDelay);
+			scroll_->SetTarget(&scrollHomePoint_);
+			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
 		}
 		else {
 			scroll_->SetScrollType(0, Scroll::kDelay);

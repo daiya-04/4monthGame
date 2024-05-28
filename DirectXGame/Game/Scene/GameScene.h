@@ -93,6 +93,7 @@ private:
 	Score score_;
 
 	std::unique_ptr<Scroll> scroll_;
+	Vector2 scrollHomePoint_{};
 
 	Vector2 scorePosition_ = { 256.0f,64.0f };
 

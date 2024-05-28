@@ -87,9 +87,8 @@ void UpgradeSystem::Initialize(int32_t stageNum) {
 
 	LoadData(stageNum);
 
-	saunaLevel_ = 0;
-
 	for (int32_t i = 0; i < 2; i++) {
+		saunaLevel_[i] = 0;
 		powerLevel_[i] = 0;
 	}
 
@@ -108,126 +107,6 @@ void UpgradeSystem::Update() {
 		sendRockSprite_->SetTextureHandle(sendIntervalTexture_);
 		powerSprite_->SetTextureHandle(powerTexture_);
 
-		//選択したものによって処理を切り替え
-		//if (isActiveUpgrade_) {
-
-		//	switch (type_)
-		//	{
-		//	default:
-		//	case UpgradeSystem::kSendRock:
-
-		//		SendRock();
-
-		//		break;
-
-		//	case UpgradeSystem::kUpgrade:
-
-		//		Upgrade();
-
-		//		break;
-
-		//	}
-
-		//	sendRockSprite_->SetTextureHandle(sendIntervalTexture_);
-		//	powerSprite_->SetTextureHandle(powerTexture_);
-
-		//}
-		//else {
-
-		//	if (input_->TriggerLStick(Input::Stick::Up)) {
-
-		//		switch (type_)
-		//		{
-		//		case UpgradeSystem::kUpgrade:
-		//			type_ = kSendRock;
-		//			break;
-		//		case UpgradeSystem::kReturn:
-		//			type_ = kUpgrade;
-		//			break;
-		//		default:
-		//			break;
-		//		}
-
-		//	}
-		//	else if (input_->TriggerLStick(Input::Stick::Down)) {
-
-		//		switch (type_)
-		//		{
-		//		case UpgradeSystem::kSendRock:
-		//			type_ = kUpgrade;
-		//			break;
-		//		case UpgradeSystem::kUpgrade:
-		//			type_ = kReturn;
-		//			break;
-		//		default:
-		//			break;
-		//		}
-
-		//	}
-
-		//	if (input_->TriggerButton(Input::Button::A)) {
-
-		//		switch (type_)
-		//		{
-		//		default:
-		//		case UpgradeSystem::kSendRock:
-
-		//			isActiveUpgrade_ = true;
-
-		//			break;
-		//		
-		//		case UpgradeSystem::kUpgrade:
-
-		//			isActiveUpgrade_ = true;
-
-		//			break;
-		//		
-		//		case UpgradeSystem::kReturn:
-
-		//			isActive_ = false;
-		//			type_ = kSendRock;
-
-		//			break;
-		//		
-		//		}
-
-		//	}
-
-		//	//UIの動き付け
-		//	switch (type_)
-		//	{
-		//	default:
-		//	case UpgradeSystem::kSendRock:
-
-		//		backSprite_->SetPosition({ 1000.0f,600.0f });
-		//		sendRockSprite_->SetPosition({ 950.0f,200.0f });
-		//		powerSprite_->SetPosition({ 1000.0f,400.0f });
-
-		//		break;
-
-		//	case UpgradeSystem::kUpgrade:
-
-		//		backSprite_->SetPosition({ 1000.0f,600.0f });
-		//		sendRockSprite_->SetPosition({ 1000.0f,200.0f });
-		//		powerSprite_->SetPosition({ 950.0f,400.0f });
-
-		//		break;
-
-		//	case UpgradeSystem::kReturn:
-
-		//		backSprite_->SetPosition({ 950.0f,600.0f });
-		//		sendRockSprite_->SetPosition({ 1000.0f,200.0f });
-		//		powerSprite_->SetPosition({ 1000.0f,400.0f });
-
-		//		break;
-
-		//	}
-
-		//	sendRockSprite_->SetTextureHandle(sendRockTexture_);
-		//	powerSprite_->SetTextureHandle(upgradeTexture_);
-
-		//}
-
 		//数字の更新
 		for (int32_t y = 0; y < 2; y++) {
 
@@ -242,7 +121,7 @@ void UpgradeSystem::Update() {
 					//岩送りの数字
 					if (y == 0) {
 
-						num = saunaUpgradeNeeds_[saunaLevel_][x] / divide;
+						num = saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][x] / divide;
 
 						numbers_[y][x][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
 
@@ -265,50 +144,6 @@ void UpgradeSystem::Update() {
 	}
 	//強化画面を開いていない時はゲームの更新をする
 	else {
-
-		//sendRocks_->ClearUseCount();
-
-		//if (sendRockCount_ > 0) {
-
-		//	if (--sendCoolTime_ <= 0) {
-
-		//		positions_.push_back(furnace_->position_);
-
-		//		sendCoolTime_ = sendInterval_;
-		//		sendRockCount_--;
-
-		//	}
-
-		//}
-		//else {
-
-		//	if (sendCoolTime_ > 0) {
-		//		sendCoolTime_--;
-		//	}
-
-		//}
-
-		//int32_t popCount = 0;
-
-		//for (int32_t i = 0; i < positions_.size(); i++) {
-
-		//	positions_[i].y -= sendSpeed_;
-		//	sendRocks_->AppendObject(positions_[i], { 0.0f,0.0f }, { 32.0f,32.0f });
-
-		//	//一定ラインを超えたら削除カウント追加
-		//	if (positions_[i].y <= Block::kBlockSize_) {
-		//		popCount++;
-		//	}
-
-		//}
-
-		//for (int32_t i = 0; i < popCount; i++) {
-
-		//	//先頭のポジション削除、ゴールカウント増加
-		//	positions_.erase(positions_.begin());
-		//	(*goalCount_)++;
-
-		//}
 
 
 
@@ -429,27 +264,27 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 	default:
 	case UpgradeSystem::kSauna:
 
-		if (saunaLevel_ < kMaxLevel_) {
+		if (saunaLevel_[player_->GetCurrentCharacter()] < kMaxLevel_) {
 
 			//条件を満たしていたらブロックを消費して強化
 			if (player_->GetRockParameter().rocks_[Player::BringRocks::kRock] >=
-				saunaUpgradeNeeds_[saunaLevel_][Player::BringRocks::kRock] &&
+				saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRock] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kBlue] >=
-				saunaUpgradeNeeds_[saunaLevel_][Player::BringRocks::kBlue] &&
+				saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kBlue] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kGreen] >=
-				saunaUpgradeNeeds_[saunaLevel_][Player::BringRocks::kGreen] &&
+				saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kGreen] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kRed] >=
-				saunaUpgradeNeeds_[saunaLevel_][Player::BringRocks::kRed]) {
+				saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRed]) {
 
 				for (int32_t i = 0; i < Player::BringRocks::kMaxType; i++) {
 
-					player_->GetRockParameter().rocks_[i] -= saunaUpgradeNeeds_[saunaLevel_][i];
+					player_->GetRockParameter().rocks_[i] -= saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][i];
 
 				}
 
 				player_->UpgradeSpeed(speedUpgradeValue_);
 				player_->UpgradeDigSpeed(digSpeedUpgradeValue_);
-				saunaLevel_++;
+				saunaLevel_[player_->GetCurrentCharacter()]++;
 
 			}
 			else {
