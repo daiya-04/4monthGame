@@ -16,6 +16,7 @@ public:
 		float roop; //ループ(大きいほど変化が細かくなる)
 		float width; //歪み幅、0で歪まない
 		float magmaLine;//マグマの上端の位置(スクリーン座標)
+		int32_t isMagmaFluction_;
 	};
 
 	HeatHaze()=default;
@@ -36,6 +37,10 @@ public:
 
 	void SetMagmaLine(float line) {
 		heatHazeData_->magmaLine = line;
+	}
+
+	void SetMagmaFluction(bool is) {
+		heatHazeData_->isMagmaFluction_ = int32_t(is);
 	}
 
 private:

@@ -174,18 +174,21 @@ void GameScene::Update() {
 			scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
 			camera_->ChangeDrawingRange({ 2240,1260.0f });
 			snowManager_->ClearEffect();
+			heatHazeManager_->SetIsUseMagmaFluction(false);
 		}
 		else if (player_->GetIsHome()) {
 			scroll_->SetScrollType(0, Scroll::kDelay);
 			scroll_->SetScrollType(1, Scroll::kDelay);
 			scroll_->SetTarget(&scrollHomePoint_);
 			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
+			heatHazeManager_->SetIsUseMagmaFluction(true);
 		}
 		else {
 			scroll_->SetScrollType(0, Scroll::kDelay);
 			scroll_->SetScrollType(1, Scroll::kDelay);
 			scroll_->SetTarget(player_->GetPositionPtr());
 			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
+			heatHazeManager_->SetIsUseMagmaFluction(true);
 		}
 
 		//アップグレード中は動けない
