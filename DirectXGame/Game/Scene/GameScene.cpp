@@ -10,7 +10,6 @@
 #include "Game/Block/BlockTextureManager.h"
 #include "Text/TextManager.h"
 #include "GameText/GameTextManager.h"
-GameScene::~GameScene() {}
 #include "AudioManager.h"
 
 GameScene::~GameScene() {
@@ -28,6 +27,7 @@ void GameScene::Init(){
 	currentStageNumber_ = stageNumber_;
 
 	player_ = std::make_shared<Player>();
+	player_->Initialize();
 	player_->Initialize();
 
 	stage_ = std::make_unique<Stage>();
@@ -81,7 +81,7 @@ void GameScene::Init(){
 	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("player/playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
 	isFirstAllDraw_ = true;
-	TextManager::GetInstance()->Initialize();
+	TextManager::GetInstance();
 
 	magmaBGM_ = AudioManager::GetInstance()->Load("BGM/magmaBGM.mp3");
 	
@@ -301,7 +301,7 @@ void GameScene::DrawUI(){
 		menuButtonSprite_->Draw();
 	}
 
-	TextManager::GetInstance()->TestDraw();
+	//TextManager::GetInstance()->TestDraw();
 	//TextManager::GetInstance()->TestDraw();
 	GameTextManager::GetInstance()->Draw();
 	testText_->SetText();

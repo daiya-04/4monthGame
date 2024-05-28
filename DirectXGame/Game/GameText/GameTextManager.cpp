@@ -14,6 +14,7 @@ void GameTextManager::Initialize() {
 	for (size_t i = 0; i < 9;i++) {
 		nineSliceTextureBox_[i].reset(Sprite::Create(TextureManager::GetInstance()->Load("textBox.png"), Vector2{ 0,0 }, 9));
 		nineSliceTextureBox_[i]->SetAnchorpoint({0.0f,0.0f});
+		nineSliceTextureBox_[i]->SetScale({1.0f,1.0f});
 	}
 
 	nameBack_.reset(Sprite::Create(TextureManager::GetInstance()->Load("nameBack.png"), Vector2{ 0,0 }));
@@ -61,22 +62,24 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 	phase_ = OPEN;
 	parametric_ = 0.0f;
 	//文字列ロード処理入れる
-	LoadText(stageNum);
+	//LoadText(stageNum);
 	//textList_.push_back(L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ");
 	//textList_.push_back(L"互サ道互サ道互サ道互サ道互サ道互サ道互サ道互サ道");
 	listIndex_ = 0;
-	mainText_->SetWString(textList_[listIndex_]);
-	mainText_->SetCharCount(0);
-	mainText_->SetCompleteDrawText(false);
-	mainText_->SetPosition({200.0f,562.0f});
-	
-	nameText_->SetWString(nameList_[listIndex_]);
-	nameText_->CharCountMax();
-	nameText_->SetArrangeType(Text::kCenter);
+	if (!textList_.empty()) {
+		mainText_->SetWString(textList_[listIndex_]);
+		mainText_->SetCharCount(0);
+		mainText_->SetCompleteDrawText(false);
+		mainText_->SetPosition({ 200.0f,562.0f });
 
-	next_->SetWString(L"A");
-	next_->SetPosition({ 1100.0f,650.0f });
-	next_->SetCharCount(1);
+		nameText_->SetWString(nameList_[listIndex_]);
+		nameText_->CharCountMax();
+		nameText_->SetArrangeType(Text::kCenter);
+
+		next_->SetWString(L"A");
+		next_->SetPosition({ 1100.0f,650.0f });
+		next_->SetCharCount(1);
+	}
 	isEnd_ = false;
 }
 
@@ -92,7 +95,7 @@ void GameTextManager::LoadText(uint32_t stageNum) {
 	std::wstring text;
 	//ファイル読み込みが出来なかったら処理を止める
 	if (!file.is_open()) {
-		MessageBox(nullptr, L"ファイルを読み込めませんでした。", L"FontOffsets", 0);
+		//MessageBox(nullptr, L"ファイルを読み込めませんでした。", L"FontOffsets", 0);
 		return;
 	}
 	
@@ -172,7 +175,7 @@ void GameTextManager::View() {
 	//終了
 	else if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 		//リストが残っていたらtextを差し替えてリセット
-		if (listIndex_ < textList_.size()-1) {
+		if (listIndex_ < textList_.size()-1 && !textList_.empty()) {
 			listIndex_++;
 			mainText_->SetWString(textList_[listIndex_]);
 			mainText_->SetCharCount(0);
