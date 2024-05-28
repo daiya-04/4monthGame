@@ -1,15 +1,20 @@
 #include "StarParticle.h"
 #include "RandomEngine/RandomEngine.h"
 int32_t StarParticle::response;
-void StarParticle::Initialize(const Vector2& postition) {
+void StarParticle::Initialize(const Vector2& postition, int32_t type) {
 	position_ = postition;
 	position_.y += RandomEngine::GetRandom(-64.0f, 64.0f);
 	position_.x += RandomEngine::GetRandom(-64.0f, 64.0f);
 	color_ = {1.0f,1.0f,1.0f,1.0f};
-	aliveTime_ = int32_t(RandomEngine::GetRandom(12.0f, 30.0f));
+	aliveTime_ = int32_t(RandomEngine::GetRandom(25.0f, 30.0f));
 	aliveMax_ = aliveTime_;
 	isAlive_ = true;
-	response = int32_t(RandomEngine::GetRandom(10.0f, 40.0f));
+	if (type==0) {
+		response = int32_t(RandomEngine::GetRandom(10.0f, 30.0f));
+	}
+	else {
+		response = int32_t(RandomEngine::GetRandom(5.0f, 8.0f));
+	}
 }
 
 void StarParticle::Update() {

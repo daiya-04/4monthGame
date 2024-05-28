@@ -114,7 +114,7 @@ void Block::Update() {
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
 
 	if (type_ == kGoldBlock) {
-		BlockTextureManager::GetInstance()->CreateStarParticle(position_);
+		BlockTextureManager::GetInstance()->CreateStarParticle(position_,0);
 	}
 }
 

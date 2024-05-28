@@ -453,6 +453,7 @@ void Player::Move() {
 
 		if (isClear_) {
 			object_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
+			BlockTextureManager::GetInstance()->CreateStarParticle(position_,1);
 		}
 		else {
 			object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
