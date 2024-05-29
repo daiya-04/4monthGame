@@ -115,7 +115,7 @@ void GameScene::Update() {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
 	if (Input::GetInstance()->PushKey(DIK_LCONTROL) && Input::GetInstance()->TriggerKey(DIK_2)) {
-		scoreManager_->SetScore(stageNumber_, score_);
+		scoreManager_->SetScore(currentStageNumber_, score_);
 		scoreManager_->SaveScore();
 		SceneManager::GetInstance()->ChangeScene("StageSelect");
 	}
@@ -233,7 +233,7 @@ void GameScene::Update() {
 void GameScene::ClearProcess() {
 
 	//ハイスコア更新で記録を塗り替える
-	scoreManager_->SetScore(stageNumber_, score_);
+	scoreManager_->SetScore(currentStageNumber_, score_);
 
 }
 

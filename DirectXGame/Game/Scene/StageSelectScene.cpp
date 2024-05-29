@@ -25,7 +25,7 @@ void StageSelectScene::Init() {
 	LoadData();
 
 	camera_.Init();
-	camera_.translation_ = { 0.0f,0.0f,0.0f };
+	camera_.translation_ = { 640.0f * (stageNumber_ - 1),0.0f,0.0f };
 
 	bgTexture_ = TextureManager::Load("backGround/stageSelectBG.png");
 	saunaRoomTex_ = TextureManager::Load("saunaRoom.png");
@@ -42,9 +42,6 @@ void StageSelectScene::Init() {
 		player_[index]->SetTextureArea({ 0.0f,0.0f }, { 160.0f,160.0f });
 		player_[index]->SetScale({ -1.0f,1.0f });
 	}
-	
-	player_[Blue]->position_ = { 242.0f,568.0f };
-	player_[Orange]->position_ = { 142.0f,568.0f };
 
 	for (size_t index = 0; index < kMaxStage_; index++) {
 		saunaRooms_.emplace_back(Object2d::Create(saunaRoomTex_, {640.0f + 640.0f * index, 653.0f}));
@@ -56,6 +53,9 @@ void StageSelectScene::Init() {
 			saunaRooms_[index]->SetScale(0.3f);
 		}
 	}
+
+	player_[Blue]->position_ = { saunaRooms_[stageNumber_ - 1]->position_.x - 400.0f, 568.0f};
+	player_[Orange]->position_ = { saunaRooms_[stageNumber_ - 1]->position_.x - 500.0f,568.0f };
 
 	///UIの設定
 
@@ -357,7 +357,7 @@ void StageSelectScene::EnterUpdate() {
 	player_[Blue]->position_.x += 5.0f;
 	player_[Orange]->position_.x += 5.0f;
 
-	if (player_[Orange]->position_.x >= 600.0f) {
+	if (player_[Orange]->position_.x >= saunaRooms_[stageNumber_ - 1]->position_.x - 40.0f) {
 		SceneManager::GetInstance()->ChangeScene("Game");
 	}
 
