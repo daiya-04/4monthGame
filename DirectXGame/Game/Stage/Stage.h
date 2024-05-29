@@ -35,9 +35,11 @@ public:
 	void Draw();
 
 	//灼熱描画
-	void DrawHeat();
+	void DrawHeatBefore();
+	void DrawHeatAfter();
 	//極寒描画
-	void DrawCold();
+	void DrawColdBefore();
+	void DrawColdAfter();
 
 	/// <summary>
 	/// UI描画

@@ -28,7 +28,6 @@ void GameScene::Init(){
 
 	player_ = std::make_shared<Player>();
 	player_->Initialize();
-	player_->Initialize();
 
 	stage_ = std::make_unique<Stage>();
 	stage_->SetPlayer(player_.get());
@@ -366,11 +365,12 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 
-	//
+	stage_->DrawColdBefore();
+
 	if (!player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
-	stage_->DrawCold();
+	stage_->DrawColdAfter();
 	if (player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
@@ -392,10 +392,12 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	
+	stage_->DrawHeatBefore();
+
 	if (!player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
-	stage_->DrawHeat();
+	stage_->DrawHeatAfter();
 	if (player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}

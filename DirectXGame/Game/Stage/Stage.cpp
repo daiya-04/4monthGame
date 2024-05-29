@@ -263,7 +263,16 @@ void Stage::Draw() {
 	*/
 }
 
-void Stage::DrawHeat() {
+void Stage::DrawHeatBefore() {
+
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (uint32_t i = 0; i < 2; i++) {
+		rope_[i]->Draw(*camera_);
+	}
+
+}
+
+void Stage::DrawHeatAfter() {
 
 	
 	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
@@ -272,7 +281,6 @@ void Stage::DrawHeat() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
-		rope_[i]->Draw(*camera_);
 	}
 
 	if (canReturn_) {
@@ -286,7 +294,16 @@ void Stage::DrawHeat() {
 	saunaRoom_->Draw(*camera_);
 }
 
-void Stage::DrawCold() {
+void Stage::DrawColdBefore() {
+
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (uint32_t i = 0; i < 2; i++) {
+		rope_[i]->Draw(*camera_);
+	}
+
+}
+
+void Stage::DrawColdAfter() {
 
 
 	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
@@ -295,7 +312,6 @@ void Stage::DrawCold() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
-		rope_[i]->Draw(*camera_);
 	}
 
 	if (canReturn_) {

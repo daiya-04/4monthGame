@@ -9,20 +9,20 @@
 Player::Player()
 {
 
-	texture_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueIdle.png");
-	textureUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookUp.png");
-	textureDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookDown.png");
-	textureRun_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueRun.png");
-	textureBreakUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakUp.png");
-	textureBreakDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakDown.png");
-	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreak.png");
-	texture_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeIdle.png");
-	textureUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookUp.png");
-	textureDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookDown.png");
-	textureRun_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeRun.png");
-	textureBreakUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakUp.png");
-	textureBreakDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakDown.png");
-	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
+	texture_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueIdle.png");
+	textureUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookUp.png");
+	textureDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookDown.png");
+	textureRun_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueRun.png");
+	textureBreakUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakUp.png");
+	textureBreakDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakDown.png");
+	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreak.png");
+	texture_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeIdle.png");
+	textureUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookUp.png");
+	textureDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookDown.png");
+	textureRun_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeRun.png");
+	textureBreakUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakUp.png");
+	textureBreakDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakDown.png");
+	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
 	/*rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
 	rockUITextures_[BringRocks::kBlue] = TextureManager::GetInstance()->Load("UI/speedRock.png");
@@ -415,7 +415,7 @@ void Player::Move() {
 		}
 
 		//スティック入力で上方向のみの入力の場合且つ横移動の値が小さい場合チャージジャンプをできるようにする
-		if (parameters_[currentCharacters_]->Jump_.canJump && input_->TiltLStick(Input::Stick::Up) &&
+		/*if (parameters_[currentCharacters_]->Jump_.canJump && input_->TiltLStick(Input::Stick::Up) &&
 			fabsf(input_->GetLX()) < fabsf(input_->GetLY())) {
 
 			parameters_[currentCharacters_]->chargeJump_.isCharge = true;
@@ -423,7 +423,7 @@ void Player::Move() {
 		}
 		else {
 			parameters_[currentCharacters_]->chargeJump_.isCharge = false;
-		}
+		}*/
 
 		//入力方向に応じて画像変更
 		if (parameters_[currentCharacters_]->dig_.digCount <= int32_t(parameters_[currentCharacters_]->dig_.digInterval * 0.5f)) {
@@ -513,12 +513,12 @@ void Player::Jump() {
 		}
 
 		//通常ジャンプ
-		if (parameters_[currentCharacters_]->Jump_.canJump && input_->TriggerButton(Input::Button::A) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
+		/*if (parameters_[currentCharacters_]->Jump_.canJump && input_->TriggerButton(Input::Button::A) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
 			velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 			parameters_[currentCharacters_]->Jump_.canJump = false;
-		}
+		}*/
 		//溜めジャンプが可能なときに必要な溜めの時間まで行かなかったら通常ジャンプの処理に切り替え
-		else if (parameters_[currentCharacters_]->Jump_.canJump && input_->ReleaseButton(Input::Button::A) && parameters_[currentCharacters_]->chargeJump_.isCharge &&
+		else if (parameters_[currentCharacters_]->Jump_.canJump && input_->ReleaseButton(Input::Button::A)/* && parameters_[currentCharacters_]->chargeJump_.isCharge*/ &&
 			parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
 			velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 			parameters_[currentCharacters_]->Jump_.canJump = false;
@@ -587,7 +587,7 @@ void Player::ChargeJump() {
 	}
 
 	//ジャンプボタンを押している間チャージカウント増加
-	if (parameters_[currentCharacters_]->chargeJump_.isCharge && input_->PushButton(Input::Button::A)) {
+	if (/*parameters_[currentCharacters_]->chargeJump_.isCharge && */input_->PushButton(Input::Button::A)) {
 
 		//最大値になるまでカウント
 		if (parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {

@@ -24,6 +24,8 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/down.png");
 	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/unbreakable.png");
+	blockTextures_.push_back(texture);
 
 	for (uint32_t index=1; index < BaseBlock::BlockType::kMaxBlock; index++) {
 
@@ -43,6 +45,10 @@ void BlockTextureManager::LoadAllBlockTexture() {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[4]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[4]);
 		}
+		else if (index == Block::kUnbreakable) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[5]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[5]);
+		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[0]);
@@ -51,7 +57,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	}
 
 	//壊せないブロック
-	objects_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });
+	/*objects_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });*/
 	//極寒
 	objects_[Block::kSnow - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	//灼熱
@@ -70,7 +76,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	objects_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
 
 	//壊せないブロック
-	breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });
+	/*breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });*/
 	//極寒
 	breakParticles_[Block::kSnow - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	//灼熱
