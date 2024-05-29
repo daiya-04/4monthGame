@@ -46,6 +46,8 @@ public:
 		kDownMagma,
 		//黄金ブロック(クリア条件)
 		kGoldBlock,
+		//チュートリアル時に使う特殊なブロック
+		kFlagBlock,
 		//ブロックの最大種類
 		kMaxBlock
 
@@ -55,7 +57,7 @@ public:
 	static bool CheckCanBreak(BlockType type) {
 
 		//破壊不可能ブロックなら、falseを返す
-		if (type == kUnbreakable) {
+		if (type == kUnbreakable || type == kFlagBlock) {
 			return false;
 		}
 
@@ -184,7 +186,10 @@ protected:
 	int32_t defaultDurability_ = 3;
 
 	//ザクザク音
-	Audio* digSE_;
+	Audio* digLowSE_;
+	Audio* digMidSE_;
+	Audio* digHighSE_;
+	Audio* crystalSE_;
 
 };
 

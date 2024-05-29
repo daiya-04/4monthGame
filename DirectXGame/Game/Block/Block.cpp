@@ -27,12 +27,15 @@ void BaseBlock::Break(int32_t power) {
 			}
 			else if (type_ == kBlueBlock) {
 				player_->AddBlueRock();
+				crystalSE_->Play();
 			}
 			else if (type_ == kGreenBlock) {
 				player_->AddGreenRock();
+				crystalSE_->Play();
 			}
 			else if (type_ == kRedBlock) {
 				player_->AddRedRock();
+				crystalSE_->Play();
 			}
 			else if (type_ == kDownMagma) {
 				//ラインを1000下げ、300フレーム止める
@@ -42,6 +45,7 @@ void BaseBlock::Break(int32_t power) {
 			}
 			else if (type_ == kGoldBlock) {
 				player_->SetIsClear(true);
+				crystalSE_->Play();
 			}
 
 		}
@@ -58,7 +62,16 @@ void BaseBlock::Break(int32_t power) {
 		score_->AddScore(10);
 	}
 
-	digSE_->Play();
+	//耐久力に応じてSE変更
+	if (durability_ >= defaultDurability_ - defaultDurability_ / 2) {
+		digLowSE_->Play();
+	}
+	else if (durability_ > 0) {
+		digMidSE_->Play();
+	}
+	else if (durability_ <= 0) {
+		digHighSE_->Play();
+	}
 
 }
 
@@ -78,7 +91,10 @@ Block::Block(const Vector2& position, BlockType type)
 	type_ = type;
 	position_ = position;
 	/*object_.reset(Object2d::Create(texture_, position_));*/
-	digSE_ = AudioManager::GetInstance()->Load("SE/dig.wav");
+	digLowSE_ = AudioManager::GetInstance()->Load("SE/dig_low.mp3");
+	digMidSE_ = AudioManager::GetInstance()->Load("SE/dig_mid.mp3");
+	digHighSE_ = AudioManager::GetInstance()->Load("SE/dig_high.mp3");
+	crystalSE_ = AudioManager::GetInstance()->Load("SE/crystal_get.mp3");
 
 }
 
