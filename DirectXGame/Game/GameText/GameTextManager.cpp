@@ -76,7 +76,7 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 		nameText_->CharCountMax();
 		nameText_->SetArrangeType(Text::kCenter);
 
-		next_->SetWString(L"A");
+		next_->SetWString(L"");
 		next_->SetPosition({ 1100.0f,650.0f });
 		next_->SetCharCount(1);
 	}

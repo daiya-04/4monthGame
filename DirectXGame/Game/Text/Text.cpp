@@ -47,6 +47,9 @@ void Text::SetText() {
             lineCount++;
             widthCount = 0;
         }
+        else if (text_.substr(index, 1) == L"＋") {
+            widthCount++;
+        }
         else {
             TextManager::GetInstance()->AppendChar(txtPosition, text_.substr(index, 1));
             widthCount++;
