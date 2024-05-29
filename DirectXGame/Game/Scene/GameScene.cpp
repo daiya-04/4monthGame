@@ -339,6 +339,11 @@ void GameScene::DebugGUI(){
 	ImGui::Begin("testText");
 	ImGui::DragInt("CharCount", &cCount, 1,0,100);
 	ImGui::DragFloat2("originPosition", &position.x,1.0f);
+	static int32_t tutorial;
+	if (ImGui::Button("DrawTutorialText!") && GameTextManager::GetInstance()->GetIsEnd()) {
+		tutorial++;
+		GameTextManager::GetInstance()->Tutorial(tutorial);
+	}
 	ImGui::End();
 	testText_->SetArrangeType(Text::kCenter);
 	testText_->SetCharCount(uint32_t(cCount));

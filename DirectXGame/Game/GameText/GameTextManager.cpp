@@ -62,7 +62,9 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 	phase_ = OPEN;
 	parametric_ = 0.0f;
 	//文字列ロード処理入れる
-	//LoadText(stageNum);
+	nameList_.clear();
+	textList_.clear();
+	LoadText(stageNum);
 	//textList_.push_back(L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ");
 	//textList_.push_back(L"互サ道互サ道互サ道互サ道互サ道互サ道互サ道互サ道");
 	listIndex_ = 0;
@@ -76,7 +78,7 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 		nameText_->CharCountMax();
 		nameText_->SetArrangeType(Text::kCenter);
 
-		next_->SetWString(L"A");
+		next_->SetWString(L"");
 		next_->SetPosition({ 1100.0f,650.0f });
 		next_->SetCharCount(1);
 	}
@@ -106,6 +108,92 @@ void GameTextManager::LoadText(uint32_t stageNum) {
 		textList_.push_back(text);
 	}
 	file.close();
+}
+
+void GameTextManager::Tutorial(int32_t tutorialNum) {
+	phase_ = OPEN;
+	parametric_ = 0.0f;
+	nameList_.clear();
+	textList_.clear();
+	//各チュートリアルごとの文字列入れる
+	switch (tutorialNum)
+	{
+	case 1:
+		textList_.push_back(L"地下に無事行けたか！？");
+		nameList_.push_back(L"老");
+		textList_.push_back(L"行けたぞ（あの爺さん声でかいな…）");
+		nameList_.push_back(L"アツオ");
+		textList_.push_back(L"てか…マグマか…？コレ…");
+		nameList_.push_back(L"アツオ");
+		textList_.push_back(L"もうそれだけ世界があったまってるということじゃ！");
+		nameList_.push_back(L"老");
+		textList_.push_back(L"目の前のヘンテコなブロックが見えるか？");
+		nameList_.push_back(L"老");
+		textList_.push_back(L"お、おう、あるな");
+		nameList_.push_back(L"アツオ");
+		textList_.push_back(L"それを壊すとマグマが少し下がる…だがじきに上がってくる！！");
+		nameList_.push_back(L"老");
+		textList_.push_back(L"壊しながら下に進むしかないってことか…");
+		nameList_.push_back(L"アツオ");
+		textList_.push_back(L"そういうことじゃ！しばらく地下を掘ってみるんじゃ");
+		nameList_.push_back(L"老");
+		break;
+	case 2:
+		textList_.push_back(L"なんかゲットしたぞ？赤い石？");
+		nameList_.push_back(L"アツオ");
+		textList_.push_back(L"それは鉱石じゃ！持っとくだけ得じゃ！");
+		nameList_.push_back(L"老");
+		break;
+	case 3:
+		textList_.push_back(L"な、なんだったんだ…");
+		nameList_.push_back(L"アツオ");
+		textList_.push_back(L"マグマに触れたら戻されるのか…知らんかったのぉ…");
+		nameList_.push_back(L"老");
+		break;
+	case 4:
+		textList_.push_back(L"右を見てみい、なにやら装置があるじゃろ？");
+		nameList_.push_back(L"老");
+		textList_.push_back(L"集めた岩や鉱石でパワーアップできる！溜まってきたら試すといい");
+		nameList_.push_back(L"老");
+		textList_.push_back(L"とりあえずコッチに帰ってこい");
+		nameList_.push_back(L"老");
+		break;
+	case 5:
+		textList_.push_back(L"そしたら次は俺が行くかー？");
+		nameList_.push_back(L"サムオ");
+		textList_.push_back(L"そうじゃな、頼んだぞ");
+		nameList_.push_back(L"老");
+		break;
+	case 6:
+		textList_.push_back(L"相棒の動きは見てたんじゃろ？さぁ黄金を目指して進め！");
+		nameList_.push_back(L"老");
+		break;
+	case 7:
+		textList_.push_back(L"まぁ、こんな感じで交互に黄金を目指して掘ってくるんじゃ！");
+		nameList_.push_back(L"老");
+		break;
+	case 8:
+		textList_.push_back(L"それじゃ！それが黄金じゃ！マグマに触れずに帰ってくるんじゃ！");
+		nameList_.push_back(L"老");
+		break;
+	default:
+		break;
+	}
+	
+	listIndex_ = 0;
+	if (!textList_.empty()) {
+		mainText_->SetWString(textList_[listIndex_]);
+		mainText_->SetCharCount(0);
+		mainText_->SetCompleteDrawText(false);
+		mainText_->SetPosition({ 200.0f,562.0f });
+
+		nameText_->SetWString(nameList_[listIndex_]);
+		nameText_->CharCountMax();
+		nameText_->SetArrangeType(Text::kCenter);
+
+	}
+	isEnd_ = false;
+
 }
 
 void GameTextManager::TestUpdate() {
