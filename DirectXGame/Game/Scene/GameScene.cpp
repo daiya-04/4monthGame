@@ -41,7 +41,8 @@ void GameScene::Init(){
 	camera_->ChangeDrawingRange({ 1600.0f,900.0f });
 	stage_->SetCamera(camera_.get());
 
-	scrollHomePoint_ = Stage::kBasePosition + Vector2{ 0.0f,-200.0f };
+	scrollHomePoint_ = Stage::kBasePosition + Vector2{ 0.0f,-600.0f };
+	isScrollEnd_ = false;
 	scroll_ = std::make_unique<Scroll>();
 	scroll_->SetCamera(camera_.get());
 	scroll_->Initialize();
@@ -129,6 +130,18 @@ void GameScene::Update() {
 #endif // _DEBUG
 
 	isPreOpenMenu_ = isOpenMenu_;
+
+	//スタート時のスクロール更新
+	if (scrollHomePoint_.y < -200.0f) {
+		
+		scrollHomePoint_.y += (- 200.0f - scrollHomePoint_.y) * 0.05f;
+
+		if (scrollHomePoint_.y > 200.0f) {
+			scrollHomePoint_.y = 200.0f;
+			isScrollEnd_ = true;
+		}
+
+	}
 
 	if (stage_->GetIsClear()) {
 

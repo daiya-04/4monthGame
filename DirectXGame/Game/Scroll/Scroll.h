@@ -45,7 +45,7 @@ public:
 	static inline Vector2 kWindowCenter_ = { 800.0f,450.0f };
 
 	//スクロール制限始点
-	static inline Vector2 limitStart_{ 0.0f,-1000.0f };
+	static inline Vector2 limitStart_{ 0.0f,-2000.0f };
 
 	//スクロール制限終点
 	static inline Vector2 limitEnd_{ Stage::kMaxStageWidth_ * Block::kBlockSize_ - kWindowCenter_.x - Block::kBlockSize_,
