@@ -286,6 +286,9 @@ public:
 
 	void HealUpdate();
 
+	//溜めジャンプ制限
+	void RestrictChargeJump() { parameters_[currentCharacters_]->chargeJump_.chargeTimer = 0; }
+
 private:
 
 	//移動

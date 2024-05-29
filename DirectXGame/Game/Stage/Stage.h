@@ -63,6 +63,9 @@ public:
 	//カメラセット
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
+	//マグマゲット
+	Magma* GetMagma() { return magma_.get(); }
+
 	//ブロック取得
 	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_>* GetBlocks() { return &map_; }
 
@@ -106,6 +109,9 @@ private:
 	//壊せないブロック以外の破壊(デバッグ)
 	void BreakAllBlock();
 
+	//フラグブロックの排除
+	void BreakFlagBlock();
+
 	void SetUV(Block* block);
 
 	//当たり判定関連
@@ -123,6 +129,12 @@ private:
 
 	//岩の数最大桁
 	static const int32_t kMaxNumbers_ = 5;
+
+	//現在のステージ番号
+	int32_t currentStageNumber_ = 1;
+
+	//チュートリアルステージ用のフラグ
+	bool isBreakFlagBlocks_ = false;
 
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Magma> magma_;

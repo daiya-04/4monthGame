@@ -70,6 +70,8 @@ void GameTextManager::AppryGlobalVariables() {
 void GameTextManager::InitializeStage(uint32_t stageNum) {
 	phase_ = OPEN;
 	parametric_ = 0.0f;
+	mainText_->Initialize();
+	nameText_->Initialize();
 	//文字列ロード処理入れる
 	nameList_.clear();
 	textList_.clear();
@@ -90,8 +92,21 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 		//next_->SetWString(L"");
 		//next_->SetPosition({ 1100.0f,650.0f });
 		//next_->SetCharCount(1);
+		isEnd_ = false;
 	}
-	isEnd_ = false;
+	else {
+		//リストが空の場合会話が終了したものとみなす
+		mainText_->SetWString(L"");
+		mainText_->SetCharCount(0);
+		mainText_->SetCompleteDrawText(false);
+		mainText_->SetPosition({ 200.0f,562.0f });
+
+		nameText_->SetWString(L"");
+		nameText_->CharCountMax();
+		nameText_->SetArrangeType(Text::kCenter);
+		phase_ = END;
+		isEnd_ = true;
+	}
 }
 
 void GameTextManager::LoadText(uint32_t stageNum) {

@@ -756,7 +756,7 @@ void Player::Change() {
 		//左側にいた場合
 		if (position_.x < Stage::kBasePosition.x) {
 
-			object_->SetTextureHandle(texture_[currentCharacters_]);
+			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
 			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -765,7 +765,7 @@ void Player::Change() {
 		}
 		else {
 
-			object_->SetTextureHandle(texture_[currentCharacters_]);
+			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -804,7 +804,7 @@ void Player::Change() {
 		default:
 		case Player::kLeftPlayer:
 
-			object_->SetTextureHandle(texture_[currentCharacters_]);
+			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -827,7 +827,7 @@ void Player::Change() {
 			break;
 		case Player::kRightPlayer:
 
-			object_->SetTextureHandle(texture_[currentCharacters_]);
+			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
 			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 

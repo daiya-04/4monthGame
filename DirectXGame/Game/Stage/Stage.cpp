@@ -10,6 +10,7 @@
 #include "Block/BlockTextureManager.h"
 #include "DirectXCommon.h"
 #include "ImGuiManager.h"
+#include "System/TutorialFlagManager.h"
 
 std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_> Stage::map_;
 
@@ -77,6 +78,8 @@ Stage::~Stage()
 
 void Stage::Initialize(uint32_t stageNumber) {
 
+	currentStageNumber_ = stageNumber;
+
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
@@ -96,6 +99,7 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	isClear_ = false;
 	isRespawn_ = false;
+	isBreakFlagBlocks_ = false;
 	rockCount_ = 0;
 	magma_->Initialize();
 	magma_->SetPlayer(player_);
@@ -122,6 +126,15 @@ void Stage::Update() {
 
 
 	if (!isClear_) {
+
+		//チュートリアルステージ用更新
+		if (currentStageNumber_ == 1) {
+
+			if (TutorialFlagManager::GetInstance()->GetFlags(2) && !isBreakFlagBlocks_) {
+				BreakFlagBlock();
+			}
+
+		}
 
 		//ブロックの更新
 		for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
@@ -194,18 +207,53 @@ void Stage::CheckCollision() {
 
 	if (IsCollision(returnArea_[0], player_->GetCollision())) {
 
-		player_->MoveLift();
-		canReturn_ = true;
+		//ステージ1の時だけ特殊処理
+		if (currentStageNumber_ == 1) {
 
-		returnUI_->position_ = returnPosition_[0] + Vector2{ 0.0f,-100.0f };
+			if (TutorialFlagManager::GetInstance()->GetFlags(2)) {
+
+				player_->MoveLift();
+				canReturn_ = true;
+
+				returnUI_->position_ = returnPosition_[0] + Vector2{ 0.0f,-100.0f };
+
+			}
+			else {
+				canReturn_ = false;
+			}
+
+		}
+		else {
+			player_->MoveLift();
+			canReturn_ = true;
+
+			returnUI_->position_ = returnPosition_[0] + Vector2{ 0.0f,-100.0f };
+		}
 
 	}
 	else if (IsCollision(returnArea_[1], player_->GetCollision())) {
 
-		player_->MoveLift();
-		canReturn_ = true;
+		if (currentStageNumber_ == 1) {
 
-		returnUI_->position_ = returnPosition_[1] + Vector2{ 0.0f,-100.0f };
+			if (TutorialFlagManager::GetInstance()->GetFlags(2)) {
+
+				player_->MoveLift();
+				canReturn_ = true;
+
+				returnUI_->position_ = returnPosition_[1] + Vector2{ 0.0f,-100.0f };
+
+			}
+			else {
+				canReturn_ = false;
+			}
+
+		}
+		else {
+			player_->MoveLift();
+			canReturn_ = true;
+
+			returnUI_->position_ = returnPosition_[1] + Vector2{ 0.0f,-100.0f };
+		}
 
 	}
 	else {
@@ -431,6 +479,16 @@ void Stage::BreakAllBlock() {
 
 }
 
+void Stage::BreakFlagBlock() {
+
+	if (currentStageNumber_ == 1) {
+		map_[2][14]->ChangeType(Block::kNone);
+		map_[3][14]->ChangeType(Block::kNone);
+		isBreakFlagBlocks_ = true;
+	}
+
+}
+
 void Stage::RespawnBlock(Block::BlockType type) {
 
 	//再生成可能なブロックの中から対応した要素を再生成させる
@@ -562,17 +620,11 @@ void Stage::Load(uint32_t stageNumber) {
 
 	}
 
-	std::string RockNum;
+	//チュートリアルステージだけ特殊ブロック配置
+	if (stageNumber == 1) {
 
-	//ブロックの必要数を読み取り。描かれていなかったら30に固定
-	if (std::getline(newFile, RockNum, ',')) {
-
-		goalRockCount_ = std::stoi(RockNum);
-
-	}
-	else {
-
-		goalRockCount_ = 100;
+		map_[2][14]->ChangeType(Block::kFlagBlock);
+		map_[3][14]->ChangeType(Block::kFlagBlock);
 
 	}
 

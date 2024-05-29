@@ -45,7 +45,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[4]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[4]);
 		}
-		else if (index == Block::kUnbreakable) {
+		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[5]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[5]);
 		}

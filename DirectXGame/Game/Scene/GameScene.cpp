@@ -11,6 +11,7 @@
 #include "Text/TextManager.h"
 #include "GameText/GameTextManager.h"
 #include "AudioManager.h"
+#include "System/TutorialFlagManager.h"
 
 GameScene::~GameScene() {
 	magmaBGM_->StopSound();
@@ -92,6 +93,11 @@ void GameScene::Init(){
 	testText_->Initialize();
 	testText_->SetWString(L"AAAAA");
 	GameTextManager::GetInstance()->InitializeStage(stageNumber_);
+
+	TutorialFlagManager::GetInstance()->Initialize();
+	TutorialFlagManager::GetInstance()->SetPlayer(player_.get());
+	TutorialFlagManager::GetInstance()->SetMagma(stage_->GetMagma());
+
 }
 
 void GameScene::Reset() {
@@ -101,6 +107,7 @@ void GameScene::Reset() {
 	camera_->Init();
 	scroll_->Initialize();
 	scroll_->SetCameraOnTarget();
+	TutorialFlagManager::GetInstance()->Initialize();
 
 }
 
@@ -160,11 +167,15 @@ void GameScene::Update() {
 	}
 	else {
 
-		if (Input::GetInstance()->TriggerButton(Input::Button::START)) {
-			isOpenMenu_ = true;
-		}
-
 		if (GameTextManager::GetInstance()->GetIsEnd()) {
+
+			if (stageNumber_ == 1) {
+				TutorialFlagManager::GetInstance()->Update();
+			}
+
+			if (Input::GetInstance()->TriggerButton(Input::Button::START)) {
+				isOpenMenu_ = true;
+			}
 
 			stage_->Update();
 
