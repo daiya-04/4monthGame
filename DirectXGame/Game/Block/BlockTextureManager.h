@@ -6,6 +6,7 @@
 #include "Vec4.h"
 class BlockBreakParticle;
 class StarParticle;
+class SandParticle;
 
 /// <summary>
 /// ブロックに使うテクスチャ一括管理
@@ -53,6 +54,9 @@ public:
 	//描画オブジェクト追加
 	void AppendStarParticle(const Vector2& position,const Vector4& color);
 
+	//描画オブジェクト追加
+	void AppendSandParticle(const Vector2& position, const Vector4& color);
+
 	//全オブジェクト描画
 	void DrawParticle(const Camera& camera);
 
@@ -60,6 +64,7 @@ public:
 	void CreateParticle(const Vector2& position, const Vector2& velocity, uint32_t type);
 
 	void CreateStarParticle(const Vector2& position, int32_t type);
+	void CreateSandParticle(const Vector2& position, int32_t type);
 
 	void UpdateParticle();
 
@@ -75,6 +80,9 @@ private:
 
 	std::list<std::unique_ptr<StarParticle>> starParticleDatas_;
 	std::unique_ptr<Object2dInstancing> starParticles_;
+
+	std::list<std::unique_ptr<SandParticle>> sandParticleDatas_;
+	std::unique_ptr<Object2dInstancing> sandParticles_;
 
 private:
 

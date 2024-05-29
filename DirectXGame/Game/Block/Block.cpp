@@ -123,6 +123,21 @@ void Block::Update() {
 	if (type_ == kGoldBlock) {
 		BlockTextureManager::GetInstance()->CreateStarParticle(position_,0);
 	}
+
+	if (!isBreak_ && type_ != kNone) {
+		//当たり判定
+		AABB2D collision = collision_;
+		collision.min.x -= 1.0f;
+		collision.min.y -= 1.0f;
+		collision.max.x += 1.0f;
+		collision.max.y += 1.0f;
+		if (player_->GetPrePosition() != player_->GetPosition() && IsCollision(collision, player_->GetCollision())) {
+			Vector2 velocity = player_->GetPosition() - position_;
+			Vector2 pos = position_ + velocity * 0.7f;
+			velocity = velocity.Normalize();
+			BlockTextureManager::GetInstance()->CreateSandParticle(pos, type_);
+		}
+	}
 }
 
 void Block::Draw(const Camera& camera) {
