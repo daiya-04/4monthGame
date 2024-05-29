@@ -587,7 +587,8 @@ void Player::ChargeJump() {
 	}
 
 	//ジャンプボタンを押している間チャージカウント増加
-	if (/*parameters_[currentCharacters_]->chargeJump_.isCharge && */input_->PushButton(Input::Button::A)) {
+	if (/*parameters_[currentCharacters_]->chargeJump_.isCharge && */input_->PushButton(Input::Button::A) && 
+		!parameters_[currentCharacters_]->wallJump_.canWallJump) {
 
 		//最大値になるまでカウント
 		if (parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
