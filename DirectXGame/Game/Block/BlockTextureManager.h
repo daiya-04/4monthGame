@@ -57,6 +57,7 @@ public:
 	void DrawParticle(const Camera& camera);
 
 	void CreateParticle(const Vector2& position, uint32_t type);
+	void CreateParticle(const Vector2& position, const Vector2& velocity, uint32_t type);
 
 	void CreateStarParticle(const Vector2& position, int32_t type);
 

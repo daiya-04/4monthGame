@@ -56,6 +56,13 @@ void BaseBlock::Break(int32_t power) {
 	}
 	else {
 		score_->AddScore(10);
+		int createNum = int(RandomEngine::GetRandom(2.0f, 5.0f));
+		for (int i = 0; i < createNum; i++) {
+			Vector2 velocity = player_->GetPosition() - position_;
+			Vector2 pos = position_ + velocity*0.5f;
+			velocity = velocity.Normalize();
+			BlockTextureManager::GetInstance()->CreateParticle(pos,velocity, type_);
+		}
 	}
 
 	digSE_->Play();

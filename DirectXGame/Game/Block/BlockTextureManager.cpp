@@ -186,6 +186,13 @@ void BlockTextureManager::CreateParticle(const Vector2& position, uint32_t type)
 	breakParticleDatas_.push_back(std::move(particle));
 }
 
+void BlockTextureManager::CreateParticle(const Vector2& position, const Vector2& velocity, uint32_t type) {
+	std::unique_ptr<BlockBreakParticle> particle;
+	particle.reset(new BlockBreakParticle);
+	particle->Initialize(position,velocity, type);
+	breakParticleDatas_.push_back(std::move(particle));
+}
+
 void BlockTextureManager::CreateStarParticle(const Vector2& position,int32_t type) {
 	StarParticle::response--;
 	if (StarParticle::response<0) {
