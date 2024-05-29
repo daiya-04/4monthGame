@@ -62,7 +62,7 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 	phase_ = OPEN;
 	parametric_ = 0.0f;
 	//文字列ロード処理入れる
-	//LoadText(stageNum);
+	LoadText(stageNum);
 	//textList_.push_back(L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ");
 	//textList_.push_back(L"互サ道互サ道互サ道互サ道互サ道互サ道互サ道互サ道");
 	listIndex_ = 0;
