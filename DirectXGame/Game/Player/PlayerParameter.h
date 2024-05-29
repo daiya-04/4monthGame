@@ -48,7 +48,7 @@ struct WorkDig {
 	//耐久減少量の最高値
 	int32_t maxDigPower = 20;
 	//採掘時の耐久減少量
-	int32_t digPower = 1;
+	float digPower = 1.01f;
 };
 
 //掴み関連の処理

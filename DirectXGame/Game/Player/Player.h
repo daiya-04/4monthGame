@@ -269,7 +269,7 @@ public:
 	}
 
 	//パワーーー！！！を強化
-	void UpgradePower(int32_t addNum) { parameters_[currentCharacters_]->dig_.digPower += addNum; }
+	void UpgradePower(float addNum) { parameters_[currentCharacters_]->dig_.digPower += addNum; }
 
 	//ブロックの数取得
 	int32_t GetRockCount() const { return rockParameter_.rocks_[BringRocks::kRock]; }

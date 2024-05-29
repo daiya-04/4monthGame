@@ -81,10 +81,11 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
 
+			//一旦初期化。耐久力などの設定はLoadで行う
 			blockPositions_[y][x] = 0;
 			map_[y][x]->SetPlayer(player_);
 			map_[y][x]->SetMagma(magma_.get());
-			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
+			map_[y][x]->SetDurability(float(y / 5) + 3.0f);
 
 		}
 
@@ -440,7 +441,15 @@ void Stage::RespawnBlock(Block::BlockType type) {
 			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->ChangeType(type);
 			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->Reset();
 			//高さに応じて耐久値を調整
-			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(int32_t(respawnBlocks_[i][1] / 5 + 3));
+			if (type == Block::kGoldBlock) {
+				map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(30.0f);
+			}
+			else if (type == Block::kDownMagma) {
+				map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(5.0f);
+			}
+			else {
+				map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(float(respawnBlocks_[i][1] / 5) + 3.0f);
+			}
 
 		}
 
@@ -530,7 +539,15 @@ void Stage::Load(uint32_t stageNumber) {
 			map_[y][x]->ChangeType(type);
 			map_[y][x]->Reset();
 			//高さに応じて耐久値を調整
-			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
+			if (type == Block::kGoldBlock) {
+				map_[y][x]->SetDurability(30.0f);
+			}
+			else if (type == Block::kDownMagma) {
+				map_[y][x]->SetDurability(5.0f);
+			}
+			else {
+				map_[y][x]->SetDurability(float(y / 5) + 3.0f);
+			}
 
 			//タイプが再生成可能なものなら配列に追加
 			if (type == Block::kDownMagma || type == Block::kGoldBlock) {

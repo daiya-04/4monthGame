@@ -13,7 +13,7 @@ void PlayerParameter::Initialize() {
 	dig_.isDig = false;
 	dig_.digInterval = 42;
 	dig_.digCount = 0;
-	dig_.digPower = 1;
+	dig_.digPower = 1.01f;
 
 	chargeJump_.isCharge = false;
 	chargeJump_.chargeTimer = 0;

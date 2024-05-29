@@ -7,15 +7,15 @@
 
 Score* BaseBlock::score_;
 
-void BaseBlock::Break(int32_t power) {
+void BaseBlock::Break(float power) {
 
 	//耐久値を減少
 	durability_ -= power;
 
 	//耐久が0以下で破壊
-	if (durability_ <= 0) {
+	if (durability_ <= 0.0f) {
 
-		durability_ = 0;
+		durability_ = 0.0f;
 
 		score_->AddScore(100);
 
@@ -23,7 +23,7 @@ void BaseBlock::Break(int32_t power) {
 		if (player_) {
 
 			if (type_ == kMagma || type_ == kSnow) {
-				player_->AddRockCount(defaultDurability_ / 3 + 1);
+				player_->AddRockCount(int32_t(defaultDurability_) / 3 + 1);
 			}
 			else if (type_ == kBlueBlock) {
 				player_->AddBlueRock();
@@ -63,7 +63,7 @@ void BaseBlock::Break(int32_t power) {
 	}
 
 	//耐久力に応じてSE変更
-	if (durability_ >= defaultDurability_ - defaultDurability_ / 2) {
+	if (durability_ >= defaultDurability_ - defaultDurability_ / 2.0f) {
 		digLowSE_->Play();
 	}
 	else if (durability_ > 0) {
@@ -77,7 +77,7 @@ void BaseBlock::Break(int32_t power) {
 
 void BaseBlock::Reset() {
 
-	durability_ = 3;
+	durability_ = 3.0f;
 
 	isBreak_ = false;
 	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
@@ -140,12 +140,68 @@ void Block::Draw(const Camera& camera) {
 		//object_->Draw(camera);
 		//切り替わるタイプのブロックだったら両方入れる
 		if (type_ == BlockType::kSnow || type_ == BlockType::kMagma) {
-			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kMagma);
-			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kSnow);
+			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kMagma, color_);
+			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kSnow, color_);
 		}
 		else {
-			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_);
+
+			//破壊可能なもののみ色を変える
+			if (CheckCanBreak(type_) && type_ != kDownMagma && type_ != kGoldBlock) {
+				BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_, color_);
+			}
+			else {
+				BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_);
+			}
+			
 		}
+	}
+
+}
+
+void BaseBlock::SetColor() {
+
+	//色分けを分かりやすくするための変数
+	float colorVal = std::fmodf(defaultDurability_ + 6.0f, 10.0f);
+
+	//固さに応じて色を変える
+	if (colorVal < 1.0f) {
+		//元の色
+		color_ = { 1.0f,1.0f,1.0f, 1.0f };
+	}
+	else if (colorVal < 2.0f) {
+		//赤めの色
+		color_ = { 1.0f,0.5f,0.5f,  1.0f };
+	}
+	else if(colorVal < 3.0f) {
+		//オレンジっぽい色
+		color_ = { 1.0f,1.0f, 0.5f, 1.0f };
+	}
+	else if (colorVal < 4.0f) {
+		//緑っぽい色
+		color_ = { 0.5,1.0f, 0.5f, 1.0f };
+	}
+	else if (colorVal < 5.0f) {
+		//水色っぽい
+		color_ = { 1.0f,0.5f,1.0f,  1.0f };
+	}
+	else if (colorVal < 6.0f) {
+		//青め
+		color_ = { 0.5f,0.5f, 1.0f, 1.0f };
+	}
+	else if (colorVal < 7.0f) {
+		//紫
+		color_ = { 1.0f, 0.3f,1.0f, 1.0f };
+	}
+	else if (colorVal < 8.0f) {
+		//暗めの色
+		color_ = { 0.5f,0.5f,0.5f,  1.0f };
+	}
+	else if (colorVal < 9.0f) {
+
+		color_ = { 1.0f, 0.3f,0.3f, 1.0f };
+	}
+	else {
+		color_ = { 0.3f, 0.3f,0.3f, 1.0f };
 	}
 
 }

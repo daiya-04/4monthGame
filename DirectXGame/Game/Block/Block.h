@@ -130,16 +130,19 @@ public:
 	//void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 	//外的要因(プレイヤーなど)で破壊された時に呼び出される関数
-	void Break(int32_t power);
+	void Break(float power);
 
 	//ブロックが再生する時の関数(再び当たり判定を持つ)
 	void Repair() { isBreak_ = false; }
 
 	//ブロックの耐久値設定
-	void SetDurability(int32_t value) { 
+	void SetDurability(float value) { 
 		defaultDurability_ = value;
 		durability_ = defaultDurability_;
+		SetColor();
 	}
+
+	void SetColor();
 
 	bool GetIsBreak() { return isBreak_; }
 
@@ -181,15 +184,17 @@ protected:
 	bool isBreak_ = false;
 
 	//耐久力
-	int32_t durability_ = 3;
+	float durability_ = 3.0f;
 
-	int32_t defaultDurability_ = 3;
+	float defaultDurability_ = 3.0f;
 
 	//ザクザク音
 	Audio* digLowSE_;
 	Audio* digMidSE_;
 	Audio* digHighSE_;
 	Audio* crystalSE_;
+
+	Vector4 color_{ 1.0f,1.0f,1.0f,1.0f };
 
 };
 

@@ -1486,7 +1486,7 @@ void Player::Debug() {
 	ImGui::Text("D-MaxSpeed : %1.2f", defaultParameter_->maxMoveSpeed_);
 	ImGui::Text("D-DigInterval : %d", defaultParameter_->dig_.digInterval);
 	ImGui::Text("D-DigCoolTime : %d", defaultParameter_->dig_.digCount);
-	ImGui::Text("D-DigPower : %d", defaultParameter_->dig_.digPower);
+	ImGui::Text("D-DigPower : %1.2f", defaultParameter_->dig_.digPower);
 	ImGui::Text("D-MaxChargeTime : %d", defaultParameter_->chargeJump_.maxChargeTime);
 	ImGui::Text("D-ChargeTimer : %d", defaultParameter_->chargeJump_.chargeTimer);
 	ImGui::Separator();
@@ -1496,7 +1496,7 @@ void Player::Debug() {
 	ImGui::Text("L-MaxSpeed : %1.2f", parameters_[kLeftPlayer]->maxMoveSpeed_);
 	ImGui::Text("L-DigInterval : %d", parameters_[kLeftPlayer]->dig_.digInterval);
 	ImGui::Text("L-DigCoolTime : %d", parameters_[kLeftPlayer]->dig_.digCount);
-	ImGui::Text("L-DigPower : %d", parameters_[kLeftPlayer]->dig_.digPower);
+	ImGui::Text("L-DigPower : %1.2f", parameters_[kLeftPlayer]->dig_.digPower);
 	ImGui::Text("L-MaxChargeTime : %d", parameters_[kLeftPlayer]->chargeJump_.maxChargeTime);
 	ImGui::Text("L-ChargeTimer : %d", parameters_[kLeftPlayer]->chargeJump_.chargeTimer);
 	ImGui::Separator();
@@ -1506,7 +1506,7 @@ void Player::Debug() {
 	ImGui::Text("R-MaxSpeed : %1.2f", parameters_[kRightPlayer]->maxMoveSpeed_);
 	ImGui::Text("R-DigInterval : %d", parameters_[kRightPlayer]->dig_.digInterval);
 	ImGui::Text("R-DigCoolTime : %d", parameters_[kRightPlayer]->dig_.digCount);
-	ImGui::Text("R-DigPower : %d", parameters_[kRightPlayer]->dig_.digPower);
+	ImGui::Text("R-DigPower : %1.2f", parameters_[kRightPlayer]->dig_.digPower);
 	ImGui::Text("R-MaxChargeTime : %d", parameters_[kRightPlayer]->chargeJump_.maxChargeTime);
 	ImGui::Text("R-ChargeTimer : %d", parameters_[kRightPlayer]->chargeJump_.chargeTimer);
 	ImGui::End();
