@@ -32,16 +32,16 @@ void StageSelectScene::Init() {
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
 
-	player_.reset(Object2d::Create(playerTex_, { 282.0f,570.0f }));
+	player_.reset(Object2d::Create(playerTex_, { 282.0f,568.0f }));
 	player_->SetSize({ 160.0f,160.0f });
 	player_->SetTextureArea({ 0.0f,0.0f }, { 160.0f,160.0f });
 	player_->SetScale({ -1.0f,1.0f });
 
 	for (size_t index = 0; index < kMaxStage_; index++) {
-		saunaRooms_.emplace_back(Object2d::Create(saunaRoomTex_, {640.0f + 640.0f * index, 650.0f}));
+		saunaRooms_.emplace_back(Object2d::Create(saunaRoomTex_, {640.0f + 640.0f * index, 653.0f}));
 		saunaRooms_[index]->SetAnchorpoint({ 0.5f,1.0f });
 		if (stageNumber_ == (index + 1)) {
-			saunaRooms_[index]->SetScale(1.0f);
+			saunaRooms_[index]->SetScale(1.2f);
 		}
 		else {
 			saunaRooms_[index]->SetScale(0.3f);
@@ -283,8 +283,8 @@ void StageSelectScene::MoveUpdate() {
 	uint32_t preIndex = preStageNum_ - 1;
 
 	if (index != preIndex) {
-		saunaRooms_[index]->SetScale(Lerp(T, 0.3f, 1.0f));
-		saunaRooms_[preIndex]->SetScale(Lerp(T, 1.0f, 0.3f));
+		saunaRooms_[index]->SetScale(Lerp(T, 0.3f, 1.2f));
+		saunaRooms_[preIndex]->SetScale(Lerp(T, 1.2f, 0.3f));
 	}
 
 	if (param_ >= 1.0f) {

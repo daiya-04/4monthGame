@@ -25,29 +25,13 @@ void TitleScene::Init() {
 
 	bgTexture_ = TextureManager::Load("backGround/titleBG.png");
 	circleTex_ = TextureManager::Load("circle.png");
-	saunaRoomTex_ = TextureManager::Load("saunaRoom.png");
-	playerTexes_[0] = TextureManager::Load("player/playerBlueRun.png");
-	playerTexes_[1] = TextureManager::Load("player/playerOrangeRun.png");
+	
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
 
 	option_ = std::make_unique<Option>();
 
 	circle_.reset(Sprite::Create(circleTex_, {}));
-
-	for (size_t index = 0; index < 2; index++) {
-		players_[index].reset(Sprite::Create(playerTexes_[index], {}));
-		players_[index]->SetSize({ 160.0f,160.0f });
-		players_[index]->SetTextureArea({ 0.0f,0.0f }, { 160.0f,160.0f });
-		players_[index]->SetScale(0.9f);
-	}
-
-	players_[0]->SetPosition({ 250.0f,648.0f });
-	players_[1]->SetPosition({ 845.0f,648.0f });
-
-	saunaRoom_.reset(Sprite::Create(saunaRoomTex_, {640.0f,720.0f}));
-	saunaRoom_->SetAnchorpoint({ 0.5f,1.0f });
-	saunaRoom_->SetScale(1.0f);
 
 	uis_["Arrow"]->SetSize({ 64.0f,64.0f });
 	uis_["Arrow"]->SetTextureArea({ 64.0f,64.0f }, { 64.0f,64.0f });
@@ -58,6 +42,9 @@ void TitleScene::Init() {
 		uis_["Start"]->DrawOff();
 		uis_["Option"]->DrawOff();
 	}
+
+	titleAnima_ = std::make_unique<TitleAnimation>();
+	titleAnima_->Init();
 
 	titlePos_ = uis_["TitleLogo"]->GetPosition();
 
@@ -107,6 +94,7 @@ void TitleScene::Update() {
 		ButtonEffectUpdate();
 	}
 	
+	titleAnima_->Update();
 
 #ifdef _DEBUG
 
@@ -141,16 +129,14 @@ void TitleScene::DrawParticle() {
 
 void TitleScene::DrawUI() {
 
+	titleAnima_->Draw();
+
 	if (!option_->IsWindow()) {
 		circle_->Draw();
 		for (const auto& ui : uis_) {
 			ui.second->Draw();
 		}
 	}
-
-	players_[0]->Draw();
-	players_[1]->Draw();
-	saunaRoom_->Draw();
 
 	option_->Draw();
 

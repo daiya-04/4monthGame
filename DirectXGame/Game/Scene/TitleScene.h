@@ -15,6 +15,7 @@
 #include "SpotLight.h"
 
 #include "Option.h"
+#include "TitleAnimation.h"
 
 
 class TitleScene : public DefaultScene {
@@ -66,13 +67,9 @@ private:
 	uint32_t circleTex_ = 0;
 	std::unique_ptr<Sprite> circle_;
 
-	uint32_t saunaRoomTex_ = 0;
-	std::unique_ptr<Sprite> saunaRoom_;
-
-	std::array<uint32_t, 2> playerTexes_;
-	std::array<std::unique_ptr<Sprite>, 2> players_;
-
 	std::unique_ptr<Option> option_;
+
+	std::unique_ptr<TitleAnimation> titleAnima_;
 
 	Vector2 titlePos_{};
 

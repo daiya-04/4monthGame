@@ -196,22 +196,26 @@ void ScoreManager::SetScore(int32_t stageNum, const Score& score) {
 	//範囲外参照防ぐ
 	stageIndex = std::clamp(stageIndex, 0, kMaxStage_ - 1);
 
-	if (bestScores_[stageIndex].score_.value_ < score.value_) {
-		bestScores_[stageIndex].score_.value_ = score.value_;
-	}
-
 	result_.score_.value_ = score.value_;
-
 	for (int32_t index = R_SS; index < kRankCount; index++) {
-		if (goalScores_[stageIndex][index] <= score.value_) {
-			if (bestScores_[stageIndex].rank_.value_ < Rate(index)) {
-				bestScores_[stageIndex].rank_.value_ = Rate(index);
-				break;
-			}
+		if (goalScores_[stageIndex][index] <= result_.score_.value_) {
 			result_.rank_.value_ = Rate(index);
 			break;
 		}
 	}
+
+	if (bestScores_[stageIndex].score_.value_ < score.value_) {
+		bestScores_[stageIndex].score_.value_ = score.value_;
+
+		for (int32_t index = R_SS; index < kRankCount; index++) {
+			if (goalScores_[stageIndex][index] <= bestScores_[stageIndex].score_.value_) {
+				bestScores_[stageIndex].rank_.value_ = Rate(index);
+				break;
+			}
+		}
+	}
+
+	
 	
 
 }
