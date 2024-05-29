@@ -129,7 +129,7 @@ void GameTextManager::Tutorial(int32_t tutorialNum) {
 		nameList_.push_back(L"老");
 		textList_.push_back(L"目の前のヘンテコなブロックが見えるか？");
 		nameList_.push_back(L"老");
-		textList_.push_back(L"お、おう。あるな");
+		textList_.push_back(L"お、おう、あるな");
 		nameList_.push_back(L"アツオ");
 		textList_.push_back(L"それを壊すとマグマが少し下がる…だがじきに上がってくる！！");
 		nameList_.push_back(L"老");
