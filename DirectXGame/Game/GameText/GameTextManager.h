@@ -77,6 +77,16 @@ private:
 	Vector2 nameBackPosition_ = {0,0};
 	Vector2 namePosition_ = { 0,0 };
 
+	Vector2 nextButtonOffset_ = {};
+	Vector2 nextButtonSize_={};
+
+	Vector2 nextButtonPosition_;//アニメーションに使う座標
+	Vector2 nextButtonOldPosition_;
+	Vector2 nextButtonTargetPosition_;
+	float buttonParametric_;
+
+	Vector4 buttonColor_;
+
 	std::array<std::unique_ptr<Sprite>,9> nineSliceTextureBox_;
 
 	std::unique_ptr<Sprite> nameBack_;//名前ひょうじの背景
@@ -85,7 +95,7 @@ private:
 
 	std::unique_ptr<Text> nameText_;//名前表示
 
-	std::unique_ptr<Text> next_;//次へボタン
+	std::unique_ptr<Sprite> nextButton_;//次へボタン
 
 	//std::wstring testText = L"";
 

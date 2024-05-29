@@ -29,8 +29,11 @@ void GameTextManager::Initialize() {
 	mainText_->Initialize();
 	nameText_.reset(new Text);
 	nameText_->Initialize();
-	next_.reset(new Text);
-	next_->Initialize();
+	
+	nextButton_.reset(Sprite::Create(TextureManager::GetInstance()->Load("AButton.png"), Vector2{ 0,0 }));
+	nextButton_->SetScale(1.0f);
+
+	buttonColor_ = { 1.0f,1.0f,1.0f,1.0f};
 
 	std::string groupName = "TextLayout";
 
@@ -42,10 +45,14 @@ void GameTextManager::Initialize() {
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "NameBack-Size", nameBackSize_);
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "Name-Position", namePosition_);
 
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "Button-Size", nextButtonSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "Button-Position", nextButtonOffset_);
+
 	AppryGlobalVariables();
 	nameBack_->SetPosition(nameBackPosition_);
 	nameBack_->SetSize(nameBackSize_);
 	nameText_->SetPosition(namePosition_);
+	nextButton_->SetSize(nextButtonSize_);
 }
 
 void GameTextManager::AppryGlobalVariables() {
@@ -56,6 +63,8 @@ void GameTextManager::AppryGlobalVariables() {
 	nameBackPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "NameBack-Position");
 	nameBackSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "NameBack-Size");
 	namePosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Name-Position");
+	nextButtonSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Button-Size");
+	nextButtonOffset_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Button-Position");
 }
 
 void GameTextManager::InitializeStage(uint32_t stageNum) {
@@ -78,9 +87,9 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 		nameText_->CharCountMax();
 		nameText_->SetArrangeType(Text::kCenter);
 
-		next_->SetWString(L"");
-		next_->SetPosition({ 1100.0f,650.0f });
-		next_->SetCharCount(1);
+		//next_->SetWString(L"");
+		//next_->SetPosition({ 1100.0f,650.0f });
+		//next_->SetCharCount(1);
 	}
 	isEnd_ = false;
 }
@@ -216,6 +225,7 @@ void GameTextManager::Update() {
 	nameBack_->SetPosition(nameBackPosition_);
 	nameBack_->SetSize(nameBackSize_);
 	nameText_->SetPosition(namePosition_);
+	nextButton_->SetSize(nextButtonSize_);
 #endif // _DEBUG
 
 	switch (phase_)
@@ -246,11 +256,16 @@ void GameTextManager::Open() {
 		parametric_ = 1.0f;
 		phase_ = VIEW;
 	}
+	nextButtonTargetPosition_ = { 0.0f,0.0f };
+	nextButtonOldPosition_ = nextButtonTargetPosition_;
+	buttonParametric_ = 1.0f;
 }
 
 void GameTextManager::View() {
 	nineSliceData_.size = textBoxOriginSize_;
+	buttonColor_ = { 1.0f,1.0f,1.0f,1.0f };
 	if (!mainText_->GetCompleteDrawText()) {
+		buttonColor_ = { 0.5f,0.5f,0.5f,1.0f };
 		//長押しで早送り
 		if (Input::GetInstance()->PushButton(Input::Button::A)) {
 			mainText_->SetCountUpFrame_(0);
@@ -277,9 +292,30 @@ void GameTextManager::View() {
 			phase_ = CLOSE;
 		}
 	}
+
+	//buttonanimation
+	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+		nextButtonTargetPosition_ = {0.0f,6.0f};
+		nextButtonOldPosition_ = nextButtonPosition_;
+		buttonParametric_ = 0.0f;
+	}
+	else if (Input::GetInstance()->ReleaseButton(Input::Button::A)) {
+		nextButtonTargetPosition_ = { 0.0f,0.0f };
+		nextButtonOldPosition_ = nextButtonPosition_;
+		buttonParametric_ = 0.0f;
+	}
+	if (buttonParametric_<=1.0f) {
+		buttonParametric_ += 0.2f;
+		nextButtonPosition_ = (nextButtonTargetPosition_ * buttonParametric_) + (1.0f- buttonParametric_) * nextButtonOldPosition_;
+	}
+	if (buttonParametric_ >= 1.0f) {
+		buttonParametric_ = 1.0f;
+	}
+	nextButton_->SetPosition(nextButtonOffset_ + nextButtonPosition_);
+	nextButton_->SetColor(buttonColor_);
 	mainText_->SetText();
 	nameText_->SetText();
-	next_->SetText();
+	//next_->SetText();
 }
 
 void GameTextManager::Close() {
@@ -300,6 +336,7 @@ void GameTextManager::Draw() {
 		}
 		if (phase_ == VIEW) {
 			nameBack_->Draw();
+			nextButton_->Draw();
 		}
 	}
 }
