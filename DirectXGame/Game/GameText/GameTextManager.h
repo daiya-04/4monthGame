@@ -49,6 +49,8 @@ public:
 
 	bool GetIsEnd() { return isEnd_; };
 
+	void Tutorial(int32_t tutorialNum);
+
 private:
 
 	//テキスト読み込み
@@ -97,4 +99,5 @@ private:
 	bool isEnd_;//終了したか
 
 	const std::string dataName = "GameText";
+
 };
