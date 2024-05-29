@@ -2,6 +2,14 @@
     "GameText": [
         {
             "TextLayout": {
+                "Button-Position": [
+                    1103.0,
+                    632.0
+                ],
+                "Button-Size": [
+                    64.0,
+                    64.0
+                ],
                 "Name-Position": [
                     300.0,
                     520.0
