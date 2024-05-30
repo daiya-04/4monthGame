@@ -24,6 +24,9 @@ Stage::Stage()
 	purposeTex_ = TextureManager::GetInstance()->Load("UI/mokuteki.png");
 	upTex_ = TextureManager::GetInstance()->Load("UI/up.png");
 	ropeTex_ = TextureManager::GetInstance()->Load("stageObject/rope.png");
+	tutorialFirstTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI1.png");
+	tutorialSecondTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI2.png");
+	tutorialThirdTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI3.png");
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
@@ -32,6 +35,11 @@ Stage::Stage()
 		numbers_[i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
 
 	}
+
+	tutorialFirst_.reset(Object2d::Create(tutorialFirstTex_, Vector2{3.5f * Block::kBlockSize_, 3.5f * Block::kBlockSize_ }));
+	tutorialSecond_.reset(Object2d::Create(tutorialSecondTex_, Vector2{ 3.5f * Block::kBlockSize_, 3.5f * Block::kBlockSize_ }));
+	tutorialThird_.reset(Object2d::Create(tutorialThirdTex_, Vector2{ 14.0f * Block::kBlockSize_, 13.5f * Block::kBlockSize_ }));
+	tutorialThird_->SetSize({ 2.0f * Block::kBlockSize_, 4.0f * Block::kBlockSize_ });
 
 	saunaRoom_.reset(Object2d::Create(saunaRoomTex_, kBasePosition - Vector2{0.0f, 18.0f}));
 	rope_[0].reset(Object2d::Create(ropeTex_, Vector2{ 10.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
@@ -132,6 +140,11 @@ void Stage::Update() {
 
 			if (TutorialFlagManager::GetInstance()->GetFlags(2) && !isBreakFlagBlocks_) {
 				BreakFlagBlock();
+			}
+
+			//画像切り替え用の変数カウント
+			if (++tutorialSwitchCount_ > maxSwitchCount_) {
+				tutorialSwitchCount_ = 0;
 			}
 
 		}
@@ -332,6 +345,19 @@ void Stage::DrawHeatAfter() {
 		borders_[i]->Draw(*camera_);
 	}
 
+	if (currentStageNumber_ == 1) {
+
+		if (tutorialSwitchCount_ < maxSwitchCount_ / 2) {
+			tutorialFirst_->Draw(*camera_);
+		}
+		else {
+			tutorialSecond_->Draw(*camera_);
+		}
+
+		tutorialThird_->Draw(*camera_);
+
+	}
+
 	if (canReturn_) {
 		returnUI_->Draw(*camera_);
 	}
@@ -361,6 +387,19 @@ void Stage::DrawColdAfter() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
+	}
+
+	if (currentStageNumber_ == 1) {
+
+		if (tutorialSwitchCount_ < maxSwitchCount_ / 2) {
+			tutorialFirst_->Draw(*camera_);
+		}
+		else {
+			tutorialSecond_->Draw(*camera_);
+		}
+
+		tutorialThird_->Draw(*camera_);
+
 	}
 
 	if (canReturn_) {

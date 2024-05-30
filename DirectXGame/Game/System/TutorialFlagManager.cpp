@@ -21,7 +21,7 @@ void TutorialFlagManager::Initialize() {
 void TutorialFlagManager::Update() {
 
 	//フラグが立つまでチャージジャンプ制限
-	if (!flags_[4]) {
+	if (!flags_[2]) {
 		player_->RestrictChargeJump();
 	}
 
@@ -57,6 +57,7 @@ void TutorialFlagManager::Update() {
 		}
 		//特定ポジションでフラグセット
 		else {
+			//チャージジャンプ解禁
 			flags_[2] = true;
 		}
 
@@ -73,8 +74,6 @@ void TutorialFlagManager::Update() {
 		//続けて会話
 		GameTextManager::GetInstance()->Tutorial(4);
 		tutorialNumber_ = 4;
-		//チャージジャンプ解禁
-		flags_[4] = true;
 
 		break;
 	case 4:

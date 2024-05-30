@@ -135,10 +135,13 @@ private:
 
 	//チュートリアルステージ用のフラグ
 	bool isBreakFlagBlocks_ = false;
+	int32_t tutorialSwitchCount_ = 0;
+	int32_t maxSwitchCount_ = 240;
 
 	//チュートリアル用のオブジェクト
 	std::unique_ptr<Object2d> tutorialFirst_;
 	std::unique_ptr<Object2d> tutorialSecond_;
+	std::unique_ptr<Object2d> tutorialThird_;
 
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Magma> magma_;
@@ -191,6 +194,9 @@ private:
 	uint32_t purposeTex_;
 	uint32_t upTex_;
 	uint32_t ropeTex_;
+	uint32_t tutorialFirstTex_;
+	uint32_t tutorialSecondTex_;
+	uint32_t tutorialThirdTex_;
 
 };
 
