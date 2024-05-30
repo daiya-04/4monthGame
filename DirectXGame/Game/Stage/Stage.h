@@ -136,6 +136,10 @@ private:
 	//チュートリアルステージ用のフラグ
 	bool isBreakFlagBlocks_ = false;
 
+	//チュートリアル用のオブジェクト
+	std::unique_ptr<Object2d> tutorialFirst_;
+	std::unique_ptr<Object2d> tutorialSecond_;
+
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Magma> magma_;
 	std::unique_ptr<Object2d> saunaRoom_;

@@ -93,7 +93,7 @@ void GameScene::Init(){
 	testText_.reset(new Text);
 	testText_->Initialize();
 	testText_->SetWString(L"AAAAA");
-	GameTextManager::GetInstance()->InitializeStage(stageNumber_);
+	GameTextManager::GetInstance()->InitializeStage(999);
 
 	TutorialFlagManager::GetInstance()->Initialize();
 	TutorialFlagManager::GetInstance()->SetPlayer(player_.get());
@@ -134,11 +134,12 @@ void GameScene::Update() {
 	//スタート時のスクロール更新
 	if (scrollHomePoint_.y < -200.0f) {
 		
-		scrollHomePoint_.y += (- 200.0f - scrollHomePoint_.y) * 0.05f;
+		scrollHomePoint_.y += (- 200.0f - scrollHomePoint_.y) * 0.1f;
 
-		if (scrollHomePoint_.y > 200.0f) {
-			scrollHomePoint_.y = 200.0f;
+		if (scrollHomePoint_.y > -201.0f) {
+			scrollHomePoint_.y = -200.0f;
 			isScrollEnd_ = true;
+			GameTextManager::GetInstance()->InitializeStage(stageNumber_);
 		}
 
 	}
@@ -180,7 +181,7 @@ void GameScene::Update() {
 	}
 	else {
 
-		if (GameTextManager::GetInstance()->GetIsEnd()) {
+		if (GameTextManager::GetInstance()->GetIsEnd() && isScrollEnd_) {
 
 			if (stageNumber_ == 1) {
 				TutorialFlagManager::GetInstance()->Update();

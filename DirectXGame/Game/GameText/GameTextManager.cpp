@@ -22,7 +22,7 @@ void GameTextManager::Initialize() {
 
 	nineSliceData_.position = {640.0f,600.0f};
 	textBoxOriginSize_ = {1000.0f,150.0f};
-	phase_ = OPEN;
+	phase_ = END;
 	parametric_ = 0.0f;
 
 	mainText_.reset(new Text);
@@ -53,6 +53,9 @@ void GameTextManager::Initialize() {
 	nameBack_->SetSize(nameBackSize_);
 	nameText_->SetPosition(namePosition_);
 	nextButton_->SetSize(nextButtonSize_);
+
+	isEnd_ = true;
+
 }
 
 void GameTextManager::AppryGlobalVariables() {
