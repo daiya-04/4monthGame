@@ -205,7 +205,7 @@ void Stage::Update() {
 
 		}
 
-		BlockTextureManager::GetInstance()->UpdateParticle();
+		BlockTextureManager::GetInstance()->UpdateParticle(*camera_);
 
 	}
 	//クリアした時

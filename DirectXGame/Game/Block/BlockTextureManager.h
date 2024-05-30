@@ -7,6 +7,7 @@
 class BlockBreakParticle;
 class StarParticle;
 class SandParticle;
+class GemGetParticle;
 
 /// <summary>
 /// ブロックに使うテクスチャ一括管理
@@ -57,6 +58,9 @@ public:
 	//描画オブジェクト追加
 	void AppendSandParticle(const Vector2& position, const Vector4& color);
 
+	//描画オブジェクト追加
+	void AppendGemParticle(const Vector2& position, uint32_t type, const Vector4& color);
+
 	//全オブジェクト描画
 	void DrawParticle(const Camera& camera);
 
@@ -65,8 +69,9 @@ public:
 
 	void CreateStarParticle(const Vector2& position, int32_t type);
 	void CreateSandParticle(const Vector2& position, int32_t type);
+	void CreateGemParticle(const Vector2& position, int32_t type);
 
-	void UpdateParticle();
+	void UpdateParticle(const Camera& camera);
 
 private:
 
@@ -84,6 +89,8 @@ private:
 	std::list<std::unique_ptr<SandParticle>> sandParticleDatas_;
 	std::unique_ptr<Object2dInstancing> sandParticles_;
 
+	std::list<std::unique_ptr<GemGetParticle>> gemParticleDatas_;
+	std::unique_ptr<Object2dInstancing> gemParticles_;
 private:
 
 	BlockTextureManager();
