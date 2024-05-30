@@ -324,6 +324,8 @@ void GameScene::DrawUI(){
 
 	score_.Draw();
 
+	BlockTextureManager::GetInstance()->DrawParticleUI();
+
 	if (isOpenMenu_) {
 
 		backSprite_->Draw();

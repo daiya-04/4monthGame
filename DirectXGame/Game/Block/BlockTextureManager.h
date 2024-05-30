@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "Object2dInstancing.h"
+#include "Camera.h"
 #include <list>
 #include "Vec4.h"
 class BlockBreakParticle;
@@ -61,8 +62,13 @@ public:
 	//描画オブジェクト追加
 	void AppendGemParticle(const Vector2& position, uint32_t type, const Vector4& color);
 
+	//描画オブジェクト追加
+	void AppendStarParticleUI(const Vector2& position, const Vector4& color);
+
 	//全オブジェクト描画
 	void DrawParticle(const Camera& camera);
+
+	void DrawParticleUI();
 
 	void CreateParticle(const Vector2& position, uint32_t type);
 	void CreateParticle(const Vector2& position, const Vector2& velocity, uint32_t type);
@@ -70,6 +76,8 @@ public:
 	void CreateStarParticle(const Vector2& position, int32_t type);
 	void CreateSandParticle(const Vector2& position, int32_t type);
 	void CreateGemParticle(const Vector2& position, int32_t type);
+
+	void CreateStarParticleUI(const Vector2& position);
 
 	void UpdateParticle(const Camera& camera);
 
@@ -98,6 +106,9 @@ private:
 	BlockTextureManager(const BlockTextureManager&) = delete;
 	const BlockTextureManager& operator=(const BlockTextureManager&) = delete;
 
+	std::unique_ptr<Camera> constantCamera_;//spriteをinstancing対応させるまでの仮カメラ
+	std::list<std::unique_ptr<StarParticle>> starParticleDatasUI_;
+	std::unique_ptr<Object2dInstancing> starParticlesUI_;
 };
 
 
