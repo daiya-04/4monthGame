@@ -49,6 +49,8 @@ public:
 
 	bool GetIsEnd() { return isEnd_; };
 
+	void SetIsEnd(bool flag) { isEnd_ = flag; }
+
 	void Tutorial(int32_t tutorialNum);
 
 private:

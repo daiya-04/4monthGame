@@ -14,6 +14,7 @@ private:
 	HWND hwnd_ = nullptr;
 
 	bool endRequest_ = false;
+	bool isFullScreen_ = false;
 
 	const wchar_t* title_;
 	RECT windowRect_{};
@@ -49,6 +50,8 @@ public: //メンバ関数
 	void GameEnd() { endRequest_ = true; }
 
 	bool IsEndRequest() const { return endRequest_; }
+
+	bool isFullScreen() const { return isFullScreen_; }
 
 };
 

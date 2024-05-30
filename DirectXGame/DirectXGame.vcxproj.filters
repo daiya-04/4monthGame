@@ -271,6 +271,7 @@
       <Filter>Game\System</Filter>
     </ClCompile>
     <ClCompile Include="Game\Block\SandParticle.cpp" />
+    <ClCompile Include="TitleAnimation.cpp" />
     <ClCompile Include="Game\Block\GemGetParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -470,6 +471,7 @@
       <Filter>Game\System</Filter>
     </ClInclude>
     <ClInclude Include="Game\Block\SandParticle.h" />
+    <ClInclude Include="TitleAnimation.h" />
     <ClInclude Include="Game\Block\GemGetParticle.h" />
   </ItemGroup>
   <ItemGroup>

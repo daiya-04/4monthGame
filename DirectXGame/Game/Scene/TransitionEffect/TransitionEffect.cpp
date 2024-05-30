@@ -41,7 +41,7 @@ void TransitionEffect::Update() {
 
 void TransitionEffect::InEffectUpdate() {
 
-	param_ += 0.02f;
+	param_ += 0.05f;
 	param_ = std::clamp(param_, 0.0f, 1.0f);
 	float T = Easing::easeInSine(param_);
 	alpha_ = Lerp(T, 1.0f, 0.0f);

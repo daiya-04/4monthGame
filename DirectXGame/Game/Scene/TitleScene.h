@@ -15,6 +15,7 @@
 #include "SpotLight.h"
 
 #include "Option.h"
+#include "TitleAnimation.h"
 
 
 class TitleScene : public DefaultScene {
@@ -50,6 +51,10 @@ public:
 
 	void ButtonEffectUpdate();
 
+	void BoundingInit(const Vector2& axisPos);
+
+	void BoundingUpdate(Sprite* sprite);
+
 private:
 
 	const std::string dataName = "TitleUI";
@@ -66,15 +71,9 @@ private:
 	uint32_t circleTex_ = 0;
 	std::unique_ptr<Sprite> circle_;
 
-	uint32_t saunaRoomTex_ = 0;
-	std::unique_ptr<Sprite> saunaRoom_;
-
-	std::array<uint32_t, 2> playerTexes_;
-	std::array<std::unique_ptr<Sprite>, 2> players_;
-
 	std::unique_ptr<Option> option_;
 
-	Vector2 titlePos_{};
+	std::unique_ptr<TitleAnimation> titleAnima_;
 
 	struct WorkFloating {
 		float param_ = 0.0f;
@@ -82,6 +81,10 @@ private:
 		float amplitude_ = 1.0f;
 		//サイクル<frame>
 		int32_t cycle_ = 60;
+		//軸座標
+		Vector2 axisPos_{};
+
+		Vector2 addPos_{};
 	};
 
 	struct WorkButtonEffect {
@@ -90,8 +93,16 @@ private:
 		float scale_ = 1.0f;
 	};
 
+	struct WorkBounding {
+		Vector2 velocity_{};
+		Vector2 accel_{};
+		Vector2 axisPos_{};
+		Vector2 addPos_{};
+	};
+
 	WorkFloating workFloating_;
 	WorkButtonEffect buttonEffect_;
+	WorkBounding workBounding_;
 
 	bool isOpening_ = true;
 
