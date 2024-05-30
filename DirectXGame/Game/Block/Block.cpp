@@ -59,6 +59,13 @@ void BaseBlock::Break(float power) {
 	}
 	else {
 		score_->AddScore(10);
+		int createNum = int(RandomEngine::GetRandom(2.0f, 5.0f));
+		for (int i = 0; i < createNum; i++) {
+			Vector2 velocity = player_->GetPosition() - position_;
+			Vector2 pos = position_ + velocity*0.5f;
+			velocity = velocity.Normalize();
+			BlockTextureManager::GetInstance()->CreateParticle(pos,velocity, type_);
+		}
 	}
 
 	//耐久力に応じてSE変更
@@ -130,6 +137,21 @@ void Block::Update() {
 
 	if (type_ == kGoldBlock) {
 		BlockTextureManager::GetInstance()->CreateStarParticle(position_,0);
+	}
+
+	if (!isBreak_ && type_ != kNone) {
+		//当たり判定
+		AABB2D collision = collision_;
+		collision.min.x -= 1.0f;
+		collision.min.y -= 1.0f;
+		collision.max.x += 1.0f;
+		collision.max.y += 1.0f;
+		if (player_->GetPrePosition() != player_->GetPosition() && IsCollision(collision, player_->GetCollision())) {
+			Vector2 velocity = player_->GetPosition() - position_;
+			Vector2 pos = position_ + velocity * 0.7f;
+			velocity = velocity.Normalize();
+			BlockTextureManager::GetInstance()->CreateSandParticle(pos, type_);
+		}
 	}
 }
 

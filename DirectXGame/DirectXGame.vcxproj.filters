@@ -270,6 +270,7 @@
     <ClCompile Include="Game\System\TutorialFlagManager.cpp">
       <Filter>Game\System</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Block\SandParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -467,6 +468,7 @@
     <ClInclude Include="Game\System\TutorialFlagManager.h">
       <Filter>Game\System</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Block\SandParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">

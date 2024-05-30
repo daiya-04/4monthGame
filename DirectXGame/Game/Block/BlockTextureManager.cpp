@@ -3,6 +3,7 @@
 #include "Block.h"
 #include "BlockBreakParticle.h"
 #include "starParticle.h"
+#include "SandParticle.h"
 BlockTextureManager* BlockTextureManager::GetInstance() {
 	static BlockTextureManager instance;
 	return &instance;
@@ -111,6 +112,10 @@ BlockTextureManager::BlockTextureManager() {
 	starParticles_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 256));
 	starParticles_->SetScale({ 1.0f, 1.0f });
 	starParticles_->SetSize({ float(BaseBlock::kBlockSize_/2),float(BaseBlock::kBlockSize_) });
+
+	sandParticles_.reset(Object2dInstancing::Create(TextureManager::Load("sandDust.png"), Vector2{ 0,0 }, 1024));
+	sandParticles_->SetScale({ 1.0f, 1.0f });
+	sandParticles_->SetSize({ float(BaseBlock::kBlockSize_ /3),float(BaseBlock::kBlockSize_/3) });
 }
 
 void BlockTextureManager::ClearObject() {
@@ -119,6 +124,7 @@ void BlockTextureManager::ClearObject() {
 		breakParticles_[index - 1]->ClearUseCount();
 	}
 	starParticles_->ClearUseCount();
+	sandParticles_->ClearUseCount();
 }
 
 void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type) {
@@ -172,6 +178,11 @@ void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vecto
 	starParticles_->AppendObject(position, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f },color);
 }
 
+void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vector4& color) {
+
+	sandParticles_->AppendObject(position, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f }, color);
+}
+
 void BlockTextureManager::DrawParticle(const Camera& camera) {
 	for (std::unique_ptr<BlockBreakParticle>& data : breakParticleDatas_) {
 		data->Draw();
@@ -183,12 +194,23 @@ void BlockTextureManager::DrawParticle(const Camera& camera) {
 		data->Draw();
 	}
 	starParticles_->Draw(camera);
+	for (std::unique_ptr<SandParticle>& data : sandParticleDatas_) {
+		data->Draw();
+	}
+	sandParticles_->Draw(camera);
 }
 
 void BlockTextureManager::CreateParticle(const Vector2& position, uint32_t type) {
 	std::unique_ptr<BlockBreakParticle> particle;
 	particle.reset(new BlockBreakParticle);
 	particle->Initialize(position,type);
+	breakParticleDatas_.push_back(std::move(particle));
+}
+
+void BlockTextureManager::CreateParticle(const Vector2& position, const Vector2& velocity, uint32_t type) {
+	std::unique_ptr<BlockBreakParticle> particle;
+	particle.reset(new BlockBreakParticle);
+	particle->Initialize(position,velocity, type);
 	breakParticleDatas_.push_back(std::move(particle));
 }
 
@@ -199,6 +221,16 @@ void BlockTextureManager::CreateStarParticle(const Vector2& position,int32_t typ
 		particle.reset(new StarParticle);
 		particle->Initialize(position,type);
 		starParticleDatas_.push_back(std::move(particle));
+	}
+}
+
+void BlockTextureManager::CreateSandParticle(const Vector2& position, int32_t type) {
+	SandParticle::response--;
+	if (SandParticle::response < 0) {
+		std::unique_ptr<SandParticle> particle;
+		particle.reset(new SandParticle);
+		particle->Initialize(position, type);
+		sandParticleDatas_.push_back(std::move(particle));
 	}
 }
 
@@ -221,6 +253,16 @@ void BlockTextureManager::UpdateParticle() {
 		return false;
 		});
 	for (std::unique_ptr<StarParticle>& data : starParticleDatas_) {
+		data->Update();
+	}
+
+	sandParticleDatas_.remove_if([](std::unique_ptr<SandParticle>& bullet) {
+		if (!bullet->GetIsAlive()) {
+			return true;
+		}
+		return false;
+		});
+	for (std::unique_ptr<SandParticle>& data : sandParticleDatas_) {
 		data->Update();
 	}
 }
