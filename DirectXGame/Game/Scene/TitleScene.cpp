@@ -46,8 +46,6 @@ void TitleScene::Init() {
 	titleAnima_ = std::make_unique<TitleAnimation>();
 	titleAnima_->Init();
 
-	titlePos_ = uis_["TitleLogo"]->GetPosition();
-
 	circle_->SetPosition(uis_["AButton"]->GetPosition());
 
 	FloatingGimmickInit();
@@ -145,6 +143,7 @@ void TitleScene::DrawUI() {
 void TitleScene::StartInit() {
 
 	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Start"]->GetPosition().y });
+	BoundingInit(uis_["Start"]->GetPosition());
 
 }
 
@@ -154,6 +153,7 @@ void TitleScene::StartUpdate() {
 	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Start"]->GetPosition().y });
 #endif // _DEBUG
 
+	BoundingUpdate(uis_["Start"].get());
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 		if (isOpening_) {
@@ -208,6 +208,7 @@ void TitleScene::StartUpdate() {
 void TitleScene::OptionInit() {
 
 	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Option"]->GetPosition().y });
+	BoundingInit(uis_["Option"]->GetPosition());
 
 }
 
@@ -217,7 +218,7 @@ void TitleScene::OptionUpdate() {
 	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Option"]->GetPosition().y });
 #endif // _DEBUG
 
-
+	BoundingUpdate(uis_["Option"].get());
 	
 
 	if (!option_->IsWindow()) {
@@ -257,6 +258,7 @@ void TitleScene::OptionUpdate() {
 void TitleScene::ExitInit() {
 
 	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Exit"]->GetPosition().y });
+	BoundingInit(uis_["Exit"]->GetPosition());
 
 }
 
@@ -266,6 +268,7 @@ void TitleScene::ExitUpdate() {
 	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Exit"]->GetPosition().y });
 #endif // _DEBUG
 
+	BoundingUpdate(uis_["Exit"].get());
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 		WinApp::GetInstance()->GameEnd();
@@ -345,7 +348,7 @@ void TitleScene::ApplyGlobalVariables() {
 		ui.second->SetPosition(gb->GetValue<Vector2>(dataName, ui.first, "position"));
 	}
 
-	titlePos_ = uis_["TitleLogo"]->GetPosition();
+	workFloating_.axisPos_ = uis_["TitleLogo"]->GetPosition();
 
 #endif // _DEBUG
 }
@@ -353,6 +356,7 @@ void TitleScene::ApplyGlobalVariables() {
 void TitleScene::FloatingGimmickInit() {
 
 	workFloating_.param_ = 0.0f;
+	workFloating_.axisPos_ = uis_["TitleLogo"]->GetPosition();
 
 }
 
@@ -364,9 +368,9 @@ void TitleScene::FloatingGimmickUpdate() {
 
 	workFloating_.param_ = std::fmod(workFloating_.param_, 2.0f * std::numbers::pi_v<float>);
 	
-	addPos_ += std::sinf(workFloating_.param_) * workFloating_.amplitude_;
+	workFloating_.addPos_.y += std::sinf(workFloating_.param_) * workFloating_.amplitude_;
 
-	uis_["TitleLogo"]->SetPosition(titlePos_ + Vector2({ 0.0f,addPos_ }));
+	uis_["TitleLogo"]->SetPosition(workFloating_.axisPos_ + workFloating_.addPos_);
 }
 
 void TitleScene::ButtonEffectInit() {
@@ -387,4 +391,29 @@ void TitleScene::ButtonEffectUpdate() {
 
 	circle_->SetColor({ 1.0f,1.0f,1.0f,buttonEffect_.alpha_ });
 	circle_->SetScale(buttonEffect_.scale_);
+}
+
+void TitleScene::BoundingInit(const Vector2& axisPos) {
+
+	workBounding_.axisPos_ = axisPos;
+	workBounding_.velocity_.y = -1.7f;
+	workBounding_.accel_ = {};
+	workBounding_.addPos_ = {};
+
+}
+
+void TitleScene::BoundingUpdate(Sprite* sprite) {
+
+	workBounding_.accel_.y += 0.02f;
+
+	workBounding_.velocity_.y += workBounding_.accel_.y;
+
+	workBounding_.addPos_ += workBounding_.velocity_;
+
+	if (workBounding_.addPos_.y > 0) {
+		BoundingInit(workBounding_.axisPos_);
+	}
+
+	sprite->SetPosition(workBounding_.axisPos_ + workBounding_.addPos_);
+
 }

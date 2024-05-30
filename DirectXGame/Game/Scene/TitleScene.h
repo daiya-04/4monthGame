@@ -51,6 +51,10 @@ public:
 
 	void ButtonEffectUpdate();
 
+	void BoundingInit(const Vector2& axisPos);
+
+	void BoundingUpdate(Sprite* sprite);
+
 private:
 
 	const std::string dataName = "TitleUI";
@@ -71,14 +75,16 @@ private:
 
 	std::unique_ptr<TitleAnimation> titleAnima_;
 
-	Vector2 titlePos_{};
-
 	struct WorkFloating {
 		float param_ = 0.0f;
 		//振幅
 		float amplitude_ = 1.0f;
 		//サイクル<frame>
 		int32_t cycle_ = 60;
+		//軸座標
+		Vector2 axisPos_{};
+
+		Vector2 addPos_{};
 	};
 
 	struct WorkButtonEffect {
@@ -87,10 +93,16 @@ private:
 		float scale_ = 1.0f;
 	};
 
+	struct WorkBounding {
+		Vector2 velocity_{};
+		Vector2 accel_{};
+		Vector2 axisPos_{};
+		Vector2 addPos_{};
+	};
+
 	WorkFloating workFloating_;
 	WorkButtonEffect buttonEffect_;
-
-	float addPos_;
+	WorkBounding workBounding_;
 
 	bool isOpening_ = true;
 
