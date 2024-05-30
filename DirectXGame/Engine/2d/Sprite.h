@@ -63,8 +63,6 @@ public: //静的メンバ関数
 
 private: //メンバ変数
 
-
-
 	ComPtr<ID3D12Resource> matrialResource_;
 	ComPtr<ID3D12Resource> wvpResource_;
 	ComPtr<ID3D12Resource> vertexResource_;
@@ -72,8 +70,7 @@ private: //メンバ変数
 	ComPtr<ID3D12Resource> indexResource_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
 	D3D12_RESOURCE_DESC resourceDesc_;
-	//座標
-	Vector2 position_{};
+	
 	//倍率
 	Vector2 scale_{ 1.0f,1.0f };
 	//サイズ
@@ -92,6 +89,11 @@ private: //メンバ変数
 	Vector2 texSize_ = { 100.0f,100.0f };
 
 	bool isDraw_ = true;
+
+public:
+
+	//座標
+	Vector2 position_{};
 
 public: //メンバ関数
 	
