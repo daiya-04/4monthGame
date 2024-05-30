@@ -333,7 +333,11 @@ void GameScene::DrawUI(){
 
 	}
 	else {
-		menuButtonSprite_->Draw();
+
+		if (GameTextManager::GetInstance()->GetIsEnd() && isScrollEnd_) {
+			menuButtonSprite_->Draw();
+		}
+
 	}
 
 	//TextManager::GetInstance()->TestDraw();
