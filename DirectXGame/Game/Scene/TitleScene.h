@@ -90,6 +90,8 @@ private:
 	WorkFloating workFloating_;
 	WorkButtonEffect buttonEffect_;
 
+	float addPos_;
+
 	bool isOpening_ = true;
 
 private:

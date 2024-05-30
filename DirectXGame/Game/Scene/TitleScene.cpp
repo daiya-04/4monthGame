@@ -144,13 +144,16 @@ void TitleScene::DrawUI() {
 
 void TitleScene::StartInit() {
 
-	
+	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Start"]->GetPosition().y });
 
 }
 
 void TitleScene::StartUpdate() {
 
-	
+#ifdef _DEBUG
+	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Start"]->GetPosition().y });
+#endif // _DEBUG
+
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 		if (isOpening_) {
@@ -198,22 +201,24 @@ void TitleScene::StartUpdate() {
 	}
 
 #endif // _DEBUG
-
 	
-
-	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Start"]->GetPosition().y });
 
 }
 
 void TitleScene::OptionInit() {
 
-
+	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Option"]->GetPosition().y });
 
 }
 
 void TitleScene::OptionUpdate() {
 
+#ifdef _DEBUG
 	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Option"]->GetPosition().y });
+#endif // _DEBUG
+
+
+	
 
 	if (!option_->IsWindow()) {
 
@@ -251,13 +256,16 @@ void TitleScene::OptionUpdate() {
 
 void TitleScene::ExitInit() {
 
-	
+	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Exit"]->GetPosition().y });
 
 }
 
 void TitleScene::ExitUpdate() {
 
+#ifdef _DEBUG
 	uis_["Arrow"]->SetPosition({ uis_["Arrow"]->GetPosition().x,uis_["Exit"]->GetPosition().y });
+#endif // _DEBUG
+
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 		WinApp::GetInstance()->GameEnd();
@@ -337,6 +345,8 @@ void TitleScene::ApplyGlobalVariables() {
 		ui.second->SetPosition(gb->GetValue<Vector2>(dataName, ui.first, "position"));
 	}
 
+	titlePos_ = uis_["TitleLogo"]->GetPosition();
+
 #endif // _DEBUG
 }
 
@@ -353,10 +363,10 @@ void TitleScene::FloatingGimmickUpdate() {
 	workFloating_.param_ += step;
 
 	workFloating_.param_ = std::fmod(workFloating_.param_, 2.0f * std::numbers::pi_v<float>);
+	
+	addPos_ += std::sinf(workFloating_.param_) * workFloating_.amplitude_;
 
-	titlePos_.y += std::sinf(workFloating_.param_) * workFloating_.amplitude_;
-
-	uis_["TitleLogo"]->SetPosition(titlePos_);
+	uis_["TitleLogo"]->SetPosition(titlePos_ + Vector2({ 0.0f,addPos_ }));
 }
 
 void TitleScene::ButtonEffectInit() {

@@ -18,7 +18,6 @@ public:
 private:
 
 	bool isWindow_ = false;
-	bool isFullScreen_;
 
 	uint32_t windowTex_ = 0;
 	std::unique_ptr<Sprite> window_;
