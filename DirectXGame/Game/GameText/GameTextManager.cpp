@@ -33,6 +33,15 @@ void GameTextManager::Initialize() {
 	nextButton_.reset(Sprite::Create(TextureManager::GetInstance()->Load("AButton.png"), Vector2{ 0,0 }));
 	nextButton_->SetScale(1.0f);
 
+	skipButton_.reset(Sprite::Create(TextureManager::GetInstance()->Load("BButton.png"), Vector2{ 1.0f,1.0f }));
+	skipButton_->SetAnchorpoint({0,0});
+	skipText_.reset(Sprite::Create(TextureManager::GetInstance()->Load("skipText.png"), Vector2{ 1.0f,1.0f }));
+	skipText_->SetAnchorpoint({ 0,0 });
+	skipGaugeBack_.reset(Sprite::Create(TextureManager::GetInstance()->Load("skipGaugeBack.png"), Vector2{ 1.0f,1.0f }));
+	skipGaugeBack_->SetAnchorpoint({ 0,0 });
+	skipGauge_.reset(Sprite::Create(TextureManager::GetInstance()->Load("skipGauge.png"), Vector2{ 1.0f,1.0f }));
+	skipGauge_->SetAnchorpoint({ 0,0 });
+
 	buttonColor_ = { 1.0f,1.0f,1.0f,1.0f};
 
 	std::string groupName = "TextLayout";
@@ -48,14 +57,33 @@ void GameTextManager::Initialize() {
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "Button-Size", nextButtonSize_);
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "Button-Position", nextButtonOffset_);
 
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipButton-Size", skipButtonSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipButton-Position", skipButtonPosition_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipText-Size", skipTextSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipText-Position", skipTextPosition_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGauge-Size", skipGaugeSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGauge-Position", skipGaugePosition_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGaugeBack-Size", skipGaugeSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGaugeBack-Position", skipGaugePosition_);
+
+
 	AppryGlobalVariables();
 	nameBack_->SetPosition(nameBackPosition_);
 	nameBack_->SetSize(nameBackSize_);
 	nameText_->SetPosition(namePosition_);
 	nextButton_->SetSize(nextButtonSize_);
 
-	isEnd_ = true;
+	skipButton_->SetPosition(skipButtonPosition_);
+	skipButton_->SetSize(skipButtonSize_);
+	skipText_->SetPosition(skipTextPosition_);
+	skipText_->SetSize(skipTextSize_);
+	skipGauge_->SetPosition(skipGaugePosition_);
+	skipGauge_->SetSize(skipGaugeSize_);
+	skipGauge_->SetColor({0.5f,0.5f,0.5f,1.0f});
+	skipGaugeBack_->SetPosition(skipGaugeBackPosition_);
+	skipGaugeBack_->SetSize(skipGaugeBackSize_);
 
+	isEnd_ = true;
 }
 
 void GameTextManager::AppryGlobalVariables() {
@@ -68,6 +96,15 @@ void GameTextManager::AppryGlobalVariables() {
 	namePosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Name-Position");
 	nextButtonSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Button-Size");
 	nextButtonOffset_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Button-Position");
+
+	skipButtonSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipButton-Size");
+	skipButtonPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipButton-Position");
+	skipTextSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipText-Size");
+	skipTextPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipText-Position");
+	skipGaugeSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGauge-Size");
+	skipGaugePosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGauge-Position");
+	skipGaugeBackSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGaugeBack-Size");
+	skipGaugeBackPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGaugeBack-Position");
 }
 
 void GameTextManager::InitializeStage(uint32_t stageNum) {
@@ -79,8 +116,7 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 	nameList_.clear();
 	textList_.clear();
 	LoadText(stageNum);
-	//textList_.push_back(L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ");
-	//textList_.push_back(L"互サ道互サ道互サ道互サ道互サ道互サ道互サ道互サ道");
+	
 	listIndex_ = 0;
 	if (!textList_.empty()) {
 		mainText_->SetWString(textList_[listIndex_]);
@@ -92,9 +128,6 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 		nameText_->CharCountMax();
 		nameText_->SetArrangeType(Text::kCenter);
 
-		//next_->SetWString(L"");
-		//next_->SetPosition({ 1100.0f,650.0f });
-		//next_->SetCharCount(1);
 		isEnd_ = false;
 	}
 	else {
@@ -110,6 +143,8 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 		phase_ = END;
 		isEnd_ = true;
 	}
+	isSkip_ = false;
+	skipButtonLength_ = 0;
 }
 
 void GameTextManager::LoadText(uint32_t stageNum) {
@@ -220,7 +255,8 @@ void GameTextManager::Tutorial(int32_t tutorialNum) {
 
 	}
 	isEnd_ = false;
-
+	isSkip_ = false; 
+	skipButtonLength_ = 0;
 }
 
 void GameTextManager::TestUpdate() {
@@ -244,7 +280,38 @@ void GameTextManager::Update() {
 	nameBack_->SetSize(nameBackSize_);
 	nameText_->SetPosition(namePosition_);
 	nextButton_->SetSize(nextButtonSize_);
+
+	skipButton_->SetPosition(skipButtonPosition_);
+	skipButton_->SetSize(skipButtonSize_);
+	skipText_->SetPosition(skipTextPosition_);
+	skipText_->SetSize(skipTextSize_);
+	skipGauge_->SetPosition(skipGaugePosition_);
+	skipGauge_->SetSize(skipGaugeSize_);
+	skipGaugeBack_->SetPosition(skipGaugeBackPosition_);
+	skipGaugeBack_->SetSize(skipGaugeBackSize_);
 #endif // _DEBUG
+
+	if (!isSkip_) {
+		if (Input::GetInstance()->PushButton(Input::Button::B)) {
+			skipButtonLength_++;
+		}
+		else {
+			skipButtonLength_--;
+		}
+		if (skipButtonLength_ < 0) {
+			skipButtonLength_ = 0;
+		}
+		if (skipButtonLength_ >= kSkipEx) {
+			isSkip_ = true;
+		}
+		float t = float(skipButtonLength_) / float(kSkipEx);
+		skipGauge_->SetTextureArea({ 0,0 }, {64*t,32.0f});
+		skipGauge_->SetSize({skipGaugeSize_.x*t,skipGaugeSize_.y});
+	}
+	else {
+		skipGauge_->SetSize(skipGaugeSize_);
+	}
+
 
 	switch (phase_)
 	{
@@ -269,7 +336,7 @@ void GameTextManager::Update() {
 
 void GameTextManager::Open() {
 	nineSliceData_.size = textBoxOriginSize_ * Easing::easeOutBack(parametric_);
-	parametric_ += 0.05f;
+	parametric_ += 0.1f;
 	if (parametric_ >= 1.0f) {
 		parametric_ = 1.0f;
 		phase_ = VIEW;
@@ -284,6 +351,7 @@ void GameTextManager::View() {
 	buttonColor_ = { 1.0f,1.0f,1.0f,1.0f };
 	if (!mainText_->GetCompleteDrawText()) {
 		buttonColor_ = { 0.5f,0.5f,0.5f,1.0f };
+		if (isSkip_) { mainText_->CharCountMax(); }
 		//長押しで早送り
 		if (Input::GetInstance()->PushButton(Input::Button::A)) {
 			mainText_->SetCountUpFrame_(0);
@@ -294,13 +362,15 @@ void GameTextManager::View() {
 		mainText_->CountUp();
 	}
 	//終了
-	else if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+	else if ((isSkip_ ) ||Input::GetInstance()->TriggerButton(Input::Button::A)) {
 		//リストが残っていたらtextを差し替えてリセット
 		if (listIndex_ < textList_.size()-1 && !textList_.empty()) {
 			listIndex_++;
 			mainText_->SetWString(textList_[listIndex_]);
 			mainText_->SetCharCount(0);
 			mainText_->SetCompleteDrawText(false);
+
+			if (isSkip_) {mainText_->CharCountMax();}
 
 			nameText_->SetWString(nameList_[listIndex_]);
 			nameText_->CharCountMax();
@@ -338,7 +408,7 @@ void GameTextManager::View() {
 
 void GameTextManager::Close() {
 	nineSliceData_.size = textBoxOriginSize_ * Easing::easeOutBack(parametric_);
-	parametric_ -= 0.05f;
+	parametric_ -= 0.1f;
 	if (parametric_ < 0.0f) {
 		parametric_ = 0.0f;
 		nineSliceData_.size = { 0.0f,0.0f };
@@ -355,6 +425,11 @@ void GameTextManager::Draw() {
 		if (phase_ == VIEW) {
 			nameBack_->Draw();
 			nextButton_->Draw();
+
+			skipGaugeBack_->Draw();
+			skipGauge_->Draw();
+			skipText_->Draw();
+			skipButton_->Draw();
 		}
 	}
 }

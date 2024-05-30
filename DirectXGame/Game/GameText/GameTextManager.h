@@ -112,4 +112,21 @@ private:
 
 	const std::string dataName = "GameText";
 
+	bool isSkip_;//テキストをスキップするか
+	static const int32_t kSkipEx = 20;//何フレームでスキップを実行するか
+	int32_t skipButtonLength_;//スキップボタンをどれくらい押しつづけているか
+
+	std::unique_ptr<Sprite> skipButton_;//スキップボタン
+	std::unique_ptr<Sprite> skipText_;
+	std::unique_ptr<Sprite> skipGaugeBack_;
+	std::unique_ptr<Sprite> skipGauge_;
+
+	Vector2 skipButtonPosition_ = {};
+	Vector2 skipButtonSize_ = {};
+	Vector2 skipTextPosition_ = {};
+	Vector2 skipTextSize_ = {};
+	Vector2 skipGaugePosition_ = {};
+	Vector2 skipGaugeSize_ = {};
+	Vector2 skipGaugeBackPosition_ = {};
+	Vector2 skipGaugeBackSize_ = {};
 };
