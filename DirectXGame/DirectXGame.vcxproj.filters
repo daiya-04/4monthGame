@@ -267,6 +267,7 @@
       <Filter>Game\Stage</Filter>
     </ClCompile>
     <ClCompile Include="TitleAnimation.cpp" />
+    <ClCompile Include="StageNumberDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -461,6 +462,7 @@
       <Filter>Game\Stage</Filter>
     </ClInclude>
     <ClInclude Include="TitleAnimation.h" />
+    <ClInclude Include="StageNumberDraw.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">
