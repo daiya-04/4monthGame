@@ -124,6 +124,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Block\Block.cpp" />
     <ClCompile Include="Game\Block\BlockBreakParticle.cpp" />
     <ClCompile Include="Game\Block\BlockTextureManager.cpp" />
+    <ClCompile Include="Game\Block\GemGetParticle.cpp" />
     <ClCompile Include="Game\Block\SandParticle.cpp" />
     <ClCompile Include="Game\Block\starParticle.cpp" />
     <ClCompile Include="Game\Enemy\Enemy.cpp" />
@@ -209,6 +210,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Block\Block.h" />
     <ClInclude Include="Game\Block\BlockBreakParticle.h" />
     <ClInclude Include="Game\Block\BlockTextureManager.h" />
+    <ClInclude Include="Game\Block\GemGetParticle.h" />
     <ClInclude Include="Game\Block\SandParticle.h" />
     <ClInclude Include="Game\Block\starParticle.h" />
     <ClInclude Include="Game\Enemy\Enemy.h" />

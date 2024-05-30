@@ -47,6 +47,9 @@ void BaseBlock::Break(float power) {
 				crystalSE_->Play();
 			}
 
+			if (type_ == kRedBlock || type_ == kGreenBlock || type_ == kBlueBlock) {
+				BlockTextureManager::GetInstance()->CreateGemParticle(position_, type_);
+			}
 		}
 		int createNum = int(RandomEngine::GetRandom(8.0f,12.0f));
 		for (int i = 0; i < createNum;i++) {
