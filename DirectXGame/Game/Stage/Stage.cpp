@@ -620,6 +620,14 @@ void Stage::Load(uint32_t stageNumber) {
 
 	}
 
+	//チュートリアルステージだけ特殊ブロック配置
+	if (stageNumber == 1) {
+
+		map_[2][14]->ChangeType(Block::kFlagBlock);
+		map_[3][14]->ChangeType(Block::kFlagBlock);
+
+	}
+
 	//ブロックの更新
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
@@ -630,15 +638,6 @@ void Stage::Load(uint32_t stageNumber) {
 		}
 
 	}
-
-	//チュートリアルステージだけ特殊ブロック配置
-	if (stageNumber == 1) {
-
-		map_[2][14]->ChangeType(Block::kFlagBlock);
-		map_[3][14]->ChangeType(Block::kFlagBlock);
-
-	}
-
 
 }
 
