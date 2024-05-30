@@ -48,6 +48,8 @@ void TitleScene::Init() {
 
 	circle_->SetPosition(uis_["AButton"]->GetPosition());
 
+	stageNumber_ = 1;
+
 	FloatingGimmickInit();
 	ButtonEffectInit();
 }
@@ -192,6 +194,7 @@ void TitleScene::StartUpdate() {
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Down) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN)) {
 		selectRequest_ = Select::Option;
+		uis_["Start"]->SetPosition(workBounding_.axisPos_);
 	}
 
 #ifdef _DEBUG
@@ -225,10 +228,12 @@ void TitleScene::OptionUpdate() {
 
 		if (Input::GetInstance()->TriggerLStick(Input::Stick::Up) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_UP)) {
 			selectRequest_ = Select::Start;
+			uis_["Option"]->SetPosition(workBounding_.axisPos_);
 		}
 
 		if (Input::GetInstance()->TriggerLStick(Input::Stick::Down) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN)) {
 			selectRequest_ = Select::Exit;
+			uis_["Option"]->SetPosition(workBounding_.axisPos_);
 		}
 
 		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
@@ -276,6 +281,7 @@ void TitleScene::ExitUpdate() {
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Up) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_UP)) {
 		selectRequest_ = Select::Option;
+		uis_["Exit"]->SetPosition(workBounding_.axisPos_);
 	}
 
 #ifdef _DEBUG
