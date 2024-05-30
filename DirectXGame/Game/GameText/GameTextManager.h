@@ -110,4 +110,7 @@ private:
 
 	const std::string dataName = "GameText";
 
+	bool isSkip_;//テキストをスキップするか
+	static const int32_t kSkipEx = 30;//何フレームでスキップを実行するか
+	int32_t skipButtonLength_;//スキップボタンをどれくらい押しつづけているか
 };

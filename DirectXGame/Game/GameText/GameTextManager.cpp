@@ -53,6 +53,7 @@ void GameTextManager::Initialize() {
 	nameBack_->SetSize(nameBackSize_);
 	nameText_->SetPosition(namePosition_);
 	nextButton_->SetSize(nextButtonSize_);
+	isEnd_ = true;
 }
 
 void GameTextManager::AppryGlobalVariables() {
@@ -76,8 +77,7 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 	nameList_.clear();
 	textList_.clear();
 	LoadText(stageNum);
-	//textList_.push_back(L"ササササササササササササササササササササササササ\nササササササササササササササササササササササササ");
-	//textList_.push_back(L"互サ道互サ道互サ道互サ道互サ道互サ道互サ道互サ道");
+	
 	listIndex_ = 0;
 	if (!textList_.empty()) {
 		mainText_->SetWString(textList_[listIndex_]);
@@ -89,9 +89,6 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 		nameText_->CharCountMax();
 		nameText_->SetArrangeType(Text::kCenter);
 
-		//next_->SetWString(L"");
-		//next_->SetPosition({ 1100.0f,650.0f });
-		//next_->SetCharCount(1);
 		isEnd_ = false;
 	}
 	else {
@@ -107,6 +104,8 @@ void GameTextManager::InitializeStage(uint32_t stageNum) {
 		phase_ = END;
 		isEnd_ = true;
 	}
+	isSkip_ = false;
+	skipButtonLength_ = 0;
 }
 
 void GameTextManager::LoadText(uint32_t stageNum) {
@@ -217,7 +216,8 @@ void GameTextManager::Tutorial(int32_t tutorialNum) {
 
 	}
 	isEnd_ = false;
-
+	isSkip_ = false; 
+	skipButtonLength_ = 0;
 }
 
 void GameTextManager::TestUpdate() {
@@ -243,6 +243,20 @@ void GameTextManager::Update() {
 	nextButton_->SetSize(nextButtonSize_);
 #endif // _DEBUG
 
+
+	if (Input::GetInstance()->PushButton(Input::Button::B)) {
+		skipButtonLength_++;
+	}
+	else {
+		skipButtonLength_--;
+	}
+	if (skipButtonLength_ < 0) {
+		skipButtonLength_ = 0;
+	}
+	if (skipButtonLength_ >= kSkipEx) {
+		isSkip_ = true;
+	}
+
 	switch (phase_)
 	{
 	case GameTextManager::OPEN:
@@ -266,7 +280,7 @@ void GameTextManager::Update() {
 
 void GameTextManager::Open() {
 	nineSliceData_.size = textBoxOriginSize_ * Easing::easeOutBack(parametric_);
-	parametric_ += 0.05f;
+	parametric_ += 0.1f;
 	if (parametric_ >= 1.0f) {
 		parametric_ = 1.0f;
 		phase_ = VIEW;
@@ -281,6 +295,7 @@ void GameTextManager::View() {
 	buttonColor_ = { 1.0f,1.0f,1.0f,1.0f };
 	if (!mainText_->GetCompleteDrawText()) {
 		buttonColor_ = { 0.5f,0.5f,0.5f,1.0f };
+		if (isSkip_) { mainText_->CharCountMax(); }
 		//長押しで早送り
 		if (Input::GetInstance()->PushButton(Input::Button::A)) {
 			mainText_->SetCountUpFrame_(0);
@@ -291,13 +306,15 @@ void GameTextManager::View() {
 		mainText_->CountUp();
 	}
 	//終了
-	else if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+	else if ((isSkip_ ) ||Input::GetInstance()->TriggerButton(Input::Button::A)) {
 		//リストが残っていたらtextを差し替えてリセット
 		if (listIndex_ < textList_.size()-1 && !textList_.empty()) {
 			listIndex_++;
 			mainText_->SetWString(textList_[listIndex_]);
 			mainText_->SetCharCount(0);
 			mainText_->SetCompleteDrawText(false);
+
+			if (isSkip_) {mainText_->CharCountMax();}
 
 			nameText_->SetWString(nameList_[listIndex_]);
 			nameText_->CharCountMax();
@@ -335,7 +352,7 @@ void GameTextManager::View() {
 
 void GameTextManager::Close() {
 	nineSliceData_.size = textBoxOriginSize_ * Easing::easeOutBack(parametric_);
-	parametric_ -= 0.05f;
+	parametric_ -= 0.1f;
 	if (parametric_ < 0.0f) {
 		parametric_ = 0.0f;
 		nineSliceData_.size = { 0.0f,0.0f };
