@@ -2,6 +2,7 @@
 #include "AudioManager.h"
 #include "Player/Player.h"
 #include "BlockBreakParticle.h"
+#include "GemGetParticle.h"
 #include "RandomEngine/RandomEngine.h"
 #include "Stage/Magma.h"
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
@@ -22,20 +23,21 @@ void BaseBlock::Break(float power) {
 
 		//タイプに応じてプレイヤーにパラメータ強化の値を付与
 		if (player_) {
-
+			int32_t num=1;
 			if (type_ == kMagma || type_ == kSnow) {
-				player_->AddRockCount(int32_t(defaultDurability_) / 3 + 1);
+				//player_->AddRockCount(int32_t(defaultDurability_) / 3 + 1);
+				num = int32_t(defaultDurability_) / 3 + 1;
 			}
 			else if (type_ == kBlueBlock) {
-				player_->AddBlueRock();
+				//player_->AddBlueRock();
 				crystalSE_->Play();
 			}
 			else if (type_ == kGreenBlock) {
-				player_->AddGreenRock();
+				//player_->AddGreenRock();
 				crystalSE_->Play();
 			}
 			else if (type_ == kRedBlock) {
-				player_->AddRedRock();
+				//player_->AddRedRock();
 				crystalSE_->Play();
 			}
 			else if (type_ == kDownMagma) {
@@ -49,8 +51,11 @@ void BaseBlock::Break(float power) {
 				crystalSE_->Play();
 			}
 
-			if (type_ == kRedBlock || type_ == kGreenBlock || type_ == kBlueBlock) {
-				BlockTextureManager::GetInstance()->CreateGemParticle(position_, type_);
+			if (type_ == kMagma || type_ == kSnow || type_ == kRedBlock || type_ == kGreenBlock || type_ == kBlueBlock) {
+				GemGetParticle::SetPlayer(player_);
+				for (int32_t i = 0; i < num;i++) {
+					BlockTextureManager::GetInstance()->CreateGemParticle(position_, type_);
+				}
 			}
 		}
 		int createNum = int(RandomEngine::GetRandom(8.0f,12.0f));

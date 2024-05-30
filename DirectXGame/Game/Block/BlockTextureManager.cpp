@@ -112,7 +112,7 @@ BlockTextureManager::BlockTextureManager() {
 	//particle
 	starParticles_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 256));
 	starParticles_->SetScale({ 1.0f, 1.0f });
-	starParticles_->SetSize({ float(BaseBlock::kBlockSize_/2),float(BaseBlock::kBlockSize_) });
+	starParticles_->SetSize({ float(BaseBlock::kBlockSize_*0.75f),float(BaseBlock::kBlockSize_*0.75f) });
 
 	sandParticles_.reset(Object2dInstancing::Create(TextureManager::Load("sandDust.png"), Vector2{ 0,0 }, 1024));
 	sandParticles_->SetScale({ 1.0f, 1.0f });
@@ -181,7 +181,7 @@ void BlockTextureManager::AppendParticle(const Vector2& position, uint32_t type)
 
 void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vector4& color) {
 	
-	starParticles_->AppendObject(position, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f },color);
+	starParticles_->AppendObject(position, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f },color);
 }
 
 void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vector4& color) {
@@ -191,11 +191,14 @@ void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vect
 
 void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t type, const Vector4& color) {
 	Vector2 tBase = {0,0};
-	if (type == Block::kGreenBlock) {
-		tBase = {32,0};
+	if (type == Block::kRedBlock) {
+		tBase = { 32,0 };
+	}
+	else if (type == Block::kGreenBlock) {
+		tBase = {64,0};
 	}
 	else if (type == Block::kBlueBlock) {
-		tBase = { 64,0 };
+		tBase = { 96,0 };
 	}
 
 	gemParticles_->AppendObject(position, tBase, Vector2{32.0f,32.0f}, color);
