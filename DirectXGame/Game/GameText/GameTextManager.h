@@ -53,6 +53,8 @@ public:
 
 	void Tutorial(int32_t tutorialNum);
 
+	bool IsCurrentText(const std::wstring& text) { return text == mainText_->GetCurrentText(); }
+
 private:
 
 	//テキスト読み込み

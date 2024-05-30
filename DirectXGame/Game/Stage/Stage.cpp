@@ -27,6 +27,9 @@ Stage::Stage()
 	tutorialFirstTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI1.png");
 	tutorialSecondTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI2.png");
 	tutorialThirdTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI3.png");
+	wellBlueTex_ = TextureManager::GetInstance()->Load("stageObject/wellBlue.png");
+	wellOrangeTex_ = TextureManager::GetInstance()->Load("stageObject/wellOrange.png");
+	UI_A_Tex_ = TextureManager::GetInstance()->Load("AButton.png");
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
@@ -42,10 +45,14 @@ Stage::Stage()
 	tutorialThird_->SetSize({ 2.0f * Block::kBlockSize_, 4.0f * Block::kBlockSize_ });
 
 	saunaRoom_.reset(Object2d::Create(saunaRoomTex_, kBasePosition - Vector2{0.0f, 18.0f}));
-	rope_[0].reset(Object2d::Create(ropeTex_, Vector2{ 10.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
-	rope_[0]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
-	rope_[1].reset(Object2d::Create(ropeTex_, Vector2{ 28.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
-	rope_[1]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
+	ropes_[0].reset(Object2d::Create(ropeTex_, Vector2{ 10.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
+	ropes_[0]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
+	ropes_[1].reset(Object2d::Create(ropeTex_, Vector2{ 28.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
+	ropes_[1]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
+	wells_[0].reset(Object2d::Create(wellOrangeTex_, Vector2{ 10.5f * Block::kBlockSize_, 0.0f * Block::kBlockSize_ }));
+	wells_[0]->SetSize({ 2.0f * Block::kBlockSize_,1.0f * Block::kBlockSize_ });
+	wells_[1].reset(Object2d::Create(wellBlueTex_, Vector2{ 28.5f * Block::kBlockSize_, 0.0f * Block::kBlockSize_ }));
+	wells_[1]->SetSize({ 2.0f * Block::kBlockSize_,1.0f * Block::kBlockSize_ });
 
 	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
 	purposeSprite_.reset(Sprite::Create(purposeTex_, { 640.0f,200.0f }));
@@ -329,7 +336,7 @@ void Stage::DrawHeatBefore() {
 
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
-		rope_[i]->Draw(*camera_);
+		ropes_[i]->Draw(*camera_);
 	}
 
 }
@@ -343,6 +350,7 @@ void Stage::DrawHeatAfter() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
+		wells_[i]->Draw(*camera_);
 	}
 
 	if (currentStageNumber_ == 1) {
@@ -373,7 +381,7 @@ void Stage::DrawColdBefore() {
 
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
-		rope_[i]->Draw(*camera_);
+		ropes_[i]->Draw(*camera_);
 	}
 
 }
@@ -387,6 +395,7 @@ void Stage::DrawColdAfter() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
+		wells_[i]->Draw(*camera_);
 	}
 
 	if (currentStageNumber_ == 1) {

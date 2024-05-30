@@ -146,8 +146,10 @@ private:
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Magma> magma_;
 	std::unique_ptr<Object2d> saunaRoom_;
+	std::unique_ptr<Object2d> saunaUI_;
 
-	std::array<std::unique_ptr<Object2d>, 2> rope_;
+	std::array<std::unique_ptr<Object2d>, 2> ropes_;
+	std::array<std::unique_ptr<Object2d>, 2> wells_;
 
 	std::unique_ptr<UpgradeSystem> upgradeSystem_;
 
@@ -194,6 +196,9 @@ private:
 	uint32_t purposeTex_;
 	uint32_t upTex_;
 	uint32_t ropeTex_;
+	uint32_t wellBlueTex_;
+	uint32_t wellOrangeTex_;
+	uint32_t UI_A_Tex_;
 	uint32_t tutorialFirstTex_;
 	uint32_t tutorialSecondTex_;
 	uint32_t tutorialThirdTex_;

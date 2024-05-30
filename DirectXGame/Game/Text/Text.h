@@ -38,6 +38,8 @@ public:
 	//文章をセットする
 	void SetWString(const std::wstring& newStr) { text_ = newStr; };
 
+	const std::wstring& GetCurrentText() { return text_; }
+
 	void SetCountUpFrame_(int32_t s) { countUpFrame_ = s; };
 
 	void SetCompleteDrawText(bool is) { isCompleteDrawText_ = is; };
