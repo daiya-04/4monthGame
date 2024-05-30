@@ -21,13 +21,6 @@ Option::Option() {
 	checkTex_ = TextureManager::Load("check.png");
 	bButtonTex_ = TextureManager::Load("BButton.png");
 
-#ifdef NDEBUG
-	isFullScreen_ = true;
-#endif // NDEBUG
-#ifdef _DEBUG
-	isFullScreen_ = false;
-#endif // _DEBUG
-
 	window_.reset(Sprite::Create(windowTex_, { 640.0f,360.0f }, 0.0f));
 
 	bgmGauge_.reset(Sprite::Create(gaugeTex_, {640.0f - 150.0f, 260.0f}));
@@ -116,7 +109,7 @@ void Option::Draw() {
 			}else {
 				checkBoxFrame_->Draw();
 			}
-			if (isFullScreen_) {
+			if (WinApp::GetInstance()->isFullScreen()) {
 				check_->Draw();
 			}
 		}
@@ -316,11 +309,9 @@ void Option::FSUpdate() {
 	}
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
-		if (isFullScreen_) {
-			isFullScreen_ = false;
+		if (WinApp::GetInstance()->isFullScreen()) {
 			WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kWindow);
-		}else if (!isFullScreen_) {
-			isFullScreen_ = true;
+		}else if (!WinApp::GetInstance()->isFullScreen()) {
 			WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
 		}
 	}
@@ -332,12 +323,10 @@ void Option::FSUpdate() {
 	}
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		if (isFullScreen_) {
-			isFullScreen_ = false;
+		if (WinApp::GetInstance()->isFullScreen()) {
 			WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kWindow);
 		}
-		else if (!isFullScreen_) {
-			isFullScreen_ = true;
+		else if (!WinApp::GetInstance()->isFullScreen()) {
 			WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
 		}
 	}

@@ -116,6 +116,7 @@ void WinApp::ChangeScreenMode(ScreenMode screenMode) {
 				windowRect_.bottom - windowRect_.top,
 				SWP_FRAMECHANGED | SWP_SHOWWINDOW
 			);
+			isFullScreen_ = false;
 			break;
 		case ScreenMode::kFullScreen:
 			// 通常ウィンドウの時の状態を保存
@@ -129,6 +130,7 @@ void WinApp::ChangeScreenMode(ScreenMode screenMode) {
 				GetSystemMetrics(SM_CYSCREEN),
 				SWP_FRAMECHANGED | SWP_SHOWWINDOW
 			);
+			isFullScreen_ = true;
 			break;
 	}
 

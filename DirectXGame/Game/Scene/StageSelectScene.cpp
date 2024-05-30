@@ -11,6 +11,7 @@
 #include "Easing.h"
 #include <random>
 #include <format>
+#include <numbers>
 
 StageSelectScene::~StageSelectScene() {}
 
@@ -24,29 +25,37 @@ void StageSelectScene::Init() {
 	LoadData();
 
 	camera_.Init();
-	camera_.translation_ = { 0.0f,0.0f,0.0f };
+	camera_.translation_ = { 640.0f * (stageNumber_ - 1),0.0f,0.0f };
 
 	bgTexture_ = TextureManager::Load("backGround/stageSelectBG.png");
 	saunaRoomTex_ = TextureManager::Load("saunaRoom.png");
-	playerTex_ = TextureManager::Load("player/playerBlueIdle.png");
+	playerTex_[Blue] = TextureManager::Load("player/playerBlueIdle.png");
+	playerTex_[Orange] = TextureManager::Load("player/playerOrangeIdle.png");
+	playerRunTex_[Blue] = TextureManager::Load("player/playerBlueRun.png");
+	playerRunTex_[Orange] = TextureManager::Load("player/playerOrangeRun.png");
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
 
-	player_.reset(Object2d::Create(playerTex_, { 282.0f,570.0f }));
-	player_->SetSize({ 160.0f,160.0f });
-	player_->SetTextureArea({ 0.0f,0.0f }, { 160.0f,160.0f });
-	player_->SetScale({ -1.0f,1.0f });
+	for (size_t index = 0; index < 2; index++) {
+		player_[index].reset(Object2d::Create(playerTex_[index], {}));
+		player_[index]->SetSize({ 160.0f,160.0f });
+		player_[index]->SetTextureArea({ 0.0f,0.0f }, { 160.0f,160.0f });
+		player_[index]->SetScale({ -1.0f,1.0f });
+	}
 
 	for (size_t index = 0; index < kMaxStage_; index++) {
-		saunaRooms_.emplace_back(Object2d::Create(saunaRoomTex_, {640.0f + 640.0f * index, 650.0f}));
+		saunaRooms_.emplace_back(Object2d::Create(saunaRoomTex_, {640.0f + 640.0f * index, 653.0f}));
 		saunaRooms_[index]->SetAnchorpoint({ 0.5f,1.0f });
 		if (stageNumber_ == (index + 1)) {
-			saunaRooms_[index]->SetScale(1.0f);
+			saunaRooms_[index]->SetScale(1.2f);
 		}
 		else {
 			saunaRooms_[index]->SetScale(0.3f);
 		}
 	}
+
+	player_[Blue]->position_ = { saunaRooms_[stageNumber_ - 1]->position_.x - 400.0f, 568.0f};
+	player_[Orange]->position_ = { saunaRooms_[stageNumber_ - 1]->position_.x - 500.0f,568.0f };
 
 	///UIの設定
 
@@ -72,14 +81,12 @@ void StageSelectScene::Update() {
 	DebugGUI();
 	ApplyGlobalVariables();
 
-	if (mode_ != Mode::Enter) {
-		if (++animationTime_ >= changeFrame_) {
+	if (++animationTime_ >= changeFrame_) {
 
-			animationTime_ = 0;
+		animationTime_ = 0;
 
-			if (++animationNum_ > 4) {
-				animationNum_ = 0;
-			}
+		if (++animationNum_ > 4) {
+			animationNum_ = 0;
 		}
 	}
 	
@@ -115,7 +122,8 @@ void StageSelectScene::Update() {
 			break;
 	}
 
-	player_->SetTextureArea({ 160.0f * animationNum_,160.0f }, { 160.0f,160.0f });
+	player_[Blue]->SetTextureArea({160.0f * animationNum_,160.0f}, {160.0f,160.0f});
+	player_[Orange]->SetTextureArea({ 160.0f * animationNum_,160.0f }, { 160.0f,160.0f });
 
 	camera_.UpdateViewMatrix();
 }
@@ -129,13 +137,15 @@ void StageSelectScene::DrawBackGround() {
 void StageSelectScene::DrawObject() {
 
 	if (mode_ == Mode::Enter) {
-		player_->Draw(camera_);
+		player_[Blue]->Draw(camera_);
+		player_[Orange]->Draw(camera_);
 	}
 	for (const auto& room : saunaRooms_) {
 		room->Draw(camera_);
 	}
 	if (mode_ != Mode::Enter) {
-		player_->Draw(camera_);
+		player_[Blue]->Draw(camera_);
+		player_[Orange]->Draw(camera_);
 	}
 	
 
@@ -200,6 +210,21 @@ void StageSelectScene::RootInit() {
 	score_.SetScore(ScoreManager::GetInstance()->GetBestScore(stageNumber_ - 1));
 	rank_.SetRank(ScoreManager::GetInstance()->GetBestRank(stageNumber_ - 1));
 
+	uis_["RArrow"]->DrawOn();
+	uis_["LArrow"]->DrawOn();
+
+	if (stageNumber_ == 1) {
+		uis_["LArrow"]->DrawOff();
+	}
+	if (stageNumber_ == kMaxStage_) {
+		uis_["RArrow"]->DrawOff();
+	}
+
+	arrowFloating_.param_ = 0.0f;
+
+	LArrowPos_ = uis_["LArrow"]->GetPosition();
+	RArrowPos_ = uis_["RArrow"]->GetPosition();
+
 }
 
 void StageSelectScene::RootUpdate() {
@@ -231,30 +256,48 @@ void StageSelectScene::RootUpdate() {
 
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Right) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_RIGHT)) {
-		stageNumber_++;
-		modeRequest_ = Mode::Move;
+		if (stageNumber_ != kMaxStage_) {
+			stageNumber_++;
+			modeRequest_ = Mode::Move;
+		}
 	}
 	else if (Input::GetInstance()->TriggerLStick(Input::Stick::Left) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_LEFT)) {
-		stageNumber_--;
-		modeRequest_ = Mode::Move;
+		if (stageNumber_ != 1) {
+			stageNumber_--;
+			modeRequest_ = Mode::Move;
+		}
 	}
 
 #ifdef _DEBUG
 
 	if (Input::GetInstance()->TriggerKey(DIK_RIGHT)) {
-		stageNumber_++;
-		modeRequest_ = Mode::Move;
+		if (stageNumber_ != kMaxStage_) {
+			stageNumber_++;
+			modeRequest_ = Mode::Move;
+		}
 	}
 	else if (Input::GetInstance()->TriggerKey(DIK_LEFT)) {
-		stageNumber_--;
-		modeRequest_ = Mode::Move;
+		if (stageNumber_ != 1) {
+			stageNumber_--;
+			modeRequest_ = Mode::Move;
+		}
 	}
 
 #endif // _DEBUG
 
 	stageNumber_ = max(1, min(stageNumber_, kMaxStage_));
 
-	
+	const float step = 2.0f * std::numbers::pi_v<float> / (float)arrowFloating_.cycle_;
+
+	arrowFloating_.param_ += step;
+
+	arrowFloating_.param_ = std::fmod(arrowFloating_.param_, 2.0f * std::numbers::pi_v<float>);
+
+	LArrowPos_.x += std::sinf(arrowFloating_.param_) * arrowFloating_.amplitude_;
+	RArrowPos_.x += -std::sinf(arrowFloating_.param_) * arrowFloating_.amplitude_;
+
+	uis_["LArrow"]->SetPosition(LArrowPos_);
+	uis_["RArrow"]->SetPosition(RArrowPos_);
 
 }
 
@@ -264,6 +307,9 @@ void StageSelectScene::MoveInit() {
 
 	moveStartPos_ = 640.0f * (preStageNum_ - 1);
 	moveEndPos_ = 640.0f * (stageNumber_ - 1);
+
+	uis_["RArrow"]->DrawOff();
+	uis_["LArrow"]->DrawOff();
 
 }
 
@@ -278,13 +324,14 @@ void StageSelectScene::MoveUpdate() {
 	camera_.translation_.x = Lerp(T, moveStartPos_, moveEndPos_);
 	
 	float distance = camera_.translation_.x - prePos;
-	player_->position_.x += distance;
+	player_[Blue]->position_.x += distance;
+	player_[Orange]->position_.x += distance;
 	uint32_t index = stageNumber_ - 1;
 	uint32_t preIndex = preStageNum_ - 1;
 
 	if (index != preIndex) {
-		saunaRooms_[index]->SetScale(Lerp(T, 0.3f, 1.0f));
-		saunaRooms_[preIndex]->SetScale(Lerp(T, 1.0f, 0.3f));
+		saunaRooms_[index]->SetScale(Lerp(T, 0.3f, 1.2f));
+		saunaRooms_[preIndex]->SetScale(Lerp(T, 1.2f, 0.3f));
 	}
 
 	if (param_ >= 1.0f) {
@@ -295,24 +342,22 @@ void StageSelectScene::MoveUpdate() {
 }
 
 void StageSelectScene::EnterInit() {
-
-	param_ = 0.0f;
-
-	moveStartPos_ = player_->position_.x;
-	moveEndPos_ = moveStartPos_ + 400.0f;
+	
 	animationNum_ = 0;
+	animationTime_ = 0;
+	player_[Blue]->SetTextureHandle(playerRunTex_[Blue]);
+	player_[Orange]->SetTextureHandle(playerRunTex_[Orange]);
+	uis_["RArrow"]->DrawOff();
+	uis_["LArrow"]->DrawOff();
 
 }
 
 void StageSelectScene::EnterUpdate() {
 
-	param_ += 0.02f;
-	param_ = min(param_, 1.0f);
+	player_[Blue]->position_.x += 5.0f;
+	player_[Orange]->position_.x += 5.0f;
 
-	float T = Easing::easeInBack(param_);
-	player_->position_.x = Lerp(T, moveStartPos_, moveEndPos_);
-
-	if (param_ >= 1.0f) {
+	if (player_[Orange]->position_.x >= saunaRooms_[stageNumber_ - 1]->position_.x - 40.0f) {
 		SceneManager::GetInstance()->ChangeScene("Game");
 	}
 

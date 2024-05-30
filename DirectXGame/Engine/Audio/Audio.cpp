@@ -107,7 +107,13 @@ void Audio::Play() {
 	assert(SUCCEEDED(hr));
 
 	sourceVoices_ = pSourcVoice;
-	
+
+	if (audioType_ == AudioType::BGM) {
+		SetVolume(bgmVolume_);
+	}
+	else if (audioType_ == AudioType::SE) {
+		SetVolume(seVolume_);
+	}
 	
 }
 

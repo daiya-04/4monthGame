@@ -142,7 +142,7 @@ void Sprite::StaticInitialize(ID3D12Device* device, int windowWidth, int windowH
 	//RasterizerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	//裏面（時計回り）を表示しない
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	//三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
@@ -230,7 +230,8 @@ Sprite::Sprite(uint32_t textureHandle, Vector2 position, float scale, Vector2 an
 	anchorpoint_ = anchorpoint;
 	color_ = color;
 	
-	texSize_ = { (float)resourceDesc_.Width,(float)resourceDesc_.Height };
+	texBase_ = { 0.5f,0.5f };
+	texSize_ = { (float)resourceDesc_.Width - 1.0f,(float)resourceDesc_.Height - 1.0f };
 
 }
 
@@ -352,8 +353,8 @@ void Sprite::SetColor(const Vector4& color) {
 }
 
 void Sprite::SetTextureArea(const Vector2& texBase, const Vector2& texSize) {
-	texBase_ = texBase;
-	texSize_ = texSize;
+	texBase_ = texBase + Vector2({ 0.0f,0.5f });
+	texSize_ = texSize - Vector2({ 1.0f,1.0f });
 
 	TransferVertex();
 }
