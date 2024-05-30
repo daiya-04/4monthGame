@@ -22,6 +22,38 @@
                     256.0,
                     36.0
                 ],
+                "SkipButton-Position": [
+                    898.0,
+                    600.0
+                ],
+                "SkipButton-Size": [
+                    64.0,
+                    64.0
+                ],
+                "SkipGauge-Position": [
+                    891.0,
+                    600.0
+                ],
+                "SkipGauge-Size": [
+                    128.0,
+                    64.0
+                ],
+                "SkipGaugeBack-Position": [
+                    891.0,
+                    600.0
+                ],
+                "SkipGaugeBack-Size": [
+                    128.0,
+                    64.0
+                ],
+                "SkipText-Position": [
+                    891.0,
+                    600.0
+                ],
+                "SkipText-Size": [
+                    128.0,
+                    64.0
+                ],
                 "TextBox-Position": [
                     640.0,
                     600.0

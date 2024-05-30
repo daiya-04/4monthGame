@@ -33,6 +33,15 @@ void GameTextManager::Initialize() {
 	nextButton_.reset(Sprite::Create(TextureManager::GetInstance()->Load("AButton.png"), Vector2{ 0,0 }));
 	nextButton_->SetScale(1.0f);
 
+	skipButton_.reset(Sprite::Create(TextureManager::GetInstance()->Load("BButton.png"), Vector2{ 1.0f,1.0f }));
+	skipButton_->SetAnchorpoint({0,0});
+	skipText_.reset(Sprite::Create(TextureManager::GetInstance()->Load("skipText.png"), Vector2{ 1.0f,1.0f }));
+	skipText_->SetAnchorpoint({ 0,0 });
+	skipGaugeBack_.reset(Sprite::Create(TextureManager::GetInstance()->Load("skipGaugeBack.png"), Vector2{ 1.0f,1.0f }));
+	skipGaugeBack_->SetAnchorpoint({ 0,0 });
+	skipGauge_.reset(Sprite::Create(TextureManager::GetInstance()->Load("skipGauge.png"), Vector2{ 1.0f,1.0f }));
+	skipGauge_->SetAnchorpoint({ 0,0 });
+
 	buttonColor_ = { 1.0f,1.0f,1.0f,1.0f};
 
 	std::string groupName = "TextLayout";
@@ -48,11 +57,32 @@ void GameTextManager::Initialize() {
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "Button-Size", nextButtonSize_);
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "Button-Position", nextButtonOffset_);
 
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipButton-Size", skipButtonSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipButton-Position", skipButtonPosition_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipText-Size", skipTextSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipText-Position", skipTextPosition_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGauge-Size", skipGaugeSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGauge-Position", skipGaugePosition_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGaugeBack-Size", skipGaugeSize_);
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGaugeBack-Position", skipGaugePosition_);
+
+
 	AppryGlobalVariables();
 	nameBack_->SetPosition(nameBackPosition_);
 	nameBack_->SetSize(nameBackSize_);
 	nameText_->SetPosition(namePosition_);
 	nextButton_->SetSize(nextButtonSize_);
+
+	skipButton_->SetPosition(skipButtonPosition_);
+	skipButton_->SetSize(skipButtonSize_);
+	skipText_->SetPosition(skipTextPosition_);
+	skipText_->SetSize(skipTextSize_);
+	skipGauge_->SetPosition(skipGaugePosition_);
+	skipGauge_->SetSize(skipGaugeSize_);
+	skipGauge_->SetColor({0.5f,0.5f,0.5f,1.0f});
+	skipGaugeBack_->SetPosition(skipGaugeBackPosition_);
+	skipGaugeBack_->SetSize(skipGaugeBackSize_);
+
 	isEnd_ = true;
 }
 
@@ -66,6 +96,15 @@ void GameTextManager::AppryGlobalVariables() {
 	namePosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Name-Position");
 	nextButtonSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Button-Size");
 	nextButtonOffset_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "Button-Position");
+
+	skipButtonSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipButton-Size");
+	skipButtonPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipButton-Position");
+	skipTextSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipText-Size");
+	skipTextPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipText-Position");
+	skipGaugeSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGauge-Size");
+	skipGaugePosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGauge-Position");
+	skipGaugeBackSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGaugeBack-Size");
+	skipGaugeBackPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGaugeBack-Position");
 }
 
 void GameTextManager::InitializeStage(uint32_t stageNum) {
@@ -241,21 +280,38 @@ void GameTextManager::Update() {
 	nameBack_->SetSize(nameBackSize_);
 	nameText_->SetPosition(namePosition_);
 	nextButton_->SetSize(nextButtonSize_);
+
+	skipButton_->SetPosition(skipButtonPosition_);
+	skipButton_->SetSize(skipButtonSize_);
+	skipText_->SetPosition(skipTextPosition_);
+	skipText_->SetSize(skipTextSize_);
+	skipGauge_->SetPosition(skipGaugePosition_);
+	skipGauge_->SetSize(skipGaugeSize_);
+	skipGaugeBack_->SetPosition(skipGaugeBackPosition_);
+	skipGaugeBack_->SetSize(skipGaugeBackSize_);
 #endif // _DEBUG
 
-
-	if (Input::GetInstance()->PushButton(Input::Button::B)) {
-		skipButtonLength_++;
+	if (!isSkip_) {
+		if (Input::GetInstance()->PushButton(Input::Button::B)) {
+			skipButtonLength_++;
+		}
+		else {
+			skipButtonLength_--;
+		}
+		if (skipButtonLength_ < 0) {
+			skipButtonLength_ = 0;
+		}
+		if (skipButtonLength_ >= kSkipEx) {
+			isSkip_ = true;
+		}
+		float t = float(skipButtonLength_) / float(kSkipEx);
+		skipGauge_->SetTextureArea({ 0,0 }, {64*t,32.0f});
+		skipGauge_->SetSize({skipGaugeSize_.x*t,skipGaugeSize_.y});
 	}
 	else {
-		skipButtonLength_--;
+		skipGauge_->SetSize(skipGaugeSize_);
 	}
-	if (skipButtonLength_ < 0) {
-		skipButtonLength_ = 0;
-	}
-	if (skipButtonLength_ >= kSkipEx) {
-		isSkip_ = true;
-	}
+
 
 	switch (phase_)
 	{
@@ -369,6 +425,11 @@ void GameTextManager::Draw() {
 		if (phase_ == VIEW) {
 			nameBack_->Draw();
 			nextButton_->Draw();
+
+			skipGaugeBack_->Draw();
+			skipGauge_->Draw();
+			skipText_->Draw();
+			skipButton_->Draw();
 		}
 	}
 }
