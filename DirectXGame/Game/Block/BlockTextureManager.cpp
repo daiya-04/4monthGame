@@ -116,7 +116,7 @@ BlockTextureManager::BlockTextureManager() {
 
 	sandParticles_.reset(Object2dInstancing::Create(TextureManager::Load("sandDust.png"), Vector2{ 0,0 }, 1024));
 	sandParticles_->SetScale({ 1.0f, 1.0f });
-	sandParticles_->SetSize({ float(BaseBlock::kBlockSize_ /3),float(BaseBlock::kBlockSize_/3) });
+	sandParticles_->SetSize({ float(BaseBlock::kBlockSize_ /4),float(BaseBlock::kBlockSize_/4) });
 
 	gemParticles_.reset(Object2dInstancing::Create(TextureManager::Load("gemGetParticle.png"), Vector2{ 0,0 }, 32));
 	gemParticles_->SetScale({ 1.0f, 1.0f });

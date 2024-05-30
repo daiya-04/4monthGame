@@ -3,8 +3,8 @@
 int32_t SandParticle::response;
 void SandParticle::Initialize(const Vector2& postition, int32_t type) {
 	position_ = postition;
-	position_.y += RandomEngine::GetRandom(-2.0f, 2.0f);
-	position_.x += RandomEngine::GetRandom(-2.0f, 2.0f);
+	position_.y += RandomEngine::GetRandom(-8.0f, 8.0f);
+	position_.x += RandomEngine::GetRandom(-8.0f, 8.0f);
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 	aliveTime_ = 20;
 	aliveMax_ = aliveTime_;

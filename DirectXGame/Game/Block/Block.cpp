@@ -4,6 +4,7 @@
 #include "BlockBreakParticle.h"
 #include "RandomEngine/RandomEngine.h"
 #include "Stage/Magma.h"
+#include "EnvironmentEffects/EnvironmentEffectsManager.h"
 
 Score* BaseBlock::score_;
 
@@ -41,6 +42,7 @@ void BaseBlock::Break(float power) {
 				//ラインを1000下げる
 				magma_->baseMagmaLine_ += 1000.0f;
 				magma_->easingT_ = 0.0f;
+				EnvironmentEffectsManager::GetInstance()->MagmaDown(position_);
 			}
 			else if (type_ == kGoldBlock) {
 				player_->SetIsClear(true);

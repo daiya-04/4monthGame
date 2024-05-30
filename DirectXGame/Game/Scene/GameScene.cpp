@@ -57,6 +57,7 @@ void GameScene::Init(){
 	commandList_ = DirectXCommon::GetInstance()->GetCommandList();
 
 	environmentEffectsManager_ = EnvironmentEffectsManager::GetInstance();
+	environmentEffectsManager_->SetCamera(camera_.get());
 	//stageに現在のシーンモードを適応する
 	AppryMode();
 
