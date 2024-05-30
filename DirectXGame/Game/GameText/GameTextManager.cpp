@@ -215,7 +215,7 @@ void GameTextManager::Tutorial(int32_t tutorialNum) {
 	case 4:
 		textList_.push_back(L"右を見てみい、なにやら装置があるじゃろ？");
 		nameList_.push_back(L"老人");
-		textList_.push_back(L"集めた岩や鉱石でパワーアップできる！溜まってきたら試すといい");
+		textList_.push_back(L"集めた岩や鉱石でパワーアップできる！＊溜まってきたら試すといい");
 		nameList_.push_back(L"老人");
 		textList_.push_back(L"とりあえずコッチに帰ってこい");
 		nameList_.push_back(L"老人");

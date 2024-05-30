@@ -192,13 +192,14 @@ void GameScene::Update() {
 			}
 
 			stage_->Update();
-
+			heatHazeManager_->SetIsUseMagmaFluction(true);
 			preCameraPosition_ = camera_->translation_;
 			if (player_->GetIsBirdsEye()) {
 				scroll_->SetScrollType(0, Scroll::kNomral);
 				scroll_->SetScrollType(1, Scroll::kNomral);
 				scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
 				camera_->ChangeDrawingRange({ 2240,1260.0f });
+				heatHazeManager_->SetIsUseMagmaFluction(false);
 				snowManager_->ClearEffect();
 			}
 			else if (player_->GetIsHome()) {
