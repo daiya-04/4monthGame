@@ -52,7 +52,7 @@ void TutorialFlagManager::Update() {
 	case 2:
 
 		//一定の深さに達するまでマグマ停止
-		if (player_->GetPosition().y < 1352.0f && !flags_[2]) {
+		if (player_->GetPosition().y < 1160.0f && !flags_[2]) {
 			magma_->freezeTime_ = 2;
 		}
 		//特定ポジションでフラグセット
