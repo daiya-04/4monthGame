@@ -620,6 +620,17 @@ void Stage::Load(uint32_t stageNumber) {
 
 	}
 
+	//ブロックの更新
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			blockPositions_[y][x] = map_[y][x]->GetType();
+			SetUV(map_[y][x].get());
+			map_[y][x]->Update();
+		}
+
+	}
+
 	//チュートリアルステージだけ特殊ブロック配置
 	if (stageNumber == 1) {
 
