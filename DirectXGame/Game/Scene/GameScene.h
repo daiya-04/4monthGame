@@ -144,6 +144,9 @@ private:
 
 	Audio* magmaBGM_;
 
+	Audio* selectSE_;
+	Audio* moveSE_;
+	Audio* cancelSE_;
 
 	uint32_t currentStageNumber_ = 0;
 

@@ -85,6 +85,10 @@ void GameScene::Init(){
 	
 	magmaBGM_->Play();
 
+	selectSE_ = AudioManager::GetInstance()->Load("SE/select_ok.mp3");
+	moveSE_ = AudioManager::GetInstance()->Load("SE/select_move.mp3");
+	cancelSE_ = AudioManager::GetInstance()->Load("SE/select_cancel.mp3");
+
 	TextManager::GetInstance();
 	testText_.reset(new Text);
 	testText_->Initialize();
