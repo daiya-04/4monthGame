@@ -15,6 +15,7 @@ public:
 	void Initialize(const Vector2& postition,int32_t type);
 	void Update();
 	void Draw();
+	void DrawUI();
 	bool GetIsAlive() { return isAlive_; };
 private:
 	Vector2 position_{};

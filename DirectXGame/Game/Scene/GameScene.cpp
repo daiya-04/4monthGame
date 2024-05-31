@@ -57,16 +57,12 @@ void GameScene::Init(){
 	commandList_ = DirectXCommon::GetInstance()->GetCommandList();
 
 	environmentEffectsManager_ = EnvironmentEffectsManager::GetInstance();
+	environmentEffectsManager_->SetCamera(camera_.get());
 	//stageに現在のシーンモードを適応する
 	AppryMode();
 
 	cameraFrozen_ = CameraFrozenManager::GetInstance();
 	heatHazeManager_ = HeatHazeManager::GetInstance();
-
-	sample0.reset(new Sprite(TextureManager::GetInstance()->Load("gokkan.png"), { 640.0f,360.0f }, 7.5f));
-	sample0->Initialize();
-	sample1.reset(new Sprite(TextureManager::GetInstance()->Load("hhTest.png"), { 640.0f,360.0f }, 1.0f));
-	sample1->Initialize();
 
 	waterDropManager_ = WaterDropManager::GetInstance();
 
@@ -194,13 +190,14 @@ void GameScene::Update() {
 			}
 
 			stage_->Update();
-
+			heatHazeManager_->SetIsUseMagmaFluction(true);
 			preCameraPosition_ = camera_->translation_;
 			if (player_->GetIsBirdsEye()) {
 				scroll_->SetScrollType(0, Scroll::kNomral);
 				scroll_->SetScrollType(1, Scroll::kNomral);
 				scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
 				camera_->ChangeDrawingRange({ 2240,1260.0f });
+				heatHazeManager_->SetIsUseMagmaFluction(false);
 				snowManager_->ClearEffect();
 			}
 			else if (player_->GetIsHome()) {
@@ -337,6 +334,8 @@ void GameScene::DrawUI(){
 	stage_->DrawUI();
 
 	score_.Draw();
+
+	BlockTextureManager::GetInstance()->DrawParticleUI();
 
 	if (isOpenMenu_) {
 

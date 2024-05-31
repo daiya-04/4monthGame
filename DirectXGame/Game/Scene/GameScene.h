@@ -84,9 +84,6 @@ private:
 		kMaxMenu, 
 	};
 
-	std::unique_ptr<Sprite> sample0;
-	std::unique_ptr<Sprite> sample1;
-
 	WaterDropManager* waterDropManager_;
 	SnowManager* snowManager_;
 	float offset_;

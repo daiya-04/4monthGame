@@ -12,6 +12,7 @@ EnvironmentEffectsManager::EnvironmentEffectsManager() {
 	weightCircle_->Init(); dualSceneDrawer_->Init();
 	isNowScene_ = true;
 	isChangeComplete_ = false;
+	isPlayDownMagmaEffect_ = false;
 }
 
 void EnvironmentEffectsManager::Update() {
@@ -27,6 +28,20 @@ void EnvironmentEffectsManager::Update() {
 		isNowScene_ = !isNowScene_;
 		weightCircle_->Reset();
 		isChangeComplete_ = true;
+	}
+
+	if (isPlayDownMagmaEffect_) {
+		weightCircle_->SetPosition(magmaCenter_ - Vector2{ camera_->translation_.x + camera_->center_.x - 640.0f,camera_->translation_.y + camera_->center_.y - 360.0f });
+		if (isChangeComplete_) {
+			isCompletefirstChange_ = true;
+		}
+		if (isCompletefirstChange_) {
+			downMagmaEffectInterval_--;
+		}
+		if (downMagmaEffectInterval_<=0) {
+			ChangeSceneMode();
+			isPlayDownMagmaEffect_ = false;
+		}
 	}
 }
 

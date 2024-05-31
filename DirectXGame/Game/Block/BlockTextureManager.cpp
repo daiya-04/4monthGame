@@ -5,6 +5,8 @@
 #include "starParticle.h"
 #include "SandParticle.h"
 #include "GemGetParticle.h"
+#include "WallKickEffect.h"
+#include "DirectXCommon.h"
 BlockTextureManager* BlockTextureManager::GetInstance() {
 	static BlockTextureManager instance;
 	return &instance;
@@ -112,15 +114,27 @@ BlockTextureManager::BlockTextureManager() {
 	//particle
 	starParticles_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 256));
 	starParticles_->SetScale({ 1.0f, 1.0f });
-	starParticles_->SetSize({ float(BaseBlock::kBlockSize_/2),float(BaseBlock::kBlockSize_) });
+	starParticles_->SetSize({ float(BaseBlock::kBlockSize_*0.75f),float(BaseBlock::kBlockSize_*0.75f) });
 
 	sandParticles_.reset(Object2dInstancing::Create(TextureManager::Load("sandDust.png"), Vector2{ 0,0 }, 1024));
 	sandParticles_->SetScale({ 1.0f, 1.0f });
-	sandParticles_->SetSize({ float(BaseBlock::kBlockSize_ /3),float(BaseBlock::kBlockSize_/3) });
+	sandParticles_->SetSize({ float(BaseBlock::kBlockSize_ /4),float(BaseBlock::kBlockSize_/4) });
 
 	gemParticles_.reset(Object2dInstancing::Create(TextureManager::Load("gemGetParticle.png"), Vector2{ 0,0 }, 32));
 	gemParticles_->SetScale({ 1.0f, 1.0f });
 	gemParticles_->SetSize({ float(BaseBlock::kBlockSize_ ),float(BaseBlock::kBlockSize_ ) });
+
+	starParticlesUI_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 256));
+	starParticlesUI_->SetScale({ 1.0f, 1.0f });
+	starParticlesUI_->SetSize({ float(BaseBlock::kBlockSize_ * 0.4f),float(BaseBlock::kBlockSize_ * 0.4f) });
+	constantCamera_.reset(new Camera);
+	constantCamera_->Init();
+	constantCamera_->ChangeDrawingRange({ 1280.0f,720.0f });
+	constantCamera_->UpdateMatrix();
+
+	//wallkick
+	wallKickEffects_.reset(Object2dInstancing::Create(TextureManager::Load("wallKickEffect.png"), Vector2{ 1.0f,1.0f }, 8));
+	wallKickEffects_->SetSize({ float(BaseBlock::kBlockSize_),float(BaseBlock::kBlockSize_) });
 }
 
 void BlockTextureManager::ClearObject() {
@@ -131,6 +145,9 @@ void BlockTextureManager::ClearObject() {
 	starParticles_->ClearUseCount();
 	sandParticles_->ClearUseCount();
 	gemParticles_->ClearUseCount();
+	starParticlesUI_->ClearUseCount();
+
+	wallKickEffects_->ClearUseCount();
 }
 
 void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type) {
@@ -181,7 +198,12 @@ void BlockTextureManager::AppendParticle(const Vector2& position, uint32_t type)
 
 void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vector4& color) {
 	
-	starParticles_->AppendObject(position, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f },color);
+	starParticles_->AppendObject(position, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f },color);
+}
+
+void BlockTextureManager::AppendStarParticleUI(const Vector2& position, const Vector4& color) {
+
+	starParticlesUI_->AppendObject(position, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f }, color);
 }
 
 void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vector4& color) {
@@ -191,14 +213,32 @@ void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vect
 
 void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t type, const Vector4& color) {
 	Vector2 tBase = {0,0};
-	if (type == Block::kGreenBlock) {
-		tBase = {32,0};
+	if (type == Block::kRedBlock) {
+		tBase = { 32,0 };
+	}
+	else if (type == Block::kGreenBlock) {
+		tBase = {64,0};
 	}
 	else if (type == Block::kBlueBlock) {
-		tBase = { 64,0 };
+		tBase = { 96,0 };
 	}
 
 	gemParticles_->AppendObject(position, tBase, Vector2{32.0f,32.0f}, color);
+}
+
+void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t type, const Vector4& color) {
+	Vector2 tBase = { 0,0 };
+	Vector2 tSize = { 0,0 };
+	if (type == 1) {
+		tBase = { 0,0 };
+		tSize = {32.0f,32.0f};
+	}
+	else if (type == 0) {
+		tBase = { 32.0f,0 };
+		tSize = { -32.0f,32.0f };
+	}
+
+	wallKickEffects_->AppendObject(position, tBase,tSize, color);
 }
 
 void BlockTextureManager::DrawParticle(const Camera& camera) {
@@ -220,6 +260,20 @@ void BlockTextureManager::DrawParticle(const Camera& camera) {
 		data->Draw();
 	}
 	gemParticles_->Draw(camera);
+
+	for (std::unique_ptr<WallKickEffect>& data : wallKickEffectDatas_) {
+		data->Draw();
+	}
+	wallKickEffects_->Draw(camera);
+}
+
+void BlockTextureManager::DrawParticleUI() {
+	for (std::unique_ptr<StarParticle>& data : starParticleDatasUI_) {
+		data->DrawUI();
+	}
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	starParticlesUI_->Draw(*constantCamera_.get());
+	Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 }
 
 void BlockTextureManager::CreateParticle(const Vector2& position, uint32_t type) {
@@ -239,11 +293,18 @@ void BlockTextureManager::CreateParticle(const Vector2& position, const Vector2&
 void BlockTextureManager::CreateStarParticle(const Vector2& position,int32_t type) {
 	StarParticle::response--;
 	if (StarParticle::response<0) {
+		std::unique_ptr<WallKickEffect> particle;
+		particle.reset(new WallKickEffect);
+		particle->Initialize(position,type);
+		wallKickEffectDatas_.push_back(std::move(particle));
+	}
+}
+
+void BlockTextureManager::CreateStarParticleUI(const Vector2& position) {
 		std::unique_ptr<StarParticle> particle;
 		particle.reset(new StarParticle);
-		particle->Initialize(position,type);
-		starParticleDatas_.push_back(std::move(particle));
-	}
+		particle->Initialize(position, 1);
+		starParticleDatasUI_.push_back(std::move(particle));
 }
 
 void BlockTextureManager::CreateSandParticle(const Vector2& position, int32_t type) {
@@ -304,5 +365,26 @@ void BlockTextureManager::UpdateParticle(const Camera& camera) {
 		});
 	for (std::unique_ptr<GemGetParticle>& data : gemParticleDatas_) {
 		data->Update(camera);
+	}
+	//starUI
+	starParticleDatasUI_.remove_if([](std::unique_ptr<StarParticle>& bullet) {
+	if (!bullet->GetIsAlive()) {
+		return true;
+	}
+	return false;
+		});
+	for (std::unique_ptr<StarParticle>& data : starParticleDatasUI_) {
+		data->Update();
+	}
+
+	//wallKick
+	wallKickEffectDatas_.remove_if([](std::unique_ptr<WallKickEffect>& bullet) {
+		if (!bullet->GetIsAlive()) {
+			return true;
+		}
+		return false;
+		});
+	for (std::unique_ptr<WallKickEffect>& data : wallKickEffectDatas_) {
+		data->Update();
 	}
 }

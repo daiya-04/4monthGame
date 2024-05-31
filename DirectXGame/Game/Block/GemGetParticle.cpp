@@ -2,8 +2,12 @@
 #include "RandomEngine/RandomEngine.h"
 //int32_t GemGetParticle::response;
 std::array<Vector2, 11> GemGetParticle::targetPositions_;
+Player *GemGetParticle::player_ = nullptr;
+
 
 void GemGetParticle::Initialize(const Vector2& postition, int32_t type) {
+	targetPositions_[2] = Vector2{ 1250.0f , 96.0f + 56.0f * 1 };//r
+	targetPositions_[3] = Vector2{ 1250.0f , 96.0f + 56.0f * 1 };//g
 	targetPositions_[5] = Vector2{ 1250.0f , 96.0f + 56.0f * 2 };//r
 	targetPositions_[6] = Vector2{ 1250.0f , 96.0f + 56.0f * 3 };//g
 	targetPositions_[7] = Vector2{ 1250.0f , 96.0f + 56.0f * 4 };//b
@@ -25,6 +29,7 @@ void GemGetParticle::Initialize(const Vector2& postition, int32_t type) {
 void GemGetParticle::Update(const Camera& camera) {
 
 	float t = 0;
+	Vector2 pos = { 0,0 };
 	switch (phase_)
 	{
 	case GemGetParticle::START:
@@ -47,9 +52,46 @@ void GemGetParticle::Update(const Camera& camera) {
 		if (aliveTime_ <= 0) {
 			aliveTime_ = 20;
 			phase_ = END;
+			switch (type_)
+			{
+			case 2:
+			case 3:
+				player_->AddRockCount(1);
+				break;
+			case 5://r
+				player_->AddRedRock();
+				break;
+			case 6://g
+				player_->AddGreenRock();
+				break;
+			case 7://b
+				player_->AddBlueRock();
+				break;
+			default:
+				break;
+			}
 		}
 		break;
 	case GemGetParticle::END:
+		
+		//pos.x = RandomEngine::GetRandom(-32.0f, -32.0f);
+		//pos.y = RandomEngine::GetRandom(-32.0f, -32.0f);
+
+		switch (type_)
+		{
+		case 5://r
+			BlockTextureManager::GetInstance()->CreateStarParticleUI(pos + Vector2{ 1170.0f , 96.0f + 56.0f * 1 });
+			break;
+		case 6://g
+			BlockTextureManager::GetInstance()->CreateStarParticleUI(pos + Vector2{ 1170.0f , 96.0f + 56.0f * 2 });
+			break;
+		case 7://b
+			BlockTextureManager::GetInstance()->CreateStarParticleUI(pos + Vector2{ 1170.0f, 96.0f + 56.0f * 3});
+			break;
+		default:
+			break;
+		}
+
 		color_.w = 0;
 		aliveTime_--;
 		if (aliveTime_ <= 0) {

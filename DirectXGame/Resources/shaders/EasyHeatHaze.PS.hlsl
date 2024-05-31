@@ -65,7 +65,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	output.color.rgb = sampleColor.rgb ;
 	output.color.r += 0.025f;
 	output.color.g += 0.00625f;
-	if(/*0<defLine &&*/ defLine < magmaborder && gHeatHazeData.ismagmeFluction!= 0){
+	if(/*0<defLine &&*/ defLine < magmaborder /*&& gHeatHazeData.ismagmeFluction!= 0*/){
 		//output.color.r -= 0.1f*(magmaborder-defLine);
 		output.color.g -= 0.2f*(magmaborder-defLine);
 		output.color.b -= 0.2f*(magmaborder-defLine);
