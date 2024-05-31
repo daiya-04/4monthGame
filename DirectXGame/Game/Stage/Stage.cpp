@@ -11,6 +11,7 @@
 #include "DirectXCommon.h"
 #include "ImGuiManager.h"
 #include "System/TutorialFlagManager.h"
+#include "GameText/GameTextManager.h"
 
 std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_> Stage::map_;
 
@@ -27,6 +28,9 @@ Stage::Stage()
 	tutorialFirstTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI1.png");
 	tutorialSecondTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI2.png");
 	tutorialThirdTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI3.png");
+	wellBlueTex_ = TextureManager::GetInstance()->Load("stageObject/wellBlue.png");
+	wellOrangeTex_ = TextureManager::GetInstance()->Load("stageObject/wellOrange.png");
+	UI_A_Tex_ = TextureManager::GetInstance()->Load("AButton.png");
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
@@ -42,10 +46,16 @@ Stage::Stage()
 	tutorialThird_->SetSize({ 2.0f * Block::kBlockSize_, 4.0f * Block::kBlockSize_ });
 
 	saunaRoom_.reset(Object2d::Create(saunaRoomTex_, kBasePosition - Vector2{0.0f, 18.0f}));
-	rope_[0].reset(Object2d::Create(ropeTex_, Vector2{ 10.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
-	rope_[0]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
-	rope_[1].reset(Object2d::Create(ropeTex_, Vector2{ 28.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
-	rope_[1]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
+	UI_A_.reset(Object2d::Create(UI_A_Tex_, kBasePosition - Vector2{ 0.0f, 150.0f }));
+	UI_A_->SetSize({ 64.0f,64.0f });
+	ropes_[0].reset(Object2d::Create(ropeTex_, Vector2{ 10.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
+	ropes_[0]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
+	ropes_[1].reset(Object2d::Create(ropeTex_, Vector2{ 28.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
+	ropes_[1]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
+	wells_[0].reset(Object2d::Create(wellOrangeTex_, Vector2{ 10.5f * Block::kBlockSize_, 0.0f * Block::kBlockSize_ }));
+	wells_[0]->SetSize({ 2.0f * Block::kBlockSize_,1.0f * Block::kBlockSize_ });
+	wells_[1].reset(Object2d::Create(wellBlueTex_, Vector2{ 28.5f * Block::kBlockSize_, 0.0f * Block::kBlockSize_ }));
+	wells_[1]->SetSize({ 2.0f * Block::kBlockSize_,1.0f * Block::kBlockSize_ });
 
 	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
 	purposeSprite_.reset(Sprite::Create(purposeTex_, { 640.0f,200.0f }));
@@ -105,9 +115,11 @@ void Stage::Initialize(uint32_t stageNumber) {
 	upgradeSystem_->Initialize(stageNumber);
 	upgradeSystem_->SetPlayer(player_);
 
+	isStart_ = false;
 	isClear_ = false;
 	isRespawn_ = false;
 	isBreakFlagBlocks_ = false;
+	canUpgrade_ = false;
 	rockCount_ = 0;
 	magma_->Initialize();
 	magma_->SetPlayer(player_);
@@ -277,10 +289,18 @@ void Stage::CheckCollision() {
 	if (IsCollision(upgradeArea_, player_->GetCollision()) &&
 		player_->GetCanJump() && !upgradeSystem_->GetPreIsActive()) {
 
+		canUpgrade_ = true;
+
+		UI_A_->position_ = player_->GetPosition() - Vector2{ 0.0f,100.0f };
+
 		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 			upgradeSystem_->SetIsActive(true);
 		}
 
+	}
+	else {
+		canUpgrade_ = false;
+		UI_A_->position_ = kBasePosition - Vector2{ 0.0f, 150.0f };
 	}
 
 }
@@ -329,7 +349,7 @@ void Stage::DrawHeatBefore() {
 
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
-		rope_[i]->Draw(*camera_);
+		ropes_[i]->Draw(*camera_);
 	}
 
 }
@@ -343,6 +363,7 @@ void Stage::DrawHeatAfter() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
+		wells_[i]->Draw(*camera_);
 	}
 
 	if (currentStageNumber_ == 1) {
@@ -367,13 +388,19 @@ void Stage::DrawHeatAfter() {
 	magma_->Draw(*camera_);
 
 	saunaRoom_->Draw(*camera_);
+
+	if ((player_->GetIsHome() && GameTextManager::GetInstance()->GetIsEnd() && isStart_) ||
+		canUpgrade_) {
+		UI_A_->Draw(*camera_);
+	}
+
 }
 
 void Stage::DrawColdBefore() {
 
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
-		rope_[i]->Draw(*camera_);
+		ropes_[i]->Draw(*camera_);
 	}
 
 }
@@ -387,6 +414,7 @@ void Stage::DrawColdAfter() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
+		wells_[i]->Draw(*camera_);
 	}
 
 	if (currentStageNumber_ == 1) {
@@ -411,6 +439,11 @@ void Stage::DrawColdAfter() {
 	magma_->Draw(*camera_);
 
 	saunaRoom_->Draw(*camera_);
+
+	if ((player_->GetIsHome() && GameTextManager::GetInstance()->GetIsEnd() && isStart_) ||
+		canUpgrade_) {
+		UI_A_->Draw(*camera_);
+	}
 
 }
 

@@ -16,6 +16,7 @@ Player::Player()
 	textureBreakUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakUp.png");
 	textureBreakDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakDown.png");
 	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreak.png");
+	textureWallJump_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueWallKick.png");
 	texture_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeIdle.png");
 	textureUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookUp.png");
 	textureDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookDown.png");
@@ -23,6 +24,7 @@ Player::Player()
 	textureBreakUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakUp.png");
 	textureBreakDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakDown.png");
 	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
+	textureWallJump_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeWallKick.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
 	/*rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
 	rockUITextures_[BringRocks::kBlue] = TextureManager::GetInstance()->Load("UI/speedRock.png");
@@ -385,6 +387,15 @@ void Player::Move() {
 
 			velocity_.x += parameters_[currentCharacters_]->speed_;
 
+			//ボタンを押していたら最大速度を変更
+			if (input_->PushButton(Input::Button::A) && 
+				parameters_[currentCharacters_]->chargeJump_.chargeTimer >= parameters_[currentCharacters_]->chargeJump_.maxChargeTime / 2) {
+				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxChargeMoveSpeed_;
+			}
+			else {
+				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxDefaultMoveSpeed_;
+			}
+
 			isFacingLeft_ = false;
 
 		}
@@ -395,6 +406,15 @@ void Player::Move() {
 			}
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_;
+
+			//ボタンを押していたら最大速度を変更
+			if (input_->PushButton(Input::Button::A) &&
+				parameters_[currentCharacters_]->chargeJump_.chargeTimer >= parameters_[currentCharacters_]->chargeJump_.maxChargeTime / 2) {
+				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxChargeMoveSpeed_;
+			}
+			else {
+				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxDefaultMoveSpeed_;
+			}
 
 			isFacingLeft_ = true;
 
@@ -588,7 +608,7 @@ void Player::ChargeJump() {
 
 	//ジャンプボタンを押している間チャージカウント増加
 	if (/*parameters_[currentCharacters_]->chargeJump_.isCharge && */input_->PushButton(Input::Button::A) && 
-		!parameters_[currentCharacters_]->wallJump_.canWallJump) {
+		!parameters_[currentCharacters_]->wallJump_.canWallJump && parameters_[currentCharacters_]->Jump_.canJump) {
 
 		//最大値になるまでカウント
 		if (parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
@@ -635,6 +655,11 @@ void Player::WallJump() {
 			BlockTextureManager::GetInstance()->CreateStarParticle(effectPos, int32_t(isFacingLeft_));
 		}
 
+	}
+
+	//壁キック可能なら画像変更
+	if (parameters_[currentCharacters_]->wallJump_.canWallJump) {
+		object_->SetTextureHandle(textureWallJump_[currentCharacters_]);
 	}
 
 }

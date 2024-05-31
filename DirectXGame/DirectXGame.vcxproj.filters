@@ -273,6 +273,7 @@
     <ClCompile Include="Game\Block\SandParticle.cpp" />
     <ClCompile Include="TitleAnimation.cpp" />
     <ClCompile Include="Game\Block\GemGetParticle.cpp" />
+    <ClCompile Include="StageNumberDraw.cpp" />
     <ClCompile Include="Game\Block\WallKickEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -474,6 +475,7 @@
     <ClInclude Include="Game\Block\SandParticle.h" />
     <ClInclude Include="TitleAnimation.h" />
     <ClInclude Include="Game\Block\GemGetParticle.h" />
+    <ClInclude Include="StageNumberDraw.h" />
     <ClInclude Include="Game\Block\WallKickEffect.h" />
   </ItemGroup>
   <ItemGroup>

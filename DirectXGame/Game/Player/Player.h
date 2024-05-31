@@ -259,6 +259,8 @@ public:
 		parameters_[currentCharacters_]->maxMoveSpeed_ += addNum * 1.0f;
 
 		parameters_[currentCharacters_]->maxMoveSpeed_ = std::clamp(parameters_[currentCharacters_]->maxMoveSpeed_, 0.0f, 30.0f);
+		parameters_[currentCharacters_]->maxDefaultMoveSpeed_ = parameters_[currentCharacters_]->maxMoveSpeed_;
+		parameters_[currentCharacters_]->maxChargeMoveSpeed_ = parameters_[currentCharacters_]->maxMoveSpeed_ / 3.0f;
 
 	}
 
@@ -413,6 +415,7 @@ private:
 	std::array<uint32_t, kMaxPlayer> textureBreakUp_;
 	std::array<uint32_t, kMaxPlayer> textureBreakDown_;
 	std::array<uint32_t, kMaxPlayer> textureBreak_;
+	std::array<uint32_t, kMaxPlayer> textureWallJump_;
 
 	//デバッグフラグ
 	bool isDebug_ = false;

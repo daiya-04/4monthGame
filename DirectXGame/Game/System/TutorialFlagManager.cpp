@@ -16,6 +16,9 @@ void TutorialFlagManager::Initialize() {
 
 	tutorialNumber_ = 0;
 
+	tutorialCameraPosition1_ = { Block::kBlockSize_ * 8.0f, Block::kBlockSize_ * 6.0f };
+	tutorialCameraPosition2_ = { Block::kBlockSize_ * 17.0f, Block::kBlockSize_ * 3.0f };
+
 }
 
 void TutorialFlagManager::Update() {
@@ -52,7 +55,7 @@ void TutorialFlagManager::Update() {
 	case 2:
 
 		//一定の深さに達するまでマグマ停止
-		if (player_->GetPosition().y < 1352.0f && !flags_[2]) {
+		if (player_->GetPosition().y < 1160.0f && !flags_[2]) {
 			magma_->freezeTime_ = 2;
 		}
 		//特定ポジションでフラグセット
@@ -124,6 +127,27 @@ void TutorialFlagManager::Update() {
 		break;
 	default:
 		break;
+	}
+
+}
+
+void TutorialFlagManager::UpdateInText() {
+
+	//特定のテキストでカメラのターゲットを変更
+	if (GameTextManager::GetInstance()->IsCurrentText(L"目の前のヘンテコなブロックが見えるか？")) {
+		scroll_->SetTarget(&tutorialCameraPosition1_);
+	}
+
+	if (GameTextManager::GetInstance()->IsCurrentText(L"そういうことじゃ！しばらく地下を掘ってみるんじゃ")) {
+		scroll_->SetTarget(player_->GetPositionPtr());
+	}
+
+	if (GameTextManager::GetInstance()->IsCurrentText(L"右を見てみい、なにやら装置があるじゃろ？")) {
+		scroll_->SetTarget(&tutorialCameraPosition2_);
+	}
+
+	if (GameTextManager::GetInstance()->IsCurrentText(L"とりあえずコッチに帰ってこい")) {
+		scroll_->SetTarget(player_->GetPositionPtr());
 	}
 
 }

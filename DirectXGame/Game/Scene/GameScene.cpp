@@ -94,6 +94,7 @@ void GameScene::Init(){
 	TutorialFlagManager::GetInstance()->Initialize();
 	TutorialFlagManager::GetInstance()->SetPlayer(player_.get());
 	TutorialFlagManager::GetInstance()->SetMagma(stage_->GetMagma());
+	TutorialFlagManager::GetInstance()->SetScroll(scroll_.get());
 
 }
 
@@ -135,6 +136,7 @@ void GameScene::Update() {
 		if (scrollHomePoint_.y > -201.0f) {
 			scrollHomePoint_.y = -200.0f;
 			isScrollEnd_ = true;
+			stage_->SetIsStart(true);
 			GameTextManager::GetInstance()->InitializeStage(stageNumber_);
 		}
 
@@ -219,6 +221,14 @@ void GameScene::Update() {
 			player_->UpdateUI();
 
 		}
+		else if (!GameTextManager::GetInstance()->GetIsEnd()) {
+
+			//テキスト中に更新するもの
+			if (stageNumber_ == 1) {
+				TutorialFlagManager::GetInstance()->UpdateInText();
+			}
+
+		}
 
 	}
 
@@ -255,6 +265,7 @@ void GameScene::ClearProcess() {
 
 	//ハイスコア更新で記録を塗り替える
 	scoreManager_->SetScore(currentStageNumber_, score_);
+	scoreManager_->SaveScore();
 
 }
 

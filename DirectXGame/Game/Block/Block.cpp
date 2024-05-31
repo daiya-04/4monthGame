@@ -110,7 +110,7 @@ Block::Block(const Vector2& position, BlockType type)
 	digLowSE_ = AudioManager::GetInstance()->Load("SE/dig_low.mp3");
 	digMidSE_ = AudioManager::GetInstance()->Load("SE/dig_mid.mp3");
 	digHighSE_ = AudioManager::GetInstance()->Load("SE/dig_high.mp3");
-	crystalSE_ = AudioManager::GetInstance()->Load("SE/crystal_get.mp3");
+	crystalSE_ = AudioManager::GetInstance()->Load("SE/crystal_get2.mp3");
 
 }
 

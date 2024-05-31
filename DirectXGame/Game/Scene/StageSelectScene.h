@@ -15,6 +15,8 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 
+#include "StageNumberDraw.h"
+
 
 class StageSelectScene : public DefaultScene {
 public:
@@ -91,6 +93,8 @@ private:
 
 	Vector2 LArrowPos_{};
 	Vector2 RArrowPos_{};
+
+	std::unique_ptr<StageNumberDraw> stageNumberDraw_;
 
 private:
 

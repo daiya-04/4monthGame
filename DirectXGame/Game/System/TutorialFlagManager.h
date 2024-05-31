@@ -3,6 +3,7 @@
 #include <vector>
 #include "Player/Player.h"
 #include "Stage/Magma.h"
+#include "Scroll/Scroll.h"
 
 class TutorialFlagManager
 {
@@ -16,9 +17,13 @@ public:
 
 	void Update();
 
+	void UpdateInText();
+
 	void SetPlayer(Player* player) { player_ = player; }
 
 	void SetMagma(Magma* magma) { magma_ = magma; }
+
+	void SetScroll(Scroll* scroll) { scroll_ = scroll; }
 
 	bool GetFlags(int32_t num) {
 		num = std::clamp(num, 0, kMaxTutorial_ - 1);
@@ -30,6 +35,11 @@ private:
 	Player* player_ = nullptr;
 
 	Magma* magma_ = nullptr;
+
+	Scroll* scroll_ = nullptr;
+
+	Vector2 tutorialCameraPosition1_{};
+	Vector2 tutorialCameraPosition2_{};
 
 	int32_t tutorialNumber_ = 0;
 

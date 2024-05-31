@@ -26,6 +26,8 @@ void PlayerParameter::CopyParameter(const PlayerParameter& origin) {
 
 	speed_ = origin.speed_;
 	maxMoveSpeed_ = origin.maxMoveSpeed_;
+	maxDefaultMoveSpeed_ = origin.maxDefaultMoveSpeed_;
+	maxChargeMoveSpeed_ = origin.maxChargeMoveSpeed_;
 
 	Jump_.kMaxGraceTime = origin.Jump_.kMaxGraceTime;
 	Jump_.jumpVelocity = origin.Jump_.jumpVelocity;
