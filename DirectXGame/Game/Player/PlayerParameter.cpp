@@ -13,7 +13,7 @@ void PlayerParameter::Initialize() {
 	dig_.isDig = false;
 	dig_.digInterval = 42;
 	dig_.digCount = 0;
-	dig_.digPower = 1;
+	dig_.digPower = 1.01f;
 
 	chargeJump_.isCharge = false;
 	chargeJump_.chargeTimer = 0;
@@ -26,6 +26,8 @@ void PlayerParameter::CopyParameter(const PlayerParameter& origin) {
 
 	speed_ = origin.speed_;
 	maxMoveSpeed_ = origin.maxMoveSpeed_;
+	maxDefaultMoveSpeed_ = origin.maxDefaultMoveSpeed_;
+	maxChargeMoveSpeed_ = origin.maxChargeMoveSpeed_;
 
 	Jump_.kMaxGraceTime = origin.Jump_.kMaxGraceTime;
 	Jump_.jumpVelocity = origin.Jump_.jumpVelocity;

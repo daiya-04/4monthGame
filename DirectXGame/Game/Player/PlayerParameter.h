@@ -48,7 +48,7 @@ struct WorkDig {
 	//耐久減少量の最高値
 	int32_t maxDigPower = 20;
 	//採掘時の耐久減少量
-	int32_t digPower = 1;
+	float digPower = 1.01f;
 };
 
 //掴み関連の処理
@@ -127,6 +127,12 @@ public:
 
 	//左右移動速度上限
 	float maxMoveSpeed_ = 10.0f;
+
+	//通常時の移動速度上限
+	float maxDefaultMoveSpeed_ = maxMoveSpeed_;
+
+	//チャージ時の移動速度上限
+	float maxChargeMoveSpeed_ = maxMoveSpeed_ / 3.0f;
 
 	//高速直線移動時の速度
 	float lineMoveSpeed_ = 35.0f;

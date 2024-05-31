@@ -9,6 +9,7 @@ struct HeathazeData {
 	float roop;
 	float width;
 	float border;
+	int32_t ismagmeFluction;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -41,7 +42,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	//plus
 	float defLine = gHeatHazeData.border - input.texcoord.y;
 	float magmaborder = 1.0f+sin(2.0f* 3.141592f * (input.texcoord.x + gHeatHazeData.offset)* gHeatHazeData.roop) * gHeatHazeData.width*3.0f;
-	if(/*0<defLine &&*/ defLine < magmaborder){
+	if(/*0<defLine &&*/ defLine < magmaborder && gHeatHazeData.ismagmeFluction!= 0){
 		transformdTexcoord.x += ty * gHeatHazeData.width * 3.0f*(magmaborder-defLine);
 	}
 
@@ -64,7 +65,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	output.color.rgb = sampleColor.rgb ;
 	output.color.r += 0.025f;
 	output.color.g += 0.00625f;
-	if(/*0<defLine &&*/ defLine < magmaborder){
+	if(/*0<defLine &&*/ defLine < magmaborder && gHeatHazeData.ismagmeFluction!= 0){
 		//output.color.r -= 0.1f*(magmaborder-defLine);
 		output.color.g -= 0.2f*(magmaborder-defLine);
 		output.color.b -= 0.2f*(magmaborder-defLine);

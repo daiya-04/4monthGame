@@ -9,25 +9,28 @@
 Player::Player()
 {
 
-	texture_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueIdle.png");
-	textureUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookUp.png");
-	textureDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookDown.png");
-	textureRun_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueRun.png");
-	textureBreakUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakUp.png");
-	textureBreakDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakDown.png");
-	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreak.png");
-	texture_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeIdle.png");
-	textureUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookUp.png");
-	textureDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookDown.png");
-	textureRun_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeRun.png");
-	textureBreakUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakUp.png");
-	textureBreakDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakDown.png");
-	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
+	texture_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueIdle.png");
+	textureUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookUp.png");
+	textureDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookDown.png");
+	textureRun_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueRun.png");
+	textureBreakUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakUp.png");
+	textureBreakDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakDown.png");
+	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreak.png");
+	textureWallJump_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueWallKick.png");
+	texture_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeIdle.png");
+	textureUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookUp.png");
+	textureDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookDown.png");
+	textureRun_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeRun.png");
+	textureBreakUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakUp.png");
+	textureBreakDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakDown.png");
+	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
+	textureWallJump_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeWallKick.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
-	rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
+	/*rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
 	rockUITextures_[BringRocks::kBlue] = TextureManager::GetInstance()->Load("UI/speedRock.png");
 	rockUITextures_[BringRocks::kGreen] = TextureManager::GetInstance()->Load("UI/digSpeedRock.png");
-	rockUITextures_[BringRocks::kRed] = TextureManager::GetInstance()->Load("UI/powerRock.png");
+	rockUITextures_[BringRocks::kRed] = TextureManager::GetInstance()->Load("UI/powerRock.png");*/
+	bagTexture_ = TextureManager::GetInstance()->Load("UI/bag.png");
 
 	deadTexture_ = TextureManager::GetInstance()->Load("UI/dead.png");
 
@@ -39,19 +42,21 @@ Player::Player()
 	//数字リセット
 	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
 
-		for (int32_t i = 0; i < 5; i++) {
+		for (int32_t i = 0; i < kMaxDigits_; i++) {
 
-			numbers_[height][i].reset(Sprite::Create(numberTexture_, { 1100.0f + 32.0f * i , 30.0f + 64.0f * height }));
-			numbers_[height][i]->SetSize({ 48.0f,48.0f });
+			numbers_[height][i].reset(Sprite::Create(numberTexture_, { 1170.0f + 24.0f * i , 96.0f + 56.0f * height }));
+			numbers_[height][i]->SetSize({ 32.0f,32.0f });
 			numbers_[height][i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
 
 		}
 
 		//岩UIリセット
-		rocksUI_[height].reset(Sprite::Create(rockUITextures_[height], { 1050.0f, 30.0f + 64.0f * height }));
-		rocksUI_[height]->SetSize({ 48.0f,48.0f });
+		/*rocksUI_[height].reset(Sprite::Create(rockUITextures_[height], { 1050.0f, 30.0f + 64.0f * height }));
+		rocksUI_[height]->SetSize({ 48.0f,48.0f });*/
 
 	}
+
+	bag_.reset(Sprite::Create(bagTexture_, { 1150.0f, 30.0f + 128.0f }));
 
 }
 
@@ -286,11 +291,11 @@ void Player::UpdateUI() {
 	//数字の更新
 	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
 
-		for (int32_t i = 0; i < 5; i++) {
+		for (int32_t i = 0; i < kMaxDigits_; i++) {
 
 			int32_t num = 0;
 
-			int32_t divide = int32_t(std::pow(10, 5 - 1 - i));
+			int32_t divide = int32_t(std::pow(10, kMaxDigits_ - 1 - i));
 
 			num = rockParameter_.rocks_[height] / divide;
 
@@ -310,16 +315,16 @@ void Player::Draw(const Camera& camera) {
 
 void Player::DrawUI() {
 
+	bag_->Draw();
+
 	//持っているブロック数の表示
 	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
 
-		for (int32_t i = 0; i < 5; i++) {
+		for (int32_t i = 0; i < kMaxDigits_; i++) {
 
 			numbers_[height][i]->Draw();
 
 		}
-
-		rocksUI_[height]->Draw();
 
 	}
 
@@ -382,6 +387,15 @@ void Player::Move() {
 
 			velocity_.x += parameters_[currentCharacters_]->speed_;
 
+			//ボタンを押していたら最大速度を変更
+			if (input_->PushButton(Input::Button::A) && 
+				parameters_[currentCharacters_]->chargeJump_.chargeTimer >= parameters_[currentCharacters_]->chargeJump_.maxChargeTime / 2) {
+				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxChargeMoveSpeed_;
+			}
+			else {
+				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxDefaultMoveSpeed_;
+			}
+
 			isFacingLeft_ = false;
 
 		}
@@ -392,6 +406,15 @@ void Player::Move() {
 			}
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_;
+
+			//ボタンを押していたら最大速度を変更
+			if (input_->PushButton(Input::Button::A) &&
+				parameters_[currentCharacters_]->chargeJump_.chargeTimer >= parameters_[currentCharacters_]->chargeJump_.maxChargeTime / 2) {
+				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxChargeMoveSpeed_;
+			}
+			else {
+				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxDefaultMoveSpeed_;
+			}
 
 			isFacingLeft_ = true;
 
@@ -412,7 +435,7 @@ void Player::Move() {
 		}
 
 		//スティック入力で上方向のみの入力の場合且つ横移動の値が小さい場合チャージジャンプをできるようにする
-		if (parameters_[currentCharacters_]->Jump_.canJump && input_->TiltLStick(Input::Stick::Up) &&
+		/*if (parameters_[currentCharacters_]->Jump_.canJump && input_->TiltLStick(Input::Stick::Up) &&
 			fabsf(input_->GetLX()) < fabsf(input_->GetLY())) {
 
 			parameters_[currentCharacters_]->chargeJump_.isCharge = true;
@@ -420,7 +443,7 @@ void Player::Move() {
 		}
 		else {
 			parameters_[currentCharacters_]->chargeJump_.isCharge = false;
-		}
+		}*/
 
 		//入力方向に応じて画像変更
 		if (parameters_[currentCharacters_]->dig_.digCount <= int32_t(parameters_[currentCharacters_]->dig_.digInterval * 0.5f)) {
@@ -450,6 +473,7 @@ void Player::Move() {
 
 		if (isClear_) {
 			object_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
+			BlockTextureManager::GetInstance()->CreateStarParticle(position_,1);
 		}
 		else {
 			object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
@@ -509,12 +533,12 @@ void Player::Jump() {
 		}
 
 		//通常ジャンプ
-		if (parameters_[currentCharacters_]->Jump_.canJump && input_->TriggerButton(Input::Button::A) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
+		/*if (parameters_[currentCharacters_]->Jump_.canJump && input_->TriggerButton(Input::Button::A) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
 			velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 			parameters_[currentCharacters_]->Jump_.canJump = false;
-		}
+		}*/
 		//溜めジャンプが可能なときに必要な溜めの時間まで行かなかったら通常ジャンプの処理に切り替え
-		else if (parameters_[currentCharacters_]->Jump_.canJump && input_->ReleaseButton(Input::Button::A) && parameters_[currentCharacters_]->chargeJump_.isCharge &&
+		else if (parameters_[currentCharacters_]->Jump_.canJump && input_->ReleaseButton(Input::Button::A)/* && parameters_[currentCharacters_]->chargeJump_.isCharge*/ &&
 			parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
 			velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 			parameters_[currentCharacters_]->Jump_.canJump = false;
@@ -583,7 +607,8 @@ void Player::ChargeJump() {
 	}
 
 	//ジャンプボタンを押している間チャージカウント増加
-	if (parameters_[currentCharacters_]->chargeJump_.isCharge && input_->PushButton(Input::Button::A)) {
+	if (/*parameters_[currentCharacters_]->chargeJump_.isCharge && */input_->PushButton(Input::Button::A) && 
+		!parameters_[currentCharacters_]->wallJump_.canWallJump && parameters_[currentCharacters_]->Jump_.canJump) {
 
 		//最大値になるまでカウント
 		if (parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
@@ -625,6 +650,11 @@ void Player::WallJump() {
 
 		}
 
+	}
+
+	//壁キック可能なら画像変更
+	if (parameters_[currentCharacters_]->wallJump_.canWallJump) {
+		object_->SetTextureHandle(textureWallJump_[currentCharacters_]);
 	}
 
 }
@@ -751,7 +781,7 @@ void Player::Change() {
 		//左側にいた場合
 		if (position_.x < Stage::kBasePosition.x) {
 
-			object_->SetTextureHandle(texture_[currentCharacters_]);
+			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
 			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -760,7 +790,7 @@ void Player::Change() {
 		}
 		else {
 
-			object_->SetTextureHandle(texture_[currentCharacters_]);
+			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -799,7 +829,7 @@ void Player::Change() {
 		default:
 		case Player::kLeftPlayer:
 
-			object_->SetTextureHandle(texture_[currentCharacters_]);
+			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
 			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -822,7 +852,7 @@ void Player::Change() {
 			break;
 		case Player::kRightPlayer:
 
-			object_->SetTextureHandle(texture_[currentCharacters_]);
+			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
 			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
 
@@ -1481,7 +1511,7 @@ void Player::Debug() {
 	ImGui::Text("D-MaxSpeed : %1.2f", defaultParameter_->maxMoveSpeed_);
 	ImGui::Text("D-DigInterval : %d", defaultParameter_->dig_.digInterval);
 	ImGui::Text("D-DigCoolTime : %d", defaultParameter_->dig_.digCount);
-	ImGui::Text("D-DigPower : %d", defaultParameter_->dig_.digPower);
+	ImGui::Text("D-DigPower : %1.2f", defaultParameter_->dig_.digPower);
 	ImGui::Text("D-MaxChargeTime : %d", defaultParameter_->chargeJump_.maxChargeTime);
 	ImGui::Text("D-ChargeTimer : %d", defaultParameter_->chargeJump_.chargeTimer);
 	ImGui::Separator();
@@ -1491,7 +1521,7 @@ void Player::Debug() {
 	ImGui::Text("L-MaxSpeed : %1.2f", parameters_[kLeftPlayer]->maxMoveSpeed_);
 	ImGui::Text("L-DigInterval : %d", parameters_[kLeftPlayer]->dig_.digInterval);
 	ImGui::Text("L-DigCoolTime : %d", parameters_[kLeftPlayer]->dig_.digCount);
-	ImGui::Text("L-DigPower : %d", parameters_[kLeftPlayer]->dig_.digPower);
+	ImGui::Text("L-DigPower : %1.2f", parameters_[kLeftPlayer]->dig_.digPower);
 	ImGui::Text("L-MaxChargeTime : %d", parameters_[kLeftPlayer]->chargeJump_.maxChargeTime);
 	ImGui::Text("L-ChargeTimer : %d", parameters_[kLeftPlayer]->chargeJump_.chargeTimer);
 	ImGui::Separator();
@@ -1501,7 +1531,7 @@ void Player::Debug() {
 	ImGui::Text("R-MaxSpeed : %1.2f", parameters_[kRightPlayer]->maxMoveSpeed_);
 	ImGui::Text("R-DigInterval : %d", parameters_[kRightPlayer]->dig_.digInterval);
 	ImGui::Text("R-DigCoolTime : %d", parameters_[kRightPlayer]->dig_.digCount);
-	ImGui::Text("R-DigPower : %d", parameters_[kRightPlayer]->dig_.digPower);
+	ImGui::Text("R-DigPower : %1.2f", parameters_[kRightPlayer]->dig_.digPower);
 	ImGui::Text("R-MaxChargeTime : %d", parameters_[kRightPlayer]->chargeJump_.maxChargeTime);
 	ImGui::Text("R-ChargeTimer : %d", parameters_[kRightPlayer]->chargeJump_.chargeTimer);
 	ImGui::End();

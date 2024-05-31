@@ -56,9 +56,9 @@ public:
 
 		enum RockType {
 			kRock, //通常の岩
-			kBlue, //移動速度
+			kRed, //移動速度
 			kGreen, //採掘速度
-			kRed, //ダメージ量
+			kBlue, //ダメージ量
 			kMaxType, //種類
 		};
 
@@ -259,6 +259,8 @@ public:
 		parameters_[currentCharacters_]->maxMoveSpeed_ += addNum * 1.0f;
 
 		parameters_[currentCharacters_]->maxMoveSpeed_ = std::clamp(parameters_[currentCharacters_]->maxMoveSpeed_, 0.0f, 30.0f);
+		parameters_[currentCharacters_]->maxDefaultMoveSpeed_ = parameters_[currentCharacters_]->maxMoveSpeed_;
+		parameters_[currentCharacters_]->maxChargeMoveSpeed_ = parameters_[currentCharacters_]->maxMoveSpeed_ / 3.0f;
 
 	}
 
@@ -269,7 +271,7 @@ public:
 	}
 
 	//パワーーー！！！を強化
-	void UpgradePower(int32_t addNum) { parameters_[currentCharacters_]->dig_.digPower += addNum; }
+	void UpgradePower(float addNum) { parameters_[currentCharacters_]->dig_.digPower += addNum; }
 
 	//ブロックの数取得
 	int32_t GetRockCount() const { return rockParameter_.rocks_[BringRocks::kRock]; }
@@ -285,6 +287,9 @@ public:
 	void DamageUpdate();
 
 	void HealUpdate();
+
+	//溜めジャンプ制限
+	void RestrictChargeJump() { parameters_[currentCharacters_]->chargeJump_.chargeTimer = 0; }
 
 private:
 
@@ -410,6 +415,7 @@ private:
 	std::array<uint32_t, kMaxPlayer> textureBreakUp_;
 	std::array<uint32_t, kMaxPlayer> textureBreakDown_;
 	std::array<uint32_t, kMaxPlayer> textureBreak_;
+	std::array<uint32_t, kMaxPlayer> textureWallJump_;
 
 	//デバッグフラグ
 	bool isDebug_ = false;
@@ -471,10 +477,14 @@ private:
 	//切り替えフレーム
 	int32_t changeFrame_ = 4;
 
+	//最大桁数
+	static const int32_t kMaxDigits_ = 3;
+
 	//UI関連
 	std::unique_ptr<Sprite> deadSprite_;
-	std::array<std::array<std::unique_ptr<Sprite>, 5>, BringRocks::RockType::kMaxType> numbers_;
+	std::array<std::array<std::unique_ptr<Sprite>, kMaxDigits_>, BringRocks::RockType::kMaxType> numbers_;
 	std::array<std::unique_ptr<Sprite>, BringRocks::RockType::kMaxType> rocksUI_;
+	std::unique_ptr<Sprite> bag_;
 
 	uint32_t lifeLeftGageTexture_;
 	uint32_t lifeLeftFrameTexture_;
@@ -482,6 +492,7 @@ private:
 	uint32_t lifeRightFrameTexture_;
 	uint32_t deadTexture_;
 	uint32_t numberTexture_;
+	uint32_t bagTexture_;
 	std::array<uint32_t, BringRocks::kMaxType> rockUITextures_;
 
 	const std::string dataName = "Player";

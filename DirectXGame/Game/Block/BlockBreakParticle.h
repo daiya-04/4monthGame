@@ -10,6 +10,7 @@
 class BlockBreakParticle {
 public:
 	void Initialize(const Vector2& postition,uint32_t blockType);
+	void Initialize(const Vector2& postition, const Vector2& velocity, uint32_t blockType);
 	void Update();
 	void Draw();
 	bool GetIsAlive() { return isAlive_; };

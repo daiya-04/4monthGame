@@ -103,6 +103,7 @@ private:
 
 	std::unique_ptr<Scroll> scroll_;
 	Vector2 scrollHomePoint_{};
+	bool isScrollEnd_ = false;
 
 	Vector2 scorePosition_ = { 256.0f,64.0f };
 

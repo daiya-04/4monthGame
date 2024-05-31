@@ -2,17 +2,57 @@
     "GameText": [
         {
             "TextLayout": {
+                "Button-Position": [
+                    1103.0,
+                    632.0
+                ],
+                "Button-Size": [
+                    64.0,
+                    64.0
+                ],
                 "Name-Position": [
-                    268.0,
+                    300.0,
                     520.0
                 ],
                 "NameBack-Position": [
-                    261.0,
+                    285.0,
                     520.0
                 ],
                 "NameBack-Size": [
-                    196.0,
+                    256.0,
                     36.0
+                ],
+                "SkipButton-Position": [
+                    898.0,
+                    600.0
+                ],
+                "SkipButton-Size": [
+                    64.0,
+                    64.0
+                ],
+                "SkipGauge-Position": [
+                    891.0,
+                    600.0
+                ],
+                "SkipGauge-Size": [
+                    128.0,
+                    64.0
+                ],
+                "SkipGaugeBack-Position": [
+                    891.0,
+                    600.0
+                ],
+                "SkipGaugeBack-Size": [
+                    128.0,
+                    64.0
+                ],
+                "SkipText-Position": [
+                    891.0,
+                    600.0
+                ],
+                "SkipText-Size": [
+                    128.0,
+                    64.0
                 ],
                 "TextBox-Position": [
                     640.0,

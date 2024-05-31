@@ -54,7 +54,13 @@ void Magma::Update() {
 	}
 	else if (baseMagmaLine_ > magmaLimit_) {
 
-		baseMagmaLine_ -= magmaSpeed_;
+		//プレイヤーが黄金を取得しているとスピードを上げるようにする
+		if (player_->GetIsClear()) {
+			baseMagmaLine_ -= magmaSpeedFaster_;
+		}
+		else {
+			baseMagmaLine_ -= magmaSpeed_;
+		}
 
 		//ラインが限界値を超えたら限界値に調整
 		if (baseMagmaLine_ < magmaLimit_) {

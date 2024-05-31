@@ -266,7 +266,13 @@
     <ClCompile Include="Game\Stage\Magma.cpp">
       <Filter>Game\Stage</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Block\starParticle.cpp" />
+    <ClCompile Include="Game\System\TutorialFlagManager.cpp">
+      <Filter>Game\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Block\SandParticle.cpp" />
     <ClCompile Include="TitleAnimation.cpp" />
+    <ClCompile Include="Game\Block\GemGetParticle.cpp" />
     <ClCompile Include="StageNumberDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -461,7 +467,13 @@
     <ClInclude Include="Game\Stage\Magma.h">
       <Filter>Game\Stage</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Block\starParticle.h" />
+    <ClInclude Include="Game\System\TutorialFlagManager.h">
+      <Filter>Game\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Block\SandParticle.h" />
     <ClInclude Include="TitleAnimation.h" />
+    <ClInclude Include="Game\Block\GemGetParticle.h" />
     <ClInclude Include="StageNumberDraw.h" />
   </ItemGroup>
   <ItemGroup>

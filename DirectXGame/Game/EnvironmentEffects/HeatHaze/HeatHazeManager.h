@@ -38,6 +38,9 @@ public:
 		magmaDistortion_->SetMagmaLine(transformdBorder);
 	};
 
+	//まぐまの揺らぎのオンオフ
+	void SetIsUseMagmaFluction(bool is) { heatHaze_->SetMagmaFluction(is); };
+
 private:
 	HeatHazeManager() {
 		Init();

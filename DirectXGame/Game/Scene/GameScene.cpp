@@ -11,6 +11,7 @@
 #include "Text/TextManager.h"
 #include "GameText/GameTextManager.h"
 #include "AudioManager.h"
+#include "System/TutorialFlagManager.h"
 
 GameScene::~GameScene() {
 	magmaBGM_->StopSound();
@@ -28,7 +29,6 @@ void GameScene::Init(){
 
 	player_ = std::make_shared<Player>();
 	player_->Initialize();
-	player_->Initialize();
 
 	stage_ = std::make_unique<Stage>();
 	stage_->SetPlayer(player_.get());
@@ -41,7 +41,8 @@ void GameScene::Init(){
 	camera_->ChangeDrawingRange({ 1600.0f,900.0f });
 	stage_->SetCamera(camera_.get());
 
-	scrollHomePoint_ = Stage::kBasePosition + Vector2{ 0.0f,-200.0f };
+	scrollHomePoint_ = Stage::kBasePosition + Vector2{ 0.0f,-600.0f };
+	isScrollEnd_ = false;
 	scroll_ = std::make_unique<Scroll>();
 	scroll_->SetCamera(camera_.get());
 	scroll_->Initialize();
@@ -92,7 +93,13 @@ void GameScene::Init(){
 	testText_.reset(new Text);
 	testText_->Initialize();
 	testText_->SetWString(L"AAAAA");
-	GameTextManager::GetInstance()->InitializeStage(stageNumber_);
+	GameTextManager::GetInstance()->InitializeStage(999);
+
+	TutorialFlagManager::GetInstance()->Initialize();
+	TutorialFlagManager::GetInstance()->SetPlayer(player_.get());
+	TutorialFlagManager::GetInstance()->SetMagma(stage_->GetMagma());
+	TutorialFlagManager::GetInstance()->SetScroll(scroll_.get());
+
 }
 
 void GameScene::Reset() {
@@ -102,6 +109,7 @@ void GameScene::Reset() {
 	camera_->Init();
 	scroll_->Initialize();
 	scroll_->SetCameraOnTarget();
+	TutorialFlagManager::GetInstance()->Initialize();
 
 }
 
@@ -123,6 +131,19 @@ void GameScene::Update() {
 #endif // _DEBUG
 
 	isPreOpenMenu_ = isOpenMenu_;
+
+	//スタート時のスクロール更新
+	if (scrollHomePoint_.y < -200.0f) {
+		
+		scrollHomePoint_.y += (- 200.0f - scrollHomePoint_.y) * 0.1f;
+
+		if (scrollHomePoint_.y > -201.0f) {
+			scrollHomePoint_.y = -200.0f;
+			isScrollEnd_ = true;
+			GameTextManager::GetInstance()->InitializeStage(stageNumber_);
+		}
+
+	}
 
 	if (stage_->GetIsClear()) {
 
@@ -161,11 +182,15 @@ void GameScene::Update() {
 	}
 	else {
 
-		if (Input::GetInstance()->TriggerButton(Input::Button::START)) {
-			isOpenMenu_ = true;
-		}
+		if (GameTextManager::GetInstance()->GetIsEnd() && isScrollEnd_) {
 
-		if (GameTextManager::GetInstance()->GetIsEnd()) {
+			if (stageNumber_ == 1) {
+				TutorialFlagManager::GetInstance()->Update();
+			}
+
+			if (Input::GetInstance()->TriggerButton(Input::Button::START)) {
+				isOpenMenu_ = true;
+			}
 
 			stage_->Update();
 
@@ -196,6 +221,14 @@ void GameScene::Update() {
 			}
 
 			player_->UpdateUI();
+
+		}
+		else if (!GameTextManager::GetInstance()->GetIsEnd()) {
+
+			//テキスト中に更新するもの
+			if (stageNumber_ == 1) {
+				TutorialFlagManager::GetInstance()->UpdateInText();
+			}
 
 		}
 
@@ -234,6 +267,7 @@ void GameScene::ClearProcess() {
 
 	//ハイスコア更新で記録を塗り替える
 	scoreManager_->SetScore(currentStageNumber_, score_);
+	scoreManager_->SaveScore();
 
 }
 
@@ -309,7 +343,11 @@ void GameScene::DrawUI(){
 
 	}
 	else {
-		menuButtonSprite_->Draw();
+
+		if (GameTextManager::GetInstance()->GetIsEnd() && isScrollEnd_) {
+			menuButtonSprite_->Draw();
+		}
+
 	}
 
 	//TextManager::GetInstance()->TestDraw();
@@ -340,6 +378,11 @@ void GameScene::DebugGUI(){
 	ImGui::Begin("testText");
 	ImGui::DragInt("CharCount", &cCount, 1,0,100);
 	ImGui::DragFloat2("originPosition", &position.x,1.0f);
+	static int32_t tutorial;
+	if (ImGui::Button("DrawTutorialText!") && GameTextManager::GetInstance()->GetIsEnd()) {
+		tutorial++;
+		GameTextManager::GetInstance()->Tutorial(tutorial);
+	}
 	ImGui::End();
 	testText_->SetArrangeType(Text::kCenter);
 	testText_->SetCharCount(uint32_t(cCount));
@@ -366,11 +409,12 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 
-	//
+	stage_->DrawColdBefore();
+
 	if (!player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
-	stage_->DrawCold();
+	stage_->DrawColdAfter();
 	if (player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
@@ -392,10 +436,12 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	
+	stage_->DrawHeatBefore();
+
 	if (!player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
-	stage_->DrawHeat();
+	stage_->DrawHeatAfter();
 	if (player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}

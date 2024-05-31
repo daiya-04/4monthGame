@@ -2,6 +2,9 @@
 #include "TextureManager.h"
 #include "Block.h"
 #include "BlockBreakParticle.h"
+#include "starParticle.h"
+#include "SandParticle.h"
+#include "GemGetParticle.h"
 BlockTextureManager* BlockTextureManager::GetInstance() {
 	static BlockTextureManager instance;
 	return &instance;
@@ -23,6 +26,8 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/down.png");
 	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/unbreakable.png");
+	blockTextures_.push_back(texture);
 
 	for (uint32_t index=1; index < BaseBlock::BlockType::kMaxBlock; index++) {
 
@@ -42,6 +47,10 @@ void BlockTextureManager::LoadAllBlockTexture() {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[4]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[4]);
 		}
+		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[5]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[5]);
+		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[0]);
@@ -50,7 +59,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	}
 
 	//壊せないブロック
-	objects_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });
+	/*objects_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });*/
 	//極寒
 	objects_[Block::kSnow - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	//灼熱
@@ -69,7 +78,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	objects_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
 
 	//壊せないブロック
-	breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });
+	/*breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });*/
 	//極寒
 	breakParticles_[Block::kSnow - 1]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	//灼熱
@@ -93,12 +102,25 @@ BlockTextureManager::BlockTextureManager() {
 	for (uint32_t index = 1; index < BaseBlock::BlockType::kMaxBlock; index++) {
 		std::unique_ptr<Object2dInstancing> object;
 		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 512));
-		object->SetSize({float(BaseBlock::kBlockSize_),float(BaseBlock::kBlockSize_) });
+		object->SetSize({ float(BaseBlock::kBlockSize_),float(BaseBlock::kBlockSize_) });
 		objects_.push_back(std::move(object));
 		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 128));
-		object->SetSize({ float(BaseBlock::kBlockSize_/3),float(BaseBlock::kBlockSize_/3) });
+		object->SetSize({ float(BaseBlock::kBlockSize_ / 3),float(BaseBlock::kBlockSize_ / 3) });
 		breakParticles_.push_back(std::move(object));
 	}
+
+	//particle
+	starParticles_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 256));
+	starParticles_->SetScale({ 1.0f, 1.0f });
+	starParticles_->SetSize({ float(BaseBlock::kBlockSize_/2),float(BaseBlock::kBlockSize_) });
+
+	sandParticles_.reset(Object2dInstancing::Create(TextureManager::Load("sandDust.png"), Vector2{ 0,0 }, 1024));
+	sandParticles_->SetScale({ 1.0f, 1.0f });
+	sandParticles_->SetSize({ float(BaseBlock::kBlockSize_ /3),float(BaseBlock::kBlockSize_/3) });
+
+	gemParticles_.reset(Object2dInstancing::Create(TextureManager::Load("gemGetParticle.png"), Vector2{ 0,0 }, 32));
+	gemParticles_->SetScale({ 1.0f, 1.0f });
+	gemParticles_->SetSize({ float(BaseBlock::kBlockSize_ ),float(BaseBlock::kBlockSize_ ) });
 }
 
 void BlockTextureManager::ClearObject() {
@@ -106,6 +128,9 @@ void BlockTextureManager::ClearObject() {
 		objects_[index-1]->ClearUseCount();
 		breakParticles_[index - 1]->ClearUseCount();
 	}
+	starParticles_->ClearUseCount();
+	sandParticles_->ClearUseCount();
+	gemParticles_->ClearUseCount();
 }
 
 void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type) {
@@ -114,6 +139,14 @@ void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& t
 		return;
 	}
 	objects_[bType-1]->AppendObject(position,texBase,texSize);
+}
+
+void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type,const Vector4& color) {
+	BaseBlock::BlockType bType = BaseBlock::BlockType(type);
+	if (bType == BaseBlock::BlockType::kNone) {
+		return;
+	}
+	objects_[bType - 1]->AppendObject(position, texBase, texSize,color);
 }
 
 void BlockTextureManager::DrawAll(const Camera& camera) {
@@ -146,6 +179,28 @@ void BlockTextureManager::AppendParticle(const Vector2& position, uint32_t type)
 	breakParticles_[bType - 1]->AppendObject(position, Vector2{0,0}, Vector2{ 32.0f,32.0f });
 }
 
+void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vector4& color) {
+	
+	starParticles_->AppendObject(position, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f },color);
+}
+
+void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vector4& color) {
+
+	sandParticles_->AppendObject(position, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f }, color);
+}
+
+void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t type, const Vector4& color) {
+	Vector2 tBase = {0,0};
+	if (type == Block::kGreenBlock) {
+		tBase = {32,0};
+	}
+	else if (type == Block::kBlueBlock) {
+		tBase = { 64,0 };
+	}
+
+	gemParticles_->AppendObject(position, tBase, Vector2{32.0f,32.0f}, color);
+}
+
 void BlockTextureManager::DrawParticle(const Camera& camera) {
 	for (std::unique_ptr<BlockBreakParticle>& data : breakParticleDatas_) {
 		data->Draw();
@@ -153,6 +208,18 @@ void BlockTextureManager::DrawParticle(const Camera& camera) {
 	for (uint32_t index = 1; index < BaseBlock::BlockType::kMaxBlock; index++) {
 		breakParticles_[index - 1]->Draw(camera);
 	}
+	for (std::unique_ptr<StarParticle>& data : starParticleDatas_) {
+		data->Draw();
+	}
+	starParticles_->Draw(camera);
+	for (std::unique_ptr<SandParticle>& data : sandParticleDatas_) {
+		data->Draw();
+	}
+	sandParticles_->Draw(camera);
+	for (std::unique_ptr<GemGetParticle>& data : gemParticleDatas_) {
+		data->Draw();
+	}
+	gemParticles_->Draw(camera);
 }
 
 void BlockTextureManager::CreateParticle(const Vector2& position, uint32_t type) {
@@ -162,7 +229,43 @@ void BlockTextureManager::CreateParticle(const Vector2& position, uint32_t type)
 	breakParticleDatas_.push_back(std::move(particle));
 }
 
-void BlockTextureManager::UpdateParticle() {
+void BlockTextureManager::CreateParticle(const Vector2& position, const Vector2& velocity, uint32_t type) {
+	std::unique_ptr<BlockBreakParticle> particle;
+	particle.reset(new BlockBreakParticle);
+	particle->Initialize(position,velocity, type);
+	breakParticleDatas_.push_back(std::move(particle));
+}
+
+void BlockTextureManager::CreateStarParticle(const Vector2& position,int32_t type) {
+	StarParticle::response--;
+	if (StarParticle::response<0) {
+		std::unique_ptr<StarParticle> particle;
+		particle.reset(new StarParticle);
+		particle->Initialize(position,type);
+		starParticleDatas_.push_back(std::move(particle));
+	}
+}
+
+void BlockTextureManager::CreateSandParticle(const Vector2& position, int32_t type) {
+	SandParticle::response--;
+	if (SandParticle::response < 0) {
+		std::unique_ptr<SandParticle> particle;
+		particle.reset(new SandParticle);
+		particle->Initialize(position, type);
+		sandParticleDatas_.push_back(std::move(particle));
+	}
+}
+
+void BlockTextureManager::CreateGemParticle(const Vector2& position, int32_t type) {
+	std::unique_ptr<GemGetParticle> particle;
+	particle.reset(new GemGetParticle);
+	particle->Initialize(position, type);
+	gemParticleDatas_.push_back(std::move(particle));
+	
+}
+
+void BlockTextureManager::UpdateParticle(const Camera& camera) {
+	//block
 	breakParticleDatas_.remove_if([](std::unique_ptr<BlockBreakParticle>& bullet) {
 		if (!bullet->GetIsAlive()) {
 			return true;
@@ -171,5 +274,35 @@ void BlockTextureManager::UpdateParticle() {
 		});
 	for (std::unique_ptr<BlockBreakParticle> &data : breakParticleDatas_) {
 		data->Update();
+	}
+	//star
+	starParticleDatas_.remove_if([](std::unique_ptr<StarParticle>& bullet) {
+		if (!bullet->GetIsAlive()) {
+			return true;
+		}
+		return false;
+		});
+	for (std::unique_ptr<StarParticle>& data : starParticleDatas_) {
+		data->Update();
+	}
+	//sand
+	sandParticleDatas_.remove_if([](std::unique_ptr<SandParticle>& bullet) {
+		if (!bullet->GetIsAlive()) {
+			return true;
+		}
+		return false;
+		});
+	for (std::unique_ptr<SandParticle>& data : sandParticleDatas_) {
+		data->Update();
+	}
+	//gem
+	gemParticleDatas_.remove_if([](std::unique_ptr<GemGetParticle>& bullet) {
+		if (!bullet->GetIsAlive()) {
+			return true;
+		}
+		return false;
+		});
+	for (std::unique_ptr<GemGetParticle>& data : gemParticleDatas_) {
+		data->Update(camera);
 	}
 }

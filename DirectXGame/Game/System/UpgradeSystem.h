@@ -82,7 +82,7 @@ private:
 	int32_t digSpeedUpgradeValue_ = 1;
 
 	//パワー強化量
-	int32_t powerUpgradeValue_ = 1;
+	float powerUpgradeValue_ = 0.5f;
 
 	//ブロック座標
 	std::vector<Vector2> positions_;

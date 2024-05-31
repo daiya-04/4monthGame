@@ -35,9 +35,11 @@ public:
 	void Draw();
 
 	//灼熱描画
-	void DrawHeat();
+	void DrawHeatBefore();
+	void DrawHeatAfter();
 	//極寒描画
-	void DrawCold();
+	void DrawColdBefore();
+	void DrawColdAfter();
 
 	/// <summary>
 	/// UI描画
@@ -60,6 +62,9 @@ public:
 
 	//カメラセット
 	void SetCamera(Camera* camera) { camera_ = camera; }
+
+	//マグマゲット
+	Magma* GetMagma() { return magma_.get(); }
 
 	//ブロック取得
 	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_>* GetBlocks() { return &map_; }
@@ -104,6 +109,9 @@ private:
 	//壊せないブロック以外の破壊(デバッグ)
 	void BreakAllBlock();
 
+	//フラグブロックの排除
+	void BreakFlagBlock();
+
 	void SetUV(Block* block);
 
 	//当たり判定関連
@@ -122,9 +130,26 @@ private:
 	//岩の数最大桁
 	static const int32_t kMaxNumbers_ = 5;
 
+	//現在のステージ番号
+	int32_t currentStageNumber_ = 1;
+
+	//チュートリアルステージ用のフラグ
+	bool isBreakFlagBlocks_ = false;
+	int32_t tutorialSwitchCount_ = 0;
+	int32_t maxSwitchCount_ = 240;
+
+	//チュートリアル用のオブジェクト
+	std::unique_ptr<Object2d> tutorialFirst_;
+	std::unique_ptr<Object2d> tutorialSecond_;
+	std::unique_ptr<Object2d> tutorialThird_;
+
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Magma> magma_;
 	std::unique_ptr<Object2d> saunaRoom_;
+	std::unique_ptr<Object2d> saunaUI_;
+
+	std::array<std::unique_ptr<Object2d>, 2> ropes_;
+	std::array<std::unique_ptr<Object2d>, 2> wells_;
 
 	std::unique_ptr<UpgradeSystem> upgradeSystem_;
 
@@ -153,7 +178,6 @@ private:
 	std::unique_ptr<Sprite> purposeSprite_;
 
 	//帰還エリア
-	std::array<std::unique_ptr<Object2d>, 2> returnObjects_;
 	std::array<Vector2, 2> returnPosition_;
 	std::array<AABB2D, 2> returnArea_;
 	std::unique_ptr<Object2d> returnUI_;
@@ -171,6 +195,13 @@ private:
 	uint32_t saunaRoomTex_;
 	uint32_t purposeTex_;
 	uint32_t upTex_;
+	uint32_t ropeTex_;
+	uint32_t wellBlueTex_;
+	uint32_t wellOrangeTex_;
+	uint32_t UI_A_Tex_;
+	uint32_t tutorialFirstTex_;
+	uint32_t tutorialSecondTex_;
+	uint32_t tutorialThirdTex_;
 
 };
 

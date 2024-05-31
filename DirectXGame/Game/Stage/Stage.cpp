@@ -10,6 +10,7 @@
 #include "Block/BlockTextureManager.h"
 #include "DirectXCommon.h"
 #include "ImGuiManager.h"
+#include "System/TutorialFlagManager.h"
 
 std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_> Stage::map_;
 
@@ -19,10 +20,16 @@ Stage::Stage()
 	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
 	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
 	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
-	returnTex_ = TextureManager::GetInstance()->Load("stageObject/returnArea.png");
 	saunaRoomTex_ = TextureManager::GetInstance()->Load("stageObject/saunaRoom.png");
 	purposeTex_ = TextureManager::GetInstance()->Load("UI/mokuteki.png");
 	upTex_ = TextureManager::GetInstance()->Load("UI/up.png");
+	ropeTex_ = TextureManager::GetInstance()->Load("stageObject/rope.png");
+	tutorialFirstTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI1.png");
+	tutorialSecondTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI2.png");
+	tutorialThirdTex_ = TextureManager::GetInstance()->Load("UI/tutorialUI3.png");
+	wellBlueTex_ = TextureManager::GetInstance()->Load("stageObject/wellBlue.png");
+	wellOrangeTex_ = TextureManager::GetInstance()->Load("stageObject/wellOrange.png");
+	UI_A_Tex_ = TextureManager::GetInstance()->Load("AButton.png");
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
@@ -32,7 +39,20 @@ Stage::Stage()
 
 	}
 
+	tutorialFirst_.reset(Object2d::Create(tutorialFirstTex_, Vector2{3.5f * Block::kBlockSize_, 3.5f * Block::kBlockSize_ }));
+	tutorialSecond_.reset(Object2d::Create(tutorialSecondTex_, Vector2{ 3.5f * Block::kBlockSize_, 3.5f * Block::kBlockSize_ }));
+	tutorialThird_.reset(Object2d::Create(tutorialThirdTex_, Vector2{ 14.0f * Block::kBlockSize_, 13.5f * Block::kBlockSize_ }));
+	tutorialThird_->SetSize({ 2.0f * Block::kBlockSize_, 4.0f * Block::kBlockSize_ });
+
 	saunaRoom_.reset(Object2d::Create(saunaRoomTex_, kBasePosition - Vector2{0.0f, 18.0f}));
+	ropes_[0].reset(Object2d::Create(ropeTex_, Vector2{ 10.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
+	ropes_[0]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
+	ropes_[1].reset(Object2d::Create(ropeTex_, Vector2{ 28.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
+	ropes_[1]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
+	wells_[0].reset(Object2d::Create(wellOrangeTex_, Vector2{ 10.5f * Block::kBlockSize_, 0.0f * Block::kBlockSize_ }));
+	wells_[0]->SetSize({ 2.0f * Block::kBlockSize_,1.0f * Block::kBlockSize_ });
+	wells_[1].reset(Object2d::Create(wellBlueTex_, Vector2{ 28.5f * Block::kBlockSize_, 0.0f * Block::kBlockSize_ }));
+	wells_[1]->SetSize({ 2.0f * Block::kBlockSize_,1.0f * Block::kBlockSize_ });
 
 	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
 	purposeSprite_.reset(Sprite::Create(purposeTex_, { 640.0f,200.0f }));
@@ -47,10 +67,6 @@ Stage::Stage()
 	returnPosition_[0] = { 10.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
 	returnPosition_[1] = { 28.5f * Block::kBlockSize_, 5.0f * Block::kBlockSize_ };
 
-	returnObjects_[0].reset(Object2d::Create(returnTex_, returnPosition_[0]));
-	returnObjects_[0]->SetSize({ 96.0f * 2.0f, 96.0f });
-	returnObjects_[1].reset(Object2d::Create(returnTex_, returnPosition_[1]));
-	returnObjects_[1]->SetSize({ 96.0f * 2.0f, 96.0f });
 	returnUI_.reset(Object2d::Create(upTex_, returnPosition_[0] + Vector2{ 0.0f,-100.0f }));
 
 	returnArea_[0].max = { returnPosition_[0].x + Block::kBlockSize_, returnPosition_[0].y + Block::kBlockHalfSize_ };
@@ -77,14 +93,17 @@ Stage::~Stage()
 
 void Stage::Initialize(uint32_t stageNumber) {
 
+	currentStageNumber_ = stageNumber;
+
 	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
 
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
 
+			//一旦初期化。耐久力などの設定はLoadで行う
 			blockPositions_[y][x] = 0;
 			map_[y][x]->SetPlayer(player_);
 			map_[y][x]->SetMagma(magma_.get());
-			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
+			map_[y][x]->SetDurability(float(y / 5) + 3.0f);
 
 		}
 
@@ -95,6 +114,7 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	isClear_ = false;
 	isRespawn_ = false;
+	isBreakFlagBlocks_ = false;
 	rockCount_ = 0;
 	magma_->Initialize();
 	magma_->SetPlayer(player_);
@@ -121,6 +141,20 @@ void Stage::Update() {
 
 
 	if (!isClear_) {
+
+		//チュートリアルステージ用更新
+		if (currentStageNumber_ == 1) {
+
+			if (TutorialFlagManager::GetInstance()->GetFlags(2) && !isBreakFlagBlocks_) {
+				BreakFlagBlock();
+			}
+
+			//画像切り替え用の変数カウント
+			if (++tutorialSwitchCount_ > maxSwitchCount_) {
+				tutorialSwitchCount_ = 0;
+			}
+
+		}
 
 		//ブロックの更新
 		for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
@@ -178,7 +212,7 @@ void Stage::Update() {
 
 		}
 
-		BlockTextureManager::GetInstance()->UpdateParticle();
+		BlockTextureManager::GetInstance()->UpdateParticle(*camera_);
 
 	}
 	//クリアした時
@@ -193,18 +227,53 @@ void Stage::CheckCollision() {
 
 	if (IsCollision(returnArea_[0], player_->GetCollision())) {
 
-		player_->MoveLift();
-		canReturn_ = true;
+		//ステージ1の時だけ特殊処理
+		if (currentStageNumber_ == 1) {
 
-		returnUI_->position_ = returnPosition_[0] + Vector2{ 0.0f,-100.0f };
+			if (TutorialFlagManager::GetInstance()->GetFlags(2)) {
+
+				player_->MoveLift();
+				canReturn_ = true;
+
+				returnUI_->position_ = returnPosition_[0] + Vector2{ 0.0f,-100.0f };
+
+			}
+			else {
+				canReturn_ = false;
+			}
+
+		}
+		else {
+			player_->MoveLift();
+			canReturn_ = true;
+
+			returnUI_->position_ = returnPosition_[0] + Vector2{ 0.0f,-100.0f };
+		}
 
 	}
 	else if (IsCollision(returnArea_[1], player_->GetCollision())) {
 
-		player_->MoveLift();
-		canReturn_ = true;
+		if (currentStageNumber_ == 1) {
 
-		returnUI_->position_ = returnPosition_[1] + Vector2{ 0.0f,-100.0f };
+			if (TutorialFlagManager::GetInstance()->GetFlags(2)) {
+
+				player_->MoveLift();
+				canReturn_ = true;
+
+				returnUI_->position_ = returnPosition_[1] + Vector2{ 0.0f,-100.0f };
+
+			}
+			else {
+				canReturn_ = false;
+			}
+
+		}
+		else {
+			player_->MoveLift();
+			canReturn_ = true;
+
+			returnUI_->position_ = returnPosition_[1] + Vector2{ 0.0f,-100.0f };
+		}
 
 	}
 	else {
@@ -263,7 +332,16 @@ void Stage::Draw() {
 	*/
 }
 
-void Stage::DrawHeat() {
+void Stage::DrawHeatBefore() {
+
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (uint32_t i = 0; i < 2; i++) {
+		ropes_[i]->Draw(*camera_);
+	}
+
+}
+
+void Stage::DrawHeatAfter() {
 
 	
 	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
@@ -272,7 +350,20 @@ void Stage::DrawHeat() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
-		returnObjects_[i]->Draw(*camera_);
+		wells_[i]->Draw(*camera_);
+	}
+
+	if (currentStageNumber_ == 1) {
+
+		if (tutorialSwitchCount_ < maxSwitchCount_ / 2) {
+			tutorialFirst_->Draw(*camera_);
+		}
+		else {
+			tutorialSecond_->Draw(*camera_);
+		}
+
+		tutorialThird_->Draw(*camera_);
+
 	}
 
 	if (canReturn_) {
@@ -286,7 +377,16 @@ void Stage::DrawHeat() {
 	saunaRoom_->Draw(*camera_);
 }
 
-void Stage::DrawCold() {
+void Stage::DrawColdBefore() {
+
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (uint32_t i = 0; i < 2; i++) {
+		ropes_[i]->Draw(*camera_);
+	}
+
+}
+
+void Stage::DrawColdAfter() {
 
 
 	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
@@ -295,7 +395,20 @@ void Stage::DrawCold() {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	for (uint32_t i = 0; i < 2; i++) {
 		borders_[i]->Draw(*camera_);
-		returnObjects_[i]->Draw(*camera_);
+		wells_[i]->Draw(*camera_);
+	}
+
+	if (currentStageNumber_ == 1) {
+
+		if (tutorialSwitchCount_ < maxSwitchCount_ / 2) {
+			tutorialFirst_->Draw(*camera_);
+		}
+		else {
+			tutorialSecond_->Draw(*camera_);
+		}
+
+		tutorialThird_->Draw(*camera_);
+
 	}
 
 	if (canReturn_) {
@@ -414,6 +527,16 @@ void Stage::BreakAllBlock() {
 
 }
 
+void Stage::BreakFlagBlock() {
+
+	if (currentStageNumber_ == 1) {
+		map_[2][14]->ChangeType(Block::kNone);
+		map_[3][14]->ChangeType(Block::kNone);
+		isBreakFlagBlocks_ = true;
+	}
+
+}
+
 void Stage::RespawnBlock(Block::BlockType type) {
 
 	//再生成可能なブロックの中から対応した要素を再生成させる
@@ -424,7 +547,15 @@ void Stage::RespawnBlock(Block::BlockType type) {
 			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->ChangeType(type);
 			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->Reset();
 			//高さに応じて耐久値を調整
-			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(int32_t(respawnBlocks_[i][1] / 5 + 3));
+			if (type == Block::kGoldBlock) {
+				map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(30.0f);
+			}
+			else if (type == Block::kDownMagma) {
+				map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(5.0f);
+			}
+			else {
+				map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->SetDurability(float(respawnBlocks_[i][1] / 5) + 3.0f);
+			}
 
 		}
 
@@ -514,7 +645,15 @@ void Stage::Load(uint32_t stageNumber) {
 			map_[y][x]->ChangeType(type);
 			map_[y][x]->Reset();
 			//高さに応じて耐久値を調整
-			map_[y][x]->SetDurability(int32_t(y / 5 + 3));
+			if (type == Block::kGoldBlock) {
+				map_[y][x]->SetDurability(30.0f);
+			}
+			else if (type == Block::kDownMagma) {
+				map_[y][x]->SetDurability(5.0f);
+			}
+			else {
+				map_[y][x]->SetDurability(float(y / 5) + 3.0f);
+			}
 
 			//タイプが再生成可能なものなら配列に追加
 			if (type == Block::kDownMagma || type == Block::kGoldBlock) {
@@ -529,20 +668,24 @@ void Stage::Load(uint32_t stageNumber) {
 
 	}
 
-	std::string RockNum;
+	//チュートリアルステージだけ特殊ブロック配置
+	if (stageNumber == 1) {
 
-	//ブロックの必要数を読み取り。描かれていなかったら30に固定
-	if (std::getline(newFile, RockNum, ',')) {
-
-		goalRockCount_ = std::stoi(RockNum);
-
-	}
-	else {
-
-		goalRockCount_ = 100;
+		map_[2][14]->ChangeType(Block::kFlagBlock);
+		map_[3][14]->ChangeType(Block::kFlagBlock);
 
 	}
 
+	//ブロックの更新
+	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			blockPositions_[y][x] = map_[y][x]->GetType();
+			SetUV(map_[y][x].get());
+			map_[y][x]->Update();
+		}
+
+	}
 
 }
 

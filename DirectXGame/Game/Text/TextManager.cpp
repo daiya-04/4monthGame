@@ -13,12 +13,12 @@ void TextManager::Initialize() {
     fontOffsets_.clear();
     LoadFontOffset();
    // fontOffsets_.emplace(L"互", Vector2{ 1.0f,0});
-   // fontOffsets_.emplace(L"サ", Vector2{ 2.0f,0 });
+   // fontOffsets_.emplace(L"サ", Vector2{ 2.0f,0 });℃
    // fontOffsets_.emplace(L"道", Vector2{ 3.0f,0 });
    // fontOffsets_.emplace(L"ぁ", Vector2{ 3.0f,0 });
     drawObject_.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 512));
     //drawObject_->Init(1024);
-    drawObject_->SetTextureHandle(TextureManager::Load("gameTextFont.png"));
+    drawObject_->SetTextureHandle(TextureManager::Load("text.png"));
     drawObject_->SetSize({ float(kTextStride_),float(kTextStride_) });
     testCamera_.reset(new Camera);
     testCamera_->Init();

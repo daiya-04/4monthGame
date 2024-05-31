@@ -27,9 +27,9 @@ UpgradeSystem::UpgradeSystem()
 	powerTexture_ = TextureManager::GetInstance()->Load("UI/power.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
 	rockUITextures_[0] = TextureManager::GetInstance()->Load("UI/rock.png");
-	rockUITextures_[1] = TextureManager::GetInstance()->Load("UI/speedRock.png");
+	rockUITextures_[1] = TextureManager::GetInstance()->Load("UI/powerRock.png");
 	rockUITextures_[2] = TextureManager::GetInstance()->Load("UI/digSpeedRock.png");
-	rockUITextures_[3] = TextureManager::GetInstance()->Load("UI/powerRock.png");
+	rockUITextures_[3] = TextureManager::GetInstance()->Load("UI/speedRock.png");
 
 	furnace_.reset(Object2d::Create(furnaceTexture_, {Block::kBlockSize_ * 19.5f, Block::kBlockSize_ * 2.5f}));
 	furnace_->SetSize({ Block::kBlockSize_ * 2.0f,Block::kBlockSize_ * 4.0f });

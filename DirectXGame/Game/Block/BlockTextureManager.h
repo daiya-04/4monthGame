@@ -3,7 +3,11 @@
 #include <memory>
 #include "Object2dInstancing.h"
 #include <list>
+#include "Vec4.h"
 class BlockBreakParticle;
+class StarParticle;
+class SandParticle;
+class GemGetParticle;
 
 /// <summary>
 /// ブロックに使うテクスチャ一括管理
@@ -33,6 +37,9 @@ public:
 	//描画オブジェクト追加
 	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize,uint32_t type);
 
+	//描画オブジェクト追加
+	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type,const Vector4& color);
+
 	//全オブジェクト描画
 	void DrawAll(const Camera& camera);
 
@@ -45,12 +52,26 @@ public:
 	//描画オブジェクト追加
 	void AppendParticle(const Vector2& position, uint32_t type);
 
+	//描画オブジェクト追加
+	void AppendStarParticle(const Vector2& position,const Vector4& color);
+
+	//描画オブジェクト追加
+	void AppendSandParticle(const Vector2& position, const Vector4& color);
+
+	//描画オブジェクト追加
+	void AppendGemParticle(const Vector2& position, uint32_t type, const Vector4& color);
+
 	//全オブジェクト描画
 	void DrawParticle(const Camera& camera);
 
 	void CreateParticle(const Vector2& position, uint32_t type);
+	void CreateParticle(const Vector2& position, const Vector2& velocity, uint32_t type);
 
-	void UpdateParticle();
+	void CreateStarParticle(const Vector2& position, int32_t type);
+	void CreateSandParticle(const Vector2& position, int32_t type);
+	void CreateGemParticle(const Vector2& position, int32_t type);
+
+	void UpdateParticle(const Camera& camera);
 
 private:
 
@@ -62,6 +83,14 @@ private:
 
 	std::list<std::unique_ptr<BlockBreakParticle>> breakParticleDatas_;
 
+	std::list<std::unique_ptr<StarParticle>> starParticleDatas_;
+	std::unique_ptr<Object2dInstancing> starParticles_;
+
+	std::list<std::unique_ptr<SandParticle>> sandParticleDatas_;
+	std::unique_ptr<Object2dInstancing> sandParticles_;
+
+	std::list<std::unique_ptr<GemGetParticle>> gemParticleDatas_;
+	std::unique_ptr<Object2dInstancing> gemParticles_;
 private:
 
 	BlockTextureManager();

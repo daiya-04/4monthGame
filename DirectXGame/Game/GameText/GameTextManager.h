@@ -49,6 +49,12 @@ public:
 
 	bool GetIsEnd() { return isEnd_; };
 
+	void SetIsEnd(bool flag) { isEnd_ = flag; }
+
+	void Tutorial(int32_t tutorialNum);
+
+	bool IsCurrentText(const std::wstring& text) { return text == mainText_->GetCurrentText(); }
+
 private:
 
 	//テキスト読み込み
@@ -75,6 +81,16 @@ private:
 	Vector2 nameBackPosition_ = {0,0};
 	Vector2 namePosition_ = { 0,0 };
 
+	Vector2 nextButtonOffset_ = {};
+	Vector2 nextButtonSize_={};
+
+	Vector2 nextButtonPosition_;//アニメーションに使う座標
+	Vector2 nextButtonOldPosition_;
+	Vector2 nextButtonTargetPosition_;
+	float buttonParametric_;
+
+	Vector4 buttonColor_;
+
 	std::array<std::unique_ptr<Sprite>,9> nineSliceTextureBox_;
 
 	std::unique_ptr<Sprite> nameBack_;//名前ひょうじの背景
@@ -83,7 +99,7 @@ private:
 
 	std::unique_ptr<Text> nameText_;//名前表示
 
-	std::unique_ptr<Text> next_;//次へボタン
+	std::unique_ptr<Sprite> nextButton_;//次へボタン
 
 	//std::wstring testText = L"";
 
@@ -97,4 +113,22 @@ private:
 	bool isEnd_;//終了したか
 
 	const std::string dataName = "GameText";
+
+	bool isSkip_;//テキストをスキップするか
+	static const int32_t kSkipEx = 20;//何フレームでスキップを実行するか
+	int32_t skipButtonLength_;//スキップボタンをどれくらい押しつづけているか
+
+	std::unique_ptr<Sprite> skipButton_;//スキップボタン
+	std::unique_ptr<Sprite> skipText_;
+	std::unique_ptr<Sprite> skipGaugeBack_;
+	std::unique_ptr<Sprite> skipGauge_;
+
+	Vector2 skipButtonPosition_ = {};
+	Vector2 skipButtonSize_ = {};
+	Vector2 skipTextPosition_ = {};
+	Vector2 skipTextSize_ = {};
+	Vector2 skipGaugePosition_ = {};
+	Vector2 skipGaugeSize_ = {};
+	Vector2 skipGaugeBackPosition_ = {};
+	Vector2 skipGaugeBackSize_ = {};
 };
