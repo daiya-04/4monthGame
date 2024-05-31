@@ -6,7 +6,10 @@ void StarParticle::Initialize(const Vector2& postition, int32_t type) {
 	position_.y += RandomEngine::GetRandom(-64.0f, 64.0f);
 	position_.x += RandomEngine::GetRandom(-64.0f, 64.0f);
 	color_ = {1.0f,1.0f,1.0f,1.0f};
-	aliveTime_ = int32_t(RandomEngine::GetRandom(25.0f, 30.0f));
+	aliveTime_ = 10;
+	if (type != 1) {
+		aliveTime_ = int32_t(RandomEngine::GetRandom(25.0f, 30.0f));
+	}
 	aliveMax_ = aliveTime_;
 	isAlive_ = true;
 	if (type==0) {
@@ -28,4 +31,8 @@ void StarParticle::Update() {
 
 void StarParticle::Draw() {
 	BlockTextureManager::GetInstance()->AppendStarParticle(position_,color_ );
+}
+
+void StarParticle::DrawUI() {
+	BlockTextureManager::GetInstance()->AppendStarParticleUI(position_, color_);
 }

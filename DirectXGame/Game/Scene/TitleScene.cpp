@@ -6,6 +6,7 @@
 #include "ImGuiManager.h"
 #include "SceneManager.h"
 #include "GlobalVariables.h"
+#include "AudioManager.h"
 #include "Audio.h"
 #include "Input.h"
 #include <random>
@@ -49,6 +50,10 @@ void TitleScene::Init() {
 	circle_->SetPosition(uis_["AButton"]->GetPosition());
 
 	stageNumber_ = 1;
+
+	selectSE_ = AudioManager::GetInstance()->Load("SE/select_ok.mp3");
+	moveSE_ = AudioManager::GetInstance()->Load("SE/select_move.mp3");
+	cancelSE_ = AudioManager::GetInstance()->Load("SE/select_cancel.mp3");
 
 	FloatingGimmickInit();
 	ButtonEffectInit();
@@ -166,8 +171,10 @@ void TitleScene::StartUpdate() {
 			uis_["Option"]->DrawOn();
 			uis_["AButton"]->DrawOff();
 			circle_->DrawOff();
+			selectSE_->Play();
 		}else {
 			SceneManager::GetInstance()->ChangeScene("StageSelect");
+			selectSE_->Play();
 		}
 	}
 
@@ -194,6 +201,7 @@ void TitleScene::StartUpdate() {
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Down) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN)) {
 		selectRequest_ = Select::Option;
+		moveSE_->Play();
 		uis_["Start"]->SetPosition(workBounding_.axisPos_);
 	}
 
@@ -228,16 +236,19 @@ void TitleScene::OptionUpdate() {
 
 		if (Input::GetInstance()->TriggerLStick(Input::Stick::Up) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_UP)) {
 			selectRequest_ = Select::Start;
+			moveSE_->Play();
 			uis_["Option"]->SetPosition(workBounding_.axisPos_);
 		}
 
 		if (Input::GetInstance()->TriggerLStick(Input::Stick::Down) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN)) {
 			selectRequest_ = Select::Exit;
+			moveSE_->Play();
 			uis_["Option"]->SetPosition(workBounding_.axisPos_);
 		}
 
 		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 			option_->Init();
+			selectSE_->Play();
 		}
 
 #ifdef _DEBUG
@@ -276,11 +287,13 @@ void TitleScene::ExitUpdate() {
 	BoundingUpdate(uis_["Exit"].get());
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+		cancelSE_->Play();
 		WinApp::GetInstance()->GameEnd();
 	}
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Up) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_UP)) {
 		selectRequest_ = Select::Option;
+		moveSE_->Play();
 		uis_["Exit"]->SetPosition(workBounding_.axisPos_);
 	}
 

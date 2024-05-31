@@ -30,6 +30,8 @@ public:/// <summary>
 	bool GetIsStart() { return isStart_; };
 	bool GetIsEnd() { return isEnd_; };
 
+	void SetPosition(const Vector2& pos) { position_ = pos; };
+
 private:
 	std::unique_ptr<PostEffect> weight_;
 	std::unique_ptr<Sprite> circle_;

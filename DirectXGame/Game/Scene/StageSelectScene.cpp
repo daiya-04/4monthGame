@@ -13,7 +13,9 @@
 #include <format>
 #include <numbers>
 
-StageSelectScene::~StageSelectScene() {}
+StageSelectScene::~StageSelectScene() {
+	selectBGM_->StopSound();
+}
 
 void StageSelectScene::Init() {
 
@@ -75,6 +77,10 @@ void StageSelectScene::Init() {
 
 	score_.Init(scorePos_, { 48.0f,48.0f });
 	rank_.Init(rankPos_, { 96.0f,96.0f });
+
+	selectBGM_ = AudioManager::GetInstance()->Load("BGM/selectBGM.mp3");
+
+	selectBGM_->Play();
 
 }
 
