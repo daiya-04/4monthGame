@@ -80,13 +80,13 @@ void GemGetParticle::Update(const Camera& camera) {
 		switch (type_)
 		{
 		case 5://r
-			BlockTextureManager::GetInstance()->CreateStarParticleUI(pos + Vector2{ 1170.0f , 96.0f + 56.0f * 1 });
+			BlockTextureManager::GetInstance()->CreateStarParticleUI(pos + Vector2{ 1170.0f , 96.0f + 56.0f * 1 },-1);
 			break;
 		case 6://g
-			BlockTextureManager::GetInstance()->CreateStarParticleUI(pos + Vector2{ 1170.0f , 96.0f + 56.0f * 2 });
+			BlockTextureManager::GetInstance()->CreateStarParticleUI(pos + Vector2{ 1170.0f , 96.0f + 56.0f * 2 },-2);
 			break;
 		case 7://b
-			BlockTextureManager::GetInstance()->CreateStarParticleUI(pos + Vector2{ 1170.0f, 96.0f + 56.0f * 3});
+			BlockTextureManager::GetInstance()->CreateStarParticleUI(pos + Vector2{ 1170.0f, 96.0f + 56.0f * 3},-3);
 			break;
 		default:
 			break;

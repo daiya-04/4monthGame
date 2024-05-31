@@ -300,10 +300,10 @@ void BlockTextureManager::CreateStarParticle(const Vector2& position,int32_t typ
 	}
 }
 
-void BlockTextureManager::CreateStarParticleUI(const Vector2& position) {
+void BlockTextureManager::CreateStarParticleUI(const Vector2& position, int32_t type) {
 		std::unique_ptr<StarParticle> particle;
 		particle.reset(new StarParticle);
-		particle->Initialize(position, 1);
+		particle->Initialize(position, type);
 		starParticleDatasUI_.push_back(std::move(particle));
 }
 

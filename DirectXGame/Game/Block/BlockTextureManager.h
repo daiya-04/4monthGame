@@ -82,7 +82,7 @@ public:
 	void CreateGemParticle(const Vector2& position, int32_t type);
 	void CreateWallKickEffect(const Vector2& position, int32_t type);
 
-	void CreateStarParticleUI(const Vector2& position);
+	void CreateStarParticleUI(const Vector2& position,int32_t type);
 
 	void UpdateParticle(const Camera& camera);
 
