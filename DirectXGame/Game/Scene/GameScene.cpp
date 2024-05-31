@@ -140,6 +140,7 @@ void GameScene::Update() {
 		if (scrollHomePoint_.y > -201.0f) {
 			scrollHomePoint_.y = -200.0f;
 			isScrollEnd_ = true;
+			stage_->SetIsStart(true);
 			GameTextManager::GetInstance()->InitializeStage(stageNumber_);
 		}
 

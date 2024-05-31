@@ -84,6 +84,9 @@ public:
 	//クリアフラグ取得
 	bool GetIsClear() const { return isClear_; }
 
+	//スタートフラグセット
+	void SetIsStart(bool flag) { isStart_ = flag; }
+
 	//極寒ブロックを灼熱ブロックに変える
 	void ChangeSnow2Magma();
 
@@ -146,12 +149,13 @@ private:
 	std::array<std::unique_ptr<Object2d>, kMaxBorder_>  borders_;
 	std::unique_ptr<Magma> magma_;
 	std::unique_ptr<Object2d> saunaRoom_;
-	std::unique_ptr<Object2d> saunaUI_;
+	std::unique_ptr<Object2d> UI_A_;
 
 	std::array<std::unique_ptr<Object2d>, 2> ropes_;
 	std::array<std::unique_ptr<Object2d>, 2> wells_;
 
 	std::unique_ptr<UpgradeSystem> upgradeSystem_;
+	bool canUpgrade_ = false;
 
 	//再生成するブロックを纏めたもの
 	std::vector<std::array<uint32_t, 2>> respawnBlocks_;
@@ -163,6 +167,8 @@ private:
 
 	//必要な岩の数
 	int32_t goalRockCount_ = 100;
+
+	bool isStart_ = false;
 
 	bool isClear_ = false;
 
