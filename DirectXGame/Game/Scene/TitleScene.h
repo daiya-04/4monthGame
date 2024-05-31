@@ -106,6 +106,10 @@ private:
 
 	bool isOpening_ = true;
 
+	Audio* selectSE_;
+	Audio* moveSE_;
+	Audio* cancelSE_;
+
 private:
 
 	enum class Select {
