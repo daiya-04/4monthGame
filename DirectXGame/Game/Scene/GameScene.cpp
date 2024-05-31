@@ -452,7 +452,9 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	targetScene->PreDrawScene(commandList_);
 	
 	waterDropManager_->DrawScene(commandList_, heatHazeManager_->GetHandle());
-	cameraFrozen_->Draw(commandList_);
+	if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
+		cameraFrozen_->Draw(commandList_);
+	}
 	targetScene->PostDrawScene(commandList_);
 
 }
