@@ -652,7 +652,7 @@ void Player::WallJump() {
 				wallJumpVelocity_.x = -parameters_[currentCharacters_]->wallJump_.wallJumpVelocity.x;
 				effectPos = GetPosition(kRightBottom);
 			}
-			BlockTextureManager::GetInstance()->CreateStarParticle(effectPos, int32_t(isFacingLeft_));
+			BlockTextureManager::GetInstance()->CreateWallKickEffect(effectPos, int32_t(isFacingLeft_));
 		}
 
 	}

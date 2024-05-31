@@ -293,11 +293,18 @@ void BlockTextureManager::CreateParticle(const Vector2& position, const Vector2&
 void BlockTextureManager::CreateStarParticle(const Vector2& position,int32_t type) {
 	StarParticle::response--;
 	if (StarParticle::response<0) {
-		std::unique_ptr<WallKickEffect> particle;
-		particle.reset(new WallKickEffect);
+		std::unique_ptr<StarParticle> particle;
+		particle.reset(new StarParticle);
 		particle->Initialize(position,type);
-		wallKickEffectDatas_.push_back(std::move(particle));
+		starParticleDatas_.push_back(std::move(particle));
 	}
+}
+
+void BlockTextureManager::CreateWallKickEffect(const Vector2& position, int32_t type) {
+	std::unique_ptr<WallKickEffect> particle;
+	particle.reset(new WallKickEffect);
+	particle->Initialize(position, type);
+	wallKickEffectDatas_.push_back(std::move(particle));
 }
 
 void BlockTextureManager::CreateStarParticleUI(const Vector2& position, int32_t type) {
