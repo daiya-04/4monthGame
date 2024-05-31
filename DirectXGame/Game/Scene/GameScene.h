@@ -78,7 +78,7 @@ private:
 
 	enum MenuType {
 		kBack, //ゲームに戻る
-		kRestart, //リスタート
+		kOption, //オプション
 		kStageSelect, //ステージ選択へ
 
 		kMaxMenu, 
@@ -129,14 +129,16 @@ private:
 
 	MenuType menu_ = kBack;
 
-	std::unique_ptr<Sprite> backSprite_;
-	std::unique_ptr<Sprite> restartSprite_;
-	std::unique_ptr<Sprite> toStageSelectSprite_;
+	std::unique_ptr<Sprite> menuBackSprite_;
 
 	std::unique_ptr<Sprite> menuButtonSprite_;
 
+	std::array<std::unique_ptr<Sprite>, kMaxMenu> menuSprites_;
+
 	uint32_t backGameTex_;
 	uint32_t restartTex_;
+	uint32_t toGameTex_;
+	uint32_t optionTex_;
 	uint32_t toStageSelectTex_;
 	uint32_t menuButtonTex_;
 
