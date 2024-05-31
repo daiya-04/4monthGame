@@ -273,6 +273,7 @@
     <ClCompile Include="Game\Block\SandParticle.cpp" />
     <ClCompile Include="TitleAnimation.cpp" />
     <ClCompile Include="Game\Block\GemGetParticle.cpp" />
+    <ClCompile Include="StageNumberDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -473,6 +474,7 @@
     <ClInclude Include="Game\Block\SandParticle.h" />
     <ClInclude Include="TitleAnimation.h" />
     <ClInclude Include="Game\Block\GemGetParticle.h" />
+    <ClInclude Include="StageNumberDraw.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">

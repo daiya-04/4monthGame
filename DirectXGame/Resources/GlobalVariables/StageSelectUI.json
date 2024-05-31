@@ -35,15 +35,6 @@
                     56.0
                 ]
             }
-        },
-        {
-            "stageNumber": {
-                "filePath": "UI/number.png",
-                "position": [
-                    640.0,
-                    270.0
-                ]
-            }
         }
     ]
 }

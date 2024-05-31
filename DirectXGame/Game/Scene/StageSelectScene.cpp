@@ -57,10 +57,10 @@ void StageSelectScene::Init() {
 	player_[Blue]->position_ = { saunaRooms_[stageNumber_ - 1]->position_.x - 400.0f, 568.0f};
 	player_[Orange]->position_ = { saunaRooms_[stageNumber_ - 1]->position_.x - 500.0f,568.0f };
 
-	///UIの設定
+	stageNumberDraw_ = std::make_unique<StageNumberDraw>();
+	stageNumberDraw_->Init({ 640.0f,270.0f }, { 96.0f, 96.0f });
 
-	uis_["stageNumber"]->SetSize({ 64.0f,64.0f });
-	uis_["stageNumber"]->SetTextureArea({ 64.0f * stageNumber_, 64.0f * stageNumber_ }, { 64.0f,64.0f });
+	///UIの設定
 
 	uis_["RArrow"]->SetSize({ 64.0f,64.0f });
 	uis_["RArrow"]->SetTextureArea({ 64.0f,64.0f }, { 64.0f,64.0f });
@@ -164,6 +164,8 @@ void StageSelectScene::DrawUI() {
 		ui.second->Draw();
 	}
 
+	stageNumberDraw_->Draw(stageNumber_);
+
 	if (mode_ == Mode::Root) {
 		score_.Draw();
 		rank_.Draw();
@@ -179,7 +181,7 @@ void StageSelectScene::DebugGUI() {
 
 	ImGui::Begin("AddUI");
 
-	ImGui::InputText("texurePath", filePathBuff, sizeof(filePathBuff));
+	ImGui::InputText("texturePath", filePathBuff, sizeof(filePathBuff));
 	std::string filePath = filePathBuff;
 	ImGui::InputText("groupName", groupNameBuff, sizeof(groupNameBuff));
 	std::string groupName = groupNameBuff;
@@ -336,7 +338,6 @@ void StageSelectScene::MoveUpdate() {
 
 	if (param_ >= 1.0f) {
 		modeRequest_ = Mode::Root;
-		uis_["stageNumber"]->SetTextureArea({ 64.0f * stageNumber_, 64.0f * stageNumber_ }, { 64.0f,64.0f });
 	}
 
 }

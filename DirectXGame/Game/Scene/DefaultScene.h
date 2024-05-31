@@ -10,8 +10,8 @@
 /// </summary>
 class DefaultScene : public IScene {
 public:
-
-	static const uint32_t kMaxStage_ = 3;
+	
+	static const uint32_t kMaxStage_ = 15;
 
 protected:
 
