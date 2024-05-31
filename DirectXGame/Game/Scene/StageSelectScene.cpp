@@ -59,6 +59,7 @@ void StageSelectScene::Init() {
 
 	stageNumberDraw_ = std::make_unique<StageNumberDraw>();
 	stageNumberDraw_->Init({ 640.0f,270.0f }, { 96.0f, 96.0f });
+	stageNumberDraw_->SetStageNumber(stageNumber_);
 
 	///UIの設定
 
@@ -73,7 +74,7 @@ void StageSelectScene::Init() {
 	///
 
 	score_.Init(scorePos_, { 48.0f,48.0f });
-	rank_.Init(rankPos_, { 64.0f,64.0f });
+	rank_.Init(rankPos_, { 96.0f,96.0f });
 
 }
 
@@ -122,6 +123,8 @@ void StageSelectScene::Update() {
 			break;
 	}
 
+	
+
 	player_[Blue]->SetTextureArea({160.0f * animationNum_,160.0f}, {160.0f,160.0f});
 	player_[Orange]->SetTextureArea({ 160.0f * animationNum_,160.0f }, { 160.0f,160.0f });
 
@@ -164,9 +167,10 @@ void StageSelectScene::DrawUI() {
 		ui.second->Draw();
 	}
 
-	stageNumberDraw_->Draw(stageNumber_);
+	
 
 	if (mode_ == Mode::Root) {
+		stageNumberDraw_->Draw();
 		score_.Draw();
 		rank_.Draw();
 	}
@@ -221,6 +225,9 @@ void StageSelectScene::RootInit() {
 	if (stageNumber_ == kMaxStage_) {
 		uis_["RArrow"]->DrawOff();
 	}
+
+	stageNumberDraw_->SetStageNumber(stageNumber_);
+	stageNumberDraw_->AnimationInit();
 
 	arrowFloating_.param_ = 0.0f;
 
@@ -301,6 +308,8 @@ void StageSelectScene::RootUpdate() {
 	uis_["LArrow"]->SetPosition(LArrowPos_);
 	uis_["RArrow"]->SetPosition(RArrowPos_);
 
+	stageNumberDraw_->AnimationUpdate();
+
 }
 
 void StageSelectScene::MoveInit() {
@@ -319,7 +328,7 @@ void StageSelectScene::MoveUpdate() {
 
 	float prePos = camera_.translation_.x;
 
-	param_ += 0.03f;
+	param_ += 0.06f;
 	param_ = min(param_, 1.0f);
 
 	float T = Easing::easeInOutQuart(param_);

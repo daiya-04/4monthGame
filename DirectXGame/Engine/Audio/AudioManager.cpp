@@ -19,6 +19,9 @@ AudioManager* AudioManager::GetInstance() {
 AudioManager::~AudioManager() {
 
 	for (const auto& audio : audios_) {
+		if (audio->IsValidPlayhandle()) {
+			audio->StopSound();
+		}
 		audio->DestroyPlayHandle();
 	}
 

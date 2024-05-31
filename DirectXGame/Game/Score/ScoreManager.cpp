@@ -69,7 +69,7 @@ void Rank::Draw() {
 
 	rankImage_->SetPosition(pos_);
 	rankImage_->SetSize(size_);
-	rankImage_->SetTextureArea({ float(value_) * 32.0f,0.0f }, { 32.0f,32.0f });
+	rankImage_->SetTextureArea({ float(value_) * 32.0f,0.0f }, { 33.0f,33.0f });
 
 	rankImage_->Draw();
 
