@@ -5,6 +5,7 @@
 #include "starParticle.h"
 #include "SandParticle.h"
 #include "GemGetParticle.h"
+#include "WallKickEffect.h"
 #include "DirectXCommon.h"
 BlockTextureManager* BlockTextureManager::GetInstance() {
 	static BlockTextureManager instance;
@@ -130,6 +131,10 @@ BlockTextureManager::BlockTextureManager() {
 	constantCamera_->Init();
 	constantCamera_->ChangeDrawingRange({ 1280.0f,720.0f });
 	constantCamera_->UpdateMatrix();
+
+	//wallkick
+	wallKickEffects_.reset(Object2dInstancing::Create(TextureManager::Load("wallKickEffect.png"), Vector2{ 1.0f,1.0f }, 8));
+	wallKickEffects_->SetSize({ float(BaseBlock::kBlockSize_),float(BaseBlock::kBlockSize_) });
 }
 
 void BlockTextureManager::ClearObject() {
@@ -141,6 +146,8 @@ void BlockTextureManager::ClearObject() {
 	sandParticles_->ClearUseCount();
 	gemParticles_->ClearUseCount();
 	starParticlesUI_->ClearUseCount();
+
+	wallKickEffects_->ClearUseCount();
 }
 
 void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type) {
@@ -219,6 +226,21 @@ void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t typ
 	gemParticles_->AppendObject(position, tBase, Vector2{32.0f,32.0f}, color);
 }
 
+void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t type, const Vector4& color) {
+	Vector2 tBase = { 0,0 };
+	Vector2 tSize = { 0,0 };
+	if (type == 1) {
+		tBase = { 0,0 };
+		tSize = {32.0f,32.0f};
+	}
+	else if (type == 0) {
+		tBase = { 32.0f,0 };
+		tSize = { -32.0f,32.0f };
+	}
+
+	wallKickEffects_->AppendObject(position, tBase,tSize, color);
+}
+
 void BlockTextureManager::DrawParticle(const Camera& camera) {
 	for (std::unique_ptr<BlockBreakParticle>& data : breakParticleDatas_) {
 		data->Draw();
@@ -238,6 +260,11 @@ void BlockTextureManager::DrawParticle(const Camera& camera) {
 		data->Draw();
 	}
 	gemParticles_->Draw(camera);
+
+	for (std::unique_ptr<WallKickEffect>& data : wallKickEffectDatas_) {
+		data->Draw();
+	}
+	wallKickEffects_->Draw(camera);
 }
 
 void BlockTextureManager::DrawParticleUI() {
@@ -266,10 +293,10 @@ void BlockTextureManager::CreateParticle(const Vector2& position, const Vector2&
 void BlockTextureManager::CreateStarParticle(const Vector2& position,int32_t type) {
 	StarParticle::response--;
 	if (StarParticle::response<0) {
-		std::unique_ptr<StarParticle> particle;
-		particle.reset(new StarParticle);
+		std::unique_ptr<WallKickEffect> particle;
+		particle.reset(new WallKickEffect);
 		particle->Initialize(position,type);
-		starParticleDatas_.push_back(std::move(particle));
+		wallKickEffectDatas_.push_back(std::move(particle));
 	}
 }
 
@@ -347,6 +374,17 @@ void BlockTextureManager::UpdateParticle(const Camera& camera) {
 	return false;
 		});
 	for (std::unique_ptr<StarParticle>& data : starParticleDatasUI_) {
+		data->Update();
+	}
+
+	//wallKick
+	wallKickEffectDatas_.remove_if([](std::unique_ptr<WallKickEffect>& bullet) {
+		if (!bullet->GetIsAlive()) {
+			return true;
+		}
+		return false;
+		});
+	for (std::unique_ptr<WallKickEffect>& data : wallKickEffectDatas_) {
 		data->Update();
 	}
 }

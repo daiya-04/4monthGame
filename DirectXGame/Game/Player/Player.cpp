@@ -620,14 +620,19 @@ void Player::WallJump() {
 
 			velocity_.y = parameters_[currentCharacters_]->wallJump_.wallJumpVelocity.y;
 
+			//エフェクト生成用position
+			Vector2 effectPos;
+
 			//向きと逆方向に移動する
 			if (isFacingLeft_) {
 				wallJumpVelocity_.x = parameters_[currentCharacters_]->wallJump_.wallJumpVelocity.x;
+				effectPos = GetPosition(kLeftBottom);
 			}
 			else {
 				wallJumpVelocity_.x = -parameters_[currentCharacters_]->wallJump_.wallJumpVelocity.x;
+				effectPos = GetPosition(kRightBottom);
 			}
-
+			BlockTextureManager::GetInstance()->CreateStarParticle(effectPos, int32_t(isFacingLeft_));
 		}
 
 	}

@@ -9,6 +9,7 @@ class BlockBreakParticle;
 class StarParticle;
 class SandParticle;
 class GemGetParticle;
+class WallKickEffect;
 
 /// <summary>
 /// ブロックに使うテクスチャ一括管理
@@ -63,6 +64,9 @@ public:
 	void AppendGemParticle(const Vector2& position, uint32_t type, const Vector4& color);
 
 	//描画オブジェクト追加
+	void AppendWallKickEffect(const Vector2& position, uint32_t type, const Vector4& color);
+
+	//描画オブジェクト追加
 	void AppendStarParticleUI(const Vector2& position, const Vector4& color);
 
 	//全オブジェクト描画
@@ -76,6 +80,7 @@ public:
 	void CreateStarParticle(const Vector2& position, int32_t type);
 	void CreateSandParticle(const Vector2& position, int32_t type);
 	void CreateGemParticle(const Vector2& position, int32_t type);
+	void CreateWallKickEffect(const Vector2& position, int32_t type);
 
 	void CreateStarParticleUI(const Vector2& position);
 
@@ -99,6 +104,9 @@ private:
 
 	std::list<std::unique_ptr<GemGetParticle>> gemParticleDatas_;
 	std::unique_ptr<Object2dInstancing> gemParticles_;
+
+	std::list<std::unique_ptr<WallKickEffect>> wallKickEffectDatas_;
+	std::unique_ptr<Object2dInstancing> wallKickEffects_;
 private:
 
 	BlockTextureManager();
