@@ -89,7 +89,7 @@ public:
 		Score score_;
 	};
 
-	static const int32_t kMaxStage_ = 10;
+	static const int32_t kMaxStage_ = 15;
 
 	static ScoreManager* GetInstance();
 

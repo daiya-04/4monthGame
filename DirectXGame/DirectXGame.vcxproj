@@ -178,6 +178,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\2d\Object2d.cpp" />
     <ClCompile Include="Game\Scene\TransitionEffect\TransitionEffect.cpp" />
     <ClCompile Include="Option.cpp" />
+    <ClCompile Include="StageNumberDraw.cpp" />
     <ClCompile Include="TitleAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +260,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\TransitionEffect\TransitionEffect.h" />
     <ClInclude Include="Option.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="StageNumberDraw.h" />
     <ClInclude Include="TitleAnimation.h" />
   </ItemGroup>
   <ItemGroup>
