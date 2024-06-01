@@ -379,7 +379,7 @@ void Player::Move() {
 	case Player::kNormal:
 
 		//移動
-		if (input_->TiltLStick(Input::Stick::Right) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
+		if (input_->TiltLStick(Input::Stick::Right) && !parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
 
 			if (velocity_.x < -2.0f) {
 				velocity_.x = 0.0f;
@@ -399,7 +399,7 @@ void Player::Move() {
 			isFacingLeft_ = false;
 
 		}
-		else if (input_->TiltLStick(Input::Stick::Left) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
+		else if (input_->TiltLStick(Input::Stick::Left) && !parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
 
 			if (velocity_.x > 2.0f) {
 				velocity_.x = 0.0f;
