@@ -96,6 +96,12 @@ private:
 
 	std::unique_ptr<StageNumberDraw> stageNumberDraw_;
 
+	Audio* selectBGM_;
+
+	Audio* selectSE_;
+	Audio* moveSE_;
+	Audio* cancelSE_;
+
 private:
 
 	enum Charactor {

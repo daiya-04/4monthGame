@@ -70,11 +70,15 @@ void GameScene::Init(){
 
 	backGameTex_ = TextureManager::Load("UI/tmpMenu.png");
 	menuButtonTex_ = TextureManager::Load("UI/menu.png");
+	toGameTex_ = TextureManager::Load("UI/toGame.png");
+	optionTex_ = TextureManager::Load("UI/option.png");
+	toStageSelectTex_ = TextureManager::Load("UI/toStageSelect.png");
 
-	backSprite_.reset(Sprite::Create(backGameTex_, { 640.0f, 360.0f }));
-	/*restartSprite_.reset(Sprite::Create(restartTex_, { 640.0f, 350.0f }));
-	toStageSelectSprite_.reset(Sprite::Create(toStageSelectTex_, { 640.0f, 550.0f }));*/
+	menuBackSprite_.reset(Sprite::Create(backGameTex_, { 640.0f, 360.0f }));
 	menuButtonSprite_.reset(Sprite::Create(menuButtonTex_, { 1150.0f, 690.0f }));
+	menuSprites_[kBack].reset(Sprite::Create(toGameTex_, { 1040.0f, 160.0f }));
+	menuSprites_[kOption].reset(Sprite::Create(optionTex_, { 1040.0f, 360.0f }));
+	menuSprites_[kStageSelect].reset(Sprite::Create(toStageSelectTex_, { 1040.0f, 560.0f }));
 
 	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("player/playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
@@ -84,6 +88,10 @@ void GameScene::Init(){
 	magmaBGM_ = AudioManager::GetInstance()->Load("BGM/magmaBGM.mp3");
 	
 	magmaBGM_->Play();
+
+	selectSE_ = AudioManager::GetInstance()->Load("SE/select_ok.mp3");
+	moveSE_ = AudioManager::GetInstance()->Load("SE/select_move.mp3");
+	cancelSE_ = AudioManager::GetInstance()->Load("SE/select_cancel.mp3");
 
 	TextManager::GetInstance();
 	testText_.reset(new Text);
@@ -155,9 +163,38 @@ void GameScene::Update() {
 		if (Input::GetInstance()->TriggerButton(Input::Button::B) ||
 			Input::GetInstance()->TriggerButton(Input::Button::START)) {
 			isOpenMenu_ = false;
+			menu_ = kBack;
+			cancelSE_->Play();
 		}
 
-		/*if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+		if (Input::GetInstance()->TriggerButton(Input::Button::DPAD_UP) || 
+			Input::GetInstance()->TriggerLStick(Input::Stick::Up)) {
+
+			if (menu_ == kOption) {
+				menu_ = kBack;
+			}
+			else if (menu_ == kStageSelect) {
+				menu_ = kOption;
+			}
+
+			moveSE_->Play();
+
+		}
+		else if (Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN) ||
+			Input::GetInstance()->TriggerLStick(Input::Stick::Down)) {
+
+			if (menu_ == kBack) {
+				menu_ = kOption;
+			}
+			else if (menu_ == kOption) {
+				menu_ = kStageSelect;
+			}
+
+			moveSE_->Play();
+
+		}
+
+		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 
 			switch (menu_)
 			{
@@ -165,16 +202,38 @@ void GameScene::Update() {
 			case GameScene::kBack:
 				isOpenMenu_ = false;
 				menu_ = kBack;
+				cancelSE_->Play();
 				break;
-			case GameScene::kRestart:
-				SceneManager::GetInstance()->ChangeScene("Game");
+			case GameScene::kOption:
+				selectSE_->Play();
 				break;
 			case GameScene::kStageSelect:
+				selectSE_->Play();
 				SceneManager::GetInstance()->ChangeScene("StageSelect");
 				break;
 			}
 
-		}*/
+		}
+
+		switch (menu_)
+		{
+		default:
+		case GameScene::kBack:
+			menuSprites_[kBack]->SetPosition({ 940.0f,160.0f });
+			menuSprites_[kOption]->SetPosition({ 1040.0f,360.0f });
+			menuSprites_[kStageSelect]->SetPosition({ 1040.0f,560.0f });
+			break;
+		case GameScene::kOption:
+			menuSprites_[kBack]->SetPosition({ 1040.0f,160.0f });
+			menuSprites_[kOption]->SetPosition({ 940.0f,360.0f });
+			menuSprites_[kStageSelect]->SetPosition({ 1040.0f,560.0f });
+			break;
+		case GameScene::kStageSelect:
+			menuSprites_[kBack]->SetPosition({ 1040.0f,160.0f });
+			menuSprites_[kOption]->SetPosition({ 1040.0f,360.0f });
+			menuSprites_[kStageSelect]->SetPosition({ 940.0f,560.0f });
+			break;
+		}
 
 	}
 	else {
@@ -187,6 +246,7 @@ void GameScene::Update() {
 
 			if (Input::GetInstance()->TriggerButton(Input::Button::START)) {
 				isOpenMenu_ = true;
+				selectSE_->Play();
 			}
 
 			stage_->Update();
@@ -339,7 +399,11 @@ void GameScene::DrawUI(){
 
 	if (isOpenMenu_) {
 
-		backSprite_->Draw();
+		menuBackSprite_->Draw();
+
+		for (int32_t i = 0; i < kMaxMenu; i++) {
+			menuSprites_[i]->Draw();
+		}
 
 	}
 	else {
@@ -452,7 +516,9 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	targetScene->PreDrawScene(commandList_);
 	
 	waterDropManager_->DrawScene(commandList_, heatHazeManager_->GetHandle());
-	cameraFrozen_->Draw(commandList_);
+	if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
+		cameraFrozen_->Draw(commandList_);
+	}
 	targetScene->PostDrawScene(commandList_);
 
 }
