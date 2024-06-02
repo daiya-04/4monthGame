@@ -32,6 +32,8 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/unbreakable.png");
 	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/gold.png");
+	blockTextures_.push_back(texture);
 
 	for (uint32_t index=1; index < BaseBlock::BlockType::kMaxBlock; index++) {
 
@@ -54,6 +56,10 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[6]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[6]);
+		}
+		else if (index == Block::kGoldBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[7]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[7]);
 		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
@@ -79,7 +85,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	//マグマ下降
 	/*objects_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });*/
 	//黄金ブロック
-	objects_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
+	/*objects_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });*/
 
 	//壊せないブロック
 	/*breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });*/
@@ -98,7 +104,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	//マグマ下降
 	/*breakParticles_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });*/
 	//黄金ブロック
-	breakParticles_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
+	/*breakParticles_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });*/
 
 }
 
