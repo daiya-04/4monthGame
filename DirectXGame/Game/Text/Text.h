@@ -2,6 +2,7 @@
 #include <vector>
 #include "Camera.h"
 #include "Object2dInstancing.h"
+#include "AudioManager.h"
 
 class Text
 {
@@ -77,4 +78,13 @@ private:
 
 	//文字送りが完了したか
 	bool isCompleteDrawText_;
+
+	//テキストを表示する際の効果音
+	Audio* voice1_;
+	Audio* voice2_;
+	Audio* voice3_;
+	Audio* voice4_;
+	Audio* voice5_;
+	Audio* voice6_;
+
 };

@@ -376,7 +376,7 @@ void GameTextManager::View() {
 		if (isSkip_) { mainText_->CharCountMax(); }
 		//長押しで早送り
 		if (Input::GetInstance()->PushButton(Input::Button::A)) {
-			mainText_->SetCountUpFrame_(0);
+			mainText_->SetCountUpFrame_(1);
 		}
 		else {
 			mainText_->SetCountUpFrame_(5);
