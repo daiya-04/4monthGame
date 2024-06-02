@@ -27,6 +27,13 @@ public:
 		Vector2 texturePartSize = {5.0f,5.0f};//テクスチャの小さいパーツのサイズ
 	};
 
+	struct BackCharactor
+	{
+		std::unique_ptr<Sprite> sprite;
+		bool isShow;//表示するか(一回の会話の中で一度でも出てきたか)
+		bool isHighLight;//今しゃべってるキャラを前面に出す用
+	};
+
 	static GameTextManager* GetInstance() {
 		static GameTextManager instance;
 		return &instance;
@@ -131,4 +138,10 @@ private:
 	Vector2 skipGaugeSize_ = {};
 	Vector2 skipGaugeBackPosition_ = {};
 	Vector2 skipGaugeBackSize_ = {};
+
+	//立ち絵周り
+	std::array<BackCharactor, 3> backCharactors_;
+	Vector2 backCharactorsSize_={};
+	void InitializeBackCharactors();
+	void UpdateBackCharactors();
 };

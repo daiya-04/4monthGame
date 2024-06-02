@@ -2,6 +2,10 @@
     "GameText": [
         {
             "TextLayout": {
+                "BackCahactorsSize": [
+                    256.0,
+                    256.0
+                ],
                 "Button-Position": [
                     1103.0,
                     695.0
@@ -21,6 +25,18 @@
                 "NameBack-Size": [
                     256.0,
                     36.0
+                ],
+                "Position-Atsuo": [
+                    230.0,
+                    526.0
+                ],
+                "Position-OldMan": [
+                    1041.0,
+                    526.0
+                ],
+                "Position-Samuo": [
+                    357.0,
+                    526.0
                 ],
                 "SkipButton-Position": [
                     1000.0,
