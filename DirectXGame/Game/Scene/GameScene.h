@@ -102,12 +102,15 @@ private:
 	Vector2 scrollHomePoint_{};
 	bool isScrollEnd_ = false;
 
-	Vector2 scorePosition_ = { 256.0f,64.0f };
+	Vector2 scorePosition_ = { 240.0f,80.0f };
 
 	//UI関連
 	std::unique_ptr<Sprite> backGround_;
 	std::unique_ptr<Sprite> pose_;
 	std::unique_ptr<Sprite> black_;
+	std::unique_ptr<Sprite> scoreFront_;
+	std::unique_ptr<Sprite> scoreMiddle_;
+	std::unique_ptr<Sprite> scoreBack_;
 
 	uint32_t bgTexture_;
 	uint32_t poseTex_;
@@ -141,6 +144,9 @@ private:
 	uint32_t optionTex_;
 	uint32_t toStageSelectTex_;
 	uint32_t menuButtonTex_;
+	uint32_t scoreFrontTex_;
+	uint32_t scoreMiddleTex_;
+	uint32_t scoreBackTex_;
 
 ///-------------------------------------------
 

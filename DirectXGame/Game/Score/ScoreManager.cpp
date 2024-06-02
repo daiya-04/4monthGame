@@ -13,6 +13,7 @@ void Score::Init(const Vector2& pos, const Vector2& size) {
 
 	pos_ = pos;
 	size_ = size;
+	space_ = 48.0f;
 
 	//スプライト生成
 	for (uint32_t i = 0; i < kMaxDigits_; i++) {
@@ -35,7 +36,7 @@ void Score::Draw() {
 
 		digitNum = judgeScore / divideNum;
 
-		numbers_[i]->SetPosition({ pos_.x + float(i - kMaxDigits_ / 2) * 48.0f, pos_.y });
+		numbers_[i]->SetPosition({ pos_.x + float(i - kMaxDigits_ / 2) * space_, pos_.y });
 
 		numbers_[i]->SetTextureArea({ float(digitNum * 64.0f), 0.0f }, { 64.0f,64.0f });
 

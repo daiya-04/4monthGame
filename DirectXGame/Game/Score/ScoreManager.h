@@ -40,6 +40,8 @@ public:
 
 	void Draw();
 
+	void SetSpace(float val) { space_ = val; }
+
 private:
 	int32_t value_ = 0;
 
@@ -51,6 +53,8 @@ public:
 
 	Vector2 pos_{};
 	Vector2 size_{};
+	//数字幅
+	float space_ = 48.0f;
 
 };
 

@@ -75,6 +75,7 @@ void StageSelectScene::Init() {
 	///
 
 	score_.Init(scorePos_, { 48.0f,48.0f });
+	score_.SetSpace(32.0f);
 	rank_.Init(rankPos_, { 64.0f,64.0f });
 
 	selectBGM_ = AudioManager::GetInstance()->Load("BGM/selectBGM.mp3");

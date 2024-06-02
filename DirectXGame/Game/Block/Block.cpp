@@ -210,6 +210,11 @@ void Block::Draw(const Camera& camera) {
 
 void BaseBlock::SetColor() {
 
+	//一部のブロックは色を変えない
+	if (type_ == kGoldBlock || type_ == kDownMagma) {
+		return;
+	}
+
 	//色分けを分かりやすくするための変数
 	float colorVal = std::fmodf(defaultDurability_ + 6.0f, 10.0f);
 

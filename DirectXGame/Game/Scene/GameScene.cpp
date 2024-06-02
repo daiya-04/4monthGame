@@ -22,7 +22,8 @@ void GameScene::Init(){
 	BlockTextureManager::GetInstance()->LoadAllBlockTexture();
 
 	scoreManager_ = ScoreManager::GetInstance();
-	score_.Init(scorePosition_, { 64.0f,64.0f });
+	score_.Init(scorePosition_, { 48.0f,48.0f });
+	score_.SetSpace(32.0f);
 	BaseBlock::SetScore(&score_);
 
 	currentStageNumber_ = stageNumber_;
@@ -73,12 +74,16 @@ void GameScene::Init(){
 	toGameTex_ = TextureManager::Load("UI/toGame.png");
 	optionTex_ = TextureManager::Load("UI/option.png");
 	toStageSelectTex_ = TextureManager::Load("UI/toStageSelect.png");
+	scoreFrontTex_ = TextureManager::Load("UI/scoreFrame.png");
+	scoreBackTex_ = TextureManager::Load("UI/scoreBackGround.png");
 
 	menuBackSprite_.reset(Sprite::Create(backGameTex_, { 640.0f, 360.0f }));
 	menuButtonSprite_.reset(Sprite::Create(menuButtonTex_, { 1150.0f, 690.0f }));
 	menuSprites_[kBack].reset(Sprite::Create(toGameTex_, { 1040.0f, 160.0f }));
 	menuSprites_[kOption].reset(Sprite::Create(optionTex_, { 1040.0f, 360.0f }));
 	menuSprites_[kStageSelect].reset(Sprite::Create(toStageSelectTex_, { 1040.0f, 560.0f }));
+	scoreFront_.reset(Sprite::Create(scoreFrontTex_, { 250.0f, 64.0f }));
+	scoreBack_.reset(Sprite::Create(scoreBackTex_, { 250.0f, 64.0f }));
 
 	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("player/playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
@@ -393,6 +398,8 @@ void GameScene::DrawUI(){
 
 	stage_->DrawUI();
 
+	scoreBack_->Draw();
+	scoreFront_->Draw();
 	score_.Draw();
 
 	BlockTextureManager::GetInstance()->DrawParticleUI();
