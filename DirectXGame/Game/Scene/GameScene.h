@@ -29,6 +29,7 @@
 #include "EnvironmentEffects/Snow/SnowManager.h"
 
 #include "Text/Text.h"
+#include "Option.h"
 
 class GameScene : public DefaultScene {
 public:
@@ -134,6 +135,8 @@ private:
 	bool isPreOpenMenu_ = false;
 
 	MenuType menu_ = kBack;
+
+	std::unique_ptr<Option> option_;
 
 	std::unique_ptr<Sprite> menuBackSprite_;
 

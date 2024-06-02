@@ -115,6 +115,8 @@ void GameScene::Init(){
 	TutorialFlagManager::GetInstance()->SetMagma(stage_->GetMagma());
 	TutorialFlagManager::GetInstance()->SetScroll(scroll_.get());
 
+	option_ = std::make_unique<Option>();
+
 }
 
 void GameScene::Reset() {
@@ -171,80 +173,88 @@ void GameScene::Update() {
 	}
 	else if (isOpenMenu_ && isPreOpenMenu_) {
 
-		if (Input::GetInstance()->TriggerButton(Input::Button::B) ||
-			Input::GetInstance()->TriggerButton(Input::Button::START)) {
-			isOpenMenu_ = false;
-			menu_ = kBack;
-			cancelSE_->Play();
-		}
+		//オプションを開いていなかったら
+		if (!option_->IsWindow()) {
 
-		if (Input::GetInstance()->TriggerButton(Input::Button::DPAD_UP) || 
-			Input::GetInstance()->TriggerLStick(Input::Stick::Up)) {
-
-			if (menu_ == kOption) {
+			if (Input::GetInstance()->TriggerButton(Input::Button::B) ||
+				Input::GetInstance()->TriggerButton(Input::Button::START)) {
+				isOpenMenu_ = false;
 				menu_ = kBack;
-			}
-			else if (menu_ == kStageSelect) {
-				menu_ = kOption;
+				cancelSE_->Play();
 			}
 
-			moveSE_->Play();
+			if (Input::GetInstance()->TriggerButton(Input::Button::DPAD_UP) ||
+				Input::GetInstance()->TriggerLStick(Input::Stick::Up)) {
 
-		}
-		else if (Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN) ||
-			Input::GetInstance()->TriggerLStick(Input::Stick::Down)) {
+				if (menu_ == kOption) {
+					menu_ = kBack;
+				}
+				else if (menu_ == kStageSelect) {
+					menu_ = kOption;
+				}
 
-			if (menu_ == kBack) {
-				menu_ = kOption;
+				moveSE_->Play();
+
 			}
-			else if (menu_ == kOption) {
-				menu_ = kStageSelect;
+			else if (Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN) ||
+				Input::GetInstance()->TriggerLStick(Input::Stick::Down)) {
+
+				if (menu_ == kBack) {
+					menu_ = kOption;
+				}
+				else if (menu_ == kOption) {
+					menu_ = kStageSelect;
+				}
+
+				moveSE_->Play();
+
 			}
 
-			moveSE_->Play();
+			if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 
-		}
+				switch (menu_)
+				{
+				default:
+				case GameScene::kBack:
+					isOpenMenu_ = false;
+					menu_ = kBack;
+					cancelSE_->Play();
+					break;
+				case GameScene::kOption:
+					option_->Init();
+					selectSE_->Play();
+					break;
+				case GameScene::kStageSelect:
+					selectSE_->Play();
+					SceneManager::GetInstance()->ChangeScene("StageSelect");
+					break;
+				}
 
-		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+			}
 
 			switch (menu_)
 			{
 			default:
 			case GameScene::kBack:
-				isOpenMenu_ = false;
-				menu_ = kBack;
-				cancelSE_->Play();
+				menuSprites_[kBack]->SetPosition({ 940.0f,160.0f });
+				menuSprites_[kOption]->SetPosition({ 1040.0f,360.0f });
+				menuSprites_[kStageSelect]->SetPosition({ 1040.0f,560.0f });
 				break;
 			case GameScene::kOption:
-				selectSE_->Play();
+				menuSprites_[kBack]->SetPosition({ 1040.0f,160.0f });
+				menuSprites_[kOption]->SetPosition({ 940.0f,360.0f });
+				menuSprites_[kStageSelect]->SetPosition({ 1040.0f,560.0f });
 				break;
 			case GameScene::kStageSelect:
-				selectSE_->Play();
-				SceneManager::GetInstance()->ChangeScene("StageSelect");
+				menuSprites_[kBack]->SetPosition({ 1040.0f,160.0f });
+				menuSprites_[kOption]->SetPosition({ 1040.0f,360.0f });
+				menuSprites_[kStageSelect]->SetPosition({ 940.0f,560.0f });
 				break;
 			}
 
 		}
 
-		switch (menu_)
-		{
-		default:
-		case GameScene::kBack:
-			menuSprites_[kBack]->SetPosition({ 940.0f,160.0f });
-			menuSprites_[kOption]->SetPosition({ 1040.0f,360.0f });
-			menuSprites_[kStageSelect]->SetPosition({ 1040.0f,560.0f });
-			break;
-		case GameScene::kOption:
-			menuSprites_[kBack]->SetPosition({ 1040.0f,160.0f });
-			menuSprites_[kOption]->SetPosition({ 940.0f,360.0f });
-			menuSprites_[kStageSelect]->SetPosition({ 1040.0f,560.0f });
-			break;
-		case GameScene::kStageSelect:
-			menuSprites_[kBack]->SetPosition({ 1040.0f,160.0f });
-			menuSprites_[kOption]->SetPosition({ 1040.0f,360.0f });
-			menuSprites_[kStageSelect]->SetPosition({ 940.0f,560.0f });
-			break;
-		}
+		option_->Update();
 
 	}
 	else {
@@ -464,9 +474,15 @@ void GameScene::DrawUI(){
 
 		menuBackSprite_->Draw();
 
-		for (int32_t i = 0; i < kMaxMenu; i++) {
-			menuSprites_[i]->Draw();
+		if (!option_->IsWindow()) {
+
+			for (int32_t i = 0; i < kMaxMenu; i++) {
+				menuSprites_[i]->Draw();
+			}
+
 		}
+
+		option_->Draw();
 
 	}
 	else {
