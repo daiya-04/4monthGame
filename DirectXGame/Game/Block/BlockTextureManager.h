@@ -86,6 +86,13 @@ public:
 
 	void UpdateParticle(const Camera& camera);
 
+	//黄金ブロックのエフェクト
+	void GoldBlockEffectUpdate();
+	void GoldBlockEffectDraw();
+	//void SetGoldBlockEffectPosition(const Vector2& pos) { goldBlockEffect_->position_ = pos; };
+	void SetIsResetGoldBlockEffect(bool is) { isResetGoldBlockEffect_ = is; };
+
+
 private:
 
 	std::vector<uint32_t> blockTextures_;
@@ -117,6 +124,12 @@ private:
 	std::unique_ptr<Camera> constantCamera_;//spriteをinstancing対応させるまでの仮カメラ
 	std::list<std::unique_ptr<StarParticle>> starParticleDatasUI_;
 	std::unique_ptr<Object2dInstancing> starParticlesUI_;
+
+	//黄金ブロックのエフェクト
+	//std::unique_ptr<Object2d> goldBlockEffect_;
+	bool isDrawGoldBlockEffect_;
+	bool isResetGoldBlockEffect_;
+
 };
 
 

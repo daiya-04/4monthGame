@@ -395,3 +395,10 @@ void BlockTextureManager::UpdateParticle(const Camera& camera) {
 		data->Update();
 	}
 }
+
+void BlockTextureManager::GoldBlockEffectUpdate() {
+
+}
+void BlockTextureManager::GoldBlockEffectDraw() {
+
+}
