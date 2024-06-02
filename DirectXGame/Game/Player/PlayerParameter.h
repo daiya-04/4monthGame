@@ -68,6 +68,10 @@ struct WorkChargeJump {
 	int32_t maxChargeTime = 40;
 	//チャージ時間をカウントする変数
 	int32_t chargeTimer = 0;
+	//最大浮き時間
+	int32_t maxFlyTime = 8;
+	//浮き時間
+	int32_t flyTimer = 0;
 	//溜めジャンプのy移動量
 	float chargeJumpVelocity = -35.0f;
 	//何マス分ジャンプするか

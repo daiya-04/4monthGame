@@ -48,6 +48,8 @@ public:
 		kGoldBlock,
 		//チュートリアル時に使う特殊なブロック
 		kFlagBlock,
+		//崩れるブロック
+		kCollapseBlock,
 		//ブロックの最大種類
 		kMaxBlock
 
@@ -142,6 +144,11 @@ public:
 		SetColor();
 	}
 
+	//ブロックの崩壊フラグ設定
+	void SetCollapse();
+
+	bool GetIsStartCollapse() const { return isStartCollapse_; }
+
 	void SetColor();
 
 	bool GetIsBreak() { return isBreak_; }
@@ -182,6 +189,12 @@ protected:
 
 	//破壊されたかどうか
 	bool isBreak_ = false;
+
+	//崩壊フラグ
+	bool isStartCollapse_ = false;
+	//崩壊カウント
+	int32_t maxCollapseCount_ = 40;
+	int32_t collapseCount_ = maxCollapseCount_;
 
 	//耐久力
 	float durability_ = 3.0f;

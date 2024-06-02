@@ -20,7 +20,8 @@ Stage::Stage()
 
 	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
 	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
-	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
+	borderBlueTex_ = TextureManager::GetInstance()->Load("stageObject/flagBlue.png");
+	borderOrangeTex_ = TextureManager::GetInstance()->Load("stageObject/flagOrange.png");
 	saunaRoomTex_ = TextureManager::GetInstance()->Load("stageObject/saunaRoom.png");
 	purposeTex_ = TextureManager::GetInstance()->Load("UI/mokuteki.png");
 	upTex_ = TextureManager::GetInstance()->Load("UI/up.png");
@@ -60,10 +61,14 @@ Stage::Stage()
 	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
 	purposeSprite_.reset(Sprite::Create(purposeTex_, { 640.0f,200.0f }));
 
-	borders_[0].reset(Object2d::Create(borderTex_, kBorderLeft));
+	borders_[0].reset(Object2d::Create(borderOrangeTex_, kBorderLeft));
 	borders_[0]->SetAnchorpoint({ 0.5f,1.0f });
-	borders_[1].reset(Object2d::Create(borderTex_, kBorderRight));
+	borders_[0]->SetSize({ 64.0f,192.0f });
+	borders_[0]->SetTextureArea({ 0.0f,0.0f }, { 32.0f,96.0f });
+	borders_[1].reset(Object2d::Create(borderBlueTex_, kBorderRight));
 	borders_[1]->SetAnchorpoint({ 0.5f,1.0f });
+	borders_[1]->SetSize({ 64.0f,192.0f });
+	borders_[1]->SetTextureArea({ 0.0f,0.0f }, { 32.0f,96.0f });
 
 	magma_ = std::make_unique<Magma>();
 
@@ -135,7 +140,6 @@ void Stage::Update() {
 	
 
 #endif // _DEBUG
-
 
 	//プレイヤーがクリアフラグを持った状態でサウナ室に帰ったらクリアフラグ立てる
 	if (player_->GetIsClear() && player_->GetIsHome()) {
@@ -225,7 +229,28 @@ void Stage::Update() {
 
 	}
 
+	UpdateAnimation();
 	
+}
+
+void Stage::UpdateAnimation() {
+
+	//画像を動かす処理
+	if (++flagAnimationTime_ >= flagChangeFrame_) {
+
+		flagAnimationTime_ = 0;
+
+		//設定した最大数に達したらリセット
+		if (++currentFlagAnimationNum_ >= maxFlagAnimationNum_) {
+			currentFlagAnimationNum_ = 0;
+		}
+
+	}
+
+	borders_[0]->SetTextureArea({ 32.0f * currentFlagAnimationNum_,0.0f }, { 32.0f,96.0f });
+	borders_[1]->SetTextureArea({ 32.0f * currentFlagAnimationNum_,0.0f }, { 32.0f,96.0f });
+
+
 }
 
 void Stage::CheckCollision() {
@@ -652,8 +677,10 @@ void Stage::Load(uint32_t stageNumber) {
 			std::string sNum;
 			//数字を格納
 			std::getline(iss, sNum, ',');
+
+
 			//番号からTypeを選ぶ
-			uint32_t num = std::stoi(sNum);
+			uint32_t num = std::stoi(sNum, nullptr, 16);
 			Block::BlockType type;
 			//範囲外のものを選ばないように防ぐ
 			if (num < Block::BlockType::kMaxBlock) {

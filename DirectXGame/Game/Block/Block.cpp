@@ -91,10 +91,18 @@ void BaseBlock::Break(float power) {
 
 }
 
+void BaseBlock::SetCollapse() {
+
+	isStartCollapse_ = true;
+
+}
+
 void BaseBlock::Reset() {
 
 	durability_ = 3.0f;
 
+	isStartCollapse_ = false;
+	collapseCount_ = maxCollapseCount_;
 	isBreak_ = false;
 	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
@@ -163,6 +171,17 @@ void Block::Update() {
 			BlockTextureManager::GetInstance()->CreateSandParticle(pos, type_);
 		}
 	}
+
+	//崩れるカウント
+	if (isStartCollapse_ && !isBreak_) {
+
+		if (--collapseCount_ <= 0) {
+			durability_ = 0.0f;
+			isBreak_ = true;
+		}
+
+	}
+
 }
 
 void Block::Draw(const Camera& camera) {

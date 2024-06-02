@@ -5,9 +5,8 @@
 #include <memory>
 #include <map>
 
-//表示ランク(仮)。SSの目標スコアを10000で設定したとして、10000取れたらSS表示、9999ならS表示する仕様
+//表示ランク
 enum Rate : int32_t {
-	R_SS, //SSランク, 基準高めで設定、やり込む人向けの裏ランク的な
 	R_S, //Sランク, これ取れたら上手いって言えるくらいの設定
 	R_A, //Aランク, ちょっとミスしてもとれる難易度で
 	R_B, //Bランク, 初見プレイでこのくらいになるような設定
@@ -100,6 +99,7 @@ public:
 
 	Score& GetBestScore(int32_t stageIndex) { return bestScores_[stageIndex].score_; }
 	Rank& GetBestRank(int32_t stageIndex) { return bestScores_[stageIndex].rank_; }
+	int32_t GetMaxRankScore(int32_t stageIndex) { return goalScores_[stageIndex][R_S]; }
 
 	//クリア時にこれから値取得して
 	Result& GetResult() { return result_; }

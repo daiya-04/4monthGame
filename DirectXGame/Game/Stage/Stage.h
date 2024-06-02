@@ -122,6 +122,8 @@ private:
 
 	void RespawnBlock(Block::BlockType type);
 
+	void UpdateAnimation();
+
 private:
 
 	Player* player_;
@@ -196,7 +198,8 @@ private:
 	//テクスチャ
 	uint32_t numTex_;
 	uint32_t clearTex_;
-	uint32_t borderTex_;
+	uint32_t borderBlueTex_;
+	uint32_t borderOrangeTex_;
 	uint32_t returnTex_;
 	uint32_t saunaRoomTex_;
 	uint32_t purposeTex_;
@@ -208,6 +211,19 @@ private:
 	uint32_t tutorialFirstTex_;
 	uint32_t tutorialSecondTex_;
 	uint32_t tutorialThirdTex_;
+
+///===============アニメーション関連=====================
+
+	//コマ最大数
+	int32_t maxFlagAnimationNum_ = 6;
+	//現在のコマ
+	int32_t currentFlagAnimationNum_ = 0;
+	//アニメーション時間
+	int32_t flagAnimationTime_ = 0;
+	//切り替えフレーム
+	int32_t flagChangeFrame_ = 4;
+
+///=============================================
 
 };
 

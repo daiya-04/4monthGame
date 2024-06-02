@@ -582,6 +582,7 @@ void Player::ChargeJump() {
 			parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
 			velocity_.y = 0.0f;
 			parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+			parameters_[currentCharacters_]->chargeJump_.flyTimer = parameters_[currentCharacters_]->chargeJump_.maxFlyTime;
 		}
 
 	}
@@ -1025,14 +1026,25 @@ void Player::UpdatePosition() {
 			}
 
 			//落下処理
-			if (velocity_.y < kMaxFallSpeed_) {
 
-				velocity_.y += kGravityFallSpeed_;
+			//浮き時間があるときは処理をしない
+			if (parameters_[currentCharacters_]->chargeJump_.flyTimer <= 0) {
 
-				//下限値を超えないように調整
-				if (velocity_.y > kMaxFallSpeed_) {
-					velocity_.y = kMaxFallSpeed_;
+				if (velocity_.y < kMaxFallSpeed_) {
+
+					velocity_.y += kGravityFallSpeed_;
+
+					//下限値を超えないように調整
+					if (velocity_.y > kMaxFallSpeed_) {
+						velocity_.y = kMaxFallSpeed_;
+					}
+
 				}
+
+			}
+			else {
+
+				parameters_[currentCharacters_]->chargeJump_.flyTimer--;
 
 			}
 
@@ -1184,6 +1196,11 @@ void Player::CheckCollision() {
 
 						}
 
+						//崩れるブロックに触れたら崩壊開始
+						if ((*blocksPtr_)[y][x]->GetType() == Block::kCollapseBlock) {
+							(*blocksPtr_)[y][x]->SetCollapse();
+						}
+
 						//左上が当たっていた
 						if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), leftTop_)) {
 
@@ -1238,8 +1255,11 @@ void Player::CheckCollision() {
 										default:
 										case Player::kNormal:
 
-											parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
-											parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+											if (parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
+												parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
+												parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+												parameters_[currentCharacters_]->chargeJump_.flyTimer = parameters_[currentCharacters_]->chargeJump_.maxFlyTime;
+											}
 
 											velocity_.y = 0;
 
@@ -1312,8 +1332,11 @@ void Player::CheckCollision() {
 										default:
 										case Player::kNormal:
 
-											parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
-											parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+											if (parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
+												parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
+												parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+												parameters_[currentCharacters_]->chargeJump_.flyTimer = parameters_[currentCharacters_]->chargeJump_.maxFlyTime;
+											}
 
 											velocity_.y = 0;
 

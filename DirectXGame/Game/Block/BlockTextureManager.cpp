@@ -26,7 +26,9 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/red.png");
 	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/down.png");
+	texture = TextureManager::Load("blocks/hot.png");
+	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/ice.png");
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/unbreakable.png");
 	blockTextures_.push_back(texture);
@@ -46,12 +48,12 @@ void BlockTextureManager::LoadAllBlockTexture() {
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[3]);
 		}
 		else if (index == Block::kDownMagma) {
-			objects_[index - 1]->SetTextureHandle(blockTextures_[4]);
-			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[4]);
-		}
-		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[5]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[5]);
+		}
+		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[6]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[6]);
 		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
