@@ -44,6 +44,10 @@ Option::Option() {
 
 	bButton_.reset(Sprite::Create(bButtonTex_, { 640.0f + 240.0f,500.0f }));
 
+	selectSE_ = AudioManager::GetInstance()->Load("SE/select_ok.mp3");
+	moveSE_ = AudioManager::GetInstance()->Load("SE/select_move.mp3");
+	cancelSE_ = AudioManager::GetInstance()->Load("SE/select_cancel.mp3");
+
 }
 
 void Option::Init() {
@@ -128,6 +132,7 @@ void Option::RootUpdate() {
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
 		modeRequest_ = Mode::Close;
+		cancelSE_->Play();
 	}
 
 #ifdef _DEBUG
@@ -226,13 +231,16 @@ void Option::BGMUpdate() {
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Down) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN)) {
 		itemRequest_ = Item::SE;
+		moveSE_->Play();
 	}
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Left) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_LEFT)) {
 		bgmVolume_--;
+		moveSE_->Play();
 	}
 	else if(Input::GetInstance()->TriggerLStick(Input::Stick::Right) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_RIGHT)){
 		bgmVolume_++;
+		moveSE_->Play();
 	}
 
 #ifdef _DEBUG
@@ -262,16 +270,20 @@ void Option::SEUpdate() {
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Up) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_UP)) {
 		itemRequest_ = Item::BGM;
+		moveSE_->Play();
 	}
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Down) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_DOWN)) {
 		itemRequest_ = Item::FullScreen;
+		moveSE_->Play();
 	}
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Left) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_LEFT)) {
 		seVolume_--;
+		moveSE_->Play();
 	}
 	else if (Input::GetInstance()->TriggerLStick(Input::Stick::Right) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_RIGHT)) {
 		seVolume_++;
+		moveSE_->Play();
 	}
 
 #ifdef _DEBUG
@@ -306,6 +318,7 @@ void Option::FSUpdate() {
 
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Up) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_UP)) {
 		itemRequest_ = Item::SE;
+		moveSE_->Play();
 	}
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
@@ -314,6 +327,7 @@ void Option::FSUpdate() {
 		}else if (!WinApp::GetInstance()->isFullScreen()) {
 			WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
 		}
+		selectSE_->Play();
 	}
 
 #ifdef _DEBUG

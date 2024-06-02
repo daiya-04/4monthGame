@@ -459,22 +459,12 @@ void GameScene::DrawParticle(){
 }
 
 void GameScene::DrawUI(){
-	player_->DrawUI();
-
-	stage_->DrawUI();
-
-	scoreBack_->Draw();
-	scoreGage_->Draw();
-	scoreFront_->Draw();
-	score_.Draw();
-
-	BlockTextureManager::GetInstance()->DrawParticleUI();
 
 	if (isOpenMenu_) {
 
-		menuBackSprite_->Draw();
-
 		if (!option_->IsWindow()) {
+
+			menuBackSprite_->Draw();
 
 			for (int32_t i = 0; i < kMaxMenu; i++) {
 				menuSprites_[i]->Draw();
@@ -486,6 +476,17 @@ void GameScene::DrawUI(){
 
 	}
 	else {
+
+		player_->DrawUI();
+
+		stage_->DrawUI();
+
+		scoreBack_->Draw();
+		scoreGage_->Draw();
+		scoreFront_->Draw();
+		score_.Draw();
+
+		BlockTextureManager::GetInstance()->DrawParticleUI();
 
 		if (GameTextManager::GetInstance()->GetIsEnd() && isScrollEnd_) {
 			menuButtonSprite_->Draw();
