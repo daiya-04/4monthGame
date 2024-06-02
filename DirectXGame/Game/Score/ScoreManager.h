@@ -103,6 +103,7 @@ public:
 
 	Score& GetBestScore(int32_t stageIndex) { return bestScores_[stageIndex].score_; }
 	Rank& GetBestRank(int32_t stageIndex) { return bestScores_[stageIndex].rank_; }
+	//Sランクのスコアラインを取得
 	int32_t GetMaxRankScore(int32_t stageIndex) { return goalScores_[stageIndex][R_S]; }
 
 	//クリア時にこれから値取得して

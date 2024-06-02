@@ -69,6 +69,9 @@ public:
 	//stage側にeffectManagerが持つモードを適応する
 	void AppryMode();
 
+	//スコアゲージ更新
+	void UpdateScoreGage();
+
 private:
 	ID3D12GraphicsCommandList* commandList_;
 	
@@ -109,7 +112,7 @@ private:
 	std::unique_ptr<Sprite> pose_;
 	std::unique_ptr<Sprite> black_;
 	std::unique_ptr<Sprite> scoreFront_;
-	std::unique_ptr<Sprite> scoreMiddle_;
+	std::unique_ptr<Sprite> scoreGage_;
 	std::unique_ptr<Sprite> scoreBack_;
 
 	uint32_t bgTexture_;

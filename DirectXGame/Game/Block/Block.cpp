@@ -11,6 +11,11 @@ Score* BaseBlock::score_;
 
 void BaseBlock::Break(float power) {
 
+	//耐久値が無い、もしくは0以下ならスキップ
+	if (durability_ <= 0.0f) {
+		return;
+	}
+
 	//耐久値を減少
 	durability_ -= power;
 
@@ -62,9 +67,10 @@ void BaseBlock::Break(float power) {
 		for (int i = 0; i < createNum;i++) {
 			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
 		}
-	isBreak_ = true;
-	type_ = kNone;
-	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+		isBreak_ = true;
+		type_ = kNone;
+		//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	
 	}
 	else {
