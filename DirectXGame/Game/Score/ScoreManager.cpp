@@ -9,7 +9,7 @@
 void Score::Init(const Vector2& pos, const Vector2& size) {
 
 	//テクスチャ読み込み
-	numTex_ = TextureManager::Load("UI/number.png");
+	numTex_ = TextureManager::Load("UI/whiteNumber.png");
 
 	pos_ = pos;
 	size_ = size;

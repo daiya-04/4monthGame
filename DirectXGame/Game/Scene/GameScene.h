@@ -106,7 +106,7 @@ private:
 	Vector2 scrollHomePoint_{};
 	bool isScrollEnd_ = false;
 
-	Vector2 scorePosition_ = { 240.0f,80.0f };
+	Vector2 scorePosition_ = { 240.0f,72.0f };
 
 	//UI関連
 	std::unique_ptr<Sprite> backGround_;
