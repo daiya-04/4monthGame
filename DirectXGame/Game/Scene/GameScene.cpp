@@ -362,7 +362,7 @@ void GameScene::UpdateScoreGage() {
 
 		//S、黄金色
 		if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_)) {
-			scoreGage_->SetColor({ 1.0f,1.0f,0.7f,1.0f });
+			scoreGage_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
 		}
 		//A、赤色
 		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_) / 4 * 3) {

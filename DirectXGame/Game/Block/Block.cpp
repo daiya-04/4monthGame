@@ -203,6 +203,7 @@ void Block::Update() {
 		if (isStartBreak_ && --iceBreakCoolTimer_ <= 0) {
 			durability_ = 0.0f;
 			type_ = kNone;
+			score_->AddScore(100);
 			isBreak_ = true;
 			//一旦鉱石で代用
 			crystalSE_->Play();
