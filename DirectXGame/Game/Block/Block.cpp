@@ -11,6 +11,11 @@ Score* BaseBlock::score_;
 
 void BaseBlock::Break(float power) {
 
+	//耐久値が無い、もしくは0以下ならスキップ
+	if (durability_ <= 0.0f) {
+		return;
+	}
+
 	//耐久値を減少
 	durability_ -= power;
 
@@ -62,9 +67,10 @@ void BaseBlock::Break(float power) {
 		for (int i = 0; i < createNum;i++) {
 			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
 		}
-	isBreak_ = true;
-	type_ = kNone;
-	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+		isBreak_ = true;
+		type_ = kNone;
+		//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 	
 	}
 	else {
@@ -91,10 +97,68 @@ void BaseBlock::Break(float power) {
 
 }
 
+void BaseBlock::IceBreak(int32_t breakCoolTime) {
+
+	//氷ブロックはスコア対象外
+	if (type_ == kIceBlock) {
+
+		isStartBreak_ = true;
+		iceBreakCoolTimer_ = breakCoolTime;
+
+		switch (direction_)
+		{
+		default:
+		case kLeft:
+
+			if (pLeft_ && pLeft_->GetType() == kIceBlock) {
+				pLeft_->SetDirection(kLeft);
+				pLeft_->IceBreak(breakCoolTime + iceBreakInterval_);
+			}
+
+			break;
+		case kRight:
+			if (pRight_ && pRight_->GetType() == kIceBlock) {
+				pRight_->SetDirection(kRight);
+				pRight_->IceBreak(breakCoolTime + iceBreakInterval_);
+			}
+			break;
+		case kUp:
+			if (pUp_ && pUp_->GetType() == kIceBlock) {
+				pUp_->SetDirection(kUp);
+				pUp_->IceBreak(breakCoolTime + iceBreakInterval_);
+			}
+			break;
+		case kDown:
+			if (pDown_ && pDown_->GetType() == kIceBlock) {
+				pDown_->SetDirection(kDown);
+				pDown_->IceBreak(breakCoolTime + iceBreakInterval_);
+			}
+			break;
+		}
+
+		int createNum = int(RandomEngine::GetRandom(8.0f, 12.0f));
+		for (int i = 0; i < createNum; i++) {
+			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
+		}
+
+		return;
+	}
+
+
+}
+
+void BaseBlock::SetCollapse() {
+
+	isStartCollapse_ = true;
+
+}
+
 void BaseBlock::Reset() {
 
 	durability_ = 3.0f;
 
+	isStartCollapse_ = false;
+	collapseCount_ = maxCollapseCount_;
 	isBreak_ = false;
 	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 
@@ -139,6 +203,19 @@ void Block::Update() {
 		isBreak_ = true;
 	}
 
+	if (type_ == kIceBlock) {
+
+		if (isStartBreak_ && --iceBreakCoolTimer_ <= 0) {
+			durability_ = 0.0f;
+			type_ = kNone;
+			score_->AddScore(100);
+			isBreak_ = true;
+			//一旦鉱石で代用
+			crystalSE_->Play();
+		}
+
+	}
+
 	//object_->SetTextureArea({ float(uvPositionX_ * kTextureBlockSize_),float(uvPositionY_ * kTextureBlockSize_) },
 		//{ kTextureBlockSize_,kTextureBlockSize_ });
 
@@ -163,6 +240,17 @@ void Block::Update() {
 			BlockTextureManager::GetInstance()->CreateSandParticle(pos, type_);
 		}
 	}
+
+	//崩れるカウント
+	if (isStartCollapse_ && !isBreak_) {
+
+		if (--collapseCount_ <= 0) {
+			durability_ = 0.0f;
+			isBreak_ = true;
+		}
+
+	}
+
 }
 
 void Block::Draw(const Camera& camera) {
@@ -190,6 +278,12 @@ void Block::Draw(const Camera& camera) {
 }
 
 void BaseBlock::SetColor() {
+
+	//一部のブロックは色を変えない
+	if (type_ == kGoldBlock || type_ == kDownMagma || type_ == kIceBlock) {
+		color_ = { 1.0f,1.0f,1.0f, 1.0f };
+		return;
+	}
 
 	//色分けを分かりやすくするための変数
 	float colorVal = std::fmodf(defaultDurability_ + 6.0f, 10.0f);

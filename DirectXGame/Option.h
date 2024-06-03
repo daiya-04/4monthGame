@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include <memory>
 #include <optional>
+#include "AudioManager.h"
 
 class Option{
 public:
@@ -92,6 +93,10 @@ private:
 
 	Item item_ = Item::BGM;
 	std::optional<Item> itemRequest_ = Item::BGM;
+
+	Audio* selectSE_;
+	Audio* moveSE_;
+	Audio* cancelSE_;
 
 };
 

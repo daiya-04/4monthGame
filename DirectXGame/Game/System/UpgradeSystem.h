@@ -17,9 +17,9 @@ public:
 	~UpgradeSystem();
 
 	enum SelectType : int32_t {
-		kSauna, //岩送り
-		kUpgrade, //強化
-		kReturn, //遊びに戻る
+		kPower, //採掘破壊力
+		kDigSpeed, //採掘速度
+		kSpeed, //移動速度
 
 		kMaxSelectType,
 
@@ -70,10 +70,10 @@ private:
 	bool isActiveUpgrade_ = false;
 
 	//選択画面でどれを選んでいるか
-	SelectType type_ = kSauna;
+	SelectType type_ = kPower;
 
 	//強化画面でどれを選んでいるか
-	SelectType upgradeType_ = kSauna;
+	SelectType upgradeType_ = kPower;
 
 	//スピード強化量
 	float speedUpgradeValue_ = 0.2f;
@@ -91,13 +91,16 @@ private:
 	static const int32_t kMaxLevel_ = 10;
 
 	//強化に必要な岩数
-	std::array<std::array<int32_t, 4>, kMaxLevel_> saunaUpgradeNeeds_;
+	std::array<std::array<int32_t, 4>, kMaxLevel_> speedUpgradeNeeds_;
 	std::array<std::array<int32_t, 4>, kMaxLevel_> powerUpgradeNeeds_;
+	std::array<std::array<int32_t, 4>, kMaxLevel_> digSpeedUpgradeNeeds_;
 
 	//強化レベル
-	std::array<int32_t, 2> saunaLevel_ = { 0,0 };
+	std::array<int32_t, 2> speedLevel_ = { 0,0 };
 
 	std::array<int32_t, 2> powerLevel_ = { 0,0 };
+
+	std::array<int32_t, 2> digSpeedLevel_ = { 0,0 };
 
 	//有効桁
 	static const int32_t kMaxDigits_ = 3;
@@ -108,20 +111,14 @@ private:
 	
 	std::unique_ptr<Object2d> furnace_;
 
-	std::unique_ptr<Sprite> backSprite_;
-	std::unique_ptr<Sprite> sendRockSprite_;
-	std::unique_ptr<Sprite> powerSprite_;
+	std::unique_ptr<Sprite> upgradeSprite_;
 
-	std::array<std::array<std::array<std::unique_ptr<Sprite>, kMaxDigits_>, 4>, 2> numbers_;
+	std::array<std::array<std::unique_ptr<Sprite>, kMaxDigits_>, 4> numbers_;
 
-	std::array<std::array<std::unique_ptr<Sprite>, 4>, 2> rocksUI_;
+	std::array<std::unique_ptr<Sprite>, 4> rocksUI_;
 
 	uint32_t furnaceTexture_;
-	uint32_t backTexture_;
-	uint32_t sendRockTexture_;
 	uint32_t upgradeTexture_;
-	uint32_t sendIntervalTexture_;
-	uint32_t powerTexture_;
 	uint32_t numberTexture_;
 	std::array<uint32_t, 4> rockUITextures_;
 

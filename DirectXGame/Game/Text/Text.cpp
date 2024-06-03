@@ -2,6 +2,12 @@
 #include "TextManager.h"
 void Text::Initialize() {
     count_ = 0;
+    voice1_ = AudioManager::GetInstance()->Load("SE/voice_01.mp3");
+    voice2_ = AudioManager::GetInstance()->Load("SE/voice_02.mp3");
+    voice3_ = AudioManager::GetInstance()->Load("SE/voice_03.mp3");
+    voice4_ = AudioManager::GetInstance()->Load("SE/voice_04.mp3");
+    voice5_ = AudioManager::GetInstance()->Load("SE/voice_05.mp3");
+    voice6_ = AudioManager::GetInstance()->Load("SE/voice_06.mp3");
 }
 
 void Text::CountUp() {
@@ -10,6 +16,30 @@ void Text::CountUp() {
         if (count_ > countUpFrame_) {
             count_ = 0;
             showCharCount_++;
+
+            switch (static_cast<int32_t>(text_[showCharCount_]) % 6 + 1)
+            {
+            default:
+            case 1:
+                voice1_->Play();
+                break;
+            case 2:
+                voice2_->Play();
+                break;
+            case 3:
+                voice3_->Play();
+                break;
+            case 4:
+                voice4_->Play();
+                break;
+            case 5:
+                voice5_->Play();
+                break;
+            case 6:
+                voice6_->Play();
+                break;
+            }
+
         }
         //文字数が最大になったら止める
         if (showCharCount_ >= text_.size()) {

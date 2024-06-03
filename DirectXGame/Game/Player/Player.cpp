@@ -5,6 +5,7 @@
 #include "Scroll/Scroll.h"
 #include "GlobalVariables.h"
 #include "Easing.h"
+#include "RandomEngine/RandomEngine.h"
 
 Player::Player()
 {
@@ -57,6 +58,13 @@ Player::Player()
 	}
 
 	bag_.reset(Sprite::Create(bagTexture_, { 1150.0f, 30.0f + 128.0f }));
+
+
+	walk1SE_ = AudioManager::GetInstance()->Load("SE/walk_01.mp3");
+	walk2SE_ = AudioManager::GetInstance()->Load("SE/walk_02.mp3");
+	walk3SE_ = AudioManager::GetInstance()->Load("SE/walk_03.mp3");
+	walk4SE_ = AudioManager::GetInstance()->Load("SE/walk_04.mp3");
+	deadSE_ = AudioManager::GetInstance()->Load("SE/dead.mp3");
 
 }
 
@@ -379,7 +387,7 @@ void Player::Move() {
 	case Player::kNormal:
 
 		//移動
-		if (input_->TiltLStick(Input::Stick::Right) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
+		if (input_->TiltLStick(Input::Stick::Right) && !parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
 
 			if (velocity_.x < -2.0f) {
 				velocity_.x = 0.0f;
@@ -399,7 +407,7 @@ void Player::Move() {
 			isFacingLeft_ = false;
 
 		}
-		else if (input_->TiltLStick(Input::Stick::Left) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
+		else if (input_->TiltLStick(Input::Stick::Left) && !parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
 
 			if (velocity_.x > 2.0f) {
 				velocity_.x = 0.0f;
@@ -582,6 +590,7 @@ void Player::ChargeJump() {
 			parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
 			velocity_.y = 0.0f;
 			parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+			parameters_[currentCharacters_]->chargeJump_.flyTimer = parameters_[currentCharacters_]->chargeJump_.maxFlyTime;
 		}
 
 	}
@@ -590,6 +599,8 @@ void Player::ChargeJump() {
 	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.maxChargeTime &&
 		input_->ReleaseButton(Input::Button::A)) {
 
+		//速度設定
+		velocity_.x = 0.0f;
 		velocity_.y = parameters_[currentCharacters_]->chargeJump_.chargeJumpVelocity;
 
 		parameters_[currentCharacters_]->chargeJump_.isChargeJumping = true;
@@ -652,7 +663,7 @@ void Player::WallJump() {
 				wallJumpVelocity_.x = -parameters_[currentCharacters_]->wallJump_.wallJumpVelocity.x;
 				effectPos = GetPosition(kRightBottom);
 			}
-			BlockTextureManager::GetInstance()->CreateStarParticle(effectPos, int32_t(isFacingLeft_));
+			BlockTextureManager::GetInstance()->CreateWallKickEffect(effectPos, int32_t(isFacingLeft_));
 		}
 
 	}
@@ -1025,14 +1036,25 @@ void Player::UpdatePosition() {
 			}
 
 			//落下処理
-			if (velocity_.y < kMaxFallSpeed_) {
 
-				velocity_.y += kGravityFallSpeed_;
+			//浮き時間があるときは処理をしない
+			if (parameters_[currentCharacters_]->chargeJump_.flyTimer <= 0) {
 
-				//下限値を超えないように調整
-				if (velocity_.y > kMaxFallSpeed_) {
-					velocity_.y = kMaxFallSpeed_;
+				if (velocity_.y < kMaxFallSpeed_) {
+
+					velocity_.y += kGravityFallSpeed_;
+
+					//下限値を超えないように調整
+					if (velocity_.y > kMaxFallSpeed_) {
+						velocity_.y = kMaxFallSpeed_;
+					}
+
 				}
+
+			}
+			else {
+
+				parameters_[currentCharacters_]->chargeJump_.flyTimer--;
 
 			}
 
@@ -1059,6 +1081,46 @@ void Player::UpdatePosition() {
 		position_.x = std::clamp(position_.x, float(Block::kBlockHalfSize_ * 0.0f), float(Block::kBlockSize_ * (Stage::kMaxStageWidth_ - 1)));
 
 		tmpPosition_ = position_;
+
+		//移動速度が0.0fじゃなければ定期的にSEを鳴らす
+		if (playSETimer_ <= 0) {
+
+			if (fabsf(velocity_.x) > 0.001f) {
+				
+				int32_t randNum = int(RandomEngine::GetRandom(1.0f, 4.0f));
+
+				switch (randNum)
+				{
+				default:
+				case 1:
+					walk1SE_->Play();
+					break;
+				case 2:
+					walk1SE_->Play();
+					break;
+				case 3:
+					walk3SE_->Play();
+					break;
+				case 4:
+					walk4SE_->Play();
+					break;
+				}
+
+				playSETimer_ = playSEInterval_;
+
+			}
+
+		}
+		else {
+
+			if (fabsf(velocity_.x) <= 0.001f) {
+				playSETimer_ = 0;
+			}
+			else {
+				playSETimer_--;
+			}
+
+		}
 
 		tmpPosition_ += velocity_ + wallJumpVelocity_;
 
@@ -1114,6 +1176,8 @@ void Player::DamageUpdate() {
 		}
 
 		isDead_ = true;
+		deadSE_->Play();
+
 		//タイマー設定
 		respwanTimer_ = respawnCoolTime_;
 		//クリアフラグへし折り
@@ -1184,6 +1248,11 @@ void Player::CheckCollision() {
 
 						}
 
+						//崩れるブロックに触れたら崩壊開始
+						if ((*blocksPtr_)[y][x]->GetType() == Block::kCollapseBlock) {
+							(*blocksPtr_)[y][x]->SetCollapse();
+						}
+
 						//左上が当たっていた
 						if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), leftTop_)) {
 
@@ -1238,8 +1307,11 @@ void Player::CheckCollision() {
 										default:
 										case Player::kNormal:
 
-											parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
-											parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+											if (parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
+												parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
+												parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+												parameters_[currentCharacters_]->chargeJump_.flyTimer = parameters_[currentCharacters_]->chargeJump_.maxFlyTime;
+											}
 
 											velocity_.y = 0;
 
@@ -1312,8 +1384,11 @@ void Player::CheckCollision() {
 										default:
 										case Player::kNormal:
 
-											parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
-											parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+											if (parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
+												parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
+												parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+												parameters_[currentCharacters_]->chargeJump_.flyTimer = parameters_[currentCharacters_]->chargeJump_.maxFlyTime;
+											}
 
 											velocity_.y = 0;
 
@@ -1467,8 +1542,37 @@ void Player::CheckCollision() {
 
 						if (Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
 
+							//氷ブロックなら別の処理
+							if ((*blocksPtr_)[y][x]->GetType() == Block::kIceBlock) {
+
+								//上下左右破壊向きを決める
+								if (input_->TiltLStick(Input::Stick::Right)) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kRight);
+								}
+								else if (input_->TiltLStick(Input::Stick::Left)) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kLeft);
+								}
+								else if (input_->TiltLStick(Input::Stick::Up)) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kUp);
+								}
+								else if (input_->TiltLStick(Input::Stick::Down)) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kDown);
+								}
+								//入力が無ければどっちを向いてるかで決める
+								else if (isFacingLeft_) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kLeft);
+								}
+								else {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kRight);
+								}
+
+								(*blocksPtr_)[y][x]->IceBreak();
+
+							}
 							//自身の破壊力に応じてダメージを与える
-							(*blocksPtr_)[y][x]->Break(parameters_[currentCharacters_]->dig_.digPower);
+							else {
+								(*blocksPtr_)[y][x]->Break(parameters_[currentCharacters_]->dig_.digPower);
+							}
 
 							//穴掘りクールタイムを設定
 							parameters_[currentCharacters_]->dig_.digCount = parameters_[currentCharacters_]->dig_.digInterval;

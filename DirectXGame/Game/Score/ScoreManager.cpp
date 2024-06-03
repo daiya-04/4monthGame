@@ -9,10 +9,11 @@
 void Score::Init(const Vector2& pos, const Vector2& size) {
 
 	//テクスチャ読み込み
-	numTex_ = TextureManager::Load("UI/number.png");
+	numTex_ = TextureManager::Load("UI/whiteNumber.png");
 
 	pos_ = pos;
 	size_ = size;
+	space_ = 48.0f;
 
 	//スプライト生成
 	for (uint32_t i = 0; i < kMaxDigits_; i++) {
@@ -35,7 +36,7 @@ void Score::Draw() {
 
 		digitNum = judgeScore / divideNum;
 
-		numbers_[i]->SetPosition({ pos_.x + float(i - kMaxDigits_ / 2) * 48.0f, pos_.y });
+		numbers_[i]->SetPosition({ pos_.x + float(i - kMaxDigits_ / 2) * space_, pos_.y });
 
 		numbers_[i]->SetTextureArea({ float(digitNum * 64.0f), 0.0f }, { 64.0f,64.0f });
 
@@ -69,7 +70,9 @@ void Rank::Draw() {
 
 	rankImage_->SetPosition(pos_);
 	rankImage_->SetSize(size_);
-	rankImage_->SetTextureArea({ float(value_) * 32.0f,0.0f }, { 33.0f,33.0f });
+
+	//テクスチャのSS不要なので一時的にずらしている
+	rankImage_->SetTextureArea({ float(value_ + 1) * 32.0f,0.0f }, { 32.0f,32.0f });
 
 	rankImage_->Draw();
 
@@ -97,11 +100,10 @@ void ScoreManager::Initialize() {
 	for (int32_t index = 0; index < kMaxStage_; index++) {
 		bestScores_[index].score_.value_ = 0;
 		bestScores_[index].rank_.value_ = R_N;
-		goalScores_[index][R_SS] = 10000;
-		goalScores_[index][R_S] = 8000;
-		goalScores_[index][R_A] = 6000;
-		goalScores_[index][R_B] = 4000;
-		goalScores_[index][R_C] = 2000;
+		goalScores_[index][R_S] = 10000;
+		goalScores_[index][R_A] = goalScores_[index][R_S] / 4 * 3;
+		goalScores_[index][R_B] = goalScores_[index][R_S] / 2;
+		goalScores_[index][R_C] = goalScores_[index][R_S] / 4;
 		goalScores_[index][R_D] = 1;
 		goalScores_[index][R_N] = 0;
 	}
@@ -148,7 +150,7 @@ void ScoreManager::Load() {
 			std::getline(file, line, ',');
 
 			bestScores_[i].score_.value_ = std::stoi(line);
-			for (int32_t index = R_SS; index < kRankCount; index++) {
+			for (int32_t index = R_S; index < kRankCount; index++) {
 				if (goalScores_[i][index] <= bestScores_[i].score_.value_) {
 					bestScores_[i].rank_.value_ = Rate(index);
 					break;
@@ -197,7 +199,7 @@ void ScoreManager::SetScore(int32_t stageNum, const Score& score) {
 	stageIndex = std::clamp(stageIndex, 0, kMaxStage_ - 1);
 
 	result_.score_.value_ = score.value_;
-	for (int32_t index = R_SS; index < kRankCount; index++) {
+	for (int32_t index = R_S; index < kRankCount; index++) {
 		if (goalScores_[stageIndex][index] <= result_.score_.value_) {
 			result_.rank_.value_ = Rate(index);
 			break;
@@ -207,7 +209,7 @@ void ScoreManager::SetScore(int32_t stageNum, const Score& score) {
 	if (bestScores_[stageIndex].score_.value_ < score.value_) {
 		bestScores_[stageIndex].score_.value_ = score.value_;
 
-		for (int32_t index = R_SS; index < kRankCount; index++) {
+		for (int32_t index = R_S; index < kRankCount; index++) {
 			if (goalScores_[stageIndex][index] <= bestScores_[stageIndex].score_.value_) {
 				bestScores_[stageIndex].rank_.value_ = Rate(index);
 				break;

@@ -20,11 +20,7 @@ UpgradeSystem::UpgradeSystem()
 
 	furnaceTexture_ = TextureManager::GetInstance()->Load("stageObject/furnace.png");
 
-	backTexture_ = TextureManager::GetInstance()->Load("UI/back.png");
-	sendRockTexture_ = TextureManager::GetInstance()->Load("UI/sendRock.png");
-	upgradeTexture_ = TextureManager::GetInstance()->Load("UI/upgrade.png");
-	sendIntervalTexture_ = TextureManager::GetInstance()->Load("UI/sendInterval.png");
-	powerTexture_ = TextureManager::GetInstance()->Load("UI/power.png");
+	upgradeTexture_ = TextureManager::GetInstance()->Load("UI/powerUp.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
 	rockUITextures_[0] = TextureManager::GetInstance()->Load("UI/rock.png");
 	rockUITextures_[1] = TextureManager::GetInstance()->Load("UI/powerRock.png");
@@ -33,45 +29,41 @@ UpgradeSystem::UpgradeSystem()
 
 	furnace_.reset(Object2d::Create(furnaceTexture_, {Block::kBlockSize_ * 19.5f, Block::kBlockSize_ * 2.5f}));
 	furnace_->SetSize({ Block::kBlockSize_ * 2.0f,Block::kBlockSize_ * 4.0f });
-	backSprite_.reset(Sprite::Create(backTexture_, UIBottomPosition_));
-	sendRockSprite_.reset(Sprite::Create(sendIntervalTexture_, UITopPosition_));
-	powerSprite_.reset(Sprite::Create(powerTexture_, UIMiddlePosition_));
+	upgradeSprite_.reset(Sprite::Create(upgradeTexture_, { 640.0f,360.0f }));
+	upgradeSprite_->SetSize({ 960.0f, 540.0f });
+	upgradeSprite_->SetTextureArea({ 0.0f,0.0f }, { 960.0f,540.0f });
 
 	//数字リセット
-	for (int32_t y = 0; y < 2; y++) {
+	for (int32_t x = 0; x < 4; x++) {
 
-		for (int32_t x = 0; x < 4; x++) {
+		float xPosition = 0.0f;
+		float yPosition = 200.0f;
 
-			float xPosition = 0.0f;
-			float yPosition = 0.0f;
+		if (x % 2 == 0) {
+			xPosition = 480.0f - 128.0f;
+		}
+		else {
+			xPosition = 480.0f + 128.0f;
+		}
 
-			if (x % 2 == 0) {
-				xPosition = 900.0f;
-			}
-			else {
-				xPosition = 1050.0f;
-			}
+		if (x < 2) {
+			yPosition = 64.0f + 200.0f;
+		}
+		else {
+			yPosition = 164.0f + 200.0f;
+		}
 
-			if (x < 2) {
-				yPosition = 50.0f + 200 * (y + 1);
-			}
-			else {
-				yPosition = 100.0f + 200 * (y + 1);
-			}
+		for (int32_t i = 0; i < kMaxDigits_; i++) {
 
-			for (int32_t i = 0; i < kMaxDigits_; i++) {
-
-				numbers_[y][x][i].reset(Sprite::Create(numberTexture_, { xPosition + 24.0f * i , yPosition }));
-				numbers_[y][x][i]->SetSize({ 32.0f,32.0f });
-				numbers_[y][x][i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
-
-			}
-
-			//岩UIリセット
-			rocksUI_[y][x].reset(Sprite::Create(rockUITextures_[x], { xPosition - 32.0f, yPosition }));
-			rocksUI_[y][x]->SetSize({ 32.0f,32.0f });
+			numbers_[x][i].reset(Sprite::Create(numberTexture_, { xPosition + 48.0f * i , yPosition }));
+			numbers_[x][i]->SetSize({ 64.0f,64.0f });
+			numbers_[x][i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
 
 		}
+
+		//岩UIリセット
+		rocksUI_[x].reset(Sprite::Create(rockUITextures_[x], { xPosition - 48.0f, yPosition }));
+		rocksUI_[x]->SetSize({ 64.0f,64.0f });
 
 	}
 
@@ -88,7 +80,7 @@ void UpgradeSystem::Initialize(int32_t stageNum) {
 	LoadData(stageNum);
 
 	for (int32_t i = 0; i < 2; i++) {
-		saunaLevel_[i] = 0;
+		speedLevel_[i] = 0;
 		powerLevel_[i] = 0;
 	}
 
@@ -104,38 +96,30 @@ void UpgradeSystem::Update() {
 
 		Upgrade();
 
-		sendRockSprite_->SetTextureHandle(sendIntervalTexture_);
-		powerSprite_->SetTextureHandle(powerTexture_);
-
 		//数字の更新
-		for (int32_t y = 0; y < 2; y++) {
+		for (int32_t x = 0; x < 4; x++) {
 
-			for (int32_t x = 0; x < 4; x++) {
+			for (int32_t i = 0; i < kMaxDigits_; i++) {
 
-				for (int32_t i = 0; i < kMaxDigits_; i++) {
+				int32_t num = 0;
 
-					int32_t num = 0;
+				int32_t divide = int32_t(std::pow(10, kMaxDigits_ - 1 - i));
 
-					int32_t divide = int32_t(std::pow(10, kMaxDigits_ - 1 - i));
-
-					//岩送りの数字
-					if (y == 0) {
-
-						num = saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][x] / divide;
-
-						numbers_[y][x][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
-
-					}
-					////採掘力の数字
-					else {
-
-						num = powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][x] / divide;
-
-						numbers_[y][x][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
-
-					}
-
+				switch (upgradeType_)
+				{
+				default:
+				case UpgradeSystem::kPower:
+					num = powerUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][x] / divide;
+					break;
+				case UpgradeSystem::kDigSpeed:
+					num = digSpeedUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][x] / divide;
+					break;
+				case UpgradeSystem::kSpeed:
+					num = speedUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][x] / divide;
+					break;
 				}
+
+				numbers_[x][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
 
 			}
 
@@ -164,11 +148,11 @@ void UpgradeSystem::Upgrade() {
 
 		switch (upgradeType_)
 		{
-		case UpgradeSystem::kUpgrade:
-			upgradeType_ = kSauna;
+		case UpgradeSystem::kSpeed:
+			upgradeType_ = kDigSpeed;
 			break;
-		case UpgradeSystem::kReturn:
-			upgradeType_ = kUpgrade;
+		case UpgradeSystem::kDigSpeed:
+			upgradeType_ = kPower;
 			break;
 		default:
 			break;
@@ -179,11 +163,11 @@ void UpgradeSystem::Upgrade() {
 
 		switch (upgradeType_)
 		{
-		case UpgradeSystem::kSauna:
-			upgradeType_ = kUpgrade;
+		case UpgradeSystem::kPower:
+			upgradeType_ = kDigSpeed;
 			break;
-		case UpgradeSystem::kUpgrade:
-			upgradeType_ = kReturn;
+		case UpgradeSystem::kDigSpeed:
+			upgradeType_ = kSpeed;
 			break;
 		default:
 			break;
@@ -196,7 +180,7 @@ void UpgradeSystem::Upgrade() {
 
 		isActiveUpgrade_ = false;
 		isActive_ = false;
-		upgradeType_ = kSauna;
+		upgradeType_ = kPower;
 
 	}
 
@@ -205,21 +189,19 @@ void UpgradeSystem::Upgrade() {
 		switch (upgradeType_)
 		{
 		default:
-		case UpgradeSystem::kSauna:
+		case UpgradeSystem::kSpeed:
 
-			CheckCanUpgrade(kSauna);
-
-			break;
-		case UpgradeSystem::kUpgrade:
-
-			CheckCanUpgrade(kUpgrade);
+			CheckCanUpgrade(kSpeed);
 
 			break;
-		case UpgradeSystem::kReturn:
+		case UpgradeSystem::kPower:
 
-			isActiveUpgrade_ = false;
-			isActive_ = false;
-			upgradeType_ = kSauna;
+			CheckCanUpgrade(kPower);
+
+			break;
+		case UpgradeSystem::kDigSpeed:
+
+			CheckCanUpgrade(kDigSpeed);
 
 			break;
 		}
@@ -229,27 +211,21 @@ void UpgradeSystem::Upgrade() {
 	switch (upgradeType_)
 	{
 	default:
-	case UpgradeSystem::kSauna:
+	case UpgradeSystem::kSpeed:
 
-		backSprite_->SetPosition({ 1000.0f,600.0f });
-		sendRockSprite_->SetPosition({ 950.0f,200.0f });
-		powerSprite_->SetPosition({ 1000.0f,400.0f });
+		upgradeSprite_->SetTextureArea({ 960.0f * 2.0f,0.0f }, { 960.0f,540.0f });
 
 		break;
 
-	case UpgradeSystem::kUpgrade:
+	case UpgradeSystem::kPower:
 
-		backSprite_->SetPosition({ 1000.0f,600.0f });
-		sendRockSprite_->SetPosition({ 1000.0f,200.0f });
-		powerSprite_->SetPosition({ 950.0f,400.0f });
+		upgradeSprite_->SetTextureArea({ 0.0f,0.0f }, { 960.0f,540.0f });
 
 		break;
 
-	case UpgradeSystem::kReturn:
+	case UpgradeSystem::kDigSpeed:
 
-		backSprite_->SetPosition({ 950.0f,600.0f });
-		sendRockSprite_->SetPosition({ 1000.0f,200.0f });
-		powerSprite_->SetPosition({ 1000.0f,400.0f });
+		upgradeSprite_->SetTextureArea({ 960.0f,0.0f }, { 960.0f,540.0f });
 
 		break;
 
@@ -262,29 +238,28 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 	switch (type)
 	{
 	default:
-	case UpgradeSystem::kSauna:
+	case UpgradeSystem::kSpeed:
 
-		if (saunaLevel_[player_->GetCurrentCharacter()] < kMaxLevel_) {
+		if (speedLevel_[player_->GetCurrentCharacter()] < kMaxLevel_) {
 
 			//条件を満たしていたらブロックを消費して強化
 			if (player_->GetRockParameter().rocks_[Player::BringRocks::kRock] >=
-				saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRock] &&
+				speedUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRock] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kBlue] >=
-				saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kBlue] &&
+				speedUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kBlue] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kGreen] >=
-				saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kGreen] &&
+				speedUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kGreen] &&
 				player_->GetRockParameter().rocks_[Player::BringRocks::kRed] >=
-				saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRed]) {
+				speedUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRed]) {
 
 				for (int32_t i = 0; i < Player::BringRocks::kMaxType; i++) {
 
-					player_->GetRockParameter().rocks_[i] -= saunaUpgradeNeeds_[saunaLevel_[player_->GetCurrentCharacter()]][i];
+					player_->GetRockParameter().rocks_[i] -= speedUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][i];
 
 				}
 
 				player_->UpgradeSpeed(speedUpgradeValue_);
-				player_->UpgradeDigSpeed(digSpeedUpgradeValue_);
-				saunaLevel_[player_->GetCurrentCharacter()]++;
+				speedLevel_[player_->GetCurrentCharacter()]++;
 
 			}
 			else {
@@ -297,7 +272,7 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 		}
 
 		break;
-	case UpgradeSystem::kUpgrade:
+	case UpgradeSystem::kPower:
 
 		if (powerLevel_[player_->GetCurrentCharacter()] < kMaxLevel_) {
 
@@ -331,14 +306,48 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 		}
 
 		break;
+	case UpgradeSystem::kDigSpeed:
+
+		if (digSpeedLevel_[player_->GetCurrentCharacter()] < kMaxLevel_) {
+
+			//条件を満たしていたらブロックを消費して強化
+			if (player_->GetRockParameter().rocks_[Player::BringRocks::kRock] >=
+				digSpeedUpgradeNeeds_[digSpeedLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRock] &&
+				player_->GetRockParameter().rocks_[Player::BringRocks::kBlue] >=
+				digSpeedUpgradeNeeds_[digSpeedLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kBlue] &&
+				player_->GetRockParameter().rocks_[Player::BringRocks::kGreen] >=
+				digSpeedUpgradeNeeds_[digSpeedLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kGreen] &&
+				player_->GetRockParameter().rocks_[Player::BringRocks::kRed] >=
+				digSpeedUpgradeNeeds_[digSpeedLevel_[player_->GetCurrentCharacter()]][Player::BringRocks::kRed]) {
+
+				for (int32_t i = 0; i < Player::BringRocks::kMaxType; i++) {
+
+					player_->GetRockParameter().rocks_[i] -= digSpeedUpgradeNeeds_[digSpeedLevel_[player_->GetCurrentCharacter()]][i];
+
+				}
+
+				player_->UpgradeDigSpeed(digSpeedUpgradeValue_);
+				digSpeedLevel_[player_->GetCurrentCharacter()]++;
+
+			}
+			else {
+
+			}
+
+		}
+		else {
+
+		}
+
+		break;
 	}
 
 }
 
 void UpgradeSystem::LoadData(int32_t stageNum) {
 
-	std::string name = "./Resources/Data/Upgrade/up";
-	name += std::to_string(stageNum);
+	std::string name = "./Resources/Data/Upgrade/up1";
+	/*name += std::to_string(stageNum);*/
 	name += ".csv";
 
 	std::ifstream file(name);
@@ -366,10 +375,14 @@ void UpgradeSystem::LoadData(int32_t stageNum) {
 			std::getline(iss, sNum, ',');
 
 			if (k < 4) {
-				saunaUpgradeNeeds_[i][k] = std::stoi(sNum);
+				speedUpgradeNeeds_[i][k] = std::stoi(sNum);
+				speedUpgradeNeeds_[i][k] = std::clamp(speedUpgradeNeeds_[i][k], 0, 999);
 			}
 			else {
 				powerUpgradeNeeds_[i][k - 4] = std::stoi(sNum);
+				digSpeedUpgradeNeeds_[i][k - 4] = std::stoi(sNum);
+				powerUpgradeNeeds_[i][k - 4] = std::clamp(powerUpgradeNeeds_[i][k - 4], 0, 999);
+				digSpeedUpgradeNeeds_[i][k - 4] = std::clamp(digSpeedUpgradeNeeds_[i][k - 4], 0, 999);
 			}
 
 		}
@@ -397,24 +410,16 @@ void UpgradeSystem::DrawUI() {
 
 	if (isActive_) {
 
-		sendRockSprite_->Draw();
-
-		powerSprite_->Draw();
-
-		backSprite_->Draw();
+		upgradeSprite_->Draw();
 
 		//数字描画
-		for (int32_t y = 0; y < 2; y++) {
+		for (int32_t x = 0; x < 4; x++) {
 
-			for (int32_t x = 0; x < 4; x++) {
-
-				for (int32_t i = 0; i < kMaxDigits_; i++) {
-					numbers_[y][x][i]->Draw();
-				}
-
-				rocksUI_[y][x]->Draw();
-
+			for (int32_t i = 0; i < kMaxDigits_; i++) {
+				numbers_[x][i]->Draw();
 			}
+
+			rocksUI_[x]->Draw();
 
 		}
 

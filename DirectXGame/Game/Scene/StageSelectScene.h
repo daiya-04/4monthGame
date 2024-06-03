@@ -98,6 +98,11 @@ private:
 
 	Audio* selectBGM_;
 
+
+	Audio* selectSE_;
+	Audio* moveSE_;
+	Audio* cancelSE_;
+
 	uint32_t moveInterval_ = 10;
 	uint32_t intervalCount_ = 0;
 

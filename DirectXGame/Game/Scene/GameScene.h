@@ -29,6 +29,7 @@
 #include "EnvironmentEffects/Snow/SnowManager.h"
 
 #include "Text/Text.h"
+#include "Option.h"
 
 class GameScene : public DefaultScene {
 public:
@@ -69,6 +70,9 @@ public:
 	//stage側にeffectManagerが持つモードを適応する
 	void AppryMode();
 
+	//スコアゲージ更新
+	void UpdateScoreGage();
+
 private:
 	ID3D12GraphicsCommandList* commandList_;
 	
@@ -78,7 +82,7 @@ private:
 
 	enum MenuType {
 		kBack, //ゲームに戻る
-		kRestart, //リスタート
+		kOption, //オプション
 		kStageSelect, //ステージ選択へ
 
 		kMaxMenu, 
@@ -102,12 +106,15 @@ private:
 	Vector2 scrollHomePoint_{};
 	bool isScrollEnd_ = false;
 
-	Vector2 scorePosition_ = { 256.0f,64.0f };
+	Vector2 scorePosition_ = { 240.0f,72.0f };
 
 	//UI関連
 	std::unique_ptr<Sprite> backGround_;
 	std::unique_ptr<Sprite> pose_;
 	std::unique_ptr<Sprite> black_;
+	std::unique_ptr<Sprite> scoreFront_;
+	std::unique_ptr<Sprite> scoreGage_;
+	std::unique_ptr<Sprite> scoreBack_;
 
 	uint32_t bgTexture_;
 	uint32_t poseTex_;
@@ -129,21 +136,31 @@ private:
 
 	MenuType menu_ = kBack;
 
-	std::unique_ptr<Sprite> backSprite_;
-	std::unique_ptr<Sprite> restartSprite_;
-	std::unique_ptr<Sprite> toStageSelectSprite_;
+	std::unique_ptr<Option> option_;
+
+	std::unique_ptr<Sprite> menuBackSprite_;
 
 	std::unique_ptr<Sprite> menuButtonSprite_;
 
+	std::array<std::unique_ptr<Sprite>, kMaxMenu> menuSprites_;
+
 	uint32_t backGameTex_;
 	uint32_t restartTex_;
+	uint32_t toGameTex_;
+	uint32_t optionTex_;
 	uint32_t toStageSelectTex_;
 	uint32_t menuButtonTex_;
+	uint32_t scoreFrontTex_;
+	uint32_t scoreMiddleTex_;
+	uint32_t scoreBackTex_;
 
 ///-------------------------------------------
 
 	Audio* magmaBGM_;
 
+	Audio* selectSE_;
+	Audio* moveSE_;
+	Audio* cancelSE_;
 
 	uint32_t currentStageNumber_ = 0;
 

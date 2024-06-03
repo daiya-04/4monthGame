@@ -82,9 +82,16 @@ public:
 	void CreateGemParticle(const Vector2& position, int32_t type);
 	void CreateWallKickEffect(const Vector2& position, int32_t type);
 
-	void CreateStarParticleUI(const Vector2& position);
+	void CreateStarParticleUI(const Vector2& position,int32_t type);
 
 	void UpdateParticle(const Camera& camera);
+
+	//黄金ブロックのエフェクト
+	void GoldBlockEffectUpdate();
+	void GoldBlockEffectDraw();
+	//void SetGoldBlockEffectPosition(const Vector2& pos) { goldBlockEffect_->position_ = pos; };
+	void SetIsResetGoldBlockEffect(bool is) { isResetGoldBlockEffect_ = is; };
+
 
 private:
 
@@ -117,6 +124,12 @@ private:
 	std::unique_ptr<Camera> constantCamera_;//spriteをinstancing対応させるまでの仮カメラ
 	std::list<std::unique_ptr<StarParticle>> starParticleDatasUI_;
 	std::unique_ptr<Object2dInstancing> starParticlesUI_;
+
+	//黄金ブロックのエフェクト
+	//std::unique_ptr<Object2d> goldBlockEffect_;
+	bool isDrawGoldBlockEffect_;
+	bool isResetGoldBlockEffect_;
+
 };
 
 

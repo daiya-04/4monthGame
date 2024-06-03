@@ -20,7 +20,8 @@ Stage::Stage()
 
 	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
 	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
-	borderTex_ = TextureManager::GetInstance()->Load("stageObject/line.png");
+	borderBlueTex_ = TextureManager::GetInstance()->Load("stageObject/flagBlue.png");
+	borderOrangeTex_ = TextureManager::GetInstance()->Load("stageObject/flagOrange.png");
 	saunaRoomTex_ = TextureManager::GetInstance()->Load("stageObject/saunaRoom.png");
 	purposeTex_ = TextureManager::GetInstance()->Load("UI/mokuteki.png");
 	upTex_ = TextureManager::GetInstance()->Load("UI/up.png");
@@ -60,10 +61,14 @@ Stage::Stage()
 	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
 	purposeSprite_.reset(Sprite::Create(purposeTex_, { 640.0f,200.0f }));
 
-	borders_[0].reset(Object2d::Create(borderTex_, kBorderLeft));
+	borders_[0].reset(Object2d::Create(borderOrangeTex_, kBorderLeft));
 	borders_[0]->SetAnchorpoint({ 0.5f,1.0f });
-	borders_[1].reset(Object2d::Create(borderTex_, kBorderRight));
+	borders_[0]->SetSize({ 64.0f,192.0f });
+	borders_[0]->SetTextureArea({ 0.0f,0.0f }, { 32.0f,96.0f });
+	borders_[1].reset(Object2d::Create(borderBlueTex_, kBorderRight));
 	borders_[1]->SetAnchorpoint({ 0.5f,1.0f });
+	borders_[1]->SetSize({ 64.0f,192.0f });
+	borders_[1]->SetTextureArea({ 0.0f,0.0f }, { 32.0f,96.0f });
 
 	magma_ = std::make_unique<Magma>();
 
@@ -86,6 +91,8 @@ Stage::Stage()
 	upgradeSystem_ = std::make_unique<UpgradeSystem>();
 	upgradeSystem_->SetGoalCount(&rockCount_);
 
+	environmentEffectsManager_ = EnvironmentEffectsManager::GetInstance();
+
 	CreateEntity();
 
 }
@@ -98,15 +105,39 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	currentStageNumber_ = stageNumber;
 
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (int32_t y = 0; y < kMaxStageHeight_; y++) {
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (int32_t x = 0; x < kMaxStageWidth_; x++) {
 
 			//一旦初期化。耐久力などの設定はLoadで行う
 			blockPositions_[y][x] = 0;
 			map_[y][x]->SetPlayer(player_);
 			map_[y][x]->SetMagma(magma_.get());
 			map_[y][x]->SetDurability(float(y / 5) + 3.0f);
+
+			//上下左右のブロックのポインタ設定
+			Block* pLeft = nullptr;
+			Block* pRight = nullptr;
+			Block* pUp = nullptr;
+			Block* pDown = nullptr;
+
+			if (y - 1 >= 0) {
+				pUp = map_[y - 1][x].get();
+			}
+			
+			if (y + 1 < kMaxStageHeight_) {
+				pDown = map_[y + 1][x].get();
+			}
+
+			if (x - 1 >= 0) {
+				pLeft = map_[y][x - 1].get();
+			}
+
+			if (x + 1 < kMaxStageWidth_) {
+				pRight = map_[y][x + 1].get();
+			}
+
+			map_[y][x]->SetPointer(pLeft, pRight, pUp, pDown);
 
 		}
 
@@ -117,7 +148,7 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	isStart_ = false;
 	isClear_ = false;
-	isRespawn_ = false;
+	isRespawn_ = true;
 	isBreakFlagBlocks_ = false;
 	canUpgrade_ = false;
 	rockCount_ = 0;
@@ -135,7 +166,6 @@ void Stage::Update() {
 	
 
 #endif // _DEBUG
-
 
 	//プレイヤーがクリアフラグを持った状態でサウナ室に帰ったらクリアフラグ立てる
 	if (player_->GetIsClear() && player_->GetIsHome()) {
@@ -175,6 +205,12 @@ void Stage::Update() {
 		//家に戻ったら再生成
 		if (player_->GetIsHome() && !isRespawn_) {
 			RespawnBlock(Block::kDownMagma);
+
+			//極寒なら氷生成
+			if (!environmentEffectsManager_->GetIsNowScene()) {
+				CreateIceBlock();
+			}
+
 			isRespawn_ = true;
 		}
 		else if (player_->GetIsDead()) {
@@ -225,7 +261,28 @@ void Stage::Update() {
 
 	}
 
+	UpdateAnimation();
 	
+}
+
+void Stage::UpdateAnimation() {
+
+	//画像を動かす処理
+	if (++flagAnimationTime_ >= flagChangeFrame_) {
+
+		flagAnimationTime_ = 0;
+
+		//設定した最大数に達したらリセット
+		if (++currentFlagAnimationNum_ >= maxFlagAnimationNum_) {
+			currentFlagAnimationNum_ = 0;
+		}
+
+	}
+
+	borders_[0]->SetTextureArea({ 32.0f * currentFlagAnimationNum_,0.0f }, { 32.0f,96.0f });
+	borders_[1]->SetTextureArea({ 32.0f * currentFlagAnimationNum_,0.0f }, { 32.0f,96.0f });
+
+
 }
 
 void Stage::CheckCollision() {
@@ -497,13 +554,37 @@ void Stage::CreateIceBlock() {
 		
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
 			
+			//一部スキップ
+			if (y < 5) {
+
+				continue;
+
+			}
+			else if (y == 5) {
+
+				if ((x >= 8 && x <= 13) || (x >= 26 && x <= 31)) {
+					continue;
+				}
+				else if (x <= 5 || (x >= 16 && x <= 23) || x >= 34) {
+					continue;
+				}
+
+			}
+			else if (y == 6) {
+
+				if ((x >= 9 && x <= 12) || (x >= 27 && x <= 30)) {
+					continue;
+				}
+
+			}
+
 			//ブロックが無い且つプレイヤーと当たらない部分に氷ブロックを生成
 			if (map_[y][x]->GetIsBreak() && !IsCollision(map_[y][x]->GetCollision(), player_->GetCollision())) {
 
 				map_[y][x]->ChangeType(Block::BlockType::kIceBlock);
 				map_[y][x]->Repair();
 
-				blockPositions_[y][x] = BaseBlock::BlockType::kIceBlock;
+				/*blockPositions_[y][x] = BaseBlock::BlockType::kIceBlock;*/
 
 			}
 
@@ -652,8 +733,10 @@ void Stage::Load(uint32_t stageNumber) {
 			std::string sNum;
 			//数字を格納
 			std::getline(iss, sNum, ',');
+
+
 			//番号からTypeを選ぶ
-			uint32_t num = std::stoi(sNum);
+			uint32_t num = std::stoi(sNum, nullptr, 16);
 			Block::BlockType type;
 			//範囲外のものを選ばないように防ぐ
 			if (num < Block::BlockType::kMaxBlock) {

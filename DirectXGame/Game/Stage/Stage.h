@@ -10,6 +10,7 @@
 #include "Sprite.h"
 #include "System/UpgradeSystem.h"
 #include "Magma.h"
+#include "EnvironmentEffects/EnvironmentEffectsManager.h"
 
 class Player;
 
@@ -122,7 +123,11 @@ private:
 
 	void RespawnBlock(Block::BlockType type);
 
+	void UpdateAnimation();
+
 private:
+
+	EnvironmentEffectsManager* environmentEffectsManager_ = nullptr;
 
 	Player* player_;
 
@@ -175,6 +180,13 @@ private:
 	//再生成フラグ
 	bool isRespawn_ = false;
 
+	//氷ブロックの破壊開始座標
+	int32_t breakStartX_ = 0;
+	int32_t breakStartY_ = 0;
+	//氷ブロック破壊間隔
+	int32_t breakInterval_ = 5;
+	int32_t breakTimer_ = 0;
+
 	//数字の表示フラグ
 	std::array<bool, kMaxNumbers_> isActiveNumber_{};
 
@@ -196,7 +208,8 @@ private:
 	//テクスチャ
 	uint32_t numTex_;
 	uint32_t clearTex_;
-	uint32_t borderTex_;
+	uint32_t borderBlueTex_;
+	uint32_t borderOrangeTex_;
 	uint32_t returnTex_;
 	uint32_t saunaRoomTex_;
 	uint32_t purposeTex_;
@@ -208,6 +221,19 @@ private:
 	uint32_t tutorialFirstTex_;
 	uint32_t tutorialSecondTex_;
 	uint32_t tutorialThirdTex_;
+
+///===============アニメーション関連=====================
+
+	//コマ最大数
+	int32_t maxFlagAnimationNum_ = 6;
+	//現在のコマ
+	int32_t currentFlagAnimationNum_ = 0;
+	//アニメーション時間
+	int32_t flagAnimationTime_ = 0;
+	//切り替えフレーム
+	int32_t flagChangeFrame_ = 4;
+
+///=============================================
 
 };
 

@@ -76,9 +76,15 @@ void StageSelectScene::Init() {
 	///
 
 	score_.Init(scorePos_, { 48.0f,48.0f });
-	rank_.Init(rankPos_, { 96.0f,96.0f });
+
+	score_.SetSpace(32.0f);
+	rank_.Init(rankPos_, { 64.0f,64.0f });
 
 	selectBGM_ = AudioManager::GetInstance()->Load("BGM/selectBGM.mp3");
+
+	selectSE_ = AudioManager::GetInstance()->Load("SE/select_ok.mp3");
+	moveSE_ = AudioManager::GetInstance()->Load("SE/select_move.mp3");
+	cancelSE_ = AudioManager::GetInstance()->Load("SE/select_cancel.mp3");
 
 	selectBGM_->Play();
 
@@ -247,10 +253,12 @@ void StageSelectScene::RootUpdate() {
 	preStageNum_ = stageNumber_;
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+		selectSE_->Play();
 		modeRequest_ = Mode::Enter;
 	}
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::B)) {
+		cancelSE_->Play();
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
 
@@ -273,12 +281,14 @@ void StageSelectScene::RootUpdate() {
 	if (Input::GetInstance()->TriggerLStick(Input::Stick::Right) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_RIGHT)) {
 		if (stageNumber_ != kMaxStage_) {
 			stageNumber_++;
+			moveSE_->Play();
 			modeRequest_ = Mode::Move;
 		}
 	}
 	else if (Input::GetInstance()->TriggerLStick(Input::Stick::Left) || Input::GetInstance()->TriggerButton(Input::Button::DPAD_LEFT)) {
 		if (stageNumber_ != 1) {
 			stageNumber_--;
+			moveSE_->Play();
 			modeRequest_ = Mode::Move;
 		}
 	}

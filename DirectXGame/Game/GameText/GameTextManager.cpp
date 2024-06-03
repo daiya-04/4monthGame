@@ -66,6 +66,7 @@ void GameTextManager::Initialize() {
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGaugeBack-Size", skipGaugeSize_);
 	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName, "SkipGaugeBack-Position", skipGaugePosition_);
 
+	InitializeBackCharactors();
 
 	AppryGlobalVariables();
 	nameBack_->SetPosition(nameBackPosition_);
@@ -82,6 +83,10 @@ void GameTextManager::Initialize() {
 	skipGauge_->SetColor({0.5f,0.5f,0.5f,1.0f});
 	skipGaugeBack_->SetPosition(skipGaugeBackPosition_);
 	skipGaugeBack_->SetSize(skipGaugeBackSize_);
+
+	for (size_t i = 0; i < 3; i++) {
+		backCharactors_[i].sprite->SetSize(backCharactorsSize_);
+	}
 
 	isEnd_ = true;
 }
@@ -105,6 +110,13 @@ void GameTextManager::AppryGlobalVariables() {
 	skipGaugePosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGauge-Position");
 	skipGaugeBackSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGaugeBack-Size");
 	skipGaugeBackPosition_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName, "SkipGaugeBack-Position");
+	
+	std::string groupName2 = "TextLayout";
+
+	backCharactors_[0].sprite->SetPosition(GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName2, "Position-Atsuo"));
+	backCharactors_[1].sprite->SetPosition(GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName2, "Position-Samuo"));
+	backCharactors_[2].sprite->SetPosition(GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName2, "Position-OldMan"));
+	backCharactorsSize_ = GlobalVariables::GetInstance()->GetValue<Vector2>(dataName, groupName2, "BackCahactorsSize");
 }
 
 void GameTextManager::InitializeStage(uint32_t stageNum) {
@@ -289,6 +301,9 @@ void GameTextManager::Update() {
 	skipGauge_->SetSize(skipGaugeSize_);
 	skipGaugeBack_->SetPosition(skipGaugeBackPosition_);
 	skipGaugeBack_->SetSize(skipGaugeBackSize_);
+	for (size_t i = 0; i < 3; i++) {
+		backCharactors_[i].sprite->SetSize(backCharactorsSize_);
+	}
 #endif // _DEBUG
 
 	if (!isSkip_) {
@@ -344,17 +359,24 @@ void GameTextManager::Open() {
 	nextButtonTargetPosition_ = { 0.0f,0.0f };
 	nextButtonOldPosition_ = nextButtonTargetPosition_;
 	buttonParametric_ = 1.0f;
+	for (size_t i = 0; i < 3; i++) {
+		backCharactors_[i].isHighLight = false;
+		backCharactors_[i].isShow = false;
+		backCharactors_[i].sprite->SetScale(1.0f);
+		backCharactors_[i].sprite->SetColor(Vector4{0.2f,0.2f,0.2f,1.0f});
+	}
 }
 
 void GameTextManager::View() {
 	nineSliceData_.size = textBoxOriginSize_;
 	buttonColor_ = { 1.0f,1.0f,1.0f,1.0f };
+	UpdateBackCharactors();
 	if (!mainText_->GetCompleteDrawText()) {
 		buttonColor_ = { 0.5f,0.5f,0.5f,1.0f };
 		if (isSkip_) { mainText_->CharCountMax(); }
 		//長押しで早送り
 		if (Input::GetInstance()->PushButton(Input::Button::A)) {
-			mainText_->SetCountUpFrame_(0);
+			mainText_->SetCountUpFrame_(1);
 		}
 		else {
 			mainText_->SetCountUpFrame_(5);
@@ -375,6 +397,13 @@ void GameTextManager::View() {
 			nameText_->SetWString(nameList_[listIndex_]);
 			nameText_->CharCountMax();
 			nameText_->SetArrangeType(Text::kCenter);
+			
+			for (size_t i = 0; i < 3; i++) {
+				backCharactors_[i].isHighLight = false;
+				backCharactors_[i].sprite->SetScale(1.0f);
+				backCharactors_[i].sprite->SetColor(Vector4{ 0.2f,0.2f,0.2f,1.0f });
+			}
+			UpdateBackCharactors();
 		}
 		else {
 			phase_ = CLOSE;
@@ -419,6 +448,20 @@ void GameTextManager::Close() {
 void GameTextManager::Draw() {
 	if (phase_ != END && nineSliceData_.size != Vector2{0.0f,0.0f}) {
 		Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+		if (phase_ == VIEW) {
+			//notHighLight
+			for (size_t i = 0; i < 3;i++) {
+				if (backCharactors_[i].isShow && !backCharactors_[i].isHighLight) {
+					backCharactors_[i].sprite->Draw();
+				}
+			}
+			//highlight
+			for (size_t i = 0; i < 3; i++) {
+				if (backCharactors_[i].isHighLight) {
+					backCharactors_[i].sprite->Draw();
+				}
+			}
+		}
 		for (size_t i = 0; i < 9; i++) {
 			nineSliceTextureBox_[i]->Draw();
 		}
@@ -491,4 +534,43 @@ void GameTextManager::SetNineSliceData() {
 	nineSliceTextureBox_[8]->SetPosition(rightTop + Vector2{ 0.0f, nineSliceData_.partSize.y + centerSize.y });
 	nineSliceTextureBox_[8]->SetSize(nineSliceData_.partSize);
 	nineSliceTextureBox_[8]->SetTextureArea(Vector2{ nineSliceData_.textureSize.x - nineSliceData_.texturePartSize.x,textureCenterSize.y + nineSliceData_.texturePartSize.y }, nineSliceData_.texturePartSize);
+}
+
+void GameTextManager::InitializeBackCharactors() {
+	backCharactors_[0].sprite.reset(Sprite::Create(TextureManager::GetInstance()->Load("atsuo.png"), Vector2{ 0,0 }, 1.0f));
+	backCharactors_[1].sprite.reset(Sprite::Create(TextureManager::GetInstance()->Load("samuo.png"), Vector2{ 0,0 }, 1.0f));
+	backCharactors_[2].sprite.reset(Sprite::Create(TextureManager::GetInstance()->Load("oldMan.png"), Vector2{ 0,0 }, 1.0f));
+	
+	std::string groupName2 = "TextLayout";
+
+	for (size_t i = 0; i < 3;i++) {
+		backCharactors_[i].isHighLight = false;
+		backCharactors_[i].isShow = false;
+		backCharactors_[i].sprite->SetScale(1.0f);
+		backCharactors_[i].sprite->SetAnchorpoint(Vector2{0.5f,1.0f});
+	}
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName2, "Position-Atsuo", backCharactors_[0].sprite->GetPosition());
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName2, "Position-Samuo", backCharactors_[1].sprite->GetPosition());
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName2, "Position-OldMan", backCharactors_[2].sprite->GetPosition());
+	GlobalVariables::GetInstance()->AddItem<const Vector2&>(dataName, groupName2, "BackCahactorsSize", backCharactorsSize_);
+}
+void GameTextManager::UpdateBackCharactors() {
+	if (nameText_->GetWString().find(L"アツオ") != std::wstring::npos) {
+		backCharactors_[0].isHighLight = true;
+		backCharactors_[0].isShow = true;
+		backCharactors_[0].sprite->SetScale(1.2f);
+		backCharactors_[0].sprite->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if(nameText_->GetWString().find(L"サムオ") != std::wstring::npos){
+		backCharactors_[1].isHighLight = true;
+		backCharactors_[1].isShow = true;
+		backCharactors_[1].sprite->SetScale(1.2f);
+		backCharactors_[1].sprite->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if(nameText_->GetWString().find(L"老人") != std::wstring::npos) {
+		backCharactors_[2].isHighLight = true;
+		backCharactors_[2].isShow = true;
+		backCharactors_[2].sprite->SetScale(1.2f);
+		backCharactors_[2].sprite->SetColor(Vector4{ 1.0f,1.0f,1.0f,1.0f });
+	}
 }

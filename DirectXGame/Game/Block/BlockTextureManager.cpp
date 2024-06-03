@@ -26,9 +26,15 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/red.png");
 	blockTextures_.push_back(texture);
-	texture = TextureManager::Load("blocks/down.png");
+	texture = TextureManager::Load("blocks/hot.png");
+	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/ice.png");
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/unbreakable.png");
+	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/gold.png");
+	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/testIce.png");
 	blockTextures_.push_back(texture);
 
 	for (uint32_t index=1; index < BaseBlock::BlockType::kMaxBlock; index++) {
@@ -46,12 +52,20 @@ void BlockTextureManager::LoadAllBlockTexture() {
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[3]);
 		}
 		else if (index == Block::kDownMagma) {
-			objects_[index - 1]->SetTextureHandle(blockTextures_[4]);
-			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[4]);
-		}
-		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[5]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[5]);
+		}
+		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[6]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[6]);
+		}
+		else if (index == Block::kGoldBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[7]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[7]);
+		}
+		else if (index == Block::kIceBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[8]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[8]);
 		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
@@ -77,7 +91,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	//マグマ下降
 	/*objects_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });*/
 	//黄金ブロック
-	objects_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
+	/*objects_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });*/
 
 	//壊せないブロック
 	/*breakParticles_[Block::kUnbreakable - 1]->SetColor({ 0.6f,0.9f,1.8f,1.0f });*/
@@ -96,8 +110,22 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	//マグマ下降
 	/*breakParticles_[Block::kDownMagma - 1]->SetColor({ 0.3f,0.1f,0.1f,1.0f });*/
 	//黄金ブロック
-	breakParticles_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });
+	/*breakParticles_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });*/
 
+
+	breakParticleDatas_.clear();
+	//star
+	starParticleDatas_.clear();
+	//sand
+	sandParticleDatas_.clear();
+	//gem
+	gemParticleDatas_.clear();
+	//starUI
+	starParticleDatasUI_.clear();
+	//wallKick
+	wallKickEffectDatas_.clear();
+
+	ClearObject();
 }
 
 BlockTextureManager::BlockTextureManager() {
@@ -293,17 +321,24 @@ void BlockTextureManager::CreateParticle(const Vector2& position, const Vector2&
 void BlockTextureManager::CreateStarParticle(const Vector2& position,int32_t type) {
 	StarParticle::response--;
 	if (StarParticle::response<0) {
-		std::unique_ptr<WallKickEffect> particle;
-		particle.reset(new WallKickEffect);
+		std::unique_ptr<StarParticle> particle;
+		particle.reset(new StarParticle);
 		particle->Initialize(position,type);
-		wallKickEffectDatas_.push_back(std::move(particle));
+		starParticleDatas_.push_back(std::move(particle));
 	}
 }
 
-void BlockTextureManager::CreateStarParticleUI(const Vector2& position) {
+void BlockTextureManager::CreateWallKickEffect(const Vector2& position, int32_t type) {
+	std::unique_ptr<WallKickEffect> particle;
+	particle.reset(new WallKickEffect);
+	particle->Initialize(position, type);
+	wallKickEffectDatas_.push_back(std::move(particle));
+}
+
+void BlockTextureManager::CreateStarParticleUI(const Vector2& position, int32_t type) {
 		std::unique_ptr<StarParticle> particle;
 		particle.reset(new StarParticle);
-		particle->Initialize(position, 1);
+		particle->Initialize(position, type);
 		starParticleDatasUI_.push_back(std::move(particle));
 }
 
@@ -387,4 +422,11 @@ void BlockTextureManager::UpdateParticle(const Camera& camera) {
 	for (std::unique_ptr<WallKickEffect>& data : wallKickEffectDatas_) {
 		data->Update();
 	}
+}
+
+void BlockTextureManager::GoldBlockEffectUpdate() {
+
+}
+void BlockTextureManager::GoldBlockEffectDraw() {
+
 }
