@@ -69,12 +69,18 @@ void GameScene::Init(){
 
 		environmentEffectsManager_->InitializeStage(true);
 		cameraFrozen_->Reset();
+		//テクスチャを氷に変更
+		BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 5);
+
 	}
 	//4~6は極寒開始
 	else if (stageNumber_ <= 6) {
 
 		environmentEffectsManager_->InitializeStage(false);
 		cameraFrozen_->Start();
+		//テクスチャをマグマに変更
+		BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 4);
+
 	}
 	//stageに現在のシーンモードを適応する
 	AppryMode();
@@ -661,6 +667,12 @@ void GameScene::ChangeMode() {
 	//極寒だったら氷ブロックを消す処理をする
 	if (!environmentEffectsManager_->GetIsNowScene()) {
 		stage_->BreakIceBlock();
+		//テクスチャを氷に変更
+		BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 5);
+	}
+	else {
+		//テクスチャをマグマに変更
+		BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 4);
 	}
 
 	environmentEffectsManager_->ChangeSceneMode();

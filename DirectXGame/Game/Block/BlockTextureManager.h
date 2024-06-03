@@ -5,6 +5,8 @@
 #include "Camera.h"
 #include <list>
 #include "Vec4.h"
+
+
 class BlockBreakParticle;
 class StarParticle;
 class SandParticle;
@@ -91,6 +93,11 @@ public:
 	void GoldBlockEffectDraw();
 	//void SetGoldBlockEffectPosition(const Vector2& pos) { goldBlockEffect_->position_ = pos; };
 	void SetIsResetGoldBlockEffect(bool is) { isResetGoldBlockEffect_ = is; };
+	//指定の番号にテクスチャ変更
+	void ChangeTexture(int32_t type, int32_t index) {
+		objects_[type - 1]->SetTextureHandle(blockTextures_[index]);
+		breakParticles_[type - 1]->SetTextureHandle(blockTextures_[index]);
+	}
 
 
 private:
