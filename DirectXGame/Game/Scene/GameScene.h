@@ -27,6 +27,7 @@
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
 #include "EnvironmentEffects/WaterDrop/WaterDropManager.h"
 #include "EnvironmentEffects/Snow/SnowManager.h"
+#include "TransitionEffect.h"
 
 #include "Text/Text.h"
 #include "Option.h"
@@ -111,10 +112,11 @@ private:
 	//UI関連
 	std::unique_ptr<Sprite> backGround_;
 	std::unique_ptr<Sprite> pose_;
-	std::unique_ptr<Sprite> black_;
 	std::unique_ptr<Sprite> scoreFront_;
 	std::unique_ptr<Sprite> scoreGage_;
 	std::unique_ptr<Sprite> scoreBack_;
+
+	std::unique_ptr<TransitionEffect> transitionEffect_;
 
 	uint32_t bgTexture_;
 	uint32_t poseTex_;

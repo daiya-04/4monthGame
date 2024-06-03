@@ -156,26 +156,10 @@ void GameScene::Init(){
 	TutorialFlagManager::GetInstance()->SetScroll(scroll_.get());
 
 	option_ = std::make_unique<Option>();
-	/*
-	//1~3,7~9は灼熱開始
-	if (stageNumber_ <= 3 || stageNumber_ > 6) {
 
-		//極寒なら切り替え
-		if (!environmentEffectsManager_->GetIsNowScene()) {
-			ChangeMode();
-		}
+	transitionEffect_ = std::make_unique<TransitionEffect>();
+	transitionEffect_->Init();
 
-	}
-	//4~6は極寒開始
-	else if (stageNumber_ <= 6) {
-		
-		//灼熱なら切り替え
-		if (environmentEffectsManager_->GetIsNowScene()) {
-			ChangeMode();
-		}
-
-	}
-	*/
 }
 
 void GameScene::Reset() {
@@ -318,7 +302,48 @@ void GameScene::Update() {
 	}
 	else {
 
-		if (GameTextManager::GetInstance()->GetIsEnd() && isScrollEnd_) {
+		if (player_->GetIsBirdsEye()) {
+			scroll_->SetScrollType(0, Scroll::kNomral);
+			scroll_->SetScrollType(1, Scroll::kNomral);
+			scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
+			camera_->ChangeDrawingRange({ 2240,1260.0f });
+			heatHazeManager_->SetIsUseMagmaFluction(false);
+			snowManager_->ClearEffect();
+		}
+		else if (player_->GetIsHome()) {
+			scroll_->SetScrollType(0, Scroll::kDelay);
+			scroll_->SetScrollType(1, Scroll::kDelay);
+			scroll_->SetTarget(&scrollHomePoint_);
+			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
+		}
+		else {
+			scroll_->SetScrollType(0, Scroll::kDelay);
+			scroll_->SetScrollType(1, Scroll::kDelay);
+			scroll_->SetTarget(player_->GetPositionPtr());
+			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
+		}
+
+		if (transitionEffect_->isActiveStart()) {
+			transitionEffect_->OutEffectStart();
+		}
+
+		transitionEffect_->Update();
+
+		if (transitionEffect_->InEffectEnter()) {
+
+			if (player_->GetIsBirdsEye()) {
+				player_->SetIsBirdsEye(false);
+			}
+			else {
+				player_->SetIsBirdsEye(true);
+			}
+
+		}
+
+		transitionEffect_->FlagUpdate();
+
+		if (GameTextManager::GetInstance()->GetIsEnd() && isScrollEnd_ &&
+			!transitionEffect_->IsActive()) {
 
 			if (stageNumber_ == 1) {
 				TutorialFlagManager::GetInstance()->Update();
@@ -332,26 +357,6 @@ void GameScene::Update() {
 			stage_->Update();
 			heatHazeManager_->SetIsUseMagmaFluction(true);
 			preCameraPosition_ = camera_->translation_;
-			if (player_->GetIsBirdsEye()) {
-				scroll_->SetScrollType(0, Scroll::kNomral);
-				scroll_->SetScrollType(1, Scroll::kNomral);
-				scroll_->SetTarget(player_->GetBirdsEyePositionPtr());
-				camera_->ChangeDrawingRange({ 2240,1260.0f });
-				heatHazeManager_->SetIsUseMagmaFluction(false);
-				snowManager_->ClearEffect();
-			}
-			else if (player_->GetIsHome()) {
-				scroll_->SetScrollType(0, Scroll::kDelay);
-				scroll_->SetScrollType(1, Scroll::kDelay);
-				scroll_->SetTarget(&scrollHomePoint_);
-				camera_->ChangeDrawingRange({ 1600.0f,900.0f });
-			}
-			else {
-				scroll_->SetScrollType(0, Scroll::kDelay);
-				scroll_->SetScrollType(1, Scroll::kDelay);
-				scroll_->SetTarget(player_->GetPositionPtr());
-				camera_->ChangeDrawingRange({ 1600.0f,900.0f });
-			}
 
 			//アップグレード中は動けない
 			if (!stage_->GetIsActiveUpgrade()) {
@@ -368,6 +373,11 @@ void GameScene::Update() {
 					//カウントリセット
 					player_->ResetDigCount();
 
+				}
+
+				if (player_->GetIsStartFade()) {
+					transitionEffect_->IsActiveOn();
+					player_->SetIsStartFade(false);
 				}
 
 			}
@@ -572,6 +582,11 @@ void GameScene::DrawUI(){
 	GameTextManager::GetInstance()->Draw();
 	testText_->SetText();
 	TextManager::GetInstance()->Draw();
+
+	if (transitionEffect_->IsActive()) {
+		transitionEffect_->Draw();
+	}
+
 }
 
 void GameScene::DebugGUI(){

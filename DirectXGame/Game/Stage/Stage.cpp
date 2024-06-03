@@ -32,6 +32,8 @@ Stage::Stage()
 	wellBlueTex_ = TextureManager::GetInstance()->Load("stageObject/wellBlue.png");
 	wellOrangeTex_ = TextureManager::GetInstance()->Load("stageObject/wellOrange.png");
 	UI_A_Tex_ = TextureManager::GetInstance()->Load("AButton.png");
+	UI_X_Tex_ = TextureManager::GetInstance()->Load("UI/XButton.png");
+	telescopeTex_ = TextureManager::GetInstance()->Load("stageObject/telescope.png");
 
 	for (int32_t i = 0; i < kMaxNumbers_; i++) {
 
@@ -47,8 +49,11 @@ Stage::Stage()
 	tutorialThird_->SetSize({ 2.0f * Block::kBlockSize_, 4.0f * Block::kBlockSize_ });
 
 	saunaRoom_.reset(Object2d::Create(saunaRoomTex_, kBasePosition - Vector2{0.0f, 18.0f}));
+	telescope_.reset(Object2d::Create(telescopeTex_, kBasePosition - Vector2{ -200.0f, -28.0f }));
 	UI_A_.reset(Object2d::Create(UI_A_Tex_, kBasePosition - Vector2{ 0.0f, 150.0f }));
 	UI_A_->SetSize({ 64.0f,64.0f });
+	UI_X_.reset(Object2d::Create(UI_X_Tex_, kBasePosition - Vector2{ -200.0f, 50.0f }));
+	UI_X_->SetSize({ 64.0f,64.0f });
 	ropes_[0].reset(Object2d::Create(ropeTex_, Vector2{ 10.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
 	ropes_[0]->SetSize({ 2.0f * Block::kBlockSize_,8.0f * Block::kBlockSize_ });
 	ropes_[1].reset(Object2d::Create(ropeTex_, Vector2{ 28.5f * Block::kBlockSize_, 1.5f * Block::kBlockSize_ }));
@@ -447,10 +452,12 @@ void Stage::DrawHeatAfter() {
 	magma_->Draw(*camera_);
 
 	saunaRoom_->Draw(*camera_);
+	telescope_->Draw(*camera_);
 
 	if ((player_->GetIsHome() && GameTextManager::GetInstance()->GetIsEnd() && isStart_) ||
 		canUpgrade_) {
 		UI_A_->Draw(*camera_);
+		UI_X_->Draw(*camera_);
 	}
 
 }
@@ -498,10 +505,12 @@ void Stage::DrawColdAfter() {
 	magma_->Draw(*camera_);
 
 	saunaRoom_->Draw(*camera_);
+	telescope_->Draw(*camera_);
 
 	if ((player_->GetIsHome() && GameTextManager::GetInstance()->GetIsEnd() && isStart_) ||
 		canUpgrade_) {
 		UI_A_->Draw(*camera_);
+		UI_X_->Draw(*camera_);
 	}
 
 }

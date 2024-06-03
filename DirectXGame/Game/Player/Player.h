@@ -224,6 +224,12 @@ public:
 
 	bool GetIsBirdsEye() const { return isBirdsEye_; }
 
+	void SetIsBirdsEye(bool flag) { isBirdsEye_ = flag; }
+
+	bool GetIsStartFade() const { return isStartFade_; }
+
+	void SetIsStartFade(bool flag) { isStartFade_ = flag; }
+
 	bool GetIsHome() const { return isHome_; }
 
 	bool GetIsMine() const { return isMining_; }
@@ -469,6 +475,9 @@ private:
 
 	//カメラ俯瞰視点に移行する時のフラグ
 	bool isBirdsEye_ = false;
+
+	//フェード開始フラグ
+	bool isStartFade_ = false;
 
 	//死亡フラグ
 	bool isDead_ = false;

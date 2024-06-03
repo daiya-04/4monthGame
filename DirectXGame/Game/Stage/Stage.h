@@ -156,6 +156,8 @@ private:
 	std::unique_ptr<Magma> magma_;
 	std::unique_ptr<Object2d> saunaRoom_;
 	std::unique_ptr<Object2d> UI_A_;
+	std::unique_ptr<Object2d> telescope_;
+	std::unique_ptr<Object2d> UI_X_;
 
 	std::array<std::unique_ptr<Object2d>, 2> ropes_;
 	std::array<std::unique_ptr<Object2d>, 2> wells_;
@@ -222,6 +224,8 @@ private:
 	uint32_t tutorialFirstTex_;
 	uint32_t tutorialSecondTex_;
 	uint32_t tutorialThirdTex_;
+	uint32_t UI_X_Tex_;
+	uint32_t telescopeTex_;
 
 ///===============アニメーション関連=====================
 

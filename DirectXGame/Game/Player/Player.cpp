@@ -159,6 +159,7 @@ void Player::SetOnBase() {
 	isBirdsEye_ = false;
 	isOut_ = false;
 	isHome_ = true;
+	isStartFade_ = false;
 	position_ = Stage::kBasePosition;
 	birdsEyePosition_ = position_;
 	isDead_ = false;
@@ -898,7 +899,7 @@ void Player::Change() {
 
 	}
 	//俯瞰視点時の行動
-	else if (isBirdsEye_) {
+	else if (isBirdsEye_ && !isStartFade_) {
 
 		//カメラのターゲット座標移動
 		if (input_->TiltLStick(Input::Stick::Right)) {
@@ -928,12 +929,12 @@ void Player::Change() {
 
 		if (input_->TriggerButton(Input::Button::X)) {
 			birdsEyePosition_ = position_;
-			isBirdsEye_ = false;
+			isStartFade_ = true;
 		}
 
 	}
 	//拠点にいる時の挙動
-	else {
+	else if(!isStartFade_) {
 
 		//拠点にいるフラグを立てる
 		isHome_ = true;
@@ -947,7 +948,7 @@ void Player::Change() {
 			}
 			else if (input_->TriggerButton(Input::Button::X)) {
 				birdsEyePosition_ = position_;
-				isBirdsEye_ = true;
+				isStartFade_ = true;
 			}
 
 		}
