@@ -70,6 +70,7 @@ void Rank::Draw() {
 
 	rankImage_->SetPosition(pos_);
 	rankImage_->SetSize(size_);
+
 	//テクスチャのSS不要なので一時的にずらしている
 	rankImage_->SetTextureArea({ float(value_ + 1) * 32.0f,0.0f }, { 32.0f,32.0f });
 

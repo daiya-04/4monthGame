@@ -30,6 +30,12 @@ public:
 		cameraFrozen_->SetMode(1);
 	}
 
+	void ClearEffect() {
+		isClearRender_ = true;
+		isActive_ = true;
+		radius_ = radiusMax_;
+	};
+
 	PostEffect* GetEffectTexture() { return cameraFrozen_.get(); };
 
 	void SetRadiusMin(float min) { radiusMin_ = min; };

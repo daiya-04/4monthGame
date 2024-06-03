@@ -82,6 +82,10 @@ void WinApp::CreateGameWindow(const wchar_t* title, int32_t clientWidth, int32_t
 	ShowWindow(hwnd_, SW_SHOW);
 }
 
+//void WinApp::CloseWindow() {
+//	PostQuitMessage(0);
+//}
+
 bool WinApp::ProcessMessage() {
 	MSG msg{};
 

@@ -20,7 +20,10 @@ AudioManager::~AudioManager() {
 
 	for (const auto& audio : audios_) {
 		audio->DestroyPlayHandle();
+		audio->SoundUnload();
 	}
+
+	audios_.clear();
 
 	Audio::DstoroyVoice();
 
@@ -42,6 +45,22 @@ void AudioManager::Update() {
 		audio->Update();
 	}
 
+}
+
+void AudioManager::AllAudioStop() {
+	for (const auto& audio : audios_) {
+		audio->StopSound();
+	}
+}
+
+bool AudioManager::IsAllAudioStop() {
+	for (const auto& audio : audios_) {
+		if (!audio->IsStop()) {
+			return false;
+		}
+	}
+	
+	return true;
 }
 
 Audio* AudioManager::LoadInternal(const std::string& filename) {

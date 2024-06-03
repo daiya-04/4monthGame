@@ -70,14 +70,18 @@ public:
 
 	//キーの押下をチェック
 	bool PushKey(BYTE keyNumber) const;
-
 	//キーのトリガーをチェック
 	bool TriggerKey(BYTE keyNumber) const;
-
+	//キーの離しのチェック
+	bool ReleaseKey(BYTE keyNumber) const;
 	//Lスティックの傾きチェック
 	bool TriggerLStick(Stick direction) const;
 	//Rスティック
 	bool TriggerRStick(Stick derection) const;
+
+	bool ReleaseLStick(Stick direction) const;
+
+	bool ReleaseRStick(Stick direction) const;
 
 	bool TiltLStick(Stick direction) const;
 

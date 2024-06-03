@@ -112,6 +112,20 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	//黄金ブロック
 	/*breakParticles_[Block::kGoldBlock - 1]->SetColor({ 2.0f,2.0f, 0.0f,1.0f });*/
 
+
+	breakParticleDatas_.clear();
+	//star
+	starParticleDatas_.clear();
+	//sand
+	sandParticleDatas_.clear();
+	//gem
+	gemParticleDatas_.clear();
+	//starUI
+	starParticleDatasUI_.clear();
+	//wallKick
+	wallKickEffectDatas_.clear();
+
+	ClearObject();
 }
 
 BlockTextureManager::BlockTextureManager() {

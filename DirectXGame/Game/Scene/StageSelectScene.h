@@ -60,7 +60,7 @@ private:
 	Score score_;
 	Rank rank_;
 	Vector2 scorePos_ = { 1000.0f,250.0f };
-	Vector2 rankPos_ = { 808.0f,186.0f };
+	Vector2 rankPos_ = { 950.0f,150.0f };
 
 	std::array<uint32_t, 2> playerTex_;
 	std::array<uint32_t, 2> playerRunTex_;
@@ -98,9 +98,13 @@ private:
 
 	Audio* selectBGM_;
 
+
 	Audio* selectSE_;
 	Audio* moveSE_;
 	Audio* cancelSE_;
+
+	uint32_t moveInterval_ = 10;
+	uint32_t intervalCount_ = 0;
 
 private:
 

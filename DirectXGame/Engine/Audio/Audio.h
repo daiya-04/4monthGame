@@ -49,6 +49,8 @@ public:
 
 	void DestroyPlayHandle();
 
+	bool IsStop()const { return isStop_; }
+
 public:
 
 	static float bgmVolume_;
@@ -69,6 +71,8 @@ private:
 	//バッファのサイズ
 	uint32_t bufferSize_;
 	AudioType audioType_{};
+
+	bool isStop_ = true;
 
 };
 

@@ -2,6 +2,8 @@
 #include "Log.h"
 #include <cassert>
 
+#include "WinApp.h"
+
 #pragma comment(lib,"xaudio2.lib")
 #pragma comment(lib,"Mf.lib")
 #pragma comment(lib,"mfplat.lib")
@@ -61,27 +63,30 @@ void Audio::DstoroyVoice() {
 
 void Audio::Update() {
 	if (sourceVoices_) {
-		XAUDIO2_VOICE_STATE state{};
-		sourceVoices_->GetState(&state);
-		if (state.BuffersQueued == 0) {
-			DestroyPlayHandle();
-		}
-	}
-	if (IsValidPlayhandle()) {
 		if (audioType_ == AudioType::BGM) {
 			SetVolume(bgmVolume_);
 		}
 		else if (audioType_ == AudioType::SE) {
 			SetVolume(seVolume_);
 		}
+		XAUDIO2_VOICE_STATE state{};
+		sourceVoices_->GetState(&state);
+		if (state.BuffersQueued == 0) {
+			DestroyPlayHandle();
+			isStop_ = true;
+		}
+		
 	}
-	
 }
 
 void Audio::Play() {
 
 	if (IsValidPlayhandle() && audioType_ == Audio::AudioType::BGM) {
 		return;
+	}
+
+	if (IsValidPlayhandle() && audioType_ == AudioType::SE) {
+		StopSound();
 	}
 
 	HRESULT hr;
@@ -94,7 +99,6 @@ void Audio::Play() {
 	if (audioType_ == AudioType::BGM) {
 		buf.LoopCount = XAUDIO2_LOOP_INFINITE;
 	}
-
 	//sourceVoiceの作成
 	IXAudio2SourceVoice* pSourcVoice = nullptr;
 	hr = xAudio2_->CreateSourceVoice(&pSourcVoice, &wfex_);
@@ -107,6 +111,7 @@ void Audio::Play() {
 	assert(SUCCEEDED(hr));
 
 	sourceVoices_ = pSourcVoice;
+	isStop_ = false;
 
 	if (audioType_ == AudioType::BGM) {
 		SetVolume(bgmVolume_);
@@ -296,7 +301,12 @@ void Audio::SoundPlayLoopEnd() {
 //}
 
 void Audio::StopSound() {
-	DestroyPlayHandle();
+	if (sourceVoices_) {
+		sourceVoices_->Stop();
+		sourceVoices_->FlushSourceBuffers();
+		DestroyPlayHandle();
+		isStop_ = true;
+	}
 }
 
 void Audio::SetPitch(float pitch) {
