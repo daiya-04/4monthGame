@@ -15,6 +15,7 @@
 
 GameScene::~GameScene() {
 	magmaBGM_->StopSound();
+	coldBGM_->StopSound();
 }
 
 void GameScene::Init(){
@@ -122,8 +123,22 @@ void GameScene::Init(){
 	TextManager::GetInstance();
 
 	magmaBGM_ = AudioManager::GetInstance()->Load("BGM/magmaBGM.mp3");
-	
+	coldBGM_ = AudioManager::GetInstance()->Load("BGM/coldBGM.mp3");
+
 	magmaBGM_->Play();
+	coldBGM_->Play();
+
+	if (environmentEffectsManager_->GetIsNowScene()) {
+		magmaBGM_->SetUniqueVolume(1.0f);
+		coldBGM_->SetUniqueVolume(0.0f);
+	}
+	else {
+		magmaBGM_->SetUniqueVolume(0.0f);
+		coldBGM_->SetUniqueVolume(1.0f);
+	}
+
+	magmaBGM_->Update();
+	coldBGM_->Update();
 
 	selectSE_ = AudioManager::GetInstance()->Load("SE/select_ok.mp3");
 	moveSE_ = AudioManager::GetInstance()->Load("SE/select_move.mp3");
@@ -663,16 +678,22 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 
 
 void GameScene::ChangeMode() {
-	
+
 	//極寒だったら氷ブロックを消す処理をする
 	if (!environmentEffectsManager_->GetIsNowScene()) {
 		stage_->BreakIceBlock();
 		//テクスチャを氷に変更
 		BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 5);
+		//マグマBGMに切り替え
+		magmaBGM_->SetUniqueVolume(1.0f);
+		coldBGM_->SetUniqueVolume(0.0f);
 	}
 	else {
 		//テクスチャをマグマに変更
 		BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 4);
+		//極寒BGMに切り替え
+		magmaBGM_->SetUniqueVolume(0.0f);
+		coldBGM_->SetUniqueVolume(1.0f);
 	}
 
 	environmentEffectsManager_->ChangeSceneMode();

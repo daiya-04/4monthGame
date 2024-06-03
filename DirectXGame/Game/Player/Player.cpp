@@ -65,6 +65,9 @@ Player::Player()
 	walk3SE_ = AudioManager::GetInstance()->Load("SE/walk_03.mp3");
 	walk4SE_ = AudioManager::GetInstance()->Load("SE/walk_04.mp3");
 	deadSE_ = AudioManager::GetInstance()->Load("SE/dead.mp3");
+	wallJumpSE_ = AudioManager::GetInstance()->Load("SE/wallJump.mp3");
+	doorCloseSE_ = AudioManager::GetInstance()->Load("SE/doorClose.mp3");
+	doorOpenSE_ = AudioManager::GetInstance()->Load("SE/doorOpen.mp3");
 
 }
 
@@ -835,6 +838,7 @@ void Player::Change() {
 			position_.x = Stage::kBasePosition.x;
 			velocity_ = { 0.0f,0.0f };
 			isReturn_ = false;
+			doorCloseSE_->Play();
 
 		}
 
@@ -939,6 +943,7 @@ void Player::Change() {
 			if (input_->TriggerButton(Input::Button::A)) {
 				isOut_ = true;
 				isHome_ = false;
+				doorOpenSE_->Play();
 			}
 			else if (input_->TriggerButton(Input::Button::X)) {
 				birdsEyePosition_ = position_;

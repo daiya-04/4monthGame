@@ -44,6 +44,8 @@ public:
 	void SetPitch(float pitch);
 	//音量設定
 	void SetVolume(float volume);
+	//インスタンス毎の音量設定
+	void SetUniqueVolume(float volume) { volume_ = volume; }
 	//再生しているか
 	bool IsValidPlayhandle();
 
@@ -73,6 +75,8 @@ private:
 	AudioType audioType_{};
 
 	bool isStop_ = true;
+
+	float volume_ = 1.0f;
 
 };
 

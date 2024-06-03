@@ -63,11 +63,16 @@ void Audio::DstoroyVoice() {
 
 void Audio::Update() {
 	if (sourceVoices_) {
+
+		float sourceVolume = volume_;
+
 		if (audioType_ == AudioType::BGM) {
-			SetVolume(bgmVolume_);
+			sourceVolume *= bgmVolume_;
+			SetVolume(sourceVolume);
 		}
 		else if (audioType_ == AudioType::SE) {
-			SetVolume(seVolume_);
+			sourceVolume *= seVolume_;
+			SetVolume(sourceVolume);
 		}
 		XAUDIO2_VOICE_STATE state{};
 		sourceVoices_->GetState(&state);
@@ -88,6 +93,8 @@ void Audio::Play() {
 	if (IsValidPlayhandle() && audioType_ == AudioType::SE) {
 		StopSound();
 	}
+
+	float sourceVolume = volume_;
 
 	HRESULT hr;
 
@@ -114,10 +121,12 @@ void Audio::Play() {
 	isStop_ = false;
 
 	if (audioType_ == AudioType::BGM) {
-		SetVolume(bgmVolume_);
+		sourceVolume *= bgmVolume_;
+		SetVolume(sourceVolume);
 	}
 	else if (audioType_ == AudioType::SE) {
-		SetVolume(seVolume_);
+		sourceVolume *= seVolume_;
+		SetVolume(sourceVolume);
 	}
 	
 }

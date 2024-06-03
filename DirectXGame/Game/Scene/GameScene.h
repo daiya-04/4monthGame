@@ -157,6 +157,7 @@ private:
 ///-------------------------------------------
 
 	Audio* magmaBGM_;
+	Audio* coldBGM_;
 
 	Audio* selectSE_;
 	Audio* moveSE_;
