@@ -1617,6 +1617,7 @@ void Player::Debug() {
 
 	ImGui::Begin("Player");
 	ImGui::Text("position x : %1.2f y : %1.2f", position_.x, position_.y);
+	ImGui::DragInt4("rocks", &rockParameter_.rocks_[BringRocks::kRock]);
 
 	//デフォルトパラメータを適用
 	if (ImGui::Button("Apply Default")) {

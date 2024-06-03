@@ -102,6 +102,9 @@ private:
 
 	std::array<int32_t, 2> digSpeedLevel_ = { 0,0 };
 
+	//表示レベル
+	std::array<std::unique_ptr<Sprite>, 2> levels_;
+
 	//有効桁
 	static const int32_t kMaxDigits_ = 3;
 

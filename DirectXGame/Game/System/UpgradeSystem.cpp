@@ -67,6 +67,12 @@ UpgradeSystem::UpgradeSystem()
 
 	}
 
+	for (int32_t i = 0; i < 2; i++) {
+		levels_[i].reset(Sprite::Create(numberTexture_, { 540.0f + 64.0f * i , 450.0f}));
+		levels_[i]->SetSize({ 96.0f,96.0f });
+		levels_[i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
+	}
+
 }
 
 UpgradeSystem::~UpgradeSystem()
@@ -109,10 +115,10 @@ void UpgradeSystem::Update() {
 				{
 				default:
 				case UpgradeSystem::kPower:
-					num = powerUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][x] / divide;
+					num = powerUpgradeNeeds_[powerLevel_[player_->GetCurrentCharacter()]][x] / divide;
 					break;
 				case UpgradeSystem::kDigSpeed:
-					num = digSpeedUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][x] / divide;
+					num = digSpeedUpgradeNeeds_[digSpeedLevel_[player_->GetCurrentCharacter()]][x] / divide;
 					break;
 				case UpgradeSystem::kSpeed:
 					num = speedUpgradeNeeds_[speedLevel_[player_->GetCurrentCharacter()]][x] / divide;
@@ -122,6 +128,56 @@ void UpgradeSystem::Update() {
 				numbers_[x][i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
 
 			}
+
+		}
+
+		for (int32_t i = 0; i < 2; i++) {
+			
+			int32_t num = 0;
+
+			int32_t divide = int32_t(std::pow(10, 2 - 1 - i));
+
+			switch (upgradeType_)
+			{
+			default:
+			case UpgradeSystem::kPower:
+				
+				num = (powerLevel_[player_->GetCurrentCharacter()] + 1) / divide;
+				
+				if (powerLevel_[player_->GetCurrentCharacter()] >= kMaxLevel_ - 1) {
+					levels_[i]->SetColor({ 1.0f,1.0f,0.0f,1.0f });
+				}
+				else {
+					levels_[i]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+				}
+				
+				break;
+			case UpgradeSystem::kDigSpeed:
+				
+				num = (digSpeedLevel_[player_->GetCurrentCharacter()] + 1) / divide;
+
+				if (digSpeedLevel_[player_->GetCurrentCharacter()] >= kMaxLevel_ - 1) {
+					levels_[i]->SetColor({ 1.0f,1.0f,0.0f,1.0f });
+				}
+				else {
+					levels_[i]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+				}
+
+				break;
+			case UpgradeSystem::kSpeed:
+				num = (speedLevel_[player_->GetCurrentCharacter()] + 1) / divide;
+
+				if (speedLevel_[player_->GetCurrentCharacter()] >= kMaxLevel_ - 1) {
+					levels_[i]->SetColor({ 1.0f,1.0f,0.0f,1.0f });
+				}
+				else {
+					levels_[i]->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+				}
+
+				break;
+			}
+
+			levels_[i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
 
 		}
 
@@ -240,7 +296,7 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 	default:
 	case UpgradeSystem::kSpeed:
 
-		if (speedLevel_[player_->GetCurrentCharacter()] < kMaxLevel_) {
+		if (speedLevel_[player_->GetCurrentCharacter()] < kMaxLevel_ - 1) {
 
 			//条件を満たしていたらブロックを消費して強化
 			if (player_->GetRockParameter().rocks_[Player::BringRocks::kRock] >=
@@ -274,7 +330,7 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 		break;
 	case UpgradeSystem::kPower:
 
-		if (powerLevel_[player_->GetCurrentCharacter()] < kMaxLevel_) {
+		if (powerLevel_[player_->GetCurrentCharacter()] < kMaxLevel_ - 1) {
 
 			//条件を満たしていたらブロックを消費して強化
 			if (player_->GetRockParameter().rocks_[Player::BringRocks::kRock] >=
@@ -308,7 +364,7 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 		break;
 	case UpgradeSystem::kDigSpeed:
 
-		if (digSpeedLevel_[player_->GetCurrentCharacter()] < kMaxLevel_) {
+		if (digSpeedLevel_[player_->GetCurrentCharacter()] < kMaxLevel_ - 1) {
 
 			//条件を満たしていたらブロックを消費して強化
 			if (player_->GetRockParameter().rocks_[Player::BringRocks::kRock] >=
@@ -415,12 +471,55 @@ void UpgradeSystem::DrawUI() {
 		//数字描画
 		for (int32_t x = 0; x < 4; x++) {
 
-			for (int32_t i = 0; i < kMaxDigits_; i++) {
-				numbers_[x][i]->Draw();
+
+			switch (upgradeType_)
+			{
+			default:
+			case UpgradeSystem::kPower:
+				
+				if (powerLevel_[player_->GetCurrentCharacter()] < kMaxLevel_ - 1) {
+
+					for (int32_t i = 0; i < kMaxDigits_; i++) {
+						numbers_[x][i]->Draw();
+					}
+
+					rocksUI_[x]->Draw();
+
+				}
+
+				break;
+			case UpgradeSystem::kDigSpeed:
+				
+				if (digSpeedLevel_[player_->GetCurrentCharacter()] < kMaxLevel_ - 1) {
+
+					for (int32_t i = 0; i < kMaxDigits_; i++) {
+						numbers_[x][i]->Draw();
+					}
+
+					rocksUI_[x]->Draw();
+
+				}
+
+				break;
+			case UpgradeSystem::kSpeed:
+				
+				if (speedLevel_[player_->GetCurrentCharacter()] < kMaxLevel_ - 1) {
+
+					for (int32_t i = 0; i < kMaxDigits_; i++) {
+						numbers_[x][i]->Draw();
+					}
+
+					rocksUI_[x]->Draw();
+
+				}
+
+				break;
 			}
 
-			rocksUI_[x]->Draw();
+		}
 
+		for (int32_t i = 0; i < 2; i++) {
+			levels_[i]->Draw();
 		}
 
 	}
