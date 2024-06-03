@@ -3,8 +3,8 @@
         {
             "TextLayout": {
                 "BackCahactorsSize": [
-                    256.0,
-                    256.0
+                    400.0,
+                    400.0
                 ],
                 "Button-Position": [
                     1103.0,
@@ -27,16 +27,16 @@
                     36.0
                 ],
                 "Position-Atsuo": [
-                    230.0,
-                    526.0
+                    138.0,
+                    720.0
                 ],
                 "Position-OldMan": [
-                    1041.0,
-                    526.0
+                    1106.0,
+                    720.0
                 ],
                 "Position-Samuo": [
                     357.0,
-                    526.0
+                    720.0
                 ],
                 "SkipButton-Position": [
                     1000.0,
