@@ -12,6 +12,7 @@
 #include <list>
 #include "Sprite.h"
 #include "Score/ScoreManager.h"
+#include "AudioManager.h"
 
 class Player
 {
@@ -508,6 +509,21 @@ private:
 	std::array<uint32_t, BringRocks::kMaxType> rockUITextures_;
 
 	const std::string dataName = "Player";
+
+	//歩きのSE制御
+	int32_t playSEInterval_ = 15;
+
+	int32_t playSETimer_ = 0;
+
+	///-----SE----------------------------------------
+
+	Audio* walk1SE_;
+	Audio* walk2SE_;
+	Audio* walk3SE_;
+	Audio* walk4SE_;
+	Audio* deadSE_;
+
+	///------------------------------------------------
 
 };
 
