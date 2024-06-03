@@ -109,6 +109,7 @@ private:
 	Audio* selectSE_;
 	Audio* moveSE_;
 	Audio* cancelSE_;
+	Audio* titleBGM_;
 
 private:
 

@@ -283,6 +283,30 @@ void StageSelectScene::RootUpdate() {
 		}
 	}
 
+	if (Input::GetInstance()->TiltLStick(Input::Stick::Right) || Input::GetInstance()->PushButton(Input::Button::DPAD_RIGHT)) {
+		if (++intervalCount_ >= moveInterval_) {
+			if (stageNumber_ != kMaxStage_) {
+				stageNumber_++;
+				modeRequest_ = Mode::Move;
+			}
+		}
+	}
+	else if (Input::GetInstance()->TiltLStick(Input::Stick::Left) || Input::GetInstance()->PushButton(Input::Button::DPAD_LEFT)) {
+		if (++intervalCount_ >= moveInterval_) {
+			if (stageNumber_ != 1) {
+				stageNumber_--;
+				modeRequest_ = Mode::Move;
+			}
+		}
+	}
+
+	if (Input::GetInstance()->ReleaseLStick(Input::Stick::Right) || Input::GetInstance()->ReleaseButton(Input::Button::DPAD_RIGHT)) {
+		intervalCount_ = 0;
+	}
+	else if (Input::GetInstance()->ReleaseLStick(Input::Stick::Left) || Input::GetInstance()->ReleaseButton(Input::Button::DPAD_LEFT)) {
+		intervalCount_ = 0;
+	}
+
 #ifdef _DEBUG
 
 	if (Input::GetInstance()->TriggerKey(DIK_RIGHT)) {
@@ -296,6 +320,27 @@ void StageSelectScene::RootUpdate() {
 			stageNumber_--;
 			modeRequest_ = Mode::Move;
 		}
+	}
+
+	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+		if (++intervalCount_ >= moveInterval_) {
+			if (stageNumber_ != kMaxStage_) {
+				stageNumber_++;
+				modeRequest_ = Mode::Move;
+			}
+		}
+	}
+	else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+		if (++intervalCount_ >= moveInterval_) {
+			if (stageNumber_ != 1) {
+				stageNumber_--;
+				modeRequest_ = Mode::Move;
+			}
+		}
+	}
+
+	if (Input::GetInstance()->ReleaseKey(DIK_RIGHT) || Input::GetInstance()->ReleaseKey(DIK_LEFT)) {
+		intervalCount_ = 0;
 	}
 
 #endif // _DEBUG
@@ -327,6 +372,8 @@ void StageSelectScene::MoveInit() {
 
 	uis_["RArrow"]->DrawOff();
 	uis_["LArrow"]->DrawOff();
+
+	intervalCount_ = 0;
 
 }
 

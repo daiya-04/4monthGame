@@ -35,6 +35,10 @@ public:
 
 	void Update();
 
+	void AllAudioStop();
+
+	bool IsAllAudioStop();
+
 private:
 
 	std::vector<std::unique_ptr<Audio>> audios_;

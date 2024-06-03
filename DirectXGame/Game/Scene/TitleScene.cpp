@@ -13,7 +13,9 @@
 #include <format>
 #include <numbers>
 
-TitleScene::~TitleScene() {}
+TitleScene::~TitleScene() {
+	titleBGM_->StopSound();
+}
 
 void TitleScene::Init() {
 
@@ -54,6 +56,9 @@ void TitleScene::Init() {
 	selectSE_ = AudioManager::GetInstance()->Load("SE/select_ok.mp3");
 	moveSE_ = AudioManager::GetInstance()->Load("SE/select_move.mp3");
 	cancelSE_ = AudioManager::GetInstance()->Load("SE/select_cancel.mp3");
+	titleBGM_ = AudioManager::GetInstance()->Load("BGM/selectBGM.mp3");
+
+	titleBGM_->Play();
 
 	FloatingGimmickInit();
 	ButtonEffectInit();
@@ -189,9 +194,11 @@ void TitleScene::StartUpdate() {
 			uis_["Option"]->DrawOn();
 			uis_["AButton"]->DrawOff();
 			circle_->DrawOff();
+			selectSE_->Play();
 		}
 		else {
 			SceneManager::GetInstance()->ChangeScene("StageSelect");
+			selectSE_->Play();
 		}
 	}
 
@@ -209,6 +216,7 @@ void TitleScene::StartUpdate() {
 	
 	if (Input::GetInstance()->TriggerKey(DIK_DOWN)) {
 		selectRequest_ = Select::Option;
+		moveSE_->Play();
 	}
 
 #endif // _DEBUG
@@ -255,12 +263,15 @@ void TitleScene::OptionUpdate() {
 
 		if (Input::GetInstance()->TriggerKey(DIK_UP)) {
 			selectRequest_ = Select::Start;
+			moveSE_->Play();
 		}
 		if (Input::GetInstance()->TriggerKey(DIK_DOWN)) {
 			selectRequest_ = Select::Exit;
+			moveSE_->Play();
 		}
 		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 			option_->Init();
+			selectSE_->Play();
 		}
 
 #endif // _DEBUG
@@ -287,7 +298,8 @@ void TitleScene::ExitUpdate() {
 	BoundingUpdate(uis_["Exit"].get());
 
 	if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
-		cancelSE_->Play();
+		//cancelSE_->Play();
+		titleBGM_->StopSound();
 		WinApp::GetInstance()->GameEnd();
 	}
 
@@ -300,10 +312,12 @@ void TitleScene::ExitUpdate() {
 #ifdef _DEBUG
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		titleBGM_->StopSound();
 		WinApp::GetInstance()->GameEnd();
 	}
 	if (Input::GetInstance()->TriggerKey(DIK_UP)) {
 		selectRequest_ = Select::Option;
+		moveSE_->Play();
 	}
 
 #endif // _DEBUG

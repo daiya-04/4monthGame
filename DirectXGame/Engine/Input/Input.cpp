@@ -64,6 +64,13 @@ bool Input::TriggerKey(BYTE keyNumber) const{
 	return false;
 }
 
+bool Input::ReleaseKey(BYTE keyNumber) const {
+	if (!key[keyNumber] && preKey[keyNumber]) {
+		return true;
+	}
+	return false;
+}
+
 bool Input::GetJoystickState() {
 
 	DWORD dwResult;
@@ -124,6 +131,44 @@ bool Input::TriggerRStick(Stick direction) const {
 	}
 	
 	return false;
+}
+
+bool Input::ReleaseLStick(Stick direction) const {
+
+	if (direction == Stick::Right) {
+		return (float)(joyState.Gamepad.sThumbLX) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) > deadZone_;
+	}
+	if (direction == Stick::Left) {
+		return (float)(joyState.Gamepad.sThumbLX) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbLX) < -deadZone_;
+	}
+	if (direction == Stick::Up) {
+		return (float)(joyState.Gamepad.sThumbLY) <= deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) > deadZone_;
+	}
+	if (direction == Stick::Down) {
+		return (float)(joyState.Gamepad.sThumbLY) >= -deadZone_ && (float)(preJoyState.Gamepad.sThumbLY) < -deadZone_;
+	}
+
+	return false;
+
+}
+
+bool Input::ReleaseRStick(Stick direction) const {
+
+	if (direction == Stick::Right) {
+		return IsRStickRight();
+	}
+	if (direction == Stick::Left) {
+		return IsRStickLeft();
+	}
+	if (direction == Stick::Up) {
+		return IsRStickUp();
+	}
+	if (direction == Stick::Down) {
+		return IsRStickDown();
+	}
+
+	return false;
+
 }
 
 bool Input::TiltLStick(Stick direction) const{

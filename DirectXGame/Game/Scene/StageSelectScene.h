@@ -98,6 +98,9 @@ private:
 
 	Audio* selectBGM_;
 
+	uint32_t moveInterval_ = 10;
+	uint32_t intervalCount_ = 0;
+
 private:
 
 	enum Charactor {

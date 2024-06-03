@@ -46,7 +46,10 @@ void DSFramework::Init(){
 
 void DSFramework::Update(){
 
-	if (WinApp::GetInstance()->ProcessMessage() || Input::GetInstance()->TriggerKey(DIK_ESCAPE)) { WinApp::GetInstance()->GameEnd(); }
+	if (WinApp::GetInstance()->ProcessMessage() || Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+		//AudioManager::GetInstance()->AllAudioStop();
+		WinApp::GetInstance()->GameEnd(); 
+	}
 
 	/*if ((Input::GetInstance()->PushKey(DIK_LCONTROL) || Input::GetInstance()->PushKey(DIK_RCONTROL)) && Input::GetInstance()->TriggerKey(DIK_9)) {
 		WinApp::GetInstance()->ChangeScreenMode(WinApp::ScreenMode::kFullScreen);
@@ -83,11 +86,18 @@ void DSFramework::Run(){
 	//ゲームループ
 	while (true) {
 
+		
+
 		//更新
 		Update();
 
 		//終了リクエストが来たら抜ける
-		if (WinApp::GetInstance()->IsEndRequest()) { break; }
+		if (WinApp::GetInstance()->IsEndRequest()) {
+			AudioManager::GetInstance()->AllAudioStop();
+			if (AudioManager::GetInstance()->IsAllAudioStop()) {
+				break;
+			}
+		}
 
 		//描画
 		Draw();
