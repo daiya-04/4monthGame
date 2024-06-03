@@ -5,6 +5,7 @@
 #include "Scroll/Scroll.h"
 #include "GlobalVariables.h"
 #include "Easing.h"
+#include "RandomEngine/RandomEngine.h"
 
 Player::Player()
 {
@@ -57,6 +58,13 @@ Player::Player()
 	}
 
 	bag_.reset(Sprite::Create(bagTexture_, { 1150.0f, 30.0f + 128.0f }));
+
+
+	walk1SE_ = AudioManager::GetInstance()->Load("SE/walk_01.mp3");
+	walk2SE_ = AudioManager::GetInstance()->Load("SE/walk_02.mp3");
+	walk3SE_ = AudioManager::GetInstance()->Load("SE/walk_03.mp3");
+	walk4SE_ = AudioManager::GetInstance()->Load("SE/walk_04.mp3");
+	deadSE_ = AudioManager::GetInstance()->Load("SE/dead.mp3");
 
 }
 
@@ -1074,6 +1082,46 @@ void Player::UpdatePosition() {
 
 		tmpPosition_ = position_;
 
+		//移動速度が0.0fじゃなければ定期的にSEを鳴らす
+		if (playSETimer_ <= 0) {
+
+			if (fabsf(velocity_.x) > 0.001f) {
+				
+				int32_t randNum = int(RandomEngine::GetRandom(1.0f, 4.0f));
+
+				switch (randNum)
+				{
+				default:
+				case 1:
+					walk1SE_->Play();
+					break;
+				case 2:
+					walk1SE_->Play();
+					break;
+				case 3:
+					walk3SE_->Play();
+					break;
+				case 4:
+					walk4SE_->Play();
+					break;
+				}
+
+				playSETimer_ = playSEInterval_;
+
+			}
+
+		}
+		else {
+
+			if (fabsf(velocity_.x) <= 0.001f) {
+				playSETimer_ = 0;
+			}
+			else {
+				playSETimer_--;
+			}
+
+		}
+
 		tmpPosition_ += velocity_ + wallJumpVelocity_;
 
 		//4頂点の座標を更新
@@ -1128,6 +1176,8 @@ void Player::DamageUpdate() {
 		}
 
 		isDead_ = true;
+		deadSE_->Play();
+
 		//タイマー設定
 		respwanTimer_ = respawnCoolTime_;
 		//クリアフラグへし折り

@@ -10,6 +10,7 @@
 #include "Sprite.h"
 #include "System/UpgradeSystem.h"
 #include "Magma.h"
+#include "EnvironmentEffects/EnvironmentEffectsManager.h"
 
 class Player;
 
@@ -125,6 +126,8 @@ private:
 	void UpdateAnimation();
 
 private:
+
+	EnvironmentEffectsManager* environmentEffectsManager_ = nullptr;
 
 	Player* player_;
 

@@ -80,9 +80,12 @@ void GameScene::Init(){
 
 	menuBackSprite_.reset(Sprite::Create(backGameTex_, { 640.0f, 360.0f }));
 	menuButtonSprite_.reset(Sprite::Create(menuButtonTex_, { 1150.0f, 690.0f }));
-	menuSprites_[kBack].reset(Sprite::Create(toGameTex_, { 1040.0f, 160.0f }));
-	menuSprites_[kOption].reset(Sprite::Create(optionTex_, { 1040.0f, 360.0f }));
-	menuSprites_[kStageSelect].reset(Sprite::Create(toStageSelectTex_, { 1040.0f, 560.0f }));
+	menuSprites_[kBack].reset(Sprite::Create(toGameTex_, { 840.0f, 160.0f }));
+	menuSprites_[kBack]->SetSize({ 512.0f,64.0f });
+	menuSprites_[kOption].reset(Sprite::Create(optionTex_, { 840.0f, 360.0f }));
+	menuSprites_[kOption]->SetSize({ 512.0f,64.0f });
+	menuSprites_[kStageSelect].reset(Sprite::Create(toStageSelectTex_, { 840.0f, 560.0f }));
+	menuSprites_[kStageSelect]->SetSize({ 512.0f,64.0f });
 	scoreFront_.reset(Sprite::Create(scoreFrontTex_, { 250.0f, 64.0f }));
 	/*scoreGage_.reset(Sprite::Create(scoreMiddleTex_, { 106.0f, 64.0f }));*/
 	scoreGage_.reset(Sprite::Create(scoreMiddleTex_, { 106.0f, 64.0f }));
@@ -116,6 +119,15 @@ void GameScene::Init(){
 	TutorialFlagManager::GetInstance()->SetScroll(scroll_.get());
 
 	option_ = std::make_unique<Option>();
+
+	//1~3,7~9は灼熱開始
+	if (stageNumber_ <= 3 || stageNumber_ > 6) {
+
+	}
+	//4~6は極寒開始
+	else if (stageNumber_ <= 6) {
+		ChangeMode();
+	}
 
 }
 

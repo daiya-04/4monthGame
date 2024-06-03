@@ -91,6 +91,8 @@ Stage::Stage()
 	upgradeSystem_ = std::make_unique<UpgradeSystem>();
 	upgradeSystem_->SetGoalCount(&rockCount_);
 
+	environmentEffectsManager_ = EnvironmentEffectsManager::GetInstance();
+
 	CreateEntity();
 
 }
@@ -203,7 +205,12 @@ void Stage::Update() {
 		//家に戻ったら再生成
 		if (player_->GetIsHome() && !isRespawn_) {
 			RespawnBlock(Block::kDownMagma);
-			/*CreateIceBlock();*/
+
+			//極寒なら氷生成
+			if (!environmentEffectsManager_->GetIsNowScene()) {
+				CreateIceBlock();
+			}
+
 			isRespawn_ = true;
 		}
 		else if (player_->GetIsDead()) {

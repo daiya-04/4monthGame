@@ -136,6 +136,11 @@ void BaseBlock::IceBreak(int32_t breakCoolTime) {
 			break;
 		}
 
+		int createNum = int(RandomEngine::GetRandom(8.0f, 12.0f));
+		for (int i = 0; i < createNum; i++) {
+			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
+		}
+
 		return;
 	}
 
