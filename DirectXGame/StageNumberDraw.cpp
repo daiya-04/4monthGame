@@ -5,7 +5,7 @@
 
 void StageNumberDraw::Init(const Vector2& pos, const Vector2& size) {
 
-	uint32_t numberTex = TextureManager::Load("UI/number.png");
+	uint32_t numberTex = TextureManager::Load("UI/whiteNumber.png");
 
 	position_ = pos;
 	size_ = size;
@@ -20,7 +20,11 @@ void StageNumberDraw::Init(const Vector2& pos, const Vector2& size) {
 void StageNumberDraw::Draw() {
 
 	if (stageNumber_ < 10) {
-		numberSprite_[0]->SetPosition(position_ + bounding_.addPos_);
+		if (stageNumber_ == 1) {
+			numberSprite_[0]->SetPosition(position_ + bounding_.addPos_ - Vector2(5.0f, 0.0f));
+		}else {
+			numberSprite_[0]->SetPosition(position_ + bounding_.addPos_);
+		}
 		numberSprite_[0]->SetTextureArea({ 64.0f * stageNumber_,0.0f }, { 64.0f,64.0f });
 		numberSprite_[0]->Draw();
 	}
@@ -32,8 +36,8 @@ void StageNumberDraw::Draw() {
 
 		int32_t judgeNumber = stageNumber_;
 
-		numberSprite_[0]->SetPosition({ position_.x - 25.0f, position_.y + bounding_.addPos_.y});
-		numberSprite_[1]->SetPosition({ position_.x + 25.0f, position_.y + bounding_.addPos_.y });
+		numberSprite_[0]->SetPosition({ position_.x - 30.0f, position_.y + bounding_.addPos_.y});
+		numberSprite_[1]->SetPosition({ position_.x + 20.0f, position_.y + bounding_.addPos_.y });
 
 		for (int32_t i = 0; i < kMaxDigit_; i++) {
 

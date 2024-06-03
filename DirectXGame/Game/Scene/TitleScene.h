@@ -16,6 +16,7 @@
 
 #include "Option.h"
 #include "TitleAnimation.h"
+#include "Steam.h"
 
 
 class TitleScene : public DefaultScene {
@@ -56,6 +57,8 @@ public:
 	void BoundingUpdate(Sprite* sprite);
 
 private:
+
+	Camera camera_;
 
 	const std::string dataName = "TitleUI";
 
@@ -110,6 +113,8 @@ private:
 	Audio* moveSE_;
 	Audio* cancelSE_;
 	Audio* titleBGM_;
+
+	std::unique_ptr<Steam> steam_;
 
 private:
 

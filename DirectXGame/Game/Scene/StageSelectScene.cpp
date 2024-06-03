@@ -1,5 +1,6 @@
 #include "StageSelectScene.h"
 
+#include "DirectXCommon.h"
 #include "TextureManager.h"
 #include "ModelManager.h"
 #include "ImGuiManager.h"
@@ -35,6 +36,10 @@ void StageSelectScene::Init() {
 	playerTex_[Orange] = TextureManager::Load("player/playerOrangeIdle.png");
 	playerRunTex_[Blue] = TextureManager::Load("player/playerBlueRun.png");
 	playerRunTex_[Orange] = TextureManager::Load("player/playerOrangeRun.png");
+	infoBaseTex_ = TextureManager::Load("UI/infoBase.png");
+	gaugeBGTex_ = TextureManager::Load("UI/selectScoreBG.png");
+	gaugeFreamTex_ = TextureManager::Load("UI/selectScoreFrame.png");
+	gaugeTex_ = TextureManager::Load("UI/scoreGage.png");
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
 
@@ -60,7 +65,7 @@ void StageSelectScene::Init() {
 	player_[Orange]->position_ = { saunaRooms_[stageNumber_ - 1]->position_.x - 500.0f,568.0f };
 
 	stageNumberDraw_ = std::make_unique<StageNumberDraw>();
-	stageNumberDraw_->Init({ 640.0f,270.0f }, { 96.0f, 96.0f });
+	stageNumberDraw_->Init({ 638.0f,255.0f }, { 96.0f, 96.0f });
 	stageNumberDraw_->SetStageNumber(stageNumber_);
 
 	///UIの設定
@@ -73,12 +78,30 @@ void StageSelectScene::Init() {
 
 	uis_["BButton"]->SetScale(0.6f);
 
+	infoBase_.reset(Sprite::Create(infoBaseTex_, { 640.0f,660.0f }));
+	infoBase_->SetAnchorpoint({ 0.5f,1.0f });
+	infoBase_->SetScale(0.7f);
+
+	gaugeBG_.reset(Sprite::Create(gaugeBGTex_, { 640.0f,420.0f }));
+	gaugeBG_->SetScale(0.7f);
+
+	gaugeFream_.reset(Sprite::Create(gaugeFreamTex_, { 640.0f,420.0f }));
+	gaugeFream_->SetScale(0.7f);
+
+	gauge_.reset(Sprite::Create(gaugeTex_, {355.0f,420.0f}));
+	gauge_->SetAnchorpoint({ 0.0f,0.5f });
+	gauge_->SetSize({ 560.0f,96.0f });
+
 	///
 
-	score_.Init(scorePos_, { 48.0f,48.0f });
+	steam_ = std::make_unique<Steam>();
+	steam_->Init({ 640.0f,360.0f }, { 1280.0f,360.0f });
+	steam_->SetEmitCount(6);
 
-	score_.SetSpace(32.0f);
-	rank_.Init(rankPos_, { 64.0f,64.0f });
+	score_.Init(scorePos_, { 64.0f,64.0f });
+	score_.SetSpace(36.0f);
+
+	rank_.Init(rankPos_, { 80.0f,80.0f });
 
 	selectBGM_ = AudioManager::GetInstance()->Load("BGM/selectBGM.mp3");
 
@@ -135,7 +158,8 @@ void StageSelectScene::Update() {
 			break;
 	}
 
-	
+	steam_->SetCenter({ 640.0f + camera_.translation_.x,360.0f });
+	steam_->Update();
 
 	player_[Blue]->SetTextureArea({160.0f * animationNum_,160.0f}, {160.0f,160.0f});
 	player_[Orange]->SetTextureArea({ 160.0f * animationNum_,160.0f }, { 160.0f,160.0f });
@@ -146,6 +170,16 @@ void StageSelectScene::Update() {
 void StageSelectScene::DrawBackGround() {
 
 	backGround_->Draw();
+
+	Particle::preDraw();
+	steam_->Draw(camera_);
+
+	Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+
+	infoBase_->Draw();
+	gaugeBG_->Draw();
+	gauge_->Draw();
+	gaugeFream_->Draw();
 
 }
 
@@ -237,6 +271,13 @@ void StageSelectScene::RootInit() {
 	if (stageNumber_ == kMaxStage_) {
 		uis_["RArrow"]->DrawOff();
 	}
+
+	infoBase_->DrawOn();
+	gaugeBG_->DrawOn();
+	gauge_->DrawOn();
+	gaugeFream_->DrawOn();
+
+	ScoreGaugeSet();
 
 	stageNumberDraw_->SetStageNumber(stageNumber_);
 	stageNumberDraw_->AnimationInit();
@@ -383,6 +424,11 @@ void StageSelectScene::MoveInit() {
 	uis_["RArrow"]->DrawOff();
 	uis_["LArrow"]->DrawOff();
 
+	infoBase_->DrawOff();
+	gaugeBG_->DrawOff();
+	gauge_->DrawOff();
+	gaugeFream_->DrawOff();
+
 	intervalCount_ = 0;
 
 }
@@ -456,6 +502,53 @@ void StageSelectScene::ApplyGlobalVariables() {
 
 	for (const auto& ui : uis_) {
 		ui.second->SetPosition(gb->GetValue<Vector2>(dataName, ui.first, "position"));
+	}
+
+}
+
+void StageSelectScene::ScoreGaugeSet() {
+
+	if (ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1) > 0) {
+
+		//倍率設定
+		float gageMag = float(score_.GetScore()) /
+			(float(ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1)) * 1.15f);
+		//1.0fを超えないようにする
+		gageMag = std::clamp(gageMag, 0.0f, 1.0f);
+
+		gauge_->SetSize({ 585.0f * gageMag,96.0f });
+		gauge_->SetTextureArea({ 0.0f,0.0f },
+			{ 380.0f * gageMag, 96.0f });
+
+		//ゲージの色変化
+
+		//S、黄金色
+		if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1)) {
+			gauge_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
+		}
+		//A、赤色
+		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1) / 4 * 3) {
+			gauge_->SetColor({ 1.0f,0.3f,0.3f,1.0f });
+		}
+		//B、黄色
+		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1) / 2) {
+			gauge_->SetColor({ 1.0f,1.0f,0.3f,1.0f });
+		}
+		//C、緑色
+		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1) / 4) {
+			gauge_->SetColor({ 0.3f,1.0f,0.3f,1.0f });
+		}
+		//D、水色
+		else {
+			gauge_->SetColor({ 0.3f,1.0f,1.0f,1.0f });
+		}
+
+	}
+	else {
+		gauge_->SetSize({ 422.0f,96.0f });
+		gauge_->SetTextureArea({ 0.0f,0.0f },
+			{ 422.0f, 96.0f });
+		gauge_->SetColor({ 1.0f,1.0f,0.7f,1.0f });
 	}
 
 }
