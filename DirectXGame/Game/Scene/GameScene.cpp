@@ -59,10 +59,26 @@ void GameScene::Init(){
 
 	environmentEffectsManager_ = EnvironmentEffectsManager::GetInstance();
 	environmentEffectsManager_->SetCamera(camera_.get());
+
+	cameraFrozen_ = CameraFrozenManager::GetInstance();
+	cameraFrozen_->ClearEffect();
+	cameraFrozen_->Reset();
+
+	//1~3,7~9は灼熱開始
+	if (stageNumber_ <= 3 || stageNumber_ > 6) {
+
+		environmentEffectsManager_->InitializeStage(true);
+		cameraFrozen_->Reset();
+	}
+	//4~6は極寒開始
+	else if (stageNumber_ <= 6) {
+
+		environmentEffectsManager_->InitializeStage(false);
+		cameraFrozen_->Start();
+	}
 	//stageに現在のシーンモードを適応する
 	AppryMode();
 
-	cameraFrozen_ = CameraFrozenManager::GetInstance();
 	heatHazeManager_ = HeatHazeManager::GetInstance();
 
 	waterDropManager_ = WaterDropManager::GetInstance();
@@ -119,7 +135,7 @@ void GameScene::Init(){
 	TutorialFlagManager::GetInstance()->SetScroll(scroll_.get());
 
 	option_ = std::make_unique<Option>();
-
+	/*
 	//1~3,7~9は灼熱開始
 	if (stageNumber_ <= 3 || stageNumber_ > 6) {
 
@@ -138,7 +154,7 @@ void GameScene::Init(){
 		}
 
 	}
-
+	*/
 }
 
 void GameScene::Reset() {

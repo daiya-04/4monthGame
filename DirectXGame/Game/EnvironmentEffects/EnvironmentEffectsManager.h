@@ -47,6 +47,14 @@ public:
 
 	void SetCamera(Camera* camera) { camera_ = camera; };
 
+	//灼熱モードで始めるか
+	void InitializeStage(bool isHeat) {
+		weightCircle_->Reset();
+		isNowScene_ = isHeat;
+		isChangeComplete_ = false;
+		isPlayDownMagmaEffect_ = false;
+	}
+
 private:
 	std::unique_ptr<PostEffect> prevScene;
 	std::unique_ptr<PostEffect> nextScene;

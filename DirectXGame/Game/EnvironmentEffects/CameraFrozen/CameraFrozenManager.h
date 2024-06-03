@@ -36,6 +36,11 @@ public:
 		radius_ = radiusMax_;
 	};
 
+	//0->凍結 1->解凍
+	void SetMode(int32_t mode) {
+		cameraFrozen_->SetMode(mode);
+	}
+
 	PostEffect* GetEffectTexture() { return cameraFrozen_.get(); };
 
 	void SetRadiusMin(float min) { radiusMin_ = min; };
