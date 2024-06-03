@@ -97,6 +97,51 @@ void BaseBlock::Break(float power) {
 
 }
 
+void BaseBlock::IceBreak(int32_t breakCoolTime) {
+
+	//氷ブロックはスコア対象外
+	if (type_ == kIceBlock) {
+
+		isStartBreak_ = true;
+		iceBreakCoolTimer_ = breakCoolTime;
+
+		switch (direction_)
+		{
+		default:
+		case kLeft:
+
+			if (pLeft_ && pLeft_->GetType() == kIceBlock) {
+				pLeft_->SetDirection(kLeft);
+				pLeft_->IceBreak(breakCoolTime + iceBreakInterval_);
+			}
+
+			break;
+		case kRight:
+			if (pRight_ && pRight_->GetType() == kIceBlock) {
+				pRight_->SetDirection(kRight);
+				pRight_->IceBreak(breakCoolTime + iceBreakInterval_);
+			}
+			break;
+		case kUp:
+			if (pUp_ && pUp_->GetType() == kIceBlock) {
+				pUp_->SetDirection(kUp);
+				pUp_->IceBreak(breakCoolTime + iceBreakInterval_);
+			}
+			break;
+		case kDown:
+			if (pDown_ && pDown_->GetType() == kIceBlock) {
+				pDown_->SetDirection(kDown);
+				pDown_->IceBreak(breakCoolTime + iceBreakInterval_);
+			}
+			break;
+		}
+
+		return;
+	}
+
+
+}
+
 void BaseBlock::SetCollapse() {
 
 	isStartCollapse_ = true;
@@ -151,6 +196,18 @@ void Block::Update() {
 
 	if (type_ == kNone) {
 		isBreak_ = true;
+	}
+
+	if (type_ == kIceBlock) {
+
+		if (isStartBreak_ && --iceBreakCoolTimer_ <= 0) {
+			durability_ = 0.0f;
+			type_ = kNone;
+			isBreak_ = true;
+			//一旦鉱石で代用
+			crystalSE_->Play();
+		}
+
 	}
 
 	//object_->SetTextureArea({ float(uvPositionX_ * kTextureBlockSize_),float(uvPositionY_ * kTextureBlockSize_) },
@@ -217,7 +274,8 @@ void Block::Draw(const Camera& camera) {
 void BaseBlock::SetColor() {
 
 	//一部のブロックは色を変えない
-	if (type_ == kGoldBlock || type_ == kDownMagma) {
+	if (type_ == kGoldBlock || type_ == kDownMagma || type_ == kIceBlock) {
+		color_ = { 1.0f,1.0f,1.0f, 1.0f };
 		return;
 	}
 

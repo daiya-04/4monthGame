@@ -591,6 +591,8 @@ void Player::ChargeJump() {
 	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.maxChargeTime &&
 		input_->ReleaseButton(Input::Button::A)) {
 
+		//速度設定
+		velocity_.x = 0.0f;
 		velocity_.y = parameters_[currentCharacters_]->chargeJump_.chargeJumpVelocity;
 
 		parameters_[currentCharacters_]->chargeJump_.isChargeJumping = true;
@@ -1490,8 +1492,37 @@ void Player::CheckCollision() {
 
 						if (Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType())) {
 
+							//氷ブロックなら別の処理
+							if ((*blocksPtr_)[y][x]->GetType() == Block::kIceBlock) {
+
+								//上下左右破壊向きを決める
+								if (input_->TiltLStick(Input::Stick::Right)) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kRight);
+								}
+								else if (input_->TiltLStick(Input::Stick::Left)) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kLeft);
+								}
+								else if (input_->TiltLStick(Input::Stick::Up)) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kUp);
+								}
+								else if (input_->TiltLStick(Input::Stick::Down)) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kDown);
+								}
+								//入力が無ければどっちを向いてるかで決める
+								else if (isFacingLeft_) {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kLeft);
+								}
+								else {
+									(*blocksPtr_)[y][x]->SetDirection(Block::kRight);
+								}
+
+								(*blocksPtr_)[y][x]->IceBreak();
+
+							}
 							//自身の破壊力に応じてダメージを与える
-							(*blocksPtr_)[y][x]->Break(parameters_[currentCharacters_]->dig_.digPower);
+							else {
+								(*blocksPtr_)[y][x]->Break(parameters_[currentCharacters_]->dig_.digPower);
+							}
 
 							//穴掘りクールタイムを設定
 							parameters_[currentCharacters_]->dig_.digCount = parameters_[currentCharacters_]->dig_.digInterval;

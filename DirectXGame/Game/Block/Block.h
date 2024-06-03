@@ -55,6 +55,13 @@ public:
 
 	};
 
+	enum IceBreakDirection {
+		kUp,
+		kDown,
+		kLeft,
+		kRight,
+	};
+
 	//破壊可能ブロックなら、trueを返す関数
 	static bool CheckCanBreak(BlockType type) {
 
@@ -135,7 +142,11 @@ public:
 	void Break(float power);
 
 	//ブロックが再生する時の関数(再び当たり判定を持つ)
-	void Repair() { isBreak_ = false; }
+	void Repair() { 
+		isBreak_ = false;
+		isStartBreak_ = false;
+		iceBreakCoolTimer_ = 0;
+	}
 
 	//ブロックの耐久値設定
 	void SetDurability(float value) { 
@@ -155,6 +166,18 @@ public:
 
 	void Reset();
 
+	void IceBreak(int32_t breakCoolTime = 0);
+
+	//上下左右隣接しているポインタ取得
+	void SetPointer(BaseBlock* left, BaseBlock* right, BaseBlock* up, BaseBlock* down) {
+		pLeft_ = left;
+		pRight_ = right;
+		pUp_ = up;
+		pDown_ = down;
+	}
+
+	void SetDirection(IceBreakDirection direction) { direction_ = direction; }
+
 protected:
 
 	static Score* score_;
@@ -162,6 +185,13 @@ protected:
 	Player* player_;
 
 	Magma* magma_ = nullptr;
+
+	BaseBlock* pLeft_ = nullptr;
+	BaseBlock* pRight_ = nullptr;
+	BaseBlock* pUp_ = nullptr;
+	BaseBlock* pDown_ = nullptr;
+
+	IceBreakDirection direction_ = kUp;
 
 	BlockType type_ = kUnbreakable;
 
@@ -200,6 +230,16 @@ protected:
 	float durability_ = 3.0f;
 
 	float defaultDurability_ = 3.0f;
+
+	///-----氷専用-------------------------------------------------------------
+
+	bool isStartBreak_ = false;
+
+	int32_t iceBreakCoolTimer_ = 0;
+
+	int32_t iceBreakInterval_ = 10;
+
+	///-------------------------------------------------------------------------
 
 	//ザクザク音
 	Audio* digLowSE_;

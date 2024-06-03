@@ -103,15 +103,39 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	currentStageNumber_ = stageNumber;
 
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (int32_t y = 0; y < kMaxStageHeight_; y++) {
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (int32_t x = 0; x < kMaxStageWidth_; x++) {
 
 			//一旦初期化。耐久力などの設定はLoadで行う
 			blockPositions_[y][x] = 0;
 			map_[y][x]->SetPlayer(player_);
 			map_[y][x]->SetMagma(magma_.get());
 			map_[y][x]->SetDurability(float(y / 5) + 3.0f);
+
+			//上下左右のブロックのポインタ設定
+			Block* pLeft = nullptr;
+			Block* pRight = nullptr;
+			Block* pUp = nullptr;
+			Block* pDown = nullptr;
+
+			if (y - 1 >= 0) {
+				pUp = map_[y - 1][x].get();
+			}
+			
+			if (y + 1 < kMaxStageHeight_) {
+				pDown = map_[y + 1][x].get();
+			}
+
+			if (x - 1 >= 0) {
+				pLeft = map_[y][x - 1].get();
+			}
+
+			if (x + 1 < kMaxStageWidth_) {
+				pRight = map_[y][x + 1].get();
+			}
+
+			map_[y][x]->SetPointer(pLeft, pRight, pUp, pDown);
 
 		}
 
@@ -122,7 +146,7 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	isStart_ = false;
 	isClear_ = false;
-	isRespawn_ = false;
+	isRespawn_ = true;
 	isBreakFlagBlocks_ = false;
 	canUpgrade_ = false;
 	rockCount_ = 0;
@@ -179,6 +203,7 @@ void Stage::Update() {
 		//家に戻ったら再生成
 		if (player_->GetIsHome() && !isRespawn_) {
 			RespawnBlock(Block::kDownMagma);
+			/*CreateIceBlock();*/
 			isRespawn_ = true;
 		}
 		else if (player_->GetIsDead()) {
@@ -522,13 +547,37 @@ void Stage::CreateIceBlock() {
 		
 		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
 			
+			//一部スキップ
+			if (y < 5) {
+
+				continue;
+
+			}
+			else if (y == 5) {
+
+				if ((x >= 8 && x <= 13) || (x >= 26 && x <= 31)) {
+					continue;
+				}
+				else if (x <= 5 || (x >= 16 && x <= 23) || x >= 34) {
+					continue;
+				}
+
+			}
+			else if (y == 6) {
+
+				if ((x >= 9 && x <= 12) || (x >= 27 && x <= 30)) {
+					continue;
+				}
+
+			}
+
 			//ブロックが無い且つプレイヤーと当たらない部分に氷ブロックを生成
 			if (map_[y][x]->GetIsBreak() && !IsCollision(map_[y][x]->GetCollision(), player_->GetCollision())) {
 
 				map_[y][x]->ChangeType(Block::BlockType::kIceBlock);
 				map_[y][x]->Repair();
 
-				blockPositions_[y][x] = BaseBlock::BlockType::kIceBlock;
+				/*blockPositions_[y][x] = BaseBlock::BlockType::kIceBlock;*/
 
 			}
 

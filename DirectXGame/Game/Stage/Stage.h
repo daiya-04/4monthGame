@@ -177,6 +177,13 @@ private:
 	//再生成フラグ
 	bool isRespawn_ = false;
 
+	//氷ブロックの破壊開始座標
+	int32_t breakStartX_ = 0;
+	int32_t breakStartY_ = 0;
+	//氷ブロック破壊間隔
+	int32_t breakInterval_ = 5;
+	int32_t breakTimer_ = 0;
+
 	//数字の表示フラグ
 	std::array<bool, kMaxNumbers_> isActiveNumber_{};
 

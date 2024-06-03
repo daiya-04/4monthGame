@@ -34,6 +34,8 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	blockTextures_.push_back(texture);
 	texture = TextureManager::Load("blocks/gold.png");
 	blockTextures_.push_back(texture);
+	texture = TextureManager::Load("blocks/testIce.png");
+	blockTextures_.push_back(texture);
 
 	for (uint32_t index=1; index < BaseBlock::BlockType::kMaxBlock; index++) {
 
@@ -60,6 +62,10 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		else if (index == Block::kGoldBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[7]);
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[7]);
+		}
+		else if (index == Block::kIceBlock) {
+			objects_[index - 1]->SetTextureHandle(blockTextures_[8]);
+			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[8]);
 		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
