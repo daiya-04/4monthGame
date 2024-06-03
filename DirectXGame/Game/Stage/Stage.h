@@ -11,6 +11,7 @@
 #include "System/UpgradeSystem.h"
 #include "Magma.h"
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
+#include "AudioManager.h"
 
 class Player;
 
@@ -96,6 +97,9 @@ public:
 
 	bool GetIsActiveUpgrade() const { return upgradeSystem_->GetIsActive(); }
 
+	//氷ブロックを溶かす
+	void BreakIceBlock();
+
 private:
 
 	//実体生成
@@ -106,9 +110,6 @@ private:
 
 	//マップの空いてるマスに氷を追加する
 	void CreateIceBlock();
-
-	//氷ブロックを溶かす
-	void BreakIceBlock();
 
 	//壊せないブロック以外の破壊(デバッグ)
 	void BreakAllBlock();
@@ -234,6 +235,9 @@ private:
 	int32_t flagChangeFrame_ = 4;
 
 ///=============================================
+
+
+	Audio* meltSE_;
 
 };
 

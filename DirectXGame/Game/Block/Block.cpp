@@ -23,6 +23,8 @@ void BaseBlock::Break(float power) {
 	if (durability_ <= 0.0f) {
 
 		durability_ = 0.0f;
+		//穴掘り回数加算
+		player_->AddDigCount();
 
 		score_->AddScore(100);
 
@@ -136,19 +138,30 @@ void BaseBlock::IceBreak(int32_t breakCoolTime) {
 			break;
 		}
 
-		int createNum = int(RandomEngine::GetRandom(8.0f, 12.0f));
-		for (int i = 0; i < createNum; i++) {
-			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
-		}
-
 		return;
 	}
 
 
 }
 
+void BaseBlock::MeltIce() {
+
+	if (type_ == kIceBlock) {
+		durability_ = 0.0f;
+		type_ = kNone;
+		isBreak_ = true;
+		int createNum = int(RandomEngine::GetRandom(8.0f, 12.0f));
+		for (int i = 0; i < createNum; i++) {
+			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
+		}
+
+	}
+
+}
+
 void BaseBlock::SetCollapse() {
 
+	collapseSE_->Play();
 	isStartCollapse_ = true;
 
 }
@@ -175,6 +188,7 @@ Block::Block(const Vector2& position, BlockType type)
 	digMidSE_ = AudioManager::GetInstance()->Load("SE/dig_mid.mp3");
 	digHighSE_ = AudioManager::GetInstance()->Load("SE/dig_high.mp3");
 	crystalSE_ = AudioManager::GetInstance()->Load("SE/crystal_get2.mp3");
+	collapseSE_ = AudioManager::GetInstance()->Load("SE/collapse.mp3");
 
 }
 
@@ -210,6 +224,10 @@ void Block::Update() {
 			type_ = kNone;
 			score_->AddScore(100);
 			isBreak_ = true;
+			int createNum = int(RandomEngine::GetRandom(8.0f, 12.0f));
+			for (int i = 0; i < createNum; i++) {
+				BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
+			}
 			//一旦鉱石で代用
 			crystalSE_->Play();
 		}
@@ -246,7 +264,12 @@ void Block::Update() {
 
 		if (--collapseCount_ <= 0) {
 			durability_ = 0.0f;
+			int createNum = int(RandomEngine::GetRandom(8.0f, 12.0f));
+			for (int i = 0; i < createNum; i++) {
+				BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
+			}
 			isBreak_ = true;
+			digHighSE_->Play();
 		}
 
 	}

@@ -168,6 +168,9 @@ public:
 
 	void IceBreak(int32_t breakCoolTime = 0);
 
+	//氷ブロックを溶かす処理(スコア加算無し)
+	void MeltIce();
+
 	//上下左右隣接しているポインタ取得
 	void SetPointer(BaseBlock* left, BaseBlock* right, BaseBlock* up, BaseBlock* down) {
 		pLeft_ = left;
@@ -246,6 +249,7 @@ protected:
 	Audio* digMidSE_;
 	Audio* digHighSE_;
 	Audio* crystalSE_;
+	Audio* collapseSE_;
 
 	Vector4 color_{ 1.0f,1.0f,1.0f,1.0f };
 

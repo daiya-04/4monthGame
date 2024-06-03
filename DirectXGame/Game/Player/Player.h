@@ -304,6 +304,13 @@ public:
 	//溜めジャンプ制限
 	void RestrictChargeJump() { parameters_[currentCharacters_]->chargeJump_.chargeTimer = 0; }
 
+	//穴掘りカウント
+	void AddDigCount(int32_t val = 1) { digCount_ += val; }
+
+	int32_t GetDigCount() const { return digCount_; }
+
+	void ResetDigCount() { digCount_ = 0; }
+
 private:
 
 	//移動
@@ -510,6 +517,8 @@ private:
 
 	const std::string dataName = "Player";
 
+	int32_t digCount_ = 0;
+
 	//歩きのSE制御
 	int32_t playSEInterval_ = 15;
 
@@ -522,6 +531,9 @@ private:
 	Audio* walk3SE_;
 	Audio* walk4SE_;
 	Audio* deadSE_;
+	Audio* wallJumpSE_;
+	Audio* doorCloseSE_;
+	Audio* doorOpenSE_;
 
 	///------------------------------------------------
 

@@ -123,10 +123,20 @@ void GameScene::Init(){
 	//1~3,7~9は灼熱開始
 	if (stageNumber_ <= 3 || stageNumber_ > 6) {
 
+		//極寒なら切り替え
+		if (!environmentEffectsManager_->GetIsNowScene()) {
+			ChangeMode();
+		}
+
 	}
 	//4~6は極寒開始
 	else if (stageNumber_ <= 6) {
-		ChangeMode();
+		
+		//灼熱なら切り替え
+		if (environmentEffectsManager_->GetIsNowScene()) {
+			ChangeMode();
+		}
+
 	}
 
 }
@@ -308,7 +318,21 @@ void GameScene::Update() {
 
 			//アップグレード中は動けない
 			if (!stage_->GetIsActiveUpgrade()) {
+				
 				player_->Update();
+
+				//十回掘るごとにリセット
+				if (player_->GetDigCount() >= 10) {
+
+					//特定のステージでは極寒灼熱切り替えする
+					if (stageNumber_ > 6) {
+						ChangeMode();
+					}
+					//カウントリセット
+					player_->ResetDigCount();
+
+				}
+
 			}
 
 			player_->UpdateUI();
@@ -617,7 +641,14 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 
 
 void GameScene::ChangeMode() {
+	
+	//極寒だったら氷ブロックを消す処理をする
+	if (!environmentEffectsManager_->GetIsNowScene()) {
+		stage_->BreakIceBlock();
+	}
+
 	environmentEffectsManager_->ChangeSceneMode();
+
 	AppryMode();
 }
 

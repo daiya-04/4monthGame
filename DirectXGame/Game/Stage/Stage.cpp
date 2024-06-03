@@ -95,6 +95,8 @@ Stage::Stage()
 
 	CreateEntity();
 
+	meltSE_ = AudioManager::GetInstance()->Load("SE/melt.mp3");
+
 }
 
 Stage::~Stage()
@@ -603,13 +605,15 @@ void Stage::BreakIceBlock() {
 			//氷ブロックを破壊する
 			if (map_[y][x]->GetType() == Block::BlockType::kIceBlock) {
 
-				map_[y][x]->Break(999);
+				map_[y][x]->MeltIce();
 
 			}
 
 		}
 
 	}
+
+	meltSE_->Play();
 
 }
 

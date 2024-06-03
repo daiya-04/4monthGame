@@ -163,6 +163,8 @@ void Player::SetOnBase() {
 	animationTime_ = 0;
 	damageTimer_ = 120;
 	respwanTimer_ = 0;
+	playSETimer_ = 0;
+	digCount_ = 0;
 
 }
 
@@ -1082,11 +1084,37 @@ void Player::UpdatePosition() {
 
 		tmpPosition_ = position_;
 
+		tmpPosition_ += velocity_ + wallJumpVelocity_;
+
+		//4頂点の座標を更新
+		leftTop_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
+		rightTop_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y - kPlayerHalfSizeY_ };
+		leftBottom_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+		rightBottom_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+
+		//仮の当たり判定更新
+		collision_.min = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
+		collision_.max = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
+
+		CheckCollision();
+
+		position_ = tmpPosition_;
+
+		object_->position_ = position_;
+
+		//4頂点の座標を更新
+		leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeX_ };
+		rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
+		leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
+		rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
+
 		//移動速度が0.0fじゃなければ定期的にSEを鳴らす
 		if (playSETimer_ <= 0) {
 
-			if (fabsf(velocity_.x) > 0.001f) {
-				
+			//地面にいる状態で動いていたら
+			if (fabsf(velocity_.x) > 0.1f && parameters_[currentCharacters_]->Jump_.canJump &&
+				!input_->PushTrigger(Input::Trigger::Right)) {
+
 				int32_t randNum = int(RandomEngine::GetRandom(1.0f, 4.0f));
 
 				switch (randNum)
@@ -1113,7 +1141,7 @@ void Player::UpdatePosition() {
 		}
 		else {
 
-			if (fabsf(velocity_.x) <= 0.001f) {
+			if (fabsf(velocity_.x) <= 0.1f) {
 				playSETimer_ = 0;
 			}
 			else {
@@ -1121,30 +1149,6 @@ void Player::UpdatePosition() {
 			}
 
 		}
-
-		tmpPosition_ += velocity_ + wallJumpVelocity_;
-
-		//4頂点の座標を更新
-		leftTop_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
-		rightTop_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y - kPlayerHalfSizeY_ };
-		leftBottom_ = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
-		rightBottom_ = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
-
-		//仮の当たり判定更新
-		collision_.min = { tmpPosition_.x - kPlayerHalfSizeX_, tmpPosition_.y - kPlayerHalfSizeY_ };
-		collision_.max = { tmpPosition_.x + kPlayerHalfSizeX_ - 1, tmpPosition_.y + kPlayerHalfSizeY_ - 1 };
-
-		CheckCollision();
-
-		position_ = tmpPosition_;
-
-		object_->position_ = position_;
-
-		//4頂点の座標を更新
-		leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeX_ };
-		rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
-		leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
-		rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
 
 	}
 
@@ -1249,7 +1253,7 @@ void Player::CheckCollision() {
 						}
 
 						//崩れるブロックに触れたら崩壊開始
-						if ((*blocksPtr_)[y][x]->GetType() == Block::kCollapseBlock) {
+						if ((*blocksPtr_)[y][x]->GetType() == Block::kCollapseBlock && !(*blocksPtr_)[y][x]->GetIsStartCollapse()) {
 							(*blocksPtr_)[y][x]->SetCollapse();
 						}
 
@@ -1567,6 +1571,7 @@ void Player::CheckCollision() {
 								}
 
 								(*blocksPtr_)[y][x]->IceBreak();
+								digCount_++;
 
 							}
 							//自身の破壊力に応じてダメージを与える
