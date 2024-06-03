@@ -41,6 +41,8 @@ public: //メンバ関数
 
 	void CreateGameWindow(const wchar_t* title = L"DirectXGame", int32_t clientWidth = kClientWidth, int32_t clientHeight = kClientHeight);
 
+	//void CloseWindow();
+
 	bool ProcessMessage();
 
 	void TerminateGameWindow();
