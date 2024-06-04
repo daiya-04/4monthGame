@@ -36,13 +36,15 @@ public:
 
 	//まぐま下げるブロックが壊れた時に呼ぶ
 	void MagmaDown(const Vector2& center) {
-		magmaCenter_ = center;
-		//weightCircle_->SetPosition(center - Vector2{camera_->translation_.x, camera_->translation_.y});
-		weightCircle_->SetPosition(magmaCenter_ - Vector2{ camera_->translation_.x + camera_->center_.x - 640.0f,camera_->translation_.y + camera_->center_.y - 360.0f });
-		weightCircle_->Start();
-		isPlayDownMagmaEffect_ = true;
-		downMagmaEffectInterval_ = kDownMagmaEffectInterval;
-		isCompletefirstChange_ = false;
+		if (!weightCircle_->GetIsStart()) {
+			magmaCenter_ = center;
+			//weightCircle_->SetPosition(center - Vector2{camera_->translation_.x, camera_->translation_.y});
+			weightCircle_->SetPosition(magmaCenter_ - Vector2{ camera_->translation_.x + camera_->center_.x - 640.0f,camera_->translation_.y + camera_->center_.y - 360.0f });
+			weightCircle_->Start();
+			isPlayDownMagmaEffect_ = true;
+			downMagmaEffectInterval_ = kDownMagmaEffectInterval;
+			isCompletefirstChange_ = false;
+		}
 	};
 
 	void SetCamera(Camera* camera) { camera_ = camera; };
@@ -54,6 +56,9 @@ public:
 		isChangeComplete_ = false;
 		isPlayDownMagmaEffect_ = false;
 	}
+
+
+	bool GetIsPlayDownMagma() {return isPlayDownMagmaEffect_;};
 
 private:
 	std::unique_ptr<PostEffect> prevScene;

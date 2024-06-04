@@ -780,26 +780,29 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 
 void GameScene::ChangeMode() {
 
-	//極寒だったら氷ブロックを消す処理をする
-	if (!environmentEffectsManager_->GetIsNowScene()) {
-		stage_->BreakIceBlock();
-		//テクスチャを氷に変更
-		BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 5);
-		//マグマBGMに切り替え
-		magmaBGM_->SetUniqueVolume(1.0f);
-		coldBGM_->SetUniqueVolume(0.0f);
-	}
-	else {
-		//テクスチャをマグマに変更
-		BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 4);
-		//極寒BGMに切り替え
-		magmaBGM_->SetUniqueVolume(0.0f);
-		coldBGM_->SetUniqueVolume(1.0f);
-	}
+	if (!environmentEffectsManager_->GetIsPlaySceneChangeAnimation() && environmentEffectsManager_->GetIsPlayDownMagma()) {
 
-	environmentEffectsManager_->ChangeSceneMode();
+		//極寒だったら氷ブロックを消す処理をする
+		if (!environmentEffectsManager_->GetIsNowScene()) {
+			stage_->BreakIceBlock();
+			//テクスチャを氷に変更
+			BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 5);
+			//マグマBGMに切り替え
+			magmaBGM_->SetUniqueVolume(1.0f);
+			coldBGM_->SetUniqueVolume(0.0f);
+		}
+		else {
+			//テクスチャをマグマに変更
+			BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 4);
+			//極寒BGMに切り替え
+			magmaBGM_->SetUniqueVolume(0.0f);
+			coldBGM_->SetUniqueVolume(1.0f);
+		}
 
-	AppryMode();
+		environmentEffectsManager_->ChangeSceneMode();
+
+		AppryMode();
+	}
 }
 
 void GameScene::AppryMode() {
