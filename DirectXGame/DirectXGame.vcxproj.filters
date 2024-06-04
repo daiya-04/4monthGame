@@ -275,6 +275,7 @@
     <ClCompile Include="Game\Block\GemGetParticle.cpp" />
     <ClCompile Include="StageNumberDraw.cpp" />
     <ClCompile Include="Game\Block\WallKickEffect.cpp" />
+    <ClCompile Include="Steam.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -477,6 +478,7 @@
     <ClInclude Include="Game\Block\GemGetParticle.h" />
     <ClInclude Include="StageNumberDraw.h" />
     <ClInclude Include="Game\Block\WallKickEffect.h" />
+    <ClInclude Include="Steam.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">
