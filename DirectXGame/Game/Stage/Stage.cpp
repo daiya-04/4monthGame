@@ -595,6 +595,7 @@ void Stage::CreateIceBlock() {
 			if (map_[y][x]->GetIsBreak() && !IsCollision(map_[y][x]->GetCollision(), player_->GetCollision())) {
 
 				map_[y][x]->ChangeType(Block::BlockType::kIceBlock);
+				map_[y][x]->SetColor();
 				map_[y][x]->Repair();
 
 				/*blockPositions_[y][x] = BaseBlock::BlockType::kIceBlock;*/

@@ -143,6 +143,7 @@ public:
 
 	//ブロックが再生する時の関数(再び当たり判定を持つ)
 	void Repair() { 
+		durability_ = defaultDurability_;
 		isBreak_ = false;
 		isStartBreak_ = false;
 		iceBreakCoolTimer_ = 0;
@@ -240,7 +241,7 @@ protected:
 
 	int32_t iceBreakCoolTimer_ = 0;
 
-	int32_t iceBreakInterval_ = 10;
+	int32_t iceBreakInterval_ = 5;
 
 	///-------------------------------------------------------------------------
 
