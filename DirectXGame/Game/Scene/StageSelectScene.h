@@ -16,6 +16,7 @@
 #include "SpotLight.h"
 
 #include "StageNumberDraw.h"
+#include "Steam.h"
 
 
 class StageSelectScene : public DefaultScene {
@@ -43,6 +44,8 @@ public:
 
 	void ApplyGlobalVariables();
 
+	void ScoreGaugeSet();
+
 private:
 
 	Camera camera_;
@@ -59,8 +62,8 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<Sprite>> uis_;
 	Score score_;
 	Rank rank_;
-	Vector2 scorePos_ = { 1000.0f,250.0f };
-	Vector2 rankPos_ = { 950.0f,150.0f };
+	Vector2 scorePos_ = { 550.0f,380.0f };
+	Vector2 rankPos_ = { 880.0f,295.0f };
 
 	std::array<uint32_t, 2> playerTex_;
 	std::array<uint32_t, 2> playerRunTex_;
@@ -105,6 +108,18 @@ private:
 
 	uint32_t moveInterval_ = 10;
 	uint32_t intervalCount_ = 0;
+
+	uint32_t infoBaseTex_ = 0;
+	uint32_t gaugeBGTex_ = 0;
+	uint32_t gaugeFreamTex_ = 0;
+	uint32_t gaugeTex_ = 0;
+
+	std::unique_ptr<Sprite> infoBase_;
+	std::unique_ptr<Sprite> gaugeBG_;
+	std::unique_ptr<Sprite> gaugeFream_;
+	std::unique_ptr<Sprite> gauge_;
+
+	std::unique_ptr<Steam> steam_;
 
 private:
 

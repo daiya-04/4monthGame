@@ -98,14 +98,27 @@ void ScoreManager::Initialize() {
 
 	//目標スコアの設定
 	for (int32_t index = 0; index < kMaxStage_; index++) {
-		bestScores_[index].score_.value_ = 0;
-		bestScores_[index].rank_.value_ = R_N;
-		goalScores_[index][R_S] = 10000;
-		goalScores_[index][R_A] = goalScores_[index][R_S] / 4 * 3;
-		goalScores_[index][R_B] = goalScores_[index][R_S] / 2;
-		goalScores_[index][R_C] = goalScores_[index][R_S] / 4;
-		goalScores_[index][R_D] = 1;
-		goalScores_[index][R_N] = 0;
+		if (index == 0) {
+			bestScores_[index].score_.value_ = 0;
+			bestScores_[index].rank_.value_ = R_N;
+			goalScores_[index][R_S] = 10000;
+			goalScores_[index][R_A] = goalScores_[index][R_S] / 4 * 3;
+			goalScores_[index][R_B] = goalScores_[index][R_S] / 2;
+			goalScores_[index][R_C] = goalScores_[index][R_S] / 4;
+			goalScores_[index][R_D] = 1;
+			goalScores_[index][R_N] = 0;
+		}
+		else {
+			bestScores_[index].score_.value_ = 0;
+			bestScores_[index].rank_.value_ = R_N;
+			goalScores_[index][R_S] = 30000;
+			goalScores_[index][R_A] = goalScores_[index][R_S] / 4 * 3;
+			goalScores_[index][R_B] = goalScores_[index][R_S] / 2;
+			goalScores_[index][R_C] = goalScores_[index][R_S] / 4;
+			goalScores_[index][R_D] = 1;
+			goalScores_[index][R_N] = 0;
+		}
+		
 	}
 	
 	Load();

@@ -29,7 +29,7 @@ private:
 	struct WorkBounding {
 		float param_ = 0.0f;
 		//振幅
-		float amplitude_ = 20.0f;
+		float amplitude_ = 10.0f;
 		//サイクル<frame>
 		int32_t cycle_ = 60;
 
