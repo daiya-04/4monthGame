@@ -69,6 +69,7 @@ Player::Player()
 	doorCloseSE_ = AudioManager::GetInstance()->Load("SE/doorClose.mp3");
 	doorOpenSE_ = AudioManager::GetInstance()->Load("SE/doorOpen.mp3");
 	jumpSE_ = AudioManager::GetInstance()->Load("SE/jump.mp3");
+	chargeJumpSE_ = AudioManager::GetInstance()->Load("SE/chargeJump.mp3");
 
 }
 
@@ -617,6 +618,7 @@ void Player::ChargeJump() {
 			position_.y - float(parameters_[currentCharacters_]->chargeJump_.jumpValue * Block::kBlockSize_);
 		parameters_[currentCharacters_]->chargeJump_.canBreak = true;
 		parameters_[currentCharacters_]->Jump_.canJump = false;
+		chargeJumpSE_->Play();
 
 	}
 

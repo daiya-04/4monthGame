@@ -544,6 +544,7 @@ private:
 	Audio* doorCloseSE_;
 	Audio* doorOpenSE_;
 	Audio* jumpSE_;
+	Audio* chargeJumpSE_;
 
 	///------------------------------------------------
 
