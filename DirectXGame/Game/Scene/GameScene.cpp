@@ -102,6 +102,7 @@ void GameScene::Init(){
 	scoreBackTex_ = TextureManager::Load("UI/scoreBackGround.png");
 	clearBGTex_ = TextureManager::Load("UI/clearBG.png");
 	clearTex_ = TextureManager::Load("UI/gameClear.png");
+	numTex_ = TextureManager::Load("UI/number.png");
 
 	menuBackSprite_.reset(Sprite::Create(backGameTex_, { 640.0f, 360.0f }));
 	menuButtonSprite_.reset(Sprite::Create(menuButtonTex_, { 1150.0f, 690.0f }));
@@ -121,6 +122,12 @@ void GameScene::Init(){
 	clearBGSprite_.reset(Sprite::Create(clearBGTex_, { 640.0f, 360.0f }));
 	clearBGSprite_->SetColor({ 1.0f,1.0f,1.0f,clearBGAlpha_ });
 	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
+	
+	for (int32_t i = 0; i < 2; i++) {
+		changeCount_[i].reset(Object2d::Create(numTex_, player_->GetPosition() - Vector2{16.0f + 32.0f * i,96.0f}));
+		changeCount_[i]->SetSize({ 64.0f,64.0f });
+		changeCount_[i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
+	}
 
 	isFirstAllDraw_ = true;
 	TextManager::GetInstance();
@@ -449,6 +456,24 @@ void GameScene::Update() {
 	//スコアゲージ調整
 	UpdateScoreGage();
 	
+	if (stageNumber_ > 6) {
+
+		for (int32_t i = 0; i < 2; i++) {
+
+			int32_t num = 0;
+
+			int32_t divide = int32_t(std::pow(10, 2 - 1 - i));
+
+			num = (10 - player_->GetDigCount()) / divide;
+
+			changeCount_[i]->SetTextureArea({ 64.0f * num, 0.0f }, { 64.0f,64.0f });
+
+			changeCount_[i]->position_ = player_->GetPosition() + Vector2{ -16.0f + 32.0f * i,-96.0f };
+
+		}
+
+	}
+
 }
 
 void GameScene::UpdateScoreGage() {
@@ -688,6 +713,15 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 		player_->Draw(*camera_.get());
 	}
 
+	if (stageNumber_ > 6 && player_->GetIsMine()) {
+
+		for (int32_t i = 0; i < 2; i++) {
+			changeCount_[i]->Draw(*camera_.get());
+		}
+
+	}
+
+
 	//snowManager_->Draw();
 	heatHazeManager_->PostDrawMagma(commandList_);
 
@@ -720,6 +754,15 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 	if (player_->GetIsDead()) {
 		player_->Draw(*camera_.get());
 	}
+
+	if (stageNumber_ > 6 && player_->GetIsMine()) {
+
+		for (int32_t i = 0; i < 2; i++) {
+			changeCount_[i]->Draw(*camera_.get());
+		}
+
+	}
+
 
 	heatHazeManager_->PostDraw(commandList_);
 

@@ -149,6 +149,7 @@ private:
 	std::unique_ptr<Sprite> menuButtonSprite_;
 
 	std::array<std::unique_ptr<Sprite>, kMaxMenu> menuSprites_;
+	std::array<std::unique_ptr<Object2d>, 2> changeCount_;
 
 	uint32_t backGameTex_;
 	uint32_t restartTex_;
@@ -161,6 +162,7 @@ private:
 	uint32_t scoreBackTex_;
 	uint32_t clearBGTex_;
 	uint32_t clearTex_;
+	uint32_t numTex_;
 
 ///-------------------------------------------
 
