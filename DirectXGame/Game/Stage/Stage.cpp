@@ -101,6 +101,7 @@ Stage::Stage()
 	CreateEntity();
 
 	meltSE_ = AudioManager::GetInstance()->Load("SE/melt.mp3");
+	upgradeOpenSE_ = AudioManager::GetInstance()->Load("SE/upgradeOpen.mp3");
 
 }
 
@@ -359,6 +360,7 @@ void Stage::CheckCollision() {
 
 		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
 			upgradeSystem_->SetIsActive(true);
+			upgradeOpenSE_->Play();
 		}
 
 	}

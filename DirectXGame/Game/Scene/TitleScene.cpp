@@ -56,7 +56,7 @@ void TitleScene::Init() {
 	selectSE_ = AudioManager::GetInstance()->Load("SE/select_ok.mp3");
 	moveSE_ = AudioManager::GetInstance()->Load("SE/select_move.mp3");
 	cancelSE_ = AudioManager::GetInstance()->Load("SE/select_cancel.mp3");
-	titleBGM_ = AudioManager::GetInstance()->Load("BGM/selectBGM.mp3");
+	titleBGM_ = AudioManager::GetInstance()->Load("BGM/titleBGM.mp3");
 
 	titleBGM_->Play();
 

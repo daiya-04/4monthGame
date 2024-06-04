@@ -73,6 +73,11 @@ UpgradeSystem::UpgradeSystem()
 		levels_[i]->SetTextureArea({ 0.0f,0.0f }, { 64.0f,64.0f });
 	}
 
+
+	upgradeCloseSE_ = AudioManager::GetInstance()->Load("SE/upgradeClose.mp3");
+	upgradeSE_ = AudioManager::GetInstance()->Load("SE/powerUp.mp3");
+	moveSE_ = AudioManager::GetInstance()->Load("SE/select_move.mp3");
+
 }
 
 UpgradeSystem::~UpgradeSystem()
@@ -214,6 +219,8 @@ void UpgradeSystem::Upgrade() {
 			break;
 		}
 
+		moveSE_->Play();
+
 	}
 	else if (input_->TriggerLStick(Input::Stick::Down)) {
 
@@ -229,6 +236,8 @@ void UpgradeSystem::Upgrade() {
 			break;
 		}
 
+		moveSE_->Play();
+
 	}
 
 	//Bボタンで戻れる
@@ -237,6 +246,7 @@ void UpgradeSystem::Upgrade() {
 		isActiveUpgrade_ = false;
 		isActive_ = false;
 		upgradeType_ = kPower;
+		upgradeCloseSE_->Play();
 
 	}
 
@@ -316,6 +326,7 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 
 				player_->UpgradeSpeed(speedUpgradeValue_);
 				speedLevel_[player_->GetCurrentCharacter()]++;
+				upgradeSE_->Play();
 
 			}
 			else {
@@ -350,6 +361,7 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 
 				player_->UpgradePower(powerUpgradeValue_);
 				powerLevel_[player_->GetCurrentCharacter()]++;
+				upgradeSE_->Play();
 
 			}
 			else {
@@ -384,6 +396,7 @@ void UpgradeSystem::CheckCanUpgrade(SelectType type) {
 
 				player_->UpgradeDigSpeed(digSpeedUpgradeValue_);
 				digSpeedLevel_[player_->GetCurrentCharacter()]++;
+				upgradeSE_->Play();
 
 			}
 			else {

@@ -7,6 +7,7 @@
 #include "Input.h"
 #include <array>
 #include <queue>
+#include "AudioManager.h"
 
 class Player;
 
@@ -129,6 +130,12 @@ private:
 	Vector2 UIMiddlePosition_{ 1000.0f,400.0f };
 	Vector2 UIBottomPosition_{ 1000.0f,600.0f };
 	std::array<Vector2, 4> numbersPosition_;
+
+
+
+	Audio* upgradeCloseSE_;
+	Audio* upgradeSE_;
+	Audio* moveSE_;
 
 };
 

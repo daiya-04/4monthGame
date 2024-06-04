@@ -242,6 +242,7 @@ private:
 
 
 	Audio* meltSE_;
+	Audio* upgradeOpenSE_;
 
 };
 
