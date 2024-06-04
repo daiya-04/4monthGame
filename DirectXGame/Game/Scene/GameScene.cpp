@@ -782,7 +782,7 @@ void GameScene::DrawHeat(PostEffect* targetScene) {
 
 void GameScene::ChangeMode() {
 
-	if (!environmentEffectsManager_->GetIsPlaySceneChangeAnimation() && environmentEffectsManager_->GetIsPlayDownMagma()) {
+	if (!environmentEffectsManager_->GetIsPlaySceneChangeAnimation() && !environmentEffectsManager_->GetIsPlayDownMagma()) {
 
 		//極寒だったら氷ブロックを消す処理をする
 		if (!environmentEffectsManager_->GetIsNowScene()) {
