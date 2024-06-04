@@ -543,6 +543,7 @@ private:
 	Audio* wallJumpSE_;
 	Audio* doorCloseSE_;
 	Audio* doorOpenSE_;
+	Audio* jumpSE_;
 
 	///------------------------------------------------
 

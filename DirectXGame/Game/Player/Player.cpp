@@ -68,6 +68,7 @@ Player::Player()
 	wallJumpSE_ = AudioManager::GetInstance()->Load("SE/wallJump.mp3");
 	doorCloseSE_ = AudioManager::GetInstance()->Load("SE/doorClose.mp3");
 	doorOpenSE_ = AudioManager::GetInstance()->Load("SE/doorOpen.mp3");
+	jumpSE_ = AudioManager::GetInstance()->Load("SE/jump.mp3");
 
 }
 
@@ -552,10 +553,11 @@ void Player::Jump() {
 			parameters_[currentCharacters_]->Jump_.canJump = false;
 		}*/
 		//溜めジャンプが可能なときに必要な溜めの時間まで行かなかったら通常ジャンプの処理に切り替え
-		else if (parameters_[currentCharacters_]->Jump_.canJump && input_->ReleaseButton(Input::Button::A)/* && parameters_[currentCharacters_]->chargeJump_.isCharge*/ &&
+		if (parameters_[currentCharacters_]->Jump_.canJump && input_->ReleaseButton(Input::Button::A)/* && parameters_[currentCharacters_]->chargeJump_.isCharge*/ &&
 			parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
 			velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 			parameters_[currentCharacters_]->Jump_.canJump = false;
+			jumpSE_->Play();
 		}
 
 		//溜めジャンプ処理
@@ -801,12 +803,18 @@ void Player::Change() {
 	//帰還中の挙動
 	if (isReturn_) {
 
+		if (parameters_[currentCharacters_]->chargeJump_.chargeTimer > 0) {
+			parameters_[currentCharacters_]->chargeJump_.chargeTimer = 0;
+			parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxDefaultMoveSpeed_;
+			object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		}
+
 		//左側にいた場合
 		if (position_.x < Stage::kBasePosition.x) {
 
 			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
-			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
+			velocity_.x += parameters_[currentCharacters_]->maxMoveSpeed_;
 
 			
 
@@ -815,7 +823,7 @@ void Player::Change() {
 
 			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
-			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
+			velocity_.x -= parameters_[currentCharacters_]->maxMoveSpeed_;
 
 		}
 
@@ -855,13 +863,14 @@ void Player::Change() {
 
 			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
-			velocity_.x -= parameters_[currentCharacters_]->speed_ * 10.0f;
+			velocity_.x -= parameters_[currentCharacters_]->maxMoveSpeed_;
 
 			//ジャンプを入れる
 			if (parameters_[currentCharacters_]->Jump_.canJump &&
 				position_.x < Stage::kBorderLeft.x - Block::kBlockSize_) {
 				velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 				parameters_[currentCharacters_]->Jump_.canJump = false;
+				jumpSE_->Play();
 			}
 
 			//ラインを超えたら採掘時の処理ループに移行
@@ -878,7 +887,7 @@ void Player::Change() {
 
 			object_->SetTextureHandle(textureRun_[currentCharacters_]);
 
-			velocity_.x += parameters_[currentCharacters_]->speed_ * 10.0f;
+			velocity_.x += parameters_[currentCharacters_]->maxMoveSpeed_;
 
 			//ジャンプを入れる
 			if (parameters_[currentCharacters_]->Jump_.canJump &&
