@@ -251,6 +251,9 @@ protected:
 	Audio* digHighSE_;
 	Audio* crystalSE_;
 	Audio* collapseSE_;
+	Audio* ice1SE_;
+	Audio* ice2SE_;
+	Audio* ice3SE_;
 
 	Vector4 color_{ 1.0f,1.0f,1.0f,1.0f };
 

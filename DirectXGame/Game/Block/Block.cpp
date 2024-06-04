@@ -189,6 +189,9 @@ Block::Block(const Vector2& position, BlockType type)
 	digHighSE_ = AudioManager::GetInstance()->Load("SE/dig_high.mp3");
 	crystalSE_ = AudioManager::GetInstance()->Load("SE/crystal_get2.mp3");
 	collapseSE_ = AudioManager::GetInstance()->Load("SE/collapse.mp3");
+	ice1SE_ = AudioManager::GetInstance()->Load("SE/ice_01.mp3");
+	ice2SE_ = AudioManager::GetInstance()->Load("SE/ice_02.mp3");
+	ice3SE_ = AudioManager::GetInstance()->Load("SE/ice_03.mp3");
 
 }
 
@@ -227,9 +230,24 @@ void Block::Update() {
 			for (int i = 0; i < createNum; i++) {
 				BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
 			}
+
+			switch (createNum % 3 + 1)
+			{
+			default:
+			case 1:
+				ice1SE_->Play();
+				break;
+			case 2:
+				ice2SE_->Play();
+				break;
+			case 3:
+				ice3SE_->Play();
+				break;
+			}
+
 			type_ = kNone;
 			//一旦鉱石で代用
-			crystalSE_->Play();
+			/*crystalSE_->Play();*/
 		}
 
 	}
