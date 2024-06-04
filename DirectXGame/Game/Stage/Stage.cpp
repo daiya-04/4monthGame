@@ -19,7 +19,6 @@ Stage::Stage()
 {
 
 	numTex_ = TextureManager::GetInstance()->Load("UI/number.png");
-	clearTex_ = TextureManager::GetInstance()->Load("UI/gameClear.png");
 	borderBlueTex_ = TextureManager::GetInstance()->Load("stageObject/flagBlue.png");
 	borderOrangeTex_ = TextureManager::GetInstance()->Load("stageObject/flagOrange.png");
 	saunaRoomTex_ = TextureManager::GetInstance()->Load("stageObject/saunaRoom.png");
@@ -63,7 +62,6 @@ Stage::Stage()
 	wells_[1].reset(Object2d::Create(wellBlueTex_, Vector2{ 28.5f * Block::kBlockSize_, 0.0f * Block::kBlockSize_ }));
 	wells_[1]->SetSize({ 2.0f * Block::kBlockSize_,1.0f * Block::kBlockSize_ });
 
-	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
 	purposeSprite_.reset(Sprite::Create(purposeTex_, { 640.0f,200.0f }));
 
 	borders_[0].reset(Object2d::Create(borderOrangeTex_, kBorderLeft));
@@ -533,9 +531,9 @@ void Stage::DrawUI() {
 		/*purposeSprite_->Draw();*/
 	}
 
-	if (isClear_) {
+	/*if (isClear_) {
 		clearSprite_->Draw();
-	}
+	}*/
 
 }
 
