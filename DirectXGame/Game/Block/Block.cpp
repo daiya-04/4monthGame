@@ -221,13 +221,13 @@ void Block::Update() {
 
 		if (isStartBreak_ && --iceBreakCoolTimer_ <= 0) {
 			durability_ = 0.0f;
-			type_ = kNone;
 			score_->AddScore(100);
 			isBreak_ = true;
 			int createNum = int(RandomEngine::GetRandom(8.0f, 12.0f));
 			for (int i = 0; i < createNum; i++) {
 				BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
 			}
+			type_ = kNone;
 			//一旦鉱石で代用
 			crystalSE_->Play();
 		}
