@@ -27,15 +27,8 @@ Player::Player()
 	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
 	textureWallJump_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeWallKick.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
-	/*rockUITextures_[BringRocks::kRock] = TextureManager::GetInstance()->Load("UI/rock.png");
-	rockUITextures_[BringRocks::kBlue] = TextureManager::GetInstance()->Load("UI/speedRock.png");
-	rockUITextures_[BringRocks::kGreen] = TextureManager::GetInstance()->Load("UI/digSpeedRock.png");
-	rockUITextures_[BringRocks::kRed] = TextureManager::GetInstance()->Load("UI/powerRock.png");*/
 	bagTexture_ = TextureManager::GetInstance()->Load("UI/bag.png");
 
-	deadTexture_ = TextureManager::GetInstance()->Load("UI/dead.png");
-
-	deadSprite_.reset(Sprite::Create(deadTexture_, { 640.0f,360.0f }));
 	object_.reset(Object2d::Create(texture_[kLeftPlayer], position_));
 	object_->SetSize({ kPlayerImageSize_, kPlayerImageSize_ });
 	object_->SetTextureArea({ 0.0f,0.0f }, { 160.0f,160.0f });

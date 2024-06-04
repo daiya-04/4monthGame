@@ -111,8 +111,6 @@ private:
 
 	//--------------UI関連---------------------
 
-	std::unique_ptr<Object2dInstancing> sendRocks_;
-	
 	std::unique_ptr<Object2d> furnace_;
 
 	std::unique_ptr<Sprite> upgradeSprite_;

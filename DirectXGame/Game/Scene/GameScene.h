@@ -124,7 +124,6 @@ private:
 	uint32_t poseTex_;
 
 	std::shared_ptr<Camera> camera_;
-	std::shared_ptr<Object2d> testObject_;//雪テスト用
 	Vector2 testObjectPosition_ = {640.0f,350.0f};
 	Vector3 preCameraPosition_ = {0,0,0};
 

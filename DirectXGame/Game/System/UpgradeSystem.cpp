@@ -11,13 +11,6 @@
 UpgradeSystem::UpgradeSystem()
 {
 
-	uint32_t texture = 0;
-	texture = TextureManager::Load("blocks/defaultRocks.png");
-
-	sendRocks_.reset(Object2dInstancing::Create(texture, { 0.0f,0.0f }, 128));
-	sendRocks_->SetSize({ 32.0f,32.0f });
-	sendRocks_->SetColor({ 0.6f,0.3f,0.1f,1.0f });
-
 	furnaceTexture_ = TextureManager::GetInstance()->Load("stageObject/furnace.png");
 
 	upgradeTexture_ = TextureManager::GetInstance()->Load("UI/powerUp.png");
@@ -464,14 +457,7 @@ void UpgradeSystem::Draw(const Camera& camera) {
 
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 
-	furnace_->Draw(camera);
-
-	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-
-	sendRocks_->Draw(camera);
-
-	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
-	
+	furnace_->Draw(camera);	
 
 }
 

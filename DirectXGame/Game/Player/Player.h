@@ -510,19 +510,12 @@ private:
 	static const int32_t kMaxDigits_ = 3;
 
 	//UI関連
-	std::unique_ptr<Sprite> deadSprite_;
 	std::array<std::array<std::unique_ptr<Sprite>, kMaxDigits_>, BringRocks::RockType::kMaxType> numbers_;
 	std::array<std::unique_ptr<Sprite>, BringRocks::RockType::kMaxType> rocksUI_;
 	std::unique_ptr<Sprite> bag_;
 
-	uint32_t lifeLeftGageTexture_;
-	uint32_t lifeLeftFrameTexture_;
-	uint32_t lifeRightGageTexture_;
-	uint32_t lifeRightFrameTexture_;
-	uint32_t deadTexture_;
 	uint32_t numberTexture_;
 	uint32_t bagTexture_;
-	std::array<uint32_t, BringRocks::kMaxType> rockUITextures_;
 
 	const std::string dataName = "Player";
 

@@ -48,7 +48,8 @@ Stage::Stage()
 	tutorialThird_->SetSize({ 2.0f * Block::kBlockSize_, 4.0f * Block::kBlockSize_ });
 
 	saunaRoom_.reset(Object2d::Create(saunaRoomTex_, kBasePosition - Vector2{0.0f, 18.0f}));
-	telescope_.reset(Object2d::Create(telescopeTex_, kBasePosition - Vector2{ -200.0f, -28.0f }));
+	telescope_.reset(Object2d::Create(telescopeTex_, kBasePosition - Vector2{ -200.0f, -12.0f }));
+	telescope_->SetSize({ 64.0f,64.0f });
 	UI_A_.reset(Object2d::Create(UI_A_Tex_, kBasePosition - Vector2{ 0.0f, 150.0f }));
 	UI_A_->SetSize({ 64.0f,64.0f });
 	UI_X_.reset(Object2d::Create(UI_X_Tex_, kBasePosition - Vector2{ -200.0f, 50.0f }));

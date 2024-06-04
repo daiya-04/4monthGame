@@ -99,6 +99,12 @@ void TutorialFlagManager::Update() {
 		break;
 	case 6:
 
+		//黄金を取ったら会話開始
+		if (player_->GetIsClear()) {
+			GameTextManager::GetInstance()->Tutorial(8);
+			tutorialNumber_ = 8;
+		}
+
 		//家に戻ったら会話開始
 		if (player_->GetIsHome()) {
 			GameTextManager::GetInstance()->Tutorial(7);
