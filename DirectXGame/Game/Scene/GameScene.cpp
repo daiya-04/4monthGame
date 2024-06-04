@@ -454,11 +454,11 @@ void GameScene::Update() {
 
 void GameScene::UpdateScoreGage() {
 
-	if (ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_) > 0) {
+	if (ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1) > 0) {
 
 		//倍率設定
 		float gageMag = float(score_.GetScore()) /
-			(float(ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_)) * 1.15f);
+			(float(ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1)) * 1.15f);
 		//1.0fを超えないようにする
 		gageMag = std::clamp(gageMag, 0.0f, 1.0f);
 
@@ -469,19 +469,19 @@ void GameScene::UpdateScoreGage() {
 		//ゲージの色変化
 
 		//S、黄金色
-		if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_)) {
+		if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1)) {
 			scoreGage_->SetColor({ 1.0f,1.0f,0.0f,1.0f });
 		}
 		//A、赤色
-		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_) / 4 * 3) {
+		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1) / 4 * 3) {
 			scoreGage_->SetColor({ 1.0f,0.3f,0.3f,1.0f });
 		}
 		//B、黄色
-		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_) / 2) {
+		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1) / 2) {
 			scoreGage_->SetColor({ 1.0f,1.0f,0.3f,1.0f });
 		}
 		//C、緑色
-		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_) / 4) {
+		else if (score_.GetScore() >= ScoreManager::GetInstance()->GetMaxRankScore(stageNumber_ - 1) / 4) {
 			scoreGage_->SetColor({ 0.3f,1.0f,0.3f,1.0f });
 		}
 		//D、水色
