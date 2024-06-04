@@ -346,12 +346,14 @@ void GameScene::Update() {
 			scroll_->SetScrollType(1, Scroll::kDelay);
 			scroll_->SetTarget(&scrollHomePoint_);
 			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
+			heatHazeManager_->SetIsUseMagmaFluction(true);
 		}
 		else {
 			scroll_->SetScrollType(0, Scroll::kDelay);
 			scroll_->SetScrollType(1, Scroll::kDelay);
 			scroll_->SetTarget(player_->GetPositionPtr());
 			camera_->ChangeDrawingRange({ 1600.0f,900.0f });
+			heatHazeManager_->SetIsUseMagmaFluction(true);
 		}
 
 		if (transitionEffect_->isActiveStart()) {
@@ -386,7 +388,7 @@ void GameScene::Update() {
 			}
 
 			stage_->Update();
-			heatHazeManager_->SetIsUseMagmaFluction(true);
+			//heatHazeManager_->SetIsUseMagmaFluction(true);
 			preCameraPosition_ = camera_->translation_;
 
 			//アップグレード中は動けない
