@@ -340,6 +340,7 @@ void StageSelectScene::RootUpdate() {
 		if (++intervalCount_ >= moveInterval_) {
 			if (stageNumber_ != kMaxStage_) {
 				stageNumber_++;
+				moveSE_->Play();
 				modeRequest_ = Mode::Move;
 			}
 		}
@@ -348,6 +349,7 @@ void StageSelectScene::RootUpdate() {
 		if (++intervalCount_ >= moveInterval_) {
 			if (stageNumber_ != 1) {
 				stageNumber_--;
+				moveSE_->Play();
 				modeRequest_ = Mode::Move;
 			}
 		}

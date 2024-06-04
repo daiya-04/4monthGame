@@ -172,6 +172,7 @@ void BaseBlock::Reset() {
 
 	isStartCollapse_ = false;
 	collapseCount_ = maxCollapseCount_;
+	isStartBreak_ = false;
 	isBreak_ = false;
 	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
 

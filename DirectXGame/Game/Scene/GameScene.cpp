@@ -234,6 +234,7 @@ void GameScene::Update() {
 		clearBGSprite_->SetColor({ 1.0f,1.0f,1.0f,clearBGAlpha_ });
 
 		if (clearBGAlpha_ >= 1.0f && Input::GetInstance()->TriggerButton(Input::Button::A)) {
+			selectSE_->Play();
 			ClearProcess();
 			SceneManager::GetInstance()->ChangeScene("StageSelect");
 		}
@@ -609,7 +610,6 @@ void GameScene::DrawUI(){
 	TextManager::GetInstance()->Draw();
 
 	if (stage_->GetIsClear()) {
-		clearBGSprite_->Draw();
 
 		if (clearBGAlpha_ >= 1.0f) {
 			clearSprite_->Draw();
@@ -672,6 +672,11 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 	heatHazeManager_->PreDrawMagma(commandList_);
 	Sprite::preDraw(commandList_);
 	backGround_->Draw();
+
+	if (stage_->GetIsClear()) {
+		clearBGSprite_->Draw();
+	}
+
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 
@@ -698,7 +703,13 @@ void GameScene::DrawCold(PostEffect* targetScene) {
 void GameScene::DrawHeat(PostEffect* targetScene) {
 	heatHazeManager_->PreDraw(commandList_);
 	Sprite::preDraw(commandList_);
+
 	backGround_->Draw();
+
+	if (stage_->GetIsClear()) {
+		clearBGSprite_->Draw();
+	}
+
 	Sprite::postDraw();
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	
