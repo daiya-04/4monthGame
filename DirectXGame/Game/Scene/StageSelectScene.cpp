@@ -213,10 +213,12 @@ void StageSelectScene::DrawUI() {
 		ui.second->Draw();
 	}
 
-	
+	if (mode_ != Mode::Move) {
+		stageNumberDraw_->Draw();
+	}
 
 	if (mode_ == Mode::Root) {
-		stageNumberDraw_->Draw();
+		
 		score_.Draw();
 		rank_.Draw();
 	}

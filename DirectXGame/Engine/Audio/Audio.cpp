@@ -301,7 +301,7 @@ void Audio::SoundPlayLoopEnd() {
 //}
 
 void Audio::StopSound() {
-	if (sourceVoices_) {
+	if (IsValidPlayhandle()) {
 		sourceVoices_->Stop();
 		sourceVoices_->FlushSourceBuffers();
 		DestroyPlayHandle();
