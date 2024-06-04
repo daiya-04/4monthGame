@@ -100,6 +100,8 @@ void GameScene::Init(){
 	scoreFrontTex_ = TextureManager::Load("UI/scoreFrame.png");
 	scoreMiddleTex_ = TextureManager::Load("UI/scoreGage.png");
 	scoreBackTex_ = TextureManager::Load("UI/scoreBackGround.png");
+	clearBGTex_ = TextureManager::Load("UI/clearBG.png");
+	clearTex_ = TextureManager::Load("UI/gameClear.png");
 
 	menuBackSprite_.reset(Sprite::Create(backGameTex_, { 640.0f, 360.0f }));
 	menuButtonSprite_.reset(Sprite::Create(menuButtonTex_, { 1150.0f, 690.0f }));
@@ -116,6 +118,9 @@ void GameScene::Init(){
 	scoreGage_->SetSize({ 380.0f,96.0f});
 	scoreGage_->SetTextureArea({ 0.0f,0.0f }, { 380.0f,96.0f });
 	scoreBack_.reset(Sprite::Create(scoreBackTex_, { 250.0f, 64.0f }));
+	clearBGSprite_.reset(Sprite::Create(clearBGTex_, { 640.0f, 360.0f }));
+	clearBGSprite_->SetColor({ 1.0f,1.0f,1.0f,clearBGAlpha_ });
+	clearSprite_.reset(Sprite::Create(clearTex_, { 640.0f,360.0f }));
 
 	testObject_.reset(Object2d::Create(TextureManager::GetInstance()->Load("player/playerBlue.png"), { 1.0f,0.5f }));
 	testObject_->SetSize({ 128.0f,128.0f });
@@ -208,7 +213,27 @@ void GameScene::Update() {
 
 	if (stage_->GetIsClear()) {
 
-		if (Input::GetInstance()->TriggerButton(Input::Button::A)) {
+		if (clearBGAlpha_ < 1.0f) {
+
+			clearBGAlpha_ += 1.0f / 30.0f;
+
+			if (clearBGAlpha_ > 1.0f) {
+				clearBGAlpha_ = 1.0f;
+			}
+
+		}
+
+		float rotate = clearBGSprite_->GetRotate();
+		rotate += 0.02f;
+
+		if (rotate > 6.28f) {
+			rotate = 0.0f;
+		}
+
+		clearBGSprite_->SetRotate(rotate);
+		clearBGSprite_->SetColor({ 1.0f,1.0f,1.0f,clearBGAlpha_ });
+
+		if (clearBGAlpha_ >= 1.0f && Input::GetInstance()->TriggerButton(Input::Button::A)) {
 			ClearProcess();
 			SceneManager::GetInstance()->ChangeScene("StageSelect");
 		}
@@ -582,6 +607,15 @@ void GameScene::DrawUI(){
 	GameTextManager::GetInstance()->Draw();
 	testText_->SetText();
 	TextManager::GetInstance()->Draw();
+
+	if (stage_->GetIsClear()) {
+		clearBGSprite_->Draw();
+
+		if (clearBGAlpha_ >= 1.0f) {
+			clearSprite_->Draw();
+		}
+
+	}
 
 	if (transitionEffect_->IsActive()) {
 		transitionEffect_->Draw();

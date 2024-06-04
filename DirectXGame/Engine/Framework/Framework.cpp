@@ -46,7 +46,7 @@ void DSFramework::Init(){
 
 void DSFramework::Update(){
 
-	if (WinApp::GetInstance()->ProcessMessage() || Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+	if (WinApp::GetInstance()->ProcessMessage()) {
 		//AudioManager::GetInstance()->AllAudioStop();
 		WinApp::GetInstance()->GameEnd(); 
 	}

@@ -115,6 +115,8 @@ private:
 	std::unique_ptr<Sprite> scoreFront_;
 	std::unique_ptr<Sprite> scoreGage_;
 	std::unique_ptr<Sprite> scoreBack_;
+	std::unique_ptr<Sprite> clearBGSprite_;
+	std::unique_ptr<Sprite> clearSprite_;
 
 	std::unique_ptr<TransitionEffect> transitionEffect_;
 
@@ -128,6 +130,9 @@ private:
 
 	bool isPlayGame_ = true;//ゲームを再生するかどうか
 	bool isFirstAllDraw_;
+
+	bool isStartClearEffect_ = false;
+	float clearBGAlpha_ = 0.0f;
 
 ///メニュー関係--------------------------------
 
@@ -155,6 +160,8 @@ private:
 	uint32_t scoreFrontTex_;
 	uint32_t scoreMiddleTex_;
 	uint32_t scoreBackTex_;
+	uint32_t clearBGTex_;
+	uint32_t clearTex_;
 
 ///-------------------------------------------
 

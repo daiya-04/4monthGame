@@ -195,7 +195,6 @@ private:
 
 	//岩の数を表示する数字
 	std::array<std::unique_ptr<Sprite>, kMaxNumbers_> numbers_;
-	std::unique_ptr<Sprite> clearSprite_;
 	std::unique_ptr<Sprite> purposeSprite_;
 
 	//帰還エリア
@@ -210,7 +209,6 @@ private:
 
 	//テクスチャ
 	uint32_t numTex_;
-	uint32_t clearTex_;
 	uint32_t borderBlueTex_;
 	uint32_t borderOrangeTex_;
 	uint32_t returnTex_;

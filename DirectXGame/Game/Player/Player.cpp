@@ -670,6 +670,7 @@ void Player::WallJump() {
 				effectPos = GetPosition(kRightBottom);
 			}
 			BlockTextureManager::GetInstance()->CreateWallKickEffect(effectPos, int32_t(isFacingLeft_));
+			wallJumpSE_->Play();
 		}
 
 	}

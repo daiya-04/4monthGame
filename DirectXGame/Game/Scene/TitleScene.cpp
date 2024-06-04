@@ -19,6 +19,8 @@ TitleScene::~TitleScene() {
 
 void TitleScene::Init() {
 
+	camera_.Init();
+
 	GlobalVariables* gb = GlobalVariables::GetInstance();
 	
 	//データの追加
@@ -59,6 +61,10 @@ void TitleScene::Init() {
 	titleBGM_ = AudioManager::GetInstance()->Load("BGM/titleBGM.mp3");
 
 	titleBGM_->Play();
+
+	steam_ = std::make_unique<Steam>();
+	steam_->Init({ 640.0f,360.0f }, { 640.0f,360.0f });
+	steam_->SetEmitCount(2);
 
 	FloatingGimmickInit();
 	ButtonEffectInit();
@@ -105,6 +111,7 @@ void TitleScene::Update() {
 	}
 	
 	titleAnima_->Update();
+	steam_->Update();
 
 #ifdef _DEBUG
 
@@ -117,11 +124,15 @@ void TitleScene::Update() {
 
 #endif // _DEBUG
 
+	camera_.UpdateViewMatrix();
 }
 
 void TitleScene::DrawBackGround() {
 
 	backGround_->Draw();
+
+	Particle::preDraw();
+	steam_->Draw(camera_);
 
 }
 
