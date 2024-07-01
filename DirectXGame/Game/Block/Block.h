@@ -50,6 +50,8 @@ public:
 		kFlagBlock,
 		//崩れるブロック
 		kCollapseBlock,
+		//敵追加ブロック
+		kEnemyBlock,
 		//ブロックの最大種類
 		kMaxBlock
 
