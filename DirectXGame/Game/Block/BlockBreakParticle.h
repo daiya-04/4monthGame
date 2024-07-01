@@ -18,6 +18,7 @@ private:
 	Vector2 position_{};
 	Vector2 velocity_{};
 	Vector2 accelerate_{};
+	float rotate_;
 	uint32_t blockType_=0;
 	//生存時間
 	uint32_t aliveTime_ = 0;

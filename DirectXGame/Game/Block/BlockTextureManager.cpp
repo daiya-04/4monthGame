@@ -41,15 +41,15 @@ void BlockTextureManager::LoadAllBlockTexture() {
 
 		if (index == Block::kBlueBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[1]);
-			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[1]);
+			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/rockParticle.png"));
 		}
 		else if (index == Block::kGreenBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[2]);
-			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[2]);
+			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/rockParticle.png"));
 		}
 		else if (index == Block::kRedBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[3]);
-			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[3]);
+			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/rockParticle.png"));
 		}
 		else if (index == Block::kDownMagma) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[5]);
@@ -69,7 +69,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
-			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[0]);
+			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/rockParticle.png"));
 		}
 
 	}
@@ -135,7 +135,11 @@ BlockTextureManager::BlockTextureManager() {
 		object->SetSize({ float(BaseBlock::kBlockSize_),float(BaseBlock::kBlockSize_) });
 		objects_.push_back(std::move(object));
 		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 128));
-		object->SetSize({ float(BaseBlock::kBlockSize_ / 3),float(BaseBlock::kBlockSize_ / 3) });
+		int32_t size = 4;
+		if (index == 2 || index == 3 || index == 5 || index == 6 || index == 7){
+			size = 1;
+		}
+		object->SetSize({ float(BaseBlock::kBlockSize_ / size),float(BaseBlock::kBlockSize_ / size) });
 		breakParticles_.push_back(std::move(object));
 	}
 
@@ -216,12 +220,12 @@ void BlockTextureManager::DrawCold(const Camera& camera) {
 	}
 }
 
-void BlockTextureManager::AppendParticle(const Vector2& position, uint32_t type) {
+void BlockTextureManager::AppendParticle(const Vector2& position, float rotate, uint32_t type) {
 	BaseBlock::BlockType bType = BaseBlock::BlockType(type);
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	breakParticles_[bType - 1]->AppendObject(position,0, Vector2{0,0}, Vector2{ 32.0f,32.0f });
+	breakParticles_[bType - 1]->AppendObject(position,rotate, Vector2{0,0}, Vector2{ 32.0f,32.0f });
 }
 
 void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vector4& color) {
