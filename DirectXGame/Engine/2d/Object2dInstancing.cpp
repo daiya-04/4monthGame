@@ -305,7 +305,7 @@ void Object2dInstancing::Draw(const Camera& camera) {
 	HRESULT hr = instancingForVSResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingForVSMap_));
 	
 	for (uint32_t index = 0; index < instanceCount_;index++) {
-		instancingForVSMap_[index].worldMat_ = MakeAffineMatrix({1.0f,1.0f,1.0f}, {0.0f,0.0f,rotate_}, {instancingCPUData_[index].position_.x,instancingCPUData_[index].position_.y,0.0f});
+		instancingForVSMap_[index].worldMat_ = MakeAffineMatrix({1.0f,1.0f,1.0f}, {0.0f,0.0f,instancingCPUData_[index].rotate_}, {instancingCPUData_[index].position_.x,instancingCPUData_[index].position_.y,0.0f});
 		
 		float uvLeft = instancingCPUData_[index].texBase_.x / (float)resourceDesc_.Width;
 		float uvRight = (instancingCPUData_[index].texBase_.x + instancingCPUData_[index].texSize_.x) / (float)resourceDesc_.Width;
