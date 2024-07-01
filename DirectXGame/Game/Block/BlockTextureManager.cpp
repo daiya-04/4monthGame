@@ -220,12 +220,12 @@ void BlockTextureManager::DrawCold(const Camera& camera) {
 	}
 }
 
-void BlockTextureManager::AppendParticle(const Vector2& position, float rotate, uint32_t type) {
+void BlockTextureManager::AppendParticle(const Vector2& position, float rotate,const Vector2& uvBase, uint32_t type) {
 	BaseBlock::BlockType bType = BaseBlock::BlockType(type);
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	breakParticles_[bType - 1]->AppendObject(position,rotate, Vector2{0,0}, Vector2{ 32.0f,32.0f });
+	breakParticles_[bType - 1]->AppendObject(position,rotate, uvBase, Vector2{ 32.0f,32.0f });
 }
 
 void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vector4& color) {
