@@ -288,6 +288,7 @@ void Block::Update() {
 				BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
 			}
 			isBreak_ = true;
+			type_ = kNone;
 			digHighSE_->Play();
 		}
 

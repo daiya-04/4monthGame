@@ -843,6 +843,8 @@ void Player::Change() {
 			position_.x = Stage::kBasePosition.x;
 			velocity_ = { 0.0f,0.0f };
 			isReturn_ = false;
+			//拠点にいるフラグを立てる
+			isHome_ = true;
 			doorCloseSE_->Play();
 
 		}

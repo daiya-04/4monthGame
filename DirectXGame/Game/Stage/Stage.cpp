@@ -212,6 +212,7 @@ void Stage::Update() {
 		//家に戻ったら再生成
 		if (player_->GetIsHome() && !isRespawn_) {
 			RespawnBlock(Block::kDownMagma);
+			RespawnBlock(Block::kCollapseBlock);
 
 			//極寒なら氷生成
 			if (!environmentEffectsManager_->GetIsNowScene()) {
@@ -778,7 +779,7 @@ void Stage::Load(uint32_t stageNumber) {
 			}
 
 			//タイプが再生成可能なものなら配列に追加
-			if (type == Block::kDownMagma || type == Block::kGoldBlock) {
+			if (type == Block::kDownMagma || type == Block::kGoldBlock || type == Block::kCollapseBlock) {
 				//書き換え場所を保存
 				std::array<uint32_t, 2> nums = { x,y };
 				respawnBlocks_.push_back(nums);
