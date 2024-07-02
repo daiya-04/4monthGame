@@ -6,11 +6,11 @@ Player *GemGetParticle::player_ = nullptr;
 
 
 void GemGetParticle::Initialize(const Vector2& postition, int32_t type) {
-	targetPositions_[2] = Vector2{ 1250.0f , 96.0f + 56.0f * 1 };//r
-	targetPositions_[3] = Vector2{ 1250.0f , 96.0f + 56.0f * 1 };//g
-	targetPositions_[5] = Vector2{ 1250.0f , 96.0f + 56.0f * 2 };//r
-	targetPositions_[6] = Vector2{ 1250.0f , 96.0f + 56.0f * 3 };//g
-	targetPositions_[7] = Vector2{ 1250.0f , 96.0f + 56.0f * 4 };//b
+	targetPositions_[2] = Vector2{ 1320.0f , 96.0f + 56.0f * 1 };//brock
+	targetPositions_[3] = Vector2{ 1320.0f , 96.0f + 56.0f * 1 };//block
+	targetPositions_[5] = Vector2{ 1320.0f , 96.0f + 56.0f * 2 };//r
+	targetPositions_[6] = Vector2{ 1320.0f , 96.0f + 56.0f * 3 };//g
+	targetPositions_[7] = Vector2{ 1320.0f , 96.0f + 56.0f * 4 };//b
 	position_ = postition;
 	startPosition_ = position_;
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
