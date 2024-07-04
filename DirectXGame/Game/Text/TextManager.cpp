@@ -41,7 +41,7 @@ void TextManager::TestDraw() {
         if (it != fontOffsets_.end()) {
             texturePosition_ = (it->second);
         }
-        drawObject_->AppendObject({ 640.0f-96+kTextStride_*float(index),360.0f}, kCharStride_ * texturePosition_, {kCharStride_ ,kCharStride_});
+        drawObject_->AppendObject({ 640.0f-96+kTextStride_*float(index),360.0f},0, kCharStride_ * texturePosition_, {kCharStride_ ,kCharStride_});
     }
     Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
     drawObject_->Draw(*testCamera_.get());
@@ -57,7 +57,7 @@ void TextManager::AppendChar(const Vector2& position,const std::wstring& str) {
     }
     Vector4 col = {1.0f,1.0f,1.0f,1.0f};
     
-    drawObject_->AppendObject(position, kCharStride_ * texturePosition_, { kCharStride_ ,kCharStride_ },col);
+    drawObject_->AppendObject(position,0, kCharStride_ * texturePosition_, { kCharStride_ ,kCharStride_ },col);
 }
 
 void TextManager::LoadFontOffset() {

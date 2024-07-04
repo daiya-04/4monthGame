@@ -55,6 +55,7 @@ public:
 		Vector2 texSize_ = { 100.0f,100.0f };
 
 		Vector4 color_ = {1.0f,1.0f,1.0f,1.0f};
+		float rotate_=0;
 	};
 
 private: //静的メンバ変数
@@ -150,7 +151,7 @@ public:
 	};
 
 	//描画オブジェクトを追加する
-	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize) {
+	void AppendObject(const Vector2& position,float rotate, const Vector2& texBase, const Vector2& texSize) {
 		if (instanceCount_ >= instanceMax_) {
 			return;
 		}
@@ -159,12 +160,13 @@ public:
 		data.texBase_ = texBase + Vector2({ 0.0f,0.5f });
 		data.texSize_ = texSize - Vector2({ 1.0f,1.0f });
 		data.color_ = {1.0f,1.0f,1.0f,1.0f};
+		data.rotate_ = rotate;
 		instancingCPUData_.push_back(data);
 		instanceCount_++;
 	};
 
 	//描画オブジェクトを追加する
-	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize,const Vector4& color) {
+	void AppendObject(const Vector2& position,float rotate, const Vector2& texBase, const Vector2& texSize,const Vector4& color) {
 		if (instanceCount_ >= instanceMax_) {
 			return;
 		}
@@ -173,6 +175,7 @@ public:
 		data.texBase_ = texBase + Vector2({ 0.0f,0.5f });
 		data.texSize_ = texSize - Vector2({ 1.0f,1.0f });
 		data.color_ = color;
+		data.rotate_ = rotate;
 		instancingCPUData_.push_back(data);
 		instanceCount_++;
 	};
