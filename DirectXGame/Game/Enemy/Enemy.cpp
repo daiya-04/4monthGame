@@ -16,6 +16,8 @@ void NormalEnemy::Initialize(const Vector2& position) {
 
 void NormalEnemy::Update() {
 
+
+
 }
 
 void NormalEnemy::Draw(const Camera& camera) {
