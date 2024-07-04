@@ -299,20 +299,22 @@ void Block::Update() {
 void Block::Draw(const Camera& camera) {
 
 	if (!isBreak_) {
-		//object_->Draw(camera);
+		//disolve計算
+		float disolveValue =  (defaultDurability_ - durability_) / defaultDurability_;
+		 
 		//切り替わるタイプのブロックだったら両方入れる
 		if (type_ == BlockType::kSnow || type_ == BlockType::kMagma) {
-			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kMagma, color_);
-			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kSnow, color_);
+			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kMagma, color_, disolveValue);
+			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, kSnow, color_, disolveValue);
 		}
 		else {
 
 			//破壊可能なもののみ色を変える
 			if (CheckCanBreak(type_) && type_ != kDownMagma && type_ != kGoldBlock) {
-				BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_, color_);
+				BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_, color_, disolveValue);
 			}
 			else {
-				BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_);
+				BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_, disolveValue);
 			}
 			
 		}

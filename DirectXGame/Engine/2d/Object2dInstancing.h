@@ -21,7 +21,7 @@ private:
 		kForVS,
 		kCamera,
 		kTexture,
-
+		kMaskTexture,
 		kParamNum,
 	};
 
@@ -43,6 +43,7 @@ public:
 		Matrix4x4 worldMat_;
 		Vector2 texcoord_[4];
 		Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
+		float disolveValue_ = 0;
 	};
 
 	//CPU内で処理に使うデータ
@@ -56,6 +57,7 @@ public:
 
 		Vector4 color_ = {1.0f,1.0f,1.0f,1.0f};
 		float rotate_=0;
+		float disolveValue_ = 0;
 	};
 
 private: //静的メンバ変数
@@ -105,6 +107,7 @@ private: //メンバ変数
 	Vector4 color_{ 1.0f,1.0f,1.0f,1.0f };
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+	uint32_t maskTextureHandle_ = 0;
 	//テクスチャ左上座標
 	//Vector2 texBase_{};
 	//テクスチャサイズ
@@ -140,6 +143,10 @@ public:
 
 	void SetTextureHandle(uint32_t textureHandle);
 
+	void SetMaskTextureHandle(uint32_t textureHandle) {
+		maskTextureHandle_ = textureHandle;
+	}
+
 	uint32_t GetTextureHandle() { return textureHandle_; };
 
 	void SetTextureArea(const Vector2& texBase, const Vector2& texSize);
@@ -151,7 +158,7 @@ public:
 	};
 
 	//描画オブジェクトを追加する
-	void AppendObject(const Vector2& position,float rotate, const Vector2& texBase, const Vector2& texSize) {
+	void AppendObject(const Vector2& position,float rotate, const Vector2& texBase, const Vector2& texSize,float disolveValue) {
 		if (instanceCount_ >= instanceMax_) {
 			return;
 		}
@@ -161,12 +168,13 @@ public:
 		data.texSize_ = texSize - Vector2({ 1.0f,1.0f });
 		data.color_ = {1.0f,1.0f,1.0f,1.0f};
 		data.rotate_ = rotate;
+		data.disolveValue_ = disolveValue;
 		instancingCPUData_.push_back(data);
 		instanceCount_++;
 	};
 
 	//描画オブジェクトを追加する
-	void AppendObject(const Vector2& position,float rotate, const Vector2& texBase, const Vector2& texSize,const Vector4& color) {
+	void AppendObject(const Vector2& position,float rotate, const Vector2& texBase, const Vector2& texSize,const Vector4& color,float disolveValue) {
 		if (instanceCount_ >= instanceMax_) {
 			return;
 		}
@@ -176,6 +184,7 @@ public:
 		data.texSize_ = texSize - Vector2({ 1.0f,1.0f });
 		data.color_ = color;
 		data.rotate_ = rotate;
+		data.disolveValue_ = disolveValue;
 		instancingCPUData_.push_back(data);
 		instanceCount_++;
 	};

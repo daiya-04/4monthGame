@@ -39,10 +39,10 @@ public:
 	void ClearObject();
 
 	//描画オブジェクト追加
-	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize,uint32_t type);
+	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize,uint32_t type, float disolveValue);
 
 	//描画オブジェクト追加
-	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type,const Vector4& color);
+	void AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type,const Vector4& color,float disolveValue);
 
 	//全オブジェクト描画
 	void DrawAll(const Camera& camera);
