@@ -65,7 +65,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		}
 		else if (index == Block::kIceBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[8]);
-			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[8]);
+			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/iceParticle.png"));
 		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
@@ -138,6 +138,9 @@ BlockTextureManager::BlockTextureManager() {
 		int32_t size = 4;
 		if (index == 2 || index == 3 || index == 5 || index == 6 || index == 7){
 			size = 1;
+		}
+		if (index == 4) {
+			size = 2;
 		}
 		object->SetSize({ float(BaseBlock::kBlockSize_ / size),float(BaseBlock::kBlockSize_ / size) });
 		breakParticles_.push_back(std::move(object));

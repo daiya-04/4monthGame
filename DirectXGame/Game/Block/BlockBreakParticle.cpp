@@ -4,7 +4,7 @@ void BlockBreakParticle::Initialize(const Vector2& postition, uint32_t blockType
 	position_ = postition;
 	blockType_ = blockType;
 	texBase_ = {0,0};
-	if (blockType == 2 || blockType == 3 || blockType == 5 || blockType == 6 || blockType == 7) {
+	if (blockType == 2 || blockType == 3 || blockType == 4 || blockType == 5 || blockType == 6 || blockType == 7) {
 		texBase_.x = RandomEngine::GetRandom(0.0f, 1.0f);
 		if (texBase_.x >0.5f) {
 			texBase_.x = 1.0f;
@@ -34,7 +34,7 @@ void BlockBreakParticle::Initialize(const Vector2& postition, const Vector2& vel
 	position_ = postition;
 	blockType_ = blockType;
 	texBase_ = { 0,0 };
-	if (blockType == 2 || blockType == 3 || blockType == 5 || blockType == 6 || blockType == 7) {
+	if (blockType == 2 || blockType == 3 || blockType == 4 ||  blockType == 5 || blockType == 6 || blockType == 7) {
 		texBase_.x = RandomEngine::GetRandom(0.0f, 1.0f);
 		if (texBase_.x > 0.5f) {
 			texBase_.x = 1.0f;
@@ -65,10 +65,10 @@ void BlockBreakParticle::Update() {
 	position_ += velocity_;
 	aliveTime_--;
 	if (velocity_.x>0) {
-		rotate_ += 0.5f;
+		rotate_ += 0.1f;
 	}
 	else {
-		rotate_ -= 0.5f;
+		rotate_ -= 0.1f;
 	}
 	if (aliveTime_<=0) {
 		isAlive_ = false;
