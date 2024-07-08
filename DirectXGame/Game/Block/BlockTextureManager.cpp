@@ -56,7 +56,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		}
 		else if (index == Block::kDownMagma) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[5]);
-			objects_[index - 1]->SetMaskTextureHandle(TextureManager::Load("blocks/maskTest.png"));
+			objects_[index - 1]->SetMaskTextureHandle(TextureManager::Load("blocks/iceMask.png"));
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[5]);
 		}
 		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
@@ -65,10 +65,12 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		}
 		else if (index == Block::kGoldBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[7]);
+			objects_[index - 1]->SetMaskTextureHandle(TextureManager::Load("blocks/rockMask.png"));
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[7]);
 		}
 		else if (index == Block::kIceBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[8]);
+			objects_[index - 1]->SetMaskTextureHandle(TextureManager::Load("blocks/iceMask.png"));
 			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/iceParticle.png"));
 		}
 		else {
