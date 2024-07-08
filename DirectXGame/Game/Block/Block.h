@@ -24,6 +24,9 @@ public:
 
 	const float kTextureBlockSize_ = 32.0f;
 
+	//光る確率
+	static inline const float kShiningProbability_ = 0.0006f;
+
 	enum BlockType : uint32_t {
 
 		//空白ブロック
@@ -244,6 +247,20 @@ protected:
 	int32_t iceBreakCoolTimer_ = 0;
 
 	int32_t iceBreakInterval_ = 5;
+
+	///-------------------------------------------------------------------------
+
+	///--------演出関連--------------------------------------------------------
+
+	bool isShining_ = false;
+
+	//光の値
+	float brightValue_ = 0.0f;
+
+	//光制限
+	float brightLimit_ = 1.0f;
+
+	float shiningValue_ = 0.02f;
 
 	///-------------------------------------------------------------------------
 

@@ -174,7 +174,9 @@ void BaseBlock::Reset() {
 	collapseCount_ = maxCollapseCount_;
 	isStartBreak_ = false;
 	isBreak_ = false;
-	//SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	SetColor();
+	isShining_ = false;
+	brightValue_ = 0.0f;
 
 }
 
@@ -208,6 +210,9 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
+
+	isShining_ = false;
+	brightValue_ = 0.0f;
 
 	//object_.reset(Object2d::Create(texture_, position_));
 	//object_->SetSize({ float(kBlockSize_),float(kBlockSize_) });
@@ -258,6 +263,38 @@ void Block::Update() {
 
 	collision_.min = { position_.x - kBlockHalfSize_, position_.y - kBlockHalfSize_ };
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
+
+	//確率でブロックを光らせる
+	if (!isShining_ && brightValue_ <= 0.0f && RandomEngine::GetRandom(0.0f, 1.0f) <= kShiningProbability_) {
+		isShining_ = true;
+	}
+
+	if (isShining_) {
+
+		color_.x += shiningValue_;
+		color_.y += shiningValue_;
+		color_.z += shiningValue_;
+		brightValue_ += shiningValue_;
+
+
+		if (brightValue_ >= brightLimit_) {
+			brightValue_ = brightLimit_;
+			isShining_ = false;
+		}
+
+	}
+	else if(brightValue_ > 0.0f) {
+
+		color_.x -= shiningValue_;
+		color_.y -= shiningValue_;
+		color_.z -= shiningValue_;
+		brightValue_ -= shiningValue_;
+
+		if (brightValue_ <= 0.0f) {
+			brightValue_ = 0.0f;
+		}
+
+	}
 
 	if (type_ == kGoldBlock) {
 		BlockTextureManager::GetInstance()->CreateStarParticle(position_,0);
@@ -310,13 +347,15 @@ void Block::Draw(const Camera& camera) {
 		else {
 
 			//破壊可能なもののみ色を変える
-			if (CheckCanBreak(type_) && type_ != kDownMagma && type_ != kGoldBlock) {
+			/*if (CheckCanBreak(type_) && type_ != kDownMagma && type_ != kGoldBlock) {
 				BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_, color_, disolveValue);
 			}
 			else {
 				BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_, disolveValue);
-			}
+			}*/
 			
+			BlockTextureManager::GetInstance()->AppendObject(position_, { float(uvPositionX_ * kTextureBlockSize_), float(uvPositionY_ * kTextureBlockSize_) }, { kTextureBlockSize_,kTextureBlockSize_ }, type_, color_, disolveValue);
+
 		}
 	}
 
@@ -325,7 +364,7 @@ void Block::Draw(const Camera& camera) {
 void BaseBlock::SetColor() {
 
 	//一部のブロックは色を変えない
-	if (type_ == kGoldBlock || type_ == kDownMagma || type_ == kIceBlock) {
+	if (type_ == kGoldBlock || type_ == kDownMagma || type_ == kIceBlock || !CheckCanBreak(type_)) {
 		color_ = { 1.0f,1.0f,1.0f, 1.0f };
 		return;
 	}

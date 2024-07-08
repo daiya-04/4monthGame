@@ -891,6 +891,7 @@ void Player::Change() {
 				position_.x > Stage::kBorderRight.x + Block::kBlockSize_) {
 				velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 				parameters_[currentCharacters_]->Jump_.canJump = false;
+				jumpSE_->Play();
 			}
 
 			//ラインを超えたら採掘時の処理ループに移行
