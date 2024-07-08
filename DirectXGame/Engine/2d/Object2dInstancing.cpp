@@ -49,6 +49,13 @@ void Object2dInstancing::StaticInitialize(ID3D12Device* device, int windowWidth,
 	descriptorRangeInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
 	descriptorRangeInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
+	D3D12_DESCRIPTOR_RANGE descriptorRangeMask[1] = {};
+	descriptorRangeMask[0].BaseShaderRegister = 2; //2から始まる
+	descriptorRangeMask[0].NumDescriptors = 1; //数は1つ
+	descriptorRangeMask[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
+	descriptorRangeMask[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
+
+
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; //バイリニアフィルタ
@@ -86,6 +93,11 @@ void Object2dInstancing::StaticInitialize(ID3D12Device* device, int windowWidth,
 	rootParameters[RootParameter::kTexture].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
 	rootParameters[RootParameter::kTexture].DescriptorTable.pDescriptorRanges = descriptorRange; //Tableの中身の配列を指定
 	rootParameters[RootParameter::kTexture].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); //Tableで利用する数
+
+	rootParameters[RootParameter::kMaskTexture].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[RootParameter::kMaskTexture].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
+	rootParameters[RootParameter::kMaskTexture].DescriptorTable.pDescriptorRanges = descriptorRangeMask; //Tableの中身の配列を指定
+	rootParameters[RootParameter::kMaskTexture].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeMask); //Tableで利用する数
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -231,6 +243,7 @@ void Object2dInstancing::postDraw() {
 Object2dInstancing::Object2dInstancing(uint32_t textureHandle, float scale, Vector4 color) {
 
 	textureHandle_ = textureHandle;
+	maskTextureHandle_ = textureHandle;
 	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
 	//position_ = position;
 	size_ = { (float)resourceDesc_.Width * scale,(float)resourceDesc_.Height * scale };
@@ -253,7 +266,7 @@ void Object2dInstancing::Init(uint32_t instanceMax) {
 	//リソースの先頭のアドレスから使う
 	vertexBufferView.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点6つ分のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * 4;
 	//1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -318,6 +331,7 @@ void Object2dInstancing::Draw(const Camera& camera) {
 		instancingForVSMap_[index].texcoord_[3] = { uvRight,uvTop };
 		
 		instancingForVSMap_[index].color_ = instancingCPUData_[index].color_;
+		instancingForVSMap_[index].disolveValue_ = instancingCPUData_[index].disolveValue_;
 	}
 
 
@@ -331,7 +345,7 @@ void Object2dInstancing::Draw(const Camera& camera) {
 
 	commandList_->SetGraphicsRootConstantBufferView(RootParameter::kCamera, camera.GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, RootParameter::kTexture, textureHandle_);
-
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList_, RootParameter::kMaskTexture, maskTextureHandle_);
 	commandList_->DrawIndexedInstanced(6, instanceCount_, 0, 0, 0);
 
 }

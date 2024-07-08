@@ -69,6 +69,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		}
 		else {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[0]);
+			objects_[index - 1]->SetMaskTextureHandle(TextureManager::Load("blocks/rockMask.png"));
 			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/rockParticle.png"));
 		}
 
@@ -185,20 +186,20 @@ void BlockTextureManager::ClearObject() {
 	wallKickEffects_->ClearUseCount();
 }
 
-void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type) {
+void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type, float disolveValue) {
 	BaseBlock::BlockType bType = BaseBlock::BlockType(type);
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	objects_[bType-1]->AppendObject(position,0,texBase,texSize);
+	objects_[bType-1]->AppendObject(position,0,texBase,texSize, disolveValue);
 }
 
-void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type,const Vector4& color) {
+void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type,const Vector4& color, float disolveValue) {
 	BaseBlock::BlockType bType = BaseBlock::BlockType(type);
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	objects_[bType - 1]->AppendObject(position,0, texBase, texSize,color);
+	objects_[bType - 1]->AppendObject(position,0, texBase, texSize,color, disolveValue);
 }
 
 void BlockTextureManager::DrawAll(const Camera& camera) {
@@ -228,22 +229,22 @@ void BlockTextureManager::AppendParticle(const Vector2& position, float rotate,c
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	breakParticles_[bType - 1]->AppendObject(position,rotate, uvBase, Vector2{ 32.0f,32.0f });
+	breakParticles_[bType - 1]->AppendObject(position,rotate, uvBase, Vector2{ 32.0f,32.0f },0);
 }
 
 void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vector4& color) {
 	
-	starParticles_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f },color);
+	starParticles_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f },color,0);
 }
 
 void BlockTextureManager::AppendStarParticleUI(const Vector2& position, const Vector4& color) {
 
-	starParticlesUI_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f }, color);
+	starParticlesUI_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f }, color,0);
 }
 
 void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vector4& color) {
 
-	sandParticles_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f }, color);
+	sandParticles_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f }, color,0);
 }
 
 void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t type, const Vector4& color) {
@@ -258,7 +259,7 @@ void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t typ
 		tBase = { 96,0 };
 	}
 
-	gemParticles_->AppendObject(position,0, tBase, Vector2{32.0f,32.0f}, color);
+	gemParticles_->AppendObject(position,0, tBase, Vector2{32.0f,32.0f}, color,0);
 }
 
 void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t type, const Vector4& color) {
@@ -273,7 +274,7 @@ void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t
 		tSize = { -32.0f,32.0f };
 	}
 
-	wallKickEffects_->AppendObject(position,0, tBase,tSize, color);
+	wallKickEffects_->AppendObject(position,0, tBase,tSize, color,0);
 }
 
 void BlockTextureManager::DrawParticle(const Camera& camera) {
