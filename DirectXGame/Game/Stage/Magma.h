@@ -4,6 +4,7 @@
 #include <memory>
 #include "TextureManager.h"
 #include "Camera.h"
+#include "StageConstant.h"
 
 class Player;
 

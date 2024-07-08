@@ -9,7 +9,7 @@
 
 Score* BaseBlock::score_;
 
-void BaseBlock::Break(float power) {
+void BaseBlock::Break(float power, bool isPlayer) {
 
 	//耐久値が無い、もしくは0以下ならスキップ
 	if (durability_ <= 0.0f) {
@@ -23,13 +23,15 @@ void BaseBlock::Break(float power) {
 	if (durability_ <= 0.0f) {
 
 		durability_ = 0.0f;
-		//穴掘り回数加算
-		player_->AddDigCount();
 
-		score_->AddScore(100);
+		if (isPlayer) {
+			//穴掘り回数加算
+			player_->AddDigCount();
+			score_->AddScore(100);
+		}
 
-		//タイプに応じてプレイヤーにパラメータ強化の値を付与
-		if (player_) {
+		//タイプに応じてプレイヤーに鉱石を付与
+		if (player_ && isPlayer) {
 			int32_t num=1;
 			if (type_ == kMagma || type_ == kSnow) {
 				//player_->AddRockCount(int32_t(defaultDurability_) / 3 + 1);
@@ -65,6 +67,23 @@ void BaseBlock::Break(float power) {
 				}
 			}
 		}
+		else if (!isPlayer) {
+
+			if (type_ == kBlueBlock) {
+				//player_->AddBlueRock();
+				crystalSE_->Play();
+			}
+			else if (type_ == kGreenBlock) {
+				//player_->AddGreenRock();
+				crystalSE_->Play();
+			}
+			else if (type_ == kRedBlock) {
+				//player_->AddRedRock();
+				crystalSE_->Play();
+			}
+
+		}
+
 		int createNum = int(RandomEngine::GetRandom(8.0f,12.0f));
 		for (int i = 0; i < createNum;i++) {
 			BlockTextureManager::GetInstance()->CreateParticle(position_, type_);
@@ -76,7 +95,11 @@ void BaseBlock::Break(float power) {
 	
 	}
 	else {
-		score_->AddScore(10);
+
+		if (isPlayer) {
+			score_->AddScore(10);
+		}
+
 		int createNum = int(RandomEngine::GetRandom(2.0f, 5.0f));
 		for (int i = 0; i < createNum; i++) {
 			Vector2 velocity = player_->GetPosition() - position_;

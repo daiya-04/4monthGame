@@ -1,8 +1,9 @@
 #pragma once
 #include "Vec2.h"
-#include "Game/Stage/Stage.h"
+#include "Game/Stage/StageConstant.h"
 #include "Camera.h"
 #include <array>
+#include "Block/Block.h"
 
 /// <summary>
 /// スクロール管理クラス
@@ -48,8 +49,8 @@ public:
 	static inline Vector2 limitStart_{ 0.0f,-2000.0f };
 
 	//スクロール制限終点
-	static inline Vector2 limitEnd_{ Stage::kMaxStageWidth_ * Block::kBlockSize_ - kWindowCenter_.x - Block::kBlockSize_,
-		Stage::kMaxStageHeight_ * Block::kBlockSize_ - kWindowCenter_.y - Block::kBlockSize_ };
+	static inline Vector2 limitEnd_{ kMaxStageWidth * Block::kBlockSize_ - kWindowCenter_.x - Block::kBlockSize_,
+		kMaxStageHeight * Block::kBlockSize_ - kWindowCenter_.y - Block::kBlockSize_ };
 
 private:
 

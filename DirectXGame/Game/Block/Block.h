@@ -144,7 +144,7 @@ public:
 	//void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 	//外的要因(プレイヤーなど)で破壊された時に呼び出される関数
-	void Break(float power);
+	void Break(float power, bool isPlayer = true);
 
 	//ブロックが再生する時の関数(再び当たり判定を持つ)
 	void Repair() { 

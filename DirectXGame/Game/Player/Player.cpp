@@ -6,6 +6,7 @@
 #include "GlobalVariables.h"
 #include "Easing.h"
 #include "RandomEngine/RandomEngine.h"
+#include "Stage/Stage.h"
 
 Player::Player()
 {
@@ -1094,7 +1095,7 @@ void Player::UpdatePosition() {
 			break;
 		}
 
-		position_.x = std::clamp(position_.x, float(Block::kBlockHalfSize_ * 0.0f), float(Block::kBlockSize_ * (Stage::kMaxStageWidth_ - 1)));
+		position_.x = std::clamp(position_.x, float(Block::kBlockHalfSize_ * 0.0f), float(Block::kBlockSize_ * (kMaxStageWidth - 1)));
 
 		tmpPosition_ = position_;
 
@@ -1242,9 +1243,9 @@ void Player::CheckCollision() {
 
 	if (blocksPtr_) {
 
-		for (uint32_t y = 0; y < Stage::kMaxStageHeight_; y++) {
+		for (uint32_t y = 0; y < kMaxStageHeight; y++) {
 
-			for (uint32_t x = 0; x < Stage::kMaxStageWidth_; x++) {
+			for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 
 				//破壊されているものは処理しない
 				if ((*blocksPtr_)[y][x]->GetIsBreak()) {
@@ -1489,7 +1490,7 @@ void Player::CheckCollision() {
 						//右下が当たっていた
 						if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), rightBottom_)) {
 
-							//プレイヤーが右側から侵入したなら左に押し戻し
+							//プレイヤーが左側から侵入したなら左に押し戻し
 							if (preRightBottom_.y > (*blocksPtr_)[y][x]->GetPosition().y - Block::kBlockHalfSize_) {
 
 								SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSizeX_), tmpPosition_.y });

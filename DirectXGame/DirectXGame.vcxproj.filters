@@ -479,6 +479,9 @@
     <ClInclude Include="StageNumberDraw.h" />
     <ClInclude Include="Game\Block\WallKickEffect.h" />
     <ClInclude Include="Steam.h" />
+    <ClInclude Include="Game\Stage\StageConstant.h">
+      <Filter>Game\Stage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">
