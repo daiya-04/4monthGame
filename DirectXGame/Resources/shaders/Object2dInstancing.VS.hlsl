@@ -26,8 +26,8 @@ static const uint32_t kNumVertex = 4;
 static const float32_t2 kMaskTexcoords[kNumVertex]={
 	{0.0f,0.0f},
 	{0.0f,1.0f},
-	{1.1f,0.0f},
-	{1.1f,1.1f}
+	{1.0f,1.0f},
+	{1.0f,0.0f}
 };
 
 VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_InstanceID,uint32_t vertexId : SV_VertexID) {
