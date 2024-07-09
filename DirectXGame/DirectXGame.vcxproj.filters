@@ -276,6 +276,7 @@
     <ClCompile Include="StageNumberDraw.cpp" />
     <ClCompile Include="Game\Block\WallKickEffect.cpp" />
     <ClCompile Include="Steam.cpp" />
+    <ClCompile Include="Game\Block\JumpChargeParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -482,6 +483,7 @@
     <ClInclude Include="Game\Stage\StageConstant.h">
       <Filter>Game\Stage</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Block\JumpChargeParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">
