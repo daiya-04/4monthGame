@@ -18,7 +18,7 @@ const float WaterDropSourceTexture::clearColorWaterDrop_[4] = { 0.0f,0.0f,0.0f,0
 void WaterDropSourceTexture::Init() {
 	HRESULT hr;
 
-	CreateGraphicsPipelineState(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+	CreateGraphicsPipelineState(L"Resources/shaders/PostEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 
 	//テクスチャリソースの設定
 	D3D12_RESOURCE_DESC texDesc{};
@@ -54,21 +54,6 @@ void WaterDropSourceTexture::Init() {
 	);
 	assert(SUCCEEDED(hr));
 
-
-	//画素数
-	const UINT pixelCount = UINT(WinApp::kClientWidth * WinApp::kClientHeight);
-	//画像1行分のデータサイズ
-	const UINT rowPitch = sizeof(UINT) * WinApp::kClientWidth;
-	//画像全体のデータサイズ
-	const UINT depthPitch = rowPitch * WinApp::kClientHeight;
-	//画像イメージ
-	UINT* img = new UINT[pixelCount];
-	for (int i = 0; i < pixelCount; i++) { img[i] = 0xffffffff; }
-
-	hr = texBuff_->WriteToSubresource(0, nullptr, img, rowPitch, depthPitch);
-	assert(SUCCEEDED(hr));
-	delete[] img;
-
 	textureSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), DirectXCommon::GetInstance()->GetSrvHeapCount());
 	textureSrvHandleGPU_ = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), DirectXCommon::GetInstance()->GetSrvHeapCount());
 
@@ -92,74 +77,7 @@ void WaterDropSourceTexture::Init() {
 
 	DirectXCommon::GetInstance()->GetDevice()->CreateRenderTargetView(texBuff_.Get(), &rtvDesc, rtvHandleCPU_);
 
-	//深度バッファリソースの設定
-	D3D12_RESOURCE_DESC depResourceDesc{};
-	depResourceDesc.Width = WinApp::kClientWidth; //Textureの幅
-	depResourceDesc.Height = WinApp::kClientHeight; //Textureの高さ
-	depResourceDesc.MipLevels = 1; //mipmapの数
-	depResourceDesc.DepthOrArraySize = 1; //奥行き or 配列Textureの配列数
-	depResourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //DepthStencilとして利用可能なフォーマット
-	depResourceDesc.SampleDesc.Count = 1; //サンプリングカウント。1固定
-	depResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D; //2次元
-	depResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL; //DepthStencilとして使う通知
-
-	//利用するHeapの設定
-	D3D12_HEAP_PROPERTIES dsvHeapProperties{};
-	dsvHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; //VRAM上に作る
-
-	//深度値のクリア設定
-	D3D12_CLEAR_VALUE depthClearValue{};
-	depthClearValue.DepthStencil.Depth = 1.0f; //1.0f(最大値)でクリア
-	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //フォーマット。Resourceと合わせる
-
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
-		&dsvHeapProperties, //Heapの設定
-		D3D12_HEAP_FLAG_NONE, //Heapの特殊な設定。特になし。
-		&depResourceDesc, //Resourceの設定
-		D3D12_RESOURCE_STATE_DEPTH_WRITE, //深度値を書き込む状態にしておく
-		&depthClearValue, //Clear最適地
-		IID_PPV_ARGS(&depthBuff_) //作成するResourceポインタへのポインタ
-	);
-	assert(SUCCEEDED(hr));
-
-	//DVSの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2dTexture
-
-	dsvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetDsvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV), DirectXCommon::GetInstance()->GetDsvHeapCount());
-	DirectXCommon::GetInstance()->IncrementDsvHeapCount();
-
-	//DSVHeapの先頭にDSVを作る
-	DirectXCommon::GetInstance()->GetDevice()->CreateDepthStencilView(depthBuff_.Get(), &dsvDesc, dsvHandleCPU_);
-
-	//頂点バッファ生成
-	vertexBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(VertexData) * 4);
-	//頂点バッファビューを作成する
-	//リソースの先頭のアドレスから使う
-	vertexBufferView_.BufferLocation = vertexBuff_->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点6つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
-	//1頂点あたりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	TransferVertex();
-
-	indexBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(uint32_t) * 6);
-
-	indexBufferView_.BufferLocation = indexBuff_->GetGPUVirtualAddress();
-	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-
-	uint32_t* indices = nullptr;
-	indexBuff_->Map(0, nullptr, reinterpret_cast<void**>(&indices));
-
-	indices[0] = 0;  indices[1] = 1;  indices[2] = 2;
-	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;
-
-	materialBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(MaterialData));
-	materialBuff_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	materialData_->color_ = Vector4({ 1.0f,1.0f,1.0f,1.0f });
+	dsvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetDsvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV), 0);
 
 }
 
