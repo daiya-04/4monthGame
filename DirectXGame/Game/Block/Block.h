@@ -24,6 +24,9 @@ public:
 
 	const float kTextureBlockSize_ = 32.0f;
 
+	//光る確率
+	static inline const float kShiningProbability_ = 0.0006f;
+
 	enum BlockType : uint32_t {
 
 		//空白ブロック
@@ -50,6 +53,8 @@ public:
 		kFlagBlock,
 		//崩れるブロック
 		kCollapseBlock,
+		//敵追加ブロック
+		kEnemyBlock,
 		//ブロックの最大種類
 		kMaxBlock
 
@@ -139,7 +144,7 @@ public:
 	//void SetColor(const Vector4& color) { object_->SetColor(color); }
 
 	//外的要因(プレイヤーなど)で破壊された時に呼び出される関数
-	void Break(float power);
+	void Break(float power, bool isPlayer = true);
 
 	//ブロックが再生する時の関数(再び当たり判定を持つ)
 	void Repair() { 
@@ -242,6 +247,20 @@ protected:
 	int32_t iceBreakCoolTimer_ = 0;
 
 	int32_t iceBreakInterval_ = 5;
+
+	///-------------------------------------------------------------------------
+
+	///--------演出関連--------------------------------------------------------
+
+	bool isShining_ = false;
+
+	//光の値
+	float brightValue_ = 0.0f;
+
+	//光制限
+	float brightLimit_ = 1.0f;
+
+	float shiningValue_ = 0.02f;
 
 	///-------------------------------------------------------------------------
 

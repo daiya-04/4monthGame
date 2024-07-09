@@ -6,6 +6,7 @@
 #include "GlobalVariables.h"
 #include "Easing.h"
 #include "RandomEngine/RandomEngine.h"
+#include "Stage/Stage.h"
 
 Player::Player()
 {
@@ -891,6 +892,7 @@ void Player::Change() {
 				position_.x > Stage::kBorderRight.x + Block::kBlockSize_) {
 				velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 				parameters_[currentCharacters_]->Jump_.canJump = false;
+				jumpSE_->Play();
 			}
 
 			//ラインを超えたら採掘時の処理ループに移行
@@ -1093,7 +1095,7 @@ void Player::UpdatePosition() {
 			break;
 		}
 
-		position_.x = std::clamp(position_.x, float(Block::kBlockHalfSize_ * 0.0f), float(Block::kBlockSize_ * (Stage::kMaxStageWidth_ - 1)));
+		position_.x = std::clamp(position_.x, float(Block::kBlockHalfSize_ * 0.0f), float(Block::kBlockSize_ * (kMaxStageWidth - 1)));
 
 		tmpPosition_ = position_;
 
@@ -1241,9 +1243,18 @@ void Player::CheckCollision() {
 
 	if (blocksPtr_) {
 
-		for (uint32_t y = 0; y < Stage::kMaxStageHeight_; y++) {
+		int32_t startY = int32_t(tmpPosition_.y) / Block::kBlockSize_ - 2;
+		startY = std::clamp(startY, 0, kMaxStageHeight - 1);
+		int32_t endY = int32_t(tmpPosition_.y) / Block::kBlockSize_ + 2;
+		endY = std::clamp(endY, 0, kMaxStageHeight - 1);
+		int32_t startX = int32_t(tmpPosition_.x) / Block::kBlockSize_ - 2;
+		startX = std::clamp(startX, 0, kMaxStageWidth - 1);
+		int32_t endX = int32_t(tmpPosition_.x) / Block::kBlockSize_ + 2;
+		endX = std::clamp(endX, 0, kMaxStageWidth - 1);
 
-			for (uint32_t x = 0; x < Stage::kMaxStageWidth_; x++) {
+		for (int32_t y = startY; y <= endY; y++) {
+
+			for (int32_t x = startX; x <= endX; x++) {
 
 				//破壊されているものは処理しない
 				if ((*blocksPtr_)[y][x]->GetIsBreak()) {
@@ -1488,7 +1499,7 @@ void Player::CheckCollision() {
 						//右下が当たっていた
 						if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), rightBottom_)) {
 
-							//プレイヤーが右側から侵入したなら左に押し戻し
+							//プレイヤーが左側から侵入したなら左に押し戻し
 							if (preRightBottom_.y > (*blocksPtr_)[y][x]->GetPosition().y - Block::kBlockHalfSize_) {
 
 								SetTmpPosition({ (*blocksPtr_)[y][x]->GetPosition().x - (Block::kBlockHalfSize_ + kPlayerHalfSizeX_), tmpPosition_.y });

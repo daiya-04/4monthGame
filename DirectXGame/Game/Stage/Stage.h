@@ -12,8 +12,9 @@
 #include "Magma.h"
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
 #include "AudioManager.h"
-
-class Player;
+#include "StageConstant.h"
+#include "Player/Player.h"
+#include "Enemy/Enemy.h"
 
 class Stage
 {
@@ -53,12 +54,6 @@ public:
 	/// </summary>
 	/// <param name="stageNumber">ステージ番号</param>
 	void Load(uint32_t stageNumber);
-
-	//横の長さ、ブロックの数
-	static const int32_t kMaxStageWidth_ = 40;
-	//縦の長さ、ブロックの数
-	static const int32_t kMaxStageHeight_ = 100;
-
 	//プレイヤーをセット
 	void SetPlayer(Player* player) { player_ = player; }
 
@@ -69,12 +64,12 @@ public:
 	Magma* GetMagma() { return magma_.get(); }
 
 	//ブロック取得
-	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_>* GetBlocks() { return &map_; }
+	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight>* GetBlocks() { return &map_; }
 
-	uint32_t blockPositions_[kMaxStageHeight_][kMaxStageWidth_]{};
+	uint32_t blockPositions_[kMaxStageHeight][kMaxStageWidth]{};
 
 	static inline const Vector2 kBasePosition =
-	{ float(kMaxStageWidth_ * Block::kBlockSize_ / 2.0f - Block::kBlockHalfSize_),-88.0f };
+	{ float(kMaxStageWidth * Block::kBlockSize_ / 2.0f - Block::kBlockHalfSize_),-88.0f };
 
 	static inline const Vector2 kBorderLeft = { float(kBasePosition.x - 5.0f * Block::kBlockSize_), -48.0f };
 
@@ -169,7 +164,9 @@ private:
 	std::vector<std::array<uint32_t, 2>> respawnBlocks_;
 
 	//マップ
-	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth_>, kMaxStageHeight_> map_;
+	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight> map_;
+
+	std::vector<std::shared_ptr<BaseEnemy>> enemies_;
 
 	int32_t rockCount_ = 0;
 

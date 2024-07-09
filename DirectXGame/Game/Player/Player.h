@@ -8,11 +8,12 @@
 #include <array>
 #include "Hit.h"
 #include <vector>
-#include "Stage/Stage.h"
+#include "Stage/StageConstant.h"
 #include <list>
 #include "Sprite.h"
 #include "Score/ScoreManager.h"
 #include "AudioManager.h"
+#include "Block/Block.h"
 
 class Player
 {
@@ -218,7 +219,7 @@ public:
 
 	void ResetVelocityY() { velocity_.y = 0.0f; }
 
-	void SetBlocks(std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_>* blocks) { blocksPtr_ = blocks; }
+	void SetBlocks(std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight>* blocks) { blocksPtr_ = blocks; }
 
 	bool GetIsDead() const { return isDead_; }
 
@@ -364,7 +365,7 @@ private:
 	std::unique_ptr<Object2d> object_;
 
 	//ブロックの配列ポインタ
-	std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_>* blocksPtr_ = nullptr;
+	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight>* blocksPtr_ = nullptr;
 
 	//当たり判定
 	AABB2D collision_{};

@@ -13,7 +13,7 @@
 #include "System/TutorialFlagManager.h"
 #include "GameText/GameTextManager.h"
 
-std::array<std::array<std::shared_ptr<Block>, Stage::kMaxStageWidth_>, Stage::kMaxStageHeight_> Stage::map_;
+std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight> Stage::map_;
 
 Stage::Stage()
 {
@@ -112,9 +112,9 @@ void Stage::Initialize(uint32_t stageNumber) {
 
 	currentStageNumber_ = stageNumber;
 
-	for (int32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (int32_t y = 0; y < kMaxStageHeight; y++) {
 
-		for (int32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (int32_t x = 0; x < kMaxStageWidth; x++) {
 
 			//一旦初期化。耐久力などの設定はLoadで行う
 			blockPositions_[y][x] = 0;
@@ -132,7 +132,7 @@ void Stage::Initialize(uint32_t stageNumber) {
 				pUp = map_[y - 1][x].get();
 			}
 			
-			if (y + 1 < kMaxStageHeight_) {
+			if (y + 1 < kMaxStageHeight) {
 				pDown = map_[y + 1][x].get();
 			}
 
@@ -140,7 +140,7 @@ void Stage::Initialize(uint32_t stageNumber) {
 				pLeft = map_[y][x - 1].get();
 			}
 
-			if (x + 1 < kMaxStageWidth_) {
+			if (x + 1 < kMaxStageWidth) {
 				pRight = map_[y][x + 1].get();
 			}
 
@@ -199,14 +199,19 @@ void Stage::Update() {
 		}
 
 		//ブロックの更新
-		for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+		for (uint32_t y = 0; y < kMaxStageHeight; y++) {
 
-			for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+			for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 				blockPositions_[y][x] = map_[y][x]->GetType();
 				SetUV(map_[y][x].get());
 				map_[y][x]->Update();
 			}
 
+		}
+
+		//敵更新
+		for (auto& enemy : enemies_) {
+			enemy->Update();
 		}
 
 		//家に戻ったら再生成
@@ -377,9 +382,9 @@ void Stage::Draw() {
 	BlockTextureManager::GetInstance()->ClearObject();
 
 	//ブロックの描画
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 
 			if (map_[y][x]->GetPosition().x >= camera_->translation_.x - Block::kBlockSize_ &&
 				map_[y][x]->GetPosition().x <= camera_->translation_.x + camera_->GetDrawingRange().x + Block::kBlockSize_ &&
@@ -449,6 +454,10 @@ void Stage::DrawHeatAfter() {
 		returnUI_->Draw(*camera_);
 	}
 
+	for (auto& enemy : enemies_) {
+		enemy->Draw(*camera_);
+	}
+
 	upgradeSystem_->Draw(*camera_);
 
 	magma_->Draw(*camera_);
@@ -502,6 +511,10 @@ void Stage::DrawColdAfter() {
 		returnUI_->Draw(*camera_);
 	}
 
+	for (auto& enemy : enemies_) {
+		enemy->Draw(*camera_);
+	}
+
 	upgradeSystem_->Draw(*camera_);
 
 	magma_->Draw(*camera_);
@@ -541,9 +554,9 @@ void Stage::DrawUI() {
 
 void Stage::SwitchBlock() {
 
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 			
 			if (map_[y][x]->GetType() == Block::BlockType::kSnow) {
 				map_[y][x]->ChangeType(Block::BlockType::kMagma);
@@ -562,10 +575,10 @@ void Stage::SwitchBlock() {
 
 void Stage::CreateIceBlock() {
 
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
 
 		
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 			
 			//一部スキップ
 			if (y < 5) {
@@ -610,9 +623,9 @@ void Stage::CreateIceBlock() {
 
 void Stage::BreakIceBlock() {
 
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 
 			//氷ブロックを破壊する
 			if (map_[y][x]->GetType() == Block::BlockType::kIceBlock) {
@@ -631,9 +644,9 @@ void Stage::BreakIceBlock() {
 
 void Stage::BreakAllBlock() {
 
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 
 			//壊せないブロック以外を破壊する
 			if (Block::CheckCanBreak(map_[y][x]->GetType())) {
@@ -665,6 +678,23 @@ void Stage::RespawnBlock(Block::BlockType type) {
 
 		if (map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->GetDefaultType() == type) {
 
+			//スキップフラグ
+			bool isContinue = false;
+
+			//敵と被ったら復活させない
+			for (auto& enemy : enemies_) {
+
+				if (IsCollision(map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->GetCollision(), enemy->GetCollision())) {
+					isContinue = true;
+					break;
+				}
+
+			}
+
+			if (isContinue) {
+				continue;
+			}
+
 			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->ChangeType(type);
 			map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->Reset();
 			//高さに応じて耐久値を調整
@@ -686,9 +716,9 @@ void Stage::RespawnBlock(Block::BlockType type) {
 
 void Stage::CreateEntity() {
 
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 
 			//実体がない場合、生成する
 			if (!map_[y][x]) {
@@ -736,7 +766,7 @@ void Stage::Load(uint32_t stageNumber) {
 	std::string line;
 
 	//ブロックを生成、初期化
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
 		
 		//一行取得
 		std::getline(newFile, line);
@@ -744,7 +774,7 @@ void Stage::Load(uint32_t stageNumber) {
 		//カンマ区切りで読み込む用の文字列
 		std::istringstream iss(line);
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 			//格納する数字
 			std::string sNum;
 			//数字を格納
@@ -795,14 +825,21 @@ void Stage::Load(uint32_t stageNumber) {
 	if (stageNumber == 1) {
 
 		map_[2][14]->ChangeType(Block::kFlagBlock);
+		map_[2][14]->Reset();
 		map_[3][14]->ChangeType(Block::kFlagBlock);
+		map_[3][14]->Reset();
 
 	}
 
-	//ブロックの更新
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
+	std::shared_ptr<NormalEnemy> enemy = std::make_shared<NormalEnemy>();
+	enemy->Initialize({ 11.0f * 96.0f, 2.0f * 96.0f });
+	enemy->SetBlocks(&map_);
+	enemies_.push_back(enemy);
 
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+	//ブロックの更新
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
+
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 			blockPositions_[y][x] = map_[y][x]->GetType();
 			SetUV(map_[y][x].get());
 			map_[y][x]->Update();
@@ -835,7 +872,7 @@ void Stage::SetUV(Block* block) {
 	int32_t bottomRightNum = 0;
 
 	//範囲外に出るかどうかで代入する値を変更
-	if (left < 0 || left >= kMaxStageWidth_) {
+	if (left < 0 || left >= kMaxStageWidth) {
 
 		leftNum = 0;
 		topLeftNum = 0;
@@ -849,7 +886,7 @@ void Stage::SetUV(Block* block) {
 
 	}
 
-	if (right < 0 || right >= kMaxStageWidth_) {
+	if (right < 0 || right >= kMaxStageWidth) {
 
 		rightNum = 0;
 		topRightNum = 0;
@@ -862,7 +899,7 @@ void Stage::SetUV(Block* block) {
 
 	}
 
-	if (top < 0 || top >= kMaxStageHeight_) {
+	if (top < 0 || top >= kMaxStageHeight) {
 
 		topNum = 0;
 		topLeftNum = 0;
@@ -873,17 +910,17 @@ void Stage::SetUV(Block* block) {
 
 		topNum = blockPositions_[top][px];
 
-		if (left >= 0 && left < kMaxStageWidth_) {
+		if (left >= 0 && left < kMaxStageWidth) {
 			topLeftNum = blockPositions_[top][left];
 		}
 
-		if (right >= 0 && right < kMaxStageWidth_) {
+		if (right >= 0 && right < kMaxStageWidth) {
 			topRightNum = blockPositions_[top][right];
 		}
 
 	}
 
-	if (bottom < 0 || bottom >= kMaxStageHeight_) {
+	if (bottom < 0 || bottom >= kMaxStageHeight) {
 
 		bottomNum = 0;
 		bottomLeftNum = 0;
@@ -894,11 +931,11 @@ void Stage::SetUV(Block* block) {
 
 		bottomNum = blockPositions_[bottom][px];
 
-		if (left >= 0 && left < kMaxStageWidth_) {
+		if (left >= 0 && left < kMaxStageWidth) {
 			bottomLeftNum = blockPositions_[bottom][left];
 		}
 
-		if (right >= 0 && right < kMaxStageWidth_) {
+		if (right >= 0 && right < kMaxStageWidth) {
 			bottomRightNum = blockPositions_[bottom][right];
 		}
 
@@ -1221,8 +1258,8 @@ void Stage::SetUV(Block* block) {
 }
 
 void Stage::ChangeSnow2Magma() {
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 			if (map_[y][x]->GetType() == Block::BlockType::kSnow) {
 				map_[y][x]->ChangeType(Block::BlockType::kMagma);
 			}
@@ -1232,8 +1269,8 @@ void Stage::ChangeSnow2Magma() {
 }
 
 void Stage::ChangeMagma2Snow() {
-	for (uint32_t y = 0; y < kMaxStageHeight_; y++) {
-		for (uint32_t x = 0; x < kMaxStageWidth_; x++) {
+	for (uint32_t y = 0; y < kMaxStageHeight; y++) {
+		for (uint32_t x = 0; x < kMaxStageWidth; x++) {
 			if (map_[y][x]->GetType() == Block::BlockType::kMagma) {
 				map_[y][x]->ChangeType(Block::BlockType::kSnow);
 			}
