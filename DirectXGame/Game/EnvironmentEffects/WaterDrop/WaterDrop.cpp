@@ -24,7 +24,7 @@ void WaterDrop::Init() {
 	}*/
 	for (int i = 0; i < 2;i++) {
 		internalEffectTextures_[i].reset(new PostEffect());
-		internalEffectTextures_[i]->Init(L"Resources/shaders/WaterDropUpdateEffect.VS.hlsl", L"Resources/shaders/WaterDropUpdateEffect.PS.hlsl");
+		internalEffectTextures_[i]->Init(L"Resources/shaders/PostEffect.VS.hlsl", L"Resources/shaders/WaterDropUpdateEffect.PS.hlsl");
 	}
 	SetPositionRandom();
 	latestTextureNum_ = 0;

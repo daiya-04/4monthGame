@@ -16,7 +16,7 @@ using namespace Microsoft::WRL;
 //const float HeatHaze::clearColor_[4] = { 0.0f,0.0f,0.0f,0.0f };
 
 void CameraFrozen::Init() {
-	PostEffect::Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+	PostEffect::Init(L"Resources/shaders/PostEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 
 	CreateGraphicsPipelineStateInternal();
 	cameraFrozenBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(CameraFrozenData));
@@ -89,13 +89,10 @@ void CameraFrozen::DrawInternal(ID3D12GraphicsCommandList* cmdList) {
 	//形状を設定。PSOに設定しているものとはまた別。設置物を設定すると考えておけばいい
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	cmdList->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	cmdList->IASetIndexBuffer(&indexBufferView_);
-
-	cmdList->SetGraphicsRootConstantBufferView(0, materialBuff_->GetGPUVirtualAddress());
-	cmdList->SetGraphicsRootConstantBufferView(1, cameraFrozenBuff_->GetGPUVirtualAddress());
 	
-	cmdList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	cmdList->SetGraphicsRootConstantBufferView(0, cameraFrozenBuff_->GetGPUVirtualAddress());
+	
+	cmdList->DrawInstanced(3, 1, 0, 0);
 }
 
 void CameraFrozen::CreateGraphicsPipelineStateInternal() {
@@ -123,12 +120,6 @@ void CameraFrozen::CreateGraphicsPipelineStateInternal() {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
 
-	//D3D12_DESCRIPTOR_RANGE descriptorRangeForBloom[1] = {};
-	//descriptorRange[0].BaseShaderRegister = 1; //0から始まる
-	//descriptorRange[0].NumDescriptors = 1; //数は1つ
-	//descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //SRVを使う
-	//descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //Offsetを自動計算
-
 	//Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; //バイリニアフィルタ
@@ -145,15 +136,11 @@ void CameraFrozen::CreateGraphicsPipelineStateInternal() {
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[2] = {};
+	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
-
-	
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
-	rootParameters[1].Descriptor.ShaderRegister = 1;   //レジスタ番号0とバインド
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -173,20 +160,9 @@ void CameraFrozen::CreateGraphicsPipelineStateInternal() {
 	assert(SUCCEEDED(hr));
 
 	//InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
-	inputElementDescs[0].SemanticName = "POSITION";
-	inputElementDescs[0].SemanticIndex = 0;
-	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[1].SemanticName = "TEXCOORD";
-	inputElementDescs[1].SemanticIndex = 0;
-	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	inputLayoutDesc.pInputElementDescs = inputElementDescs;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs);
+	inputLayoutDesc.pInputElementDescs = nullptr;
+	inputLayoutDesc.NumElements = 0;
 
 	//BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};
@@ -213,7 +189,7 @@ void CameraFrozen::CreateGraphicsPipelineStateInternal() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 	//Shaderをコンパイルする
-	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/CameraFrozen.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	ComPtr<IDxcBlob> verterShaderBlob = CompileShader(L"Resources/shaders/PostEffect.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(verterShaderBlob != nullptr);
 
 	ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"Resources/shaders/CameraFrozen.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
@@ -224,9 +200,9 @@ void CameraFrozen::CreateGraphicsPipelineStateInternal() {
 	//Depthの機能を有効化する
 	depthStencilDesc.DepthEnable = false;
 	//書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	//比較関数はLessEqual。つまり、近ければ描画される
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 
 	//POSを生成する
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};

@@ -1,16 +1,10 @@
 #include"NoneEffect.hlsli"
 
-struct Material {
-	float32_t4 color;
-};
-
-ConstantBuffer<Material> gMaterial : register(b0);
-
 struct SlideData {
 	float32_t2 slide;
 };
 
-ConstantBuffer<SlideData> gSlide : register(b1);
+ConstantBuffer<SlideData> gSlide : register(b0);
 
 
 struct PixelShaderOutput {
