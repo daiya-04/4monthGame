@@ -41,8 +41,6 @@ public: //メンバ関数
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU() { return textureSrvHandleGPU_; };
 protected:
 
-	void TransferVertex();
-
 	virtual void CreateGraphicsPipelineState();
 	void CreateGraphicsPipelineState(const std::wstring &vertexShaderPath,const std::wstring &pixelShaderPath);
 
@@ -62,23 +60,12 @@ protected: //メンバ変数
 	ComPtr<ID3D12RootSignature> rootSignature_;
 
 	ComPtr<ID3D12Resource> texBuff_;
-	ComPtr<ID3D12Resource> depthBuff_;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_{};
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_{};
 
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandleCPU_{};
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCPU_{};
-
-	ComPtr<ID3D12Resource> vertexBuff_;
-	VertexData* vertexData_ = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-
-	ComPtr<ID3D12Resource> indexBuff_;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
-
-	ComPtr<ID3D12Resource> materialBuff_;
-	MaterialData* materialData_ = nullptr;
 
 };
 

@@ -60,21 +60,6 @@ void SnowEffectDrawer::Init() {
 	);
 	assert(SUCCEEDED(hr));
 
-
-	//画素数
-	const UINT pixelCount = UINT(WinApp::kClientWidth * WinApp::kClientHeight);
-	//画像1行分のデータサイズ
-	const UINT rowPitch = sizeof(UINT) * WinApp::kClientWidth;
-	//画像全体のデータサイズ
-	const UINT depthPitch = rowPitch * WinApp::kClientHeight;
-	//画像イメージ
-	UINT* img = new UINT[pixelCount];
-	for (int i = 0; i < pixelCount; i++) { img[i] = 0xffffffff; }
-
-	hr = texBuff_->WriteToSubresource(0, nullptr, img, rowPitch, depthPitch);
-	assert(SUCCEEDED(hr));
-	delete[] img;
-
 	textureSrvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), DirectXCommon::GetInstance()->GetSrvHeapCount());
 	textureSrvHandleGPU_ = GetGPUDescriptorHandle(DirectXCommon::GetInstance()->GetSrvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), DirectXCommon::GetInstance()->GetSrvHeapCount());
 
@@ -98,74 +83,7 @@ void SnowEffectDrawer::Init() {
 
 	DirectXCommon::GetInstance()->GetDevice()->CreateRenderTargetView(texBuff_.Get(), &rtvDesc, rtvHandleCPU_);
 
-	//深度バッファリソースの設定
-	D3D12_RESOURCE_DESC depResourceDesc{};
-	depResourceDesc.Width = WinApp::kClientWidth; //Textureの幅
-	depResourceDesc.Height = WinApp::kClientHeight; //Textureの高さ
-	depResourceDesc.MipLevels = 1; //mipmapの数
-	depResourceDesc.DepthOrArraySize = 1; //奥行き or 配列Textureの配列数
-	depResourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //DepthStencilとして利用可能なフォーマット
-	depResourceDesc.SampleDesc.Count = 1; //サンプリングカウント。1固定
-	depResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D; //2次元
-	depResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL; //DepthStencilとして使う通知
-
-	//利用するHeapの設定
-	D3D12_HEAP_PROPERTIES dsvHeapProperties{};
-	dsvHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; //VRAM上に作る
-
-	//深度値のクリア設定
-	D3D12_CLEAR_VALUE depthClearValue{};
-	depthClearValue.DepthStencil.Depth = 1.0f; //1.0f(最大値)でクリア
-	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //フォーマット。Resourceと合わせる
-
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
-		&dsvHeapProperties, //Heapの設定
-		D3D12_HEAP_FLAG_NONE, //Heapの特殊な設定。特になし。
-		&depResourceDesc, //Resourceの設定
-		D3D12_RESOURCE_STATE_DEPTH_WRITE, //深度値を書き込む状態にしておく
-		&depthClearValue, //Clear最適地
-		IID_PPV_ARGS(&depthBuff_) //作成するResourceポインタへのポインタ
-	);
-	assert(SUCCEEDED(hr));
-
-	//DVSの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //Format。基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //2dTexture
-
-	dsvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetDsvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV), DirectXCommon::GetInstance()->GetDsvHeapCount());
-	DirectXCommon::GetInstance()->IncrementDsvHeapCount();
-
-	//DSVHeapの先頭にDSVを作る
-	DirectXCommon::GetInstance()->GetDevice()->CreateDepthStencilView(depthBuff_.Get(), &dsvDesc, dsvHandleCPU_);
-
-	//頂点バッファ生成
-	vertexBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(VertexData) * 4);
-	//頂点バッファビューを作成する
-	//リソースの先頭のアドレスから使う
-	vertexBufferView_.BufferLocation = vertexBuff_->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点6つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
-	//1頂点あたりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	TransferVertex();
-
-	indexBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(uint32_t) * 6);
-
-	indexBufferView_.BufferLocation = indexBuff_->GetGPUVirtualAddress();
-	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
-	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
-
-	uint32_t* indices = nullptr;
-	indexBuff_->Map(0, nullptr, reinterpret_cast<void**>(&indices));
-
-	indices[0] = 0;  indices[1] = 1;  indices[2] = 2;
-	indices[3] = 1;  indices[4] = 3;  indices[5] = 2;
-
-	materialBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(MaterialData));
-	materialBuff_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	materialData_->color_ = Vector4({ 1.0f,1.0f,1.0f,1.0f });
+	dsvHandleCPU_ = GetCPUDescriptorHandle(DirectXCommon::GetInstance()->GetDsvHeap(), DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV), 0);
 
 	cameraSlideBuff_ = CreateBufferResource(DirectXCommon::GetInstance()->GetDevice(), sizeof(Vector2));
 	cameraSlideBuff_->Map(0, nullptr, reinterpret_cast<void**>(&cameraSlideData_));
@@ -175,11 +93,6 @@ void SnowEffectDrawer::Init() {
 
 
 void SnowEffectDrawer::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRIPTOR_HANDLE prevSceneHandle, D3D12_GPU_DESCRIPTOR_HANDLE nextSceneHandle) {
-	/*Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 640.0f,360.0f,0.0f });
-	Matrix4x4 viewMatrix = MakeIdentity44();
-	Matrix4x4 wvpMatrix = worldMatrix * viewMatrix * projectionMatrix_;
-	Matrix4x4* wvpData = nullptr;
-	*wvpData_ = wvpMatrix;*/
 
 	cmdList->SetGraphicsRootSignature(rootSignature_.Get());
 
@@ -187,16 +100,11 @@ void SnowEffectDrawer::Draw(ID3D12GraphicsCommandList* cmdList, D3D12_GPU_DESCRI
 	//形状を設定。PSOに設定しているものとはまた別。設置物を設定すると考えておけばいい
 	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	cmdList->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	cmdList->IASetIndexBuffer(&indexBufferView_);
+	cmdList->SetGraphicsRootDescriptorTable(0, prevSceneHandle);
+	cmdList->SetGraphicsRootDescriptorTable(1, nextSceneHandle);
+	cmdList->SetGraphicsRootConstantBufferView(2, cameraSlideBuff_->GetGPUVirtualAddress());
 
-	cmdList->SetGraphicsRootConstantBufferView(0, materialBuff_->GetGPUVirtualAddress());
-	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(cmdList, 2, textureHandle_);
-	cmdList->SetGraphicsRootDescriptorTable(1, prevSceneHandle);
-	cmdList->SetGraphicsRootDescriptorTable(2, nextSceneHandle);
-	cmdList->SetGraphicsRootConstantBufferView(3, cameraSlideBuff_->GetGPUVirtualAddress());
-
-	cmdList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	cmdList->DrawInstanced(6, 1, 0, 0);
 }
 
 void SnowEffectDrawer::PreDrawScene(ID3D12GraphicsCommandList* cmdList) {
@@ -250,8 +158,6 @@ void SnowEffectDrawer::PreDrawScene(ID3D12GraphicsCommandList* cmdList) {
 	ID3D12DescriptorHeap* descriptorHeaps[] = { DirectXCommon::GetInstance()->GetSrvHeap() };
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-
-
 }
 
 void SnowEffectDrawer::PostDrawScene(ID3D12GraphicsCommandList* cmdList) {
@@ -265,25 +171,6 @@ void SnowEffectDrawer::PostDrawScene(ID3D12GraphicsCommandList* cmdList) {
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
 	cmdList->ResourceBarrier(1, &barrier);
-
-}
-
-void SnowEffectDrawer::TransferVertex() {
-
-	vertexBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-
-	//左下
-	vertexData_[0].pos_ = { -1.0f,-1.0f,0.0f,1.0f };
-	vertexData_[0].uv_ = { 0.0f,1.0f };
-	//左上
-	vertexData_[1].pos_ = { -1.0f,1.0f,0.0f,1.0f };
-	vertexData_[1].uv_ = { 0.0f,0.0f };
-	//右下
-	vertexData_[2].pos_ = { 1.0f,-1.0f,0.0f,1.0f };
-	vertexData_[2].uv_ = { 1.0f,1.0f };
-	//右上
-	vertexData_[3].pos_ = { 1.0f,1.0f,0.0f,1.0f };
-	vertexData_[3].uv_ = { 1.0f,0.0f };
 
 }
 
@@ -335,39 +222,26 @@ void SnowEffectDrawer::CreateGraphicsPipelineState() {
 	staticSamplers[0].ShaderRegister = 0;  //レジスタ番号0を使う
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
 
-	//staticSamplers[1].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; //バイリニアフィルタ
-	//staticSamplers[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP; //0~1の範囲外をリピート
-	//staticSamplers[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	//staticSamplers[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	//staticSamplers[1].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;  //比較しない
-	//staticSamplers[1].MaxLOD = D3D12_FLOAT32_MAX;  //ありったけのMipmapを使う
-	//staticSamplers[1].ShaderRegister = 1;  //レジスタ番号0を使う
-	//staticSamplers[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
-
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	//RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;   //レジスタ番号0とバインド
-
+	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 	//scene
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
-	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangePrevScene; //Tableの中身の配列を指定
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangePrevScene); //Tableで利用する数
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
+	rootParameters[0].DescriptorTable.pDescriptorRanges = descriptorRangePrevScene; //Tableの中身の配列を指定
+	rootParameters[0].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangePrevScene); //Tableで利用する数
 
 	//source
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRangeNextScene; //Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeNextScene); //Tableで利用する数
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; //DescriptorTableを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //PixelShaderで使う
+	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeNextScene; //Tableの中身の配列を指定
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeNextScene); //Tableで利用する数
 
-	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
-	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
-	rootParameters[3].Descriptor.ShaderRegister = 1;   //レジスタ番号1とバインド
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;   //CBVを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;   //PixelShaderで使う
+	rootParameters[2].Descriptor.ShaderRegister = 0;   //レジスタ番号1とバインド
 
 	descriptionRootSignature.pParameters = rootParameters;   //ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);  //配列の長さ
@@ -387,20 +261,9 @@ void SnowEffectDrawer::CreateGraphicsPipelineState() {
 	assert(SUCCEEDED(hr));
 
 	//InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
-	inputElementDescs[0].SemanticName = "POSITION";
-	inputElementDescs[0].SemanticIndex = 0;
-	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[1].SemanticName = "TEXCOORD";
-	inputElementDescs[1].SemanticIndex = 0;
-	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	inputLayoutDesc.pInputElementDescs = inputElementDescs;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs);
+	inputLayoutDesc.pInputElementDescs = nullptr;
+	inputLayoutDesc.NumElements = 0;
 
 	//BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};

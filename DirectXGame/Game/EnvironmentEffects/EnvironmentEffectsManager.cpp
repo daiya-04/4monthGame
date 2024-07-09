@@ -2,10 +2,10 @@
 #include "Input.h"
 EnvironmentEffectsManager::EnvironmentEffectsManager() {
 	prevScene.reset(new PostEffect());
-	prevScene->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+	prevScene->Init(L"Resources/shaders/PostEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 
 	nextScene.reset(new PostEffect());
-	nextScene->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+	nextScene->Init(L"Resources/shaders/PostEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 	dualSceneDrawer_.reset(new DualSceneDrawer());
 	
 	weightCircle_.reset(new WeightCircle);

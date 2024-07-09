@@ -27,7 +27,7 @@ void SnowManager::Init() {
 	originalSnow->position_ = { Stage::kBasePosition.x + 96.0f * 15 + 48.0f ,-48.0f };
 	originalSnows_.push_back(std::move(originalSnow));
 	snowPositionTexture_.reset(new PostEffect());
-	snowPositionTexture_->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+	snowPositionTexture_->Init(L"Resources/shaders/PostEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 
 	snowEffectDrawer_.reset(new SnowEffectDrawer);
 	snowEffectDrawer_->Init();

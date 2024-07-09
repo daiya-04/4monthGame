@@ -7,7 +7,7 @@ void HeatHazeManager::Init() {
 	roop_ = 17.3f;
 	width_ = 0.001f;
 	effectTexture_.reset(new PostEffect());
-	effectTexture_->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+	effectTexture_->Init(L"Resources/shaders/PostEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 
 	magmaDistortion_.reset(new MagmaDistortion());
 	magmaDistortion_->Init();

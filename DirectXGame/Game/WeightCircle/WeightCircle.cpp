@@ -5,7 +5,7 @@
 void WeightCircle::Init() {
 
 	weight_.reset(new PostEffect());
-	weight_->Init(L"Resources/shaders/NoneEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
+	weight_->Init(L"Resources/shaders/PostEffect.VS.hlsl", L"Resources/shaders/NoneEffect.PS.hlsl");
 
 	circle_.reset(new Sprite(TextureManager::GetInstance()->Load("weightCircle.png"), { 640.0f,360.0f }, 1.0f/64.0f));
 	circle_->Initialize();
