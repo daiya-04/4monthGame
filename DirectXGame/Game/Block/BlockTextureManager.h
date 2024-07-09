@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "Object2dInstancing.h"
+#include "Object2d.h"
 #include "Camera.h"
 #include <list>
 #include "Vec4.h"
@@ -93,6 +94,9 @@ public:
 
 	void UpdateJumpChargeParticle(const Vector2& position);
 
+	void UpdateChargeCompleteEffect(const Vector2& position);
+	void DrawChargeCompleteEffect(const Camera& camera);
+
 	//黄金ブロックのエフェクト
 	void GoldBlockEffectUpdate();
 	void GoldBlockEffectDraw();
@@ -145,6 +149,11 @@ private:
 	bool isDrawGoldBlockEffect_;
 	bool isResetGoldBlockEffect_;
 
+	//タメ完了エフェクト
+	bool isDrawChargeCompleteEffect_=false;
+	uint32_t chargeCompleteTime=0;
+	static const uint32_t chargeCompleteEnd=20;
+	std::unique_ptr<Object2d> chargeCompleteEffect_;
 };
 
 

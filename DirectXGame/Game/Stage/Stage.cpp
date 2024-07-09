@@ -422,7 +422,7 @@ void Stage::DrawHeatBefore() {
 	for (uint32_t i = 0; i < 2; i++) {
 		ropes_[i]->Draw(*camera_);
 	}
-
+	BlockTextureManager::GetInstance()->DrawChargeCompleteEffect(*camera_);
 }
 
 void Stage::DrawHeatAfter() {
@@ -479,7 +479,7 @@ void Stage::DrawColdBefore() {
 	for (uint32_t i = 0; i < 2; i++) {
 		ropes_[i]->Draw(*camera_);
 	}
-
+	BlockTextureManager::GetInstance()->DrawChargeCompleteEffect(*camera_);
 }
 
 void Stage::DrawColdAfter() {

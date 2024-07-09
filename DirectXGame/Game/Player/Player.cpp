@@ -635,6 +635,10 @@ void Player::ChargeJump() {
 			BlockTextureManager::GetInstance()->CreateJumpChargeParticle(position_, 0);
 			}
 		}
+		else {
+			//完了エフェクト
+			//BlockTextureManager::GetInstance()->UpdateChargeCompleteEffect(position_);
+		}
 
 	}
 	else {
@@ -642,7 +646,10 @@ void Player::ChargeJump() {
 		parameters_[currentCharacters_]->chargeJump_.chargeTimer = 0;
 
 	}
-
+	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
+		//完了エフェクト
+		BlockTextureManager::GetInstance()->UpdateChargeCompleteEffect(position_);
+	}
 }
 
 void Player::WallJump() {

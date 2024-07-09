@@ -184,6 +184,10 @@ BlockTextureManager::BlockTextureManager() {
 	//chargejump
 	jumpChargeParticles_.reset(Object2dInstancing::Create(TextureManager::Load("circle.png"), Vector2{ 1.0f,1.0f }, 8));
 	jumpChargeParticles_->SetSize({ float(BaseBlock::kBlockSize_/6),float(BaseBlock::kBlockSize_/6) });
+
+	//chargeComplete
+	chargeCompleteEffect_.reset(Object2d::Create(TextureManager::Load("circle.png"), { 0,0 }, 1.0f));
+	chargeCompleteEffect_->SetSize({12.0f,12.0f});
 }
 
 void BlockTextureManager::ClearObject() {
@@ -485,4 +489,25 @@ void BlockTextureManager::GoldBlockEffectUpdate() {
 }
 void BlockTextureManager::GoldBlockEffectDraw() {
 
+}
+
+void BlockTextureManager::UpdateChargeCompleteEffect(const Vector2& position) {
+	chargeCompleteTime++;
+	if (chargeCompleteTime>=chargeCompleteEnd) {
+		chargeCompleteTime = 0;
+	}
+	chargeCompleteEffect_->position_ = position;
+	chargeCompleteEffect_->SetScale((0.75f + float(chargeCompleteTime) / float(chargeCompleteEnd) * 0.25f)*8.0f);
+	float c = 0.5f + (float(chargeCompleteEnd - chargeCompleteTime) / float(chargeCompleteEnd)) * 0.5f;
+	chargeCompleteEffect_->SetColor({c,c,c,c});
+	isDrawChargeCompleteEffect_ = true;
+}
+
+void BlockTextureManager::DrawChargeCompleteEffect(const Camera& camera) {
+	if (!isDrawChargeCompleteEffect_) {
+		chargeCompleteTime = 0;
+		return;
+	}
+	chargeCompleteEffect_->Draw(camera);
+	isDrawChargeCompleteEffect_ = false;
 }
