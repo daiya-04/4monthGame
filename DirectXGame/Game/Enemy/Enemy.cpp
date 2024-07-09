@@ -9,9 +9,18 @@ void BaseEnemy::CheckCollision() {
 
 	if (blocksPtr_) {
 
-		for (uint32_t y = 0; y < kMaxStageHeight; y++) {
+		int32_t startY = int32_t(tmpPosition_.y) / Block::kBlockSize_ - 2;
+		startY = std::clamp(startY, 0, kMaxStageHeight - 1);
+		int32_t endY = int32_t(tmpPosition_.y) / Block::kBlockSize_ + 2;
+		endY = std::clamp(endY, 0, kMaxStageHeight - 1);
+		int32_t startX = int32_t(tmpPosition_.x) / Block::kBlockSize_ - 2;
+		startX = std::clamp(startX, 0, kMaxStageWidth - 1);
+		int32_t endX = int32_t(tmpPosition_.x) / Block::kBlockSize_ + 2;
+		endX = std::clamp(endX, 0, kMaxStageWidth - 1);
 
-			for (uint32_t x = 0; x < kMaxStageWidth; x++) {
+		for (int32_t y = startY; y <= endY; y++) {
+
+			for (int32_t x = startX; x <= endX; x++) {
 
 				//破壊されているものは処理しない
 				if ((*blocksPtr_)[y][x]->GetIsBreak()) {
