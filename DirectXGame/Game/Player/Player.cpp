@@ -649,6 +649,9 @@ void Player::ChargeJump() {
 	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
 		//完了エフェクト
 		BlockTextureManager::GetInstance()->UpdateChargeCompleteEffect(position_);
+		//BlockTextureManager::GetInstance()->SetPlayerTextureSize({ kPlayerImageSize_, kPlayerImageSize_ });
+		//BlockTextureManager::GetInstance()->SetPlayerTextureHandle(object_->GetTextureHandle());
+		//BlockTextureManager::GetInstance()->SetPlayerTextureArea({ 160.0f * currentAnimationNum_,0.0f }, { 160.0f,160.0f });
 	}
 }
 

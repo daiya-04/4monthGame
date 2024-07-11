@@ -14,7 +14,7 @@ void JumpChargeParticle::Initialize(const Vector2& postition, int32_t type) {
 	aliveTime_ = 15;
 	aliveMax_ = aliveTime_;
 	isAlive_ = true;
-	response = 5;
+	response = 2;
 
 	//rotate_ = DirectionToDirection(Vector3{ offset_.x,offset_.y,1.0f }.Normalize(), Vector3{0,0,0}).m[2][0];
 	

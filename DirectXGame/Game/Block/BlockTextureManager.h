@@ -96,6 +96,15 @@ public:
 
 	void UpdateChargeCompleteEffect(const Vector2& position);
 	void DrawChargeCompleteEffect(const Camera& camera);
+	void SetPlayerTextureHandle(uint32_t handle){
+		chargeCompleteEffect_->SetTextureHandle(handle);
+	}
+	void SetPlayerTextureArea(const Vector2& base, const Vector2& size) {
+		chargeCompleteEffect_->SetTextureArea(base,size);
+	};
+	void SetPlayerTextureSize(const Vector2& size) {
+		chargeCompleteEffect_->SetSize(size);
+	}
 
 	//黄金ブロックのエフェクト
 	void GoldBlockEffectUpdate();
@@ -152,7 +161,7 @@ private:
 	//タメ完了エフェクト
 	bool isDrawChargeCompleteEffect_=false;
 	uint32_t chargeCompleteTime=0;
-	static const uint32_t chargeCompleteEnd=20;
+	static const uint32_t chargeCompleteEnd=12;
 	std::unique_ptr<Object2d> chargeCompleteEffect_;
 };
 

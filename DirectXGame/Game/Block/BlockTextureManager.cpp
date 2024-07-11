@@ -497,9 +497,9 @@ void BlockTextureManager::UpdateChargeCompleteEffect(const Vector2& position) {
 		chargeCompleteTime = 0;
 	}
 	chargeCompleteEffect_->position_ = position;
-	chargeCompleteEffect_->SetScale((0.75f + float(chargeCompleteTime) / float(chargeCompleteEnd) * 0.25f)*8.0f);
-	float c = 0.5f + (float(chargeCompleteEnd - chargeCompleteTime) / float(chargeCompleteEnd)) * 0.5f;
-	chargeCompleteEffect_->SetColor({c,c,c,c});
+	chargeCompleteEffect_->SetScale(1.1f+( float(chargeCompleteTime) / float(chargeCompleteEnd)) * 8.2f);
+	float c = (float(chargeCompleteEnd - chargeCompleteTime) / float(chargeCompleteEnd)) * 0.8f;
+	chargeCompleteEffect_->SetColor({1000.0f,1000.0f,1000.0f,c});
 	isDrawChargeCompleteEffect_ = true;
 }
 
