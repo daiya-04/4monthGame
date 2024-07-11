@@ -40,8 +40,12 @@ void StageSelectScene::Init() {
 	gaugeBGTex_ = TextureManager::Load("UI/selectScoreBG.png");
 	gaugeFreamTex_ = TextureManager::Load("UI/selectScoreFrame.png");
 	gaugeTex_ = TextureManager::Load("UI/scoreGage.png");
+	circleTex_ = TextureManager::Load("circle.png");
 
 	backGround_.reset(Sprite::Create(bgTexture_, { 640.0f,360.0f }));
+
+	circle_.reset(Sprite::Create(circleTex_, {}));
+	circle_->SetPosition(uis_["BButton"]->GetPosition());
 
 	for (size_t index = 0; index < 2; index++) {
 		player_[index].reset(Object2d::Create(playerTex_[index], {}));
@@ -111,6 +115,8 @@ void StageSelectScene::Init() {
 
 	selectBGM_->Play();
 
+	ButtonEffectInit();
+	BoundingInit(uis_["ToTitle"]->GetPosition());
 }
 
 void StageSelectScene::Update() {
@@ -157,6 +163,9 @@ void StageSelectScene::Update() {
 			EnterUpdate();
 			break;
 	}
+
+	ButtonEffectUpdate();
+	BoundingUpdate(uis_["ToTitle"].get());
 
 	steam_->SetCenter({ 640.0f + camera_.translation_.x,360.0f });
 	steam_->Update();
@@ -209,6 +218,7 @@ void StageSelectScene::DrawParticle() {
 void StageSelectScene::DrawUI() {
 
 	//stageNum_->Draw();
+	circle_->Draw();
 	for (const auto& ui : uis_) {
 		ui.second->Draw();
 	}
@@ -556,3 +566,49 @@ void StageSelectScene::ScoreGaugeSet() {
 	}
 
 }
+
+void StageSelectScene::ButtonEffectInit() {
+
+	buttonEffect_.param_ = 0.0f;
+	buttonEffect_.alpha_ = 1.0f;
+
+}
+
+void StageSelectScene::ButtonEffectUpdate() {
+
+	buttonEffect_.param_ += 0.04f;
+
+	buttonEffect_.param_ = std::fmod(buttonEffect_.param_, 1.0f);
+
+	buttonEffect_.alpha_ = Lerp(buttonEffect_.param_, 1.0f, 0.0f);
+	buttonEffect_.scale_ = Lerp(buttonEffect_.param_, 0.5f, 0.8f);
+
+	circle_->SetColor({ 1.0f,1.0f,1.0f,buttonEffect_.alpha_ });
+	circle_->SetScale(buttonEffect_.scale_);
+}
+
+void StageSelectScene::BoundingInit(const Vector2& axisPos) {
+
+	workBounding_.axisPos_ = axisPos;
+	workBounding_.velocity_.x = 0.5f;
+	workBounding_.accel_ = {};
+	workBounding_.addPos_ = {};
+
+}
+
+void StageSelectScene::BoundingUpdate(Sprite* sprite) {
+
+	workBounding_.accel_.x += -0.001f;
+
+	workBounding_.velocity_.x += workBounding_.accel_.x;
+
+	workBounding_.addPos_ += workBounding_.velocity_;
+
+	if (workBounding_.addPos_.x < 0) {
+		BoundingInit(workBounding_.axisPos_);
+	}
+
+	sprite->SetPosition(workBounding_.axisPos_ + workBounding_.addPos_);
+
+}
+
