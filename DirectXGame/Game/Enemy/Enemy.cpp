@@ -185,7 +185,7 @@ void BaseEnemy::CheckCollision() {
 				else {
 
 					//プレイヤースタン
-
+					player_->Stun();
 
 				}
 

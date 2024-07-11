@@ -42,9 +42,9 @@ void Magma::Update() {
 #endif // _DEBUG
 
 	//採掘中にマグマライン上昇
-	if (player_->GetIsMine()) {
+	/*if (player_->GetIsMine()) {
 
-	}
+	}*/
 
 	//硬直時間中は動かない
 	if (freezeTime_ > 0) {

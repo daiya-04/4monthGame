@@ -511,7 +511,7 @@ void Stage::DrawColdAfter() {
 		returnUI_->Draw(*camera_);
 	}
 
-	
+	EnemyManager::GetInstance()->Draw(*camera_);
 
 	upgradeSystem_->Draw(*camera_);
 

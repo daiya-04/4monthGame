@@ -320,6 +320,8 @@ public:
 
 	void ResetDigCount() { digCount_ = 0; }
 
+	void Stun();
+
 private:
 
 	//移動
@@ -481,6 +483,11 @@ private:
 
 	//フェード開始フラグ
 	bool isStartFade_ = false;
+
+	//スタンタイマー
+	int32_t stunTimer_ = 0;
+	//無敵時間
+	int32_t invincibleTimer_ = 0;
 
 	//死亡フラグ
 	bool isDead_ = false;

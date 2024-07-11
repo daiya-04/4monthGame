@@ -218,6 +218,20 @@ void Player::Update() {
 
 		useCollision_ = true;
 
+		if (invincibleTimer_ > 0) {
+			invincibleTimer_--;
+		}
+
+		if (stunTimer_ > 0) {
+
+			stunTimer_--;
+
+			if (stunTimer_ <= 0) {
+				invincibleTimer_ = 180;
+			}
+
+		}
+
 		//採掘中の行動処理
 		if (isMining_ && !isDead_) {
 
@@ -234,7 +248,7 @@ void Player::Update() {
 			}
 
 			//動きを止めるフラグが立ったら操作不可にする
-			if (!isStopMove_) {
+			if (!isStopMove_ && stunTimer_ <= 0) {
 
 				//移動処理
 				Move();
@@ -319,7 +333,9 @@ void Player::UpdateUI() {
 
 void Player::Draw(const Camera& camera) {
 
-	object_->Draw(camera);
+	if (invincibleTimer_ % 2 == 0) {
+		object_->Draw(camera);
+	}
 
 }
 
@@ -1117,6 +1133,8 @@ void Player::UpdatePosition() {
 
 		object_->position_ = position_;
 
+		object_->position_.x += RandomEngine::GetRandom(float(-stunTimer_) * 0.1f, float(stunTimer_) * 0.1f);
+
 		//4頂点の座標を更新
 		leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeX_ };
 		rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
@@ -1203,28 +1221,6 @@ void Player::DamageUpdate() {
 		isClear_ = false;
 
 	}
-	//一定間隔ごとにダメージを受ける
-	//if (--damageTimer_ <= 0) {
-
-	//	damageTimer_ = 120;
-
-	//	for (int32_t i = 0; i < BringRocks::kMaxType; i++) {
-
-	//		//1つ以上持っていたら約10%減少させる
-	//		if (rockParameter_.rocks_[i] > 1) {
-
-	//			rockParameter_.rocks_[i] -= (rockParameter_.rocks_[i] / 10) + 1;
-
-	//			//0未満になってしまったら調整
-	//			if (rockParameter_.rocks_[i] < 0) {
-	//				rockParameter_.rocks_[i] = 0;
-	//			}
-
-	//		}
-
-	//	}
-
-	//}
 
 }
 
@@ -1234,6 +1230,16 @@ void Player::HealUpdate() {
 	/*if (damageTimer_ < 120) {
 		damageTimer_++;
 	}*/
+
+}
+
+void Player::Stun() {
+
+	if (stunTimer_ <= 0 && invincibleTimer_ <= 0) {
+		stunTimer_ = 90;
+		velocity_ = { 0.0f,0.0f };
+		object_->SetTextureHandle(texture_[currentCharacters_]);
+	}
 
 }
 
