@@ -32,6 +32,7 @@ public:
 	void AddScore(int32_t value) {
 		value_ += value;
 		value_ = std::clamp(value_, 0, 99999999);
+		AddScoreEffectInit();
 	}
 
 	int32_t GetScore() const { return value_; }
@@ -42,12 +43,24 @@ public:
 
 	void SetSpace(float val) { space_ = val; }
 
+	void AddScoreEffectInit();
+
+	void AddScoreEffectUpdate();
+
 private:
 	int32_t value_ = 0;
 
 	//スコアの数字
 	uint32_t numTex_ = 0;
 	std::array<std::unique_ptr<Sprite>, kMaxDigits_> numbers_;
+
+	struct WorkAddScoreEffect {
+		float velocity_{};
+		float accel_{};
+		float addScale{};
+	};
+
+	WorkAddScoreEffect workAddScoreEffect_;
 
 public:
 

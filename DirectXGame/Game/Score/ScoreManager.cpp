@@ -53,6 +53,32 @@ void Score::SetScore(const Score& score) {
 	value_ = score.value_;
 }
 
+void Score::AddScoreEffectInit() {
+
+	workAddScoreEffect_.accel_ = 0.0f;
+	workAddScoreEffect_.velocity_ = 0.1f;
+	workAddScoreEffect_.addScale = 0.0f;
+
+}
+
+void Score::AddScoreEffectUpdate() {
+
+	workAddScoreEffect_.accel_ += -0.005f;
+
+	workAddScoreEffect_.velocity_ += workAddScoreEffect_.accel_;
+
+	workAddScoreEffect_.addScale += workAddScoreEffect_.velocity_;
+
+	if (workAddScoreEffect_.addScale <= 0.0f) {
+		workAddScoreEffect_.addScale = 0.0f;
+	}
+
+	for (int32_t i = 0; i < kMaxDigits_; i++) {
+		numbers_[i]->SetScale(1.0f + workAddScoreEffect_.addScale);
+	}
+
+}
+
 void Rank::Init(const Vector2& pos, const Vector2& size) {
 
 	rankTex_ = TextureManager::Load("rank.png");

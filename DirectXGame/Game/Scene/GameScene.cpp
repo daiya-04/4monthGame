@@ -476,6 +476,8 @@ void GameScene::Update() {
 
 	}
 
+	score_.AddScoreEffectUpdate();
+
 }
 
 void GameScene::UpdateScoreGage() {
