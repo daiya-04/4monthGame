@@ -120,10 +120,15 @@ void BaseBlock::Break(float power, bool isPlayer) {
 
 void BaseBlock::UnBreak() {
 
-	int createNum = int(RandomEngine::GetRandom(32.0f, 48.0f));
-	Vector2 center = position_ + Vector2{ kBlockHalfSize_ ,kBlockHalfSize_ };
+	int createNum = int(RandomEngine::GetRandom(2.0f, 3.0f));
+	Vector2 center = position_;
+	Vector2 pCenter = player_->GetPosition();
+	Vector2 closestPoint{
+		std::clamp(pCenter.x ,center.x - kBlockHalfSize_ ,center.x + kBlockHalfSize_),
+		std::clamp(pCenter.y ,center.y - kBlockHalfSize_ ,center.y + kBlockHalfSize_)};
 	Vector2 velocity = player_->GetPosition() - center;
-	Vector2 pos = center + velocity.Normalize() * float(kBlockHalfSize_);
+	//Vector2 velocity = {0,0};
+	Vector2 pos = closestPoint;
 	velocity = velocity.Normalize();
 	for (int i = 0; i < createNum; i++) {
 		BlockTextureManager::GetInstance()->CreateParticle(pos, velocity, kUnbreakable);

@@ -149,7 +149,7 @@ BlockTextureManager::BlockTextureManager() {
 		if (index == 2 || index == 3 || index == 5 || index == 6 || index == 7){
 			size = 1;
 		}
-		if (index == 4 || index == 1) {
+		if (index == 4) {
 			size = 2;
 		}
 		object->SetSize({ float(BaseBlock::kBlockSize_ / size),float(BaseBlock::kBlockSize_ / size) });

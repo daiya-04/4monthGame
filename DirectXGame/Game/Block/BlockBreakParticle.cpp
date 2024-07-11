@@ -58,7 +58,7 @@ void BlockBreakParticle::Initialize(const Vector2& postition, const Vector2& vel
 	//velocity_ = velocity_.Normal();
 	aliveTime_ = 40;
 	if (blockType == 1){
-		aliveTime_ = 10;
+		aliveTime_ = 20;
 	}
 	isAlive_ = true;
 }
