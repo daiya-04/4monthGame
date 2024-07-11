@@ -1,9 +1,5 @@
 #include"CameraFrozen.hlsli"
 
-struct Material {
-	float32_t4 color;
-};
-
 struct CameraFrozenData {
 	float radius;
 	float border;
@@ -11,8 +7,7 @@ struct CameraFrozenData {
 	int32_t mode;
 };
 
-ConstantBuffer<Material> gMaterial : register(b0);
-ConstantBuffer<CameraFrozenData> gCameraFrozenData : register(b1);
+ConstantBuffer<CameraFrozenData> gCameraFrozenData : register(b0);
 
 float rand(float32_t2 seed) 
 {

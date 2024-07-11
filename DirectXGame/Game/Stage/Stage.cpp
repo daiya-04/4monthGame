@@ -110,6 +110,10 @@ Stage::~Stage()
 
 void Stage::Initialize(uint32_t stageNumber) {
 
+	EnemyManager::GetInstance()->Initialize();
+	EnemyManager::GetInstance()->SetMap(&map_);
+	EnemyManager::GetInstance()->SetPlayer(player_);
+
 	currentStageNumber_ = stageNumber;
 
 	for (int32_t y = 0; y < kMaxStageHeight; y++) {
@@ -210,9 +214,7 @@ void Stage::Update() {
 		}
 
 		//敵更新
-		for (auto& enemy : enemies_) {
-			enemy->Update();
-		}
+		EnemyManager::GetInstance()->Update();
 
 		//家に戻ったら再生成
 		if (player_->GetIsHome() && !isRespawn_) {
@@ -454,9 +456,7 @@ void Stage::DrawHeatAfter() {
 		returnUI_->Draw(*camera_);
 	}
 
-	for (auto& enemy : enemies_) {
-		enemy->Draw(*camera_);
-	}
+	EnemyManager::GetInstance()->Draw(*camera_);
 
 	upgradeSystem_->Draw(*camera_);
 
@@ -511,9 +511,7 @@ void Stage::DrawColdAfter() {
 		returnUI_->Draw(*camera_);
 	}
 
-	for (auto& enemy : enemies_) {
-		enemy->Draw(*camera_);
-	}
+	
 
 	upgradeSystem_->Draw(*camera_);
 
@@ -682,7 +680,7 @@ void Stage::RespawnBlock(Block::BlockType type) {
 			bool isContinue = false;
 
 			//敵と被ったら復活させない
-			for (auto& enemy : enemies_) {
+			for (auto& enemy : EnemyManager::GetInstance()->GetEnemies()) {
 
 				if (IsCollision(map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->GetCollision(), enemy->GetCollision())) {
 					isContinue = true;
@@ -830,11 +828,6 @@ void Stage::Load(uint32_t stageNumber) {
 		map_[3][14]->Reset();
 
 	}
-
-	std::shared_ptr<NormalEnemy> enemy = std::make_shared<NormalEnemy>();
-	enemy->Initialize({ 11.0f * 96.0f, 2.0f * 96.0f });
-	enemy->SetBlocks(&map_);
-	enemies_.push_back(enemy);
 
 	//ブロックの更新
 	for (uint32_t y = 0; y < kMaxStageHeight; y++) {

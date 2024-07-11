@@ -219,6 +219,8 @@ public:
 
 	void ResetVelocityY() { velocity_.y = 0.0f; }
 
+	void SetVelocityY(float value) { velocity_.y = value; }
+
 	void SetBlocks(std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight>* blocks) { blocksPtr_ = blocks; }
 
 	bool GetIsDead() const { return isDead_; }

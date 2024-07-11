@@ -11,16 +11,6 @@
 class DualSceneDrawer {
 private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-public:
-
-	struct VertexData {
-		Vector4 pos_;
-		Vector2 uv_;
-	};
-
-	struct MaterialData {
-		Vector4 color_;
-	};
 
 public: //メンバ関数
 
@@ -47,8 +37,6 @@ public: //メンバ関数
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU() { return textureSrvHandleGPU_; };
 private:
 
-	void TransferVertex();
-
 	void CreateGraphicsPipelineState();
 	
 	ComPtr<ID3D12Resource> CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
@@ -74,16 +62,6 @@ private: //メンバ変数
 
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandleCPU_{};
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandleCPU_{};
-
-	ComPtr<ID3D12Resource> vertexBuff_;
-	VertexData* vertexData_ = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-
-	ComPtr<ID3D12Resource> indexBuff_;
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
-
-	ComPtr<ID3D12Resource> materialBuff_;
-	MaterialData* materialData_ = nullptr;
 
 };
 

@@ -9,6 +9,7 @@
 #include "Block/Block.h"
 #include <array>
 #include "Stage/StageConstant.h"
+#include "Player/Player.h"
 
 class BaseEnemy
 {
@@ -27,7 +28,11 @@ public:
 
 	const AABB2D& GetCollision() { return collision_; }
 
+	bool GetIsDead() const { return isDead_; }
+
 	void SetBlocks(std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight>* blocks) { blocksPtr_ = blocks; }
+
+	void SetPlayer(Player* player) { player_ = player; }
 
 	void SetPosition(const Vector2& position) {
 		position_ = position;
@@ -64,6 +69,8 @@ protected:
 	//ブロックの配列ポインタ
 	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight>* blocksPtr_ = nullptr;
 
+	Player* player_ = nullptr;
+
 	Vector2 velocity_{};
 
 	std::unique_ptr<Object2d> object_;
@@ -77,6 +84,9 @@ protected:
 
 	//自然落下速度
 	float gravityFallSpeed_ = 2.0f;
+
+	//死亡フラグ
+	bool isDead_ = false;
 
 	//位置
 	Vector2 position_{};

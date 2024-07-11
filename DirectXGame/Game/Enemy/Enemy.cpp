@@ -7,6 +7,7 @@ BaseEnemy::BaseEnemy() {
 
 void BaseEnemy::CheckCollision() {
 
+	//ブロックとの当たり判定
 	if (blocksPtr_) {
 
 		int32_t startY = int32_t(tmpPosition_.y) / Block::kBlockSize_ - 2;
@@ -156,6 +157,36 @@ void BaseEnemy::CheckCollision() {
 
 					}
 					
+				}
+
+			}
+
+		}
+
+	}
+
+	//プレイヤーとの当たり判定
+	if (player_) {
+
+		//プレイヤーとの距離が一定まで近づいていたら判定を取る
+		if (fabsf(player_->GetPosition().x - position_.x) <= 150.0f &&
+			fabsf(player_->GetPosition().y - position_.y) <= 150.0f) {
+
+			//プレイヤーと当たっていたら
+			if (IsCollision(player_->GetCollision(), collision_)) {
+
+				//上側からプレイヤーが来ていたら踏み判定
+				if (player_->GetPrePosition().y + Player::kPlayerHalfSizeY_ <= position_.y - kEnemyHalfSize_) {
+
+					isDead_ = true;
+					player_->SetVelocityY(-20.0f);
+
+				}
+				else {
+
+					//プレイヤースタン
+
+
 				}
 
 			}

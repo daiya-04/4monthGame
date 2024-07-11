@@ -130,6 +130,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Block\starParticle.cpp" />
     <ClCompile Include="Game\Block\WallKickEffect.cpp" />
     <ClCompile Include="Game\Enemy\Enemy.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyManager.cpp" />
     <ClCompile Include="Game\EnvironmentEffects\MagmaDistortion.cpp" />
     <ClCompile Include="Game\GameText\GameTextManager.cpp" />
     <ClCompile Include="Game\Player\Player.cpp" />
@@ -221,6 +222,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Block\starParticle.h" />
     <ClInclude Include="Game\Block\WallKickEffect.h" />
     <ClInclude Include="Game\Enemy\Enemy.h" />
+    <ClInclude Include="Game\Enemy\EnemyManager.h" />
     <ClInclude Include="Game\EnvironmentEffects\MagmaDistortion.h" />
     <ClInclude Include="Game\GameText\GameTextManager.h" />
     <ClInclude Include="Game\Player\Player.h" />
