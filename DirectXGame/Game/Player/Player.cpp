@@ -1623,7 +1623,10 @@ void Player::CheckCollision() {
 							parameters_[currentCharacters_]->dig_.digCount = parameters_[currentCharacters_]->dig_.digInterval;
 
 						}
-
+						else {
+							//壊せないブロックは火花出す
+							(*blocksPtr_)[y][x]->UnBreak();
+						}
 					}
 
 				}

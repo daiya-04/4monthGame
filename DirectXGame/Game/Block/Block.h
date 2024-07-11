@@ -146,6 +146,9 @@ public:
 	//外的要因(プレイヤーなど)で破壊された時に呼び出される関数
 	void Break(float power, bool isPlayer = true);
 
+	//破壊できないブロックに対して攻撃が行われたときに呼ぶ
+	void UnBreak();
+
 	//ブロックが再生する時の関数(再び当たり判定を持つ)
 	void Repair() { 
 		durability_ = defaultDurability_;

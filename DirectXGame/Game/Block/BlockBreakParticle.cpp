@@ -51,17 +51,20 @@ void BlockBreakParticle::Initialize(const Vector2& postition, const Vector2& vel
 		}
 		texBase_ *= 32.0f;
 	}
-	velocity_.y = RandomEngine::GetRandom(-8.0f,-4.0f);
+	velocity_.y = RandomEngine::GetRandom(-6.0f, 4.0f);
 	velocity_.x = RandomEngine::GetRandom(-2.0f, 2.0f);
 	velocity_ += velocity*7.0f;
 	rotate_ = 0;
 	//velocity_ = velocity_.Normal();
 	aliveTime_ = 40;
+	if (blockType == 1){
+		aliveTime_ = 10;
+	}
 	isAlive_ = true;
 }
 
 void BlockBreakParticle::Update() {
-	velocity_ += Vector2{0.0f,0.8f};
+	velocity_ += Vector2{0.0f,0.6f};
 	position_ += velocity_;
 	aliveTime_--;
 	if (velocity_.x>0) {

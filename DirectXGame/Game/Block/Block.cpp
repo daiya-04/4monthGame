@@ -122,6 +122,24 @@ void BaseBlock::Break(float power, bool isPlayer) {
 
 }
 
+void BaseBlock::UnBreak() {
+
+	int createNum = int(RandomEngine::GetRandom(32.0f, 48.0f));
+	Vector2 center = position_ + Vector2{ kBlockHalfSize_ ,kBlockHalfSize_ };
+	Vector2 velocity = player_->GetPosition() - center;
+	Vector2 pos = center + velocity.Normalize() * float(kBlockHalfSize_);
+	velocity = velocity.Normalize();
+	for (int i = 0; i < createNum; i++) {
+		BlockTextureManager::GetInstance()->CreateParticle(pos, velocity, kUnbreakable);
+	}
+
+		
+
+	//はじかれるSE入れる
+
+
+}
+
 void BaseBlock::IceBreak(int32_t breakCoolTime) {
 
 	//氷ブロックはスコア対象外

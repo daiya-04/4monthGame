@@ -62,7 +62,7 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		}
 		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[6]);
-			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[6]);
+			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/fire.png"));//ここ火花に差し替える
 		}
 		else if (index == Block::kGoldBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[7]);
@@ -149,7 +149,7 @@ BlockTextureManager::BlockTextureManager() {
 		if (index == 2 || index == 3 || index == 5 || index == 6 || index == 7){
 			size = 1;
 		}
-		if (index == 4) {
+		if (index == 4 || index == 1) {
 			size = 2;
 		}
 		object->SetSize({ float(BaseBlock::kBlockSize_ / size),float(BaseBlock::kBlockSize_ / size) });
