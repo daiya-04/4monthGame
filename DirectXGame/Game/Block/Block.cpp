@@ -96,13 +96,27 @@ void BaseBlock::Break(float power, bool isPlayer) {
 			score_->AddScore(10);
 		}
 
-		int createNum = int(RandomEngine::GetRandom(2.0f, 5.0f));
+		int createNum = int(RandomEngine::GetRandom(8.0f, 16.0f));
+		int fireCreateNum = int(RandomEngine::GetRandom(10.0f, 16.0f));
+		Vector2 center = position_;
+		Vector2 pCenter = player_->GetPosition();
+		Vector2 closestPoint{
+			std::clamp(pCenter.x ,center.x - kBlockHalfSize_ ,center.x + kBlockHalfSize_),
+			std::clamp(pCenter.y ,center.y - kBlockHalfSize_ ,center.y + kBlockHalfSize_) };
+		Vector2 velocity = player_->GetPosition() - center;
+		//Vector2 velocity = {0,0};
+		Vector2 pos = closestPoint;
+		velocity = velocity.Normalize();
+		velocity *= 2.0f;
 		for (int i = 0; i < createNum; i++) {
-			Vector2 velocity = player_->GetPosition() - position_;
-			Vector2 pos = position_ + velocity*0.5f;
-			velocity = velocity.Normalize();
 			BlockTextureManager::GetInstance()->CreateParticle(pos,velocity, type_);
 		}
+		velocity = velocity.Normalize();
+		velocity *= 0.4f;
+		for (int i = 0; i < fireCreateNum; i++) {
+			BlockTextureManager::GetInstance()->CreateParticle(pos, velocity, kUnbreakable);
+		}
+
 	}
 
 	//耐久力に応じてSE変更
@@ -129,7 +143,7 @@ void BaseBlock::UnBreak() {
 	Vector2 velocity = player_->GetPosition() - center;
 	//Vector2 velocity = {0,0};
 	Vector2 pos = closestPoint;
-	velocity = velocity.Normalize();
+	velocity = velocity.Normalize() * 0.3f;
 	for (int i = 0; i < createNum; i++) {
 		BlockTextureManager::GetInstance()->CreateParticle(pos, velocity, kUnbreakable);
 	}
