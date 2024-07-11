@@ -6,6 +6,7 @@
 #include "RandomEngine/RandomEngine.h"
 #include "Stage/Magma.h"
 #include "EnvironmentEffects/EnvironmentEffectsManager.h"
+#include "Enemy/EnemyManager.h"
 
 Score* BaseBlock::score_;
 
@@ -59,6 +60,9 @@ void BaseBlock::Break(float power, bool isPlayer) {
 				player_->SetIsClear(true);
 				crystalSE_->Play();
 			}
+			else if (type_ == kEnemyBlock) {
+				EnemyManager::GetInstance()->AddEnemy(position_);
+			}
 
 			if (type_ == kMagma || type_ == kSnow || type_ == kRedBlock || type_ == kGreenBlock || type_ == kBlueBlock) {
 				GemGetParticle::SetPlayer(player_);
@@ -69,17 +73,9 @@ void BaseBlock::Break(float power, bool isPlayer) {
 		}
 		else if (!isPlayer) {
 
-			if (type_ == kBlueBlock) {
-				//player_->AddBlueRock();
-				crystalSE_->Play();
-			}
-			else if (type_ == kGreenBlock) {
-				//player_->AddGreenRock();
-				crystalSE_->Play();
-			}
-			else if (type_ == kRedBlock) {
-				//player_->AddRedRock();
-				crystalSE_->Play();
+			//敵が敵の出現ブロックを壊したら出現するようにする
+			if (type_ == kEnemyBlock) {
+				EnemyManager::GetInstance()->AddEnemy(position_);
 			}
 
 		}

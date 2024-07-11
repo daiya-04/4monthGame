@@ -276,6 +276,9 @@
     <ClCompile Include="StageNumberDraw.cpp" />
     <ClCompile Include="Game\Block\WallKickEffect.cpp" />
     <ClCompile Include="Steam.cpp" />
+    <ClCompile Include="Game\Enemy\EnemyManager.cpp">
+      <Filter>Game\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -481,6 +484,9 @@
     <ClInclude Include="Steam.h" />
     <ClInclude Include="Game\Stage\StageConstant.h">
       <Filter>Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Enemy\EnemyManager.h">
+      <Filter>Game\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

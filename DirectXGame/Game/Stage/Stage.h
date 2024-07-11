@@ -15,6 +15,7 @@
 #include "StageConstant.h"
 #include "Player/Player.h"
 #include "Enemy/Enemy.h"
+#include "Enemy/EnemyManager.h"
 
 class Stage
 {
@@ -165,8 +166,6 @@ private:
 
 	//マップ
 	static std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight> map_;
-
-	std::vector<std::shared_ptr<BaseEnemy>> enemies_;
 
 	int32_t rockCount_ = 0;
 
