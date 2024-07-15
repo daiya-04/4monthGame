@@ -32,38 +32,20 @@ void CameraFrozenManager::Update() {
 	//ImGui::RadioButton("IsActive", isActive_);
 	ImGui::End();
 #endif // _DEBUG
-	if (isActive_) {
-		
-		if(std::fabsf(radius_ - radiusMin_)<0.004f) {
-			isActive_ = false;
-			//radius_ = radiusMin_;
-			if (cameraFrozen_->GetMode()) {
-				isClearRender_=true;
-			}
-		}
-		else if (radius_ > radiusMin_) {
-			radius_ -= 0.003f;
+	if (isActive_ || 1) {
+		if (radius_ > radiusMin_) {
+			radius_ -= 0.001f;
 		}
 		else {
-			radius_ += 0.003f;
+			radius_ += 0.001f;
 		}
 	}
-	else if(preRadius_ != radiusMin_){
-		if (!cameraFrozen_->GetMode()) {
-			isActive_ = true;
-			radius_ = radiusMin_;
-		}
-	}
+	
 	seed_+=0.01f;
-	cameraFrozen_->SetRadius(radiusMin_);
+	cameraFrozen_->SetRadius(radius_);
 	cameraFrozen_->SetBorder(border_);
 	cameraFrozen_->SetSeed(seed_);
-	/*if (radiusMinTarget_ - radiusMin_ < 0.005f) {
-		radiusMin_ += 0.01f;
-	}
-	else if (radiusMinTarget_ - radiusMin_>-0.005f) {
-		radiusMin_ -= 0.01f;
-	}*/
+	
 	preRadius_ = radiusMin_;
 }
 
