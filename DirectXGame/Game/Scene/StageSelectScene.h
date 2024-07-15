@@ -46,6 +46,14 @@ public:
 
 	void ScoreGaugeSet();
 
+	void ButtonEffectInit();
+
+	void ButtonEffectUpdate();
+
+	void BoundingInit(const Vector2& axisPos);
+
+	void BoundingUpdate(Sprite* sprite);
+
 private:
 
 	Camera camera_;
@@ -64,6 +72,9 @@ private:
 	Rank rank_;
 	Vector2 scorePos_ = { 550.0f,380.0f };
 	Vector2 rankPos_ = { 880.0f,295.0f };
+
+	uint32_t circleTex_ = 0;
+	std::unique_ptr<Sprite> circle_;
 
 	std::array<uint32_t, 2> playerTex_;
 	std::array<uint32_t, 2> playerRunTex_;
@@ -92,7 +103,23 @@ private:
 		int32_t cycle_ = 60;
 	};
 
+	struct WorkButtonEffect {
+		float param_ = 0.0f;
+		float alpha_ = 1.0f;
+		float scale_ = 1.0f;
+	};
+
+	struct WorkBounding {
+		Vector2 velocity_{};
+		Vector2 accel_{};
+		Vector2 axisPos_{};
+		Vector2 addPos_{};
+	};
+
+
 	WorkFloating arrowFloating_;
+	WorkButtonEffect buttonEffect_;
+	WorkBounding workBounding_;
 
 	Vector2 LArrowPos_{};
 	Vector2 RArrowPos_{};
