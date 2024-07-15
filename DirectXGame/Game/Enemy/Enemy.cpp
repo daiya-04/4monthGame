@@ -3,6 +3,7 @@
 BaseEnemy::BaseEnemy() {
 	enemyTexture_ = TextureManager::GetInstance()->Load("enemy/enemy.png");
 	object_.reset(Object2d::Create(enemyTexture_, {}));
+	crushSE_ = AudioManager::GetInstance()->Load("SE/crush.mp3");
 }
 
 void BaseEnemy::CheckCollision() {
@@ -179,6 +180,7 @@ void BaseEnemy::CheckCollision() {
 				if (player_->GetPrePosition().y + Player::kPlayerHalfSizeY_ <= position_.y - kEnemyHalfSize_) {
 
 					isDead_ = true;
+					crushSE_->Play();
 					player_->SetVelocityY(-20.0f);
 
 				}

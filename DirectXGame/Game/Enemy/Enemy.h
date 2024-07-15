@@ -117,6 +117,12 @@ protected:
 
 	uint32_t enemyTexture_;
 
+	///-----SE----------------------------------------
+
+	Audio* crushSE_;
+
+	///------------------------------------------------
+
 };
 
 class NormalEnemy : public BaseEnemy 
