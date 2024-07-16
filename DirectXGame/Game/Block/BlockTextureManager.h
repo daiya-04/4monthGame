@@ -14,6 +14,7 @@ class SandParticle;
 class GemGetParticle;
 class WallKickEffect;
 class JumpChargeParticle;
+class HitEffect;
 /// <summary>
 /// ブロックに使うテクスチャ一括管理
 /// </summary>
@@ -73,6 +74,9 @@ public:
 	void AppendJumpChargeParticle(const Vector2& position,float rotate, uint32_t type, const Vector4& color);
 
 	//描画オブジェクト追加
+	void AppendHitEffect(const Vector2& position, float rotate, const Vector4& color);
+
+	//描画オブジェクト追加
 	void AppendStarParticleUI(const Vector2& position, const Vector4& color);
 
 	//全オブジェクト描画
@@ -89,7 +93,7 @@ public:
 	void CreateWallKickEffect(const Vector2& position, int32_t type);
 	void CreateJumpChargeParticle(const Vector2& position, int32_t type);
 	void CreateStarParticleUI(const Vector2& position,int32_t type);
-
+	void CreateHitEffect(const Vector2& position, int32_t type);
 	void UpdateParticle(const Camera& camera);
 
 	void UpdateJumpChargeParticle(const Vector2& position);
@@ -144,6 +148,10 @@ private:
 
 	std::list<std::unique_ptr<JumpChargeParticle>> jumpChargeParticleDatas_;
 	std::unique_ptr<Object2dInstancing> jumpChargeParticles_;
+
+	std::list<std::unique_ptr<HitEffect>> hitEffectDatas_;
+	std::unique_ptr<Object2dInstancing> hitEffects_;
+
 private:
 
 	BlockTextureManager();

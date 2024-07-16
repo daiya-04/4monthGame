@@ -6,6 +6,7 @@
 #include "SandParticle.h"
 #include "GemGetParticle.h"
 #include "WallKickEffect.h"
+#include "hitEffect.h"
 #include "JumpChargeParticle.h"
 #include "DirectXCommon.h"
 BlockTextureManager* BlockTextureManager::GetInstance() {
@@ -135,6 +136,8 @@ void BlockTextureManager::LoadAllBlockTexture() {
 
 	jumpChargeParticleDatas_.clear();
 
+	hitEffectDatas_.clear();
+
 	ClearObject();
 }
 
@@ -177,6 +180,10 @@ BlockTextureManager::BlockTextureManager() {
 	constantCamera_->ChangeDrawingRange({ 1280.0f,720.0f });
 	constantCamera_->UpdateMatrix();
 
+	hitEffects_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 256));
+	hitEffects_->SetScale({ 1.0f, 1.0f });
+	hitEffects_->SetSize({ float(BaseBlock::kBlockSize_)*0.25f,float(BaseBlock::kBlockSize_)*10.0f });
+
 	//wallkick
 	wallKickEffects_.reset(Object2dInstancing::Create(TextureManager::Load("wallKickEffect.png"), Vector2{ 1.0f,1.0f }, 8));
 	wallKickEffects_->SetSize({ float(BaseBlock::kBlockSize_),float(BaseBlock::kBlockSize_) });
@@ -206,6 +213,7 @@ void BlockTextureManager::ClearObject() {
 
 	wallKickEffects_->ClearUseCount();
 	jumpChargeParticles_->ClearUseCount();
+	hitEffects_->ClearUseCount();
 }
 
 void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type, float disolveValue) {
@@ -299,6 +307,11 @@ void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t
 	wallKickEffects_->AppendObject(position,0, tBase,tSize, color,0);
 }
 
+//描画オブジェクト追加
+void BlockTextureManager::AppendHitEffect(const Vector2& position, float rotate, const Vector4& color) {
+	hitEffects_->AppendObject(position, rotate, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f }, color, 0);
+}
+
 void BlockTextureManager::AppendJumpChargeParticle(const Vector2& position,float rotate, uint32_t type, const Vector4& color) {
 	Vector2 tBase = { 0,0 };
 	Vector2 tSize = { 128,128 };
@@ -337,6 +350,10 @@ void BlockTextureManager::DrawParticle(const Camera& camera) {
 	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	GoldBlockEffectDraw(camera);
 	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (std::unique_ptr<HitEffect>& data : hitEffectDatas_) {
+		data->Draw();
+	}
+	hitEffects_->Draw(camera);
 }
 
 void BlockTextureManager::DrawParticleUI() {
@@ -387,6 +404,13 @@ void BlockTextureManager::CreateJumpChargeParticle(const Vector2& position, int3
 		particle->Initialize(position, type);
 		jumpChargeParticleDatas_.push_back(std::move(particle));
 	}
+}
+
+void BlockTextureManager::CreateHitEffect(const Vector2& position, int32_t type) {
+	std::unique_ptr<HitEffect> particle;
+	particle.reset(new HitEffect);
+	particle->Initialize(position);
+	hitEffectDatas_.push_back(std::move(particle));
 }
 
 void BlockTextureManager::CreateStarParticleUI(const Vector2& position, int32_t type) {
@@ -474,6 +498,17 @@ void BlockTextureManager::UpdateParticle(const Camera& camera) {
 		return false;
 		});
 	for (std::unique_ptr<WallKickEffect>& data : wallKickEffectDatas_) {
+		data->Update();
+	}
+
+	//hitEffect
+	hitEffectDatas_.remove_if([](std::unique_ptr<HitEffect>& bullet) {
+		if (!bullet->GetIsAlive()) {
+			return true;
+		}
+		return false;
+		});
+	for (std::unique_ptr<HitEffect>& data : hitEffectDatas_) {
 		data->Update();
 	}
 }

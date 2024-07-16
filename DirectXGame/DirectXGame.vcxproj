@@ -125,6 +125,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Block\BlockBreakParticle.cpp" />
     <ClCompile Include="Game\Block\BlockTextureManager.cpp" />
     <ClCompile Include="Game\Block\GemGetParticle.cpp" />
+    <ClCompile Include="Game\Block\HitEffect.cpp" />
     <ClCompile Include="Game\Block\JumpChargeParticle.cpp" />
     <ClCompile Include="Game\Block\SandParticle.cpp" />
     <ClCompile Include="Game\Block\starParticle.cpp" />
@@ -217,6 +218,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Block\BlockBreakParticle.h" />
     <ClInclude Include="Game\Block\BlockTextureManager.h" />
     <ClInclude Include="Game\Block\GemGetParticle.h" />
+    <ClInclude Include="Game\Block\HitEffect.h" />
     <ClInclude Include="Game\Block\JumpChargeParticle.h" />
     <ClInclude Include="Game\Block\SandParticle.h" />
     <ClInclude Include="Game\Block\starParticle.h" />

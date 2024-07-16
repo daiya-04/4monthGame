@@ -280,6 +280,7 @@
       <Filter>Game\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Game\Block\JumpChargeParticle.cpp" />
+    <ClCompile Include="Game\Block\HitEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -490,6 +491,7 @@
       <Filter>Game\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Game\Block\JumpChargeParticle.h" />
+    <ClInclude Include="Game\Block\HitEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectXGame.rc">

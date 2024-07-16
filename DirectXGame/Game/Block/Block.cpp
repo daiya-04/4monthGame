@@ -116,7 +116,7 @@ void BaseBlock::Break(float power, bool isPlayer) {
 		for (int i = 0; i < fireCreateNum; i++) {
 			BlockTextureManager::GetInstance()->CreateParticle(pos, velocity, kUnbreakable);
 		}
-
+		BlockTextureManager::GetInstance()->CreateHitEffect(pos,0);
 	}
 
 	//耐久力に応じてSE変更
