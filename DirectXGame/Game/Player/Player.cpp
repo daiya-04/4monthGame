@@ -329,6 +329,8 @@ void Player::UpdateUI() {
 
 	}
 
+	AddRockEffectUpdate();
+
 }
 
 void Player::Draw(const Camera& camera) {
@@ -1717,5 +1719,35 @@ void Player::LoadParameter() {
 
 	parameters_[kLeftPlayer]->CopyParameter(*defaultParameter_);
 	parameters_[kRightPlayer]->CopyParameter(*defaultParameter_);
+
+}
+
+void Player::AddRockEffectInit(BringRocks::RockType rockType) {
+
+	workAddScoreEffects_[rockType].accel_ = 0.0f;
+	workAddScoreEffects_[rockType].velocity_ = 0.1f;
+	workAddScoreEffects_[rockType].addScale = 0.0f;
+
+}
+
+void Player::AddRockEffectUpdate() {
+
+	for (int32_t height = 0; height < BringRocks::kMaxType; height++) {
+
+		workAddScoreEffects_[height].accel_ += -0.005f;
+
+		workAddScoreEffects_[height].velocity_ += workAddScoreEffects_[height].accel_;
+
+		workAddScoreEffects_[height].addScale += workAddScoreEffects_[height].velocity_;
+
+		if (workAddScoreEffects_[height].addScale <= 0.0f) {
+			workAddScoreEffects_[height].addScale = 0.0f;
+		}
+
+		for (int32_t i = 0; i < kMaxDigits_; i++) {
+			numbers_[height][i]->SetScale(1.0f + workAddScoreEffects_[height].addScale);
+		}
+
+	}
 
 }
