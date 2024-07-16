@@ -569,7 +569,6 @@ void GameScene::DrawNotSetPipeline() {
 	if (environmentEffectsManager_->GetIsPlaySceneChangeAnimation()) {
 		environmentEffectsManager_->WeightCircleDraw();
 	}
-	
 }
 
 void GameScene::DrawBackGround(){
@@ -584,6 +583,8 @@ void GameScene::DrawObject(){
 
 	//stage_->Draw();
 	environmentEffectsManager_->Draw(commandList_);
+	//ヒットエフェクト
+	BlockTextureManager::GetInstance()->DrawHitEffect(*camera_.get());
 }
 
 void GameScene::DrawParticle(){

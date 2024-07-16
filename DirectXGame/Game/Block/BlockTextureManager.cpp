@@ -353,6 +353,11 @@ void BlockTextureManager::DrawParticle(const Camera& camera) {
 	for (std::unique_ptr<HitEffect>& data : hitEffectDatas_) {
 		data->Draw();
 	}
+	//hitEffects_->Draw(camera);
+}
+
+void BlockTextureManager::DrawHitEffect(const Camera& camera) {
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 	hitEffects_->Draw(camera);
 }
 

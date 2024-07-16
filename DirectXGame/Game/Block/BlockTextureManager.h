@@ -82,6 +82,8 @@ public:
 	//全オブジェクト描画
 	void DrawParticle(const Camera& camera);
 
+	void DrawHitEffect(const Camera& camera);
+
 	void DrawParticleUI();
 
 	void CreateParticle(const Vector2& position, uint32_t type);
