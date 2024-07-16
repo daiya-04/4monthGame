@@ -94,6 +94,8 @@ public:
 
 	void UpdateJumpChargeParticle(const Vector2& position);
 
+	void UpdateGoldWaveEffectEffect(const Vector2& position);
+
 	void UpdateChargeCompleteEffect(const Vector2& position);
 	void DrawChargeCompleteEffect(const Camera& camera);
 	void SetPlayerTextureHandle(uint32_t handle){
@@ -108,7 +110,7 @@ public:
 
 	//黄金ブロックのエフェクト
 	void GoldBlockEffectUpdate();
-	void GoldBlockEffectDraw();
+	void GoldBlockEffectDraw(const Camera& camera);
 	//void SetGoldBlockEffectPosition(const Vector2& pos) { goldBlockEffect_->position_ = pos; };
 	void SetIsResetGoldBlockEffect(bool is) { isResetGoldBlockEffect_ = is; };
 	//指定の番号にテクスチャ変更
@@ -154,9 +156,10 @@ private:
 	std::unique_ptr<Object2dInstancing> starParticlesUI_;
 
 	//黄金ブロックのエフェクト
-	//std::unique_ptr<Object2d> goldBlockEffect_;
-	bool isDrawGoldBlockEffect_;
+	std::unique_ptr<Object2d> goldBlockEffect_;
+	bool isDrawGoldBlockEffect_=false;
 	bool isResetGoldBlockEffect_;
+	static const uint32_t goldWaveEffectEnd = 30;
 
 	//タメ完了エフェクト
 	bool isDrawChargeCompleteEffect_=false;

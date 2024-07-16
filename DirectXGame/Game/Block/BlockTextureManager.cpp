@@ -188,6 +188,10 @@ BlockTextureManager::BlockTextureManager() {
 	//chargeComplete
 	chargeCompleteEffect_.reset(Object2d::Create(TextureManager::Load("circle.png"), { 0,0 }, 1.0f));
 	chargeCompleteEffect_->SetSize({12.0f,12.0f});
+
+	//goldWave
+	goldBlockEffect_.reset(Object2d::Create(TextureManager::Load("goldEffect.png"), { 0,0 }, 1.0f));
+	goldBlockEffect_->SetSize({float(Block::kBlockSize_),float(Block::kBlockSize_) });
 }
 
 void BlockTextureManager::ClearObject() {
@@ -330,6 +334,9 @@ void BlockTextureManager::DrawParticle(const Camera& camera) {
 		data->Draw();
 	}
 	jumpChargeParticles_->Draw(camera);
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	GoldBlockEffectDraw(camera);
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 }
 
 void BlockTextureManager::DrawParticleUI() {
@@ -487,8 +494,12 @@ void BlockTextureManager::UpdateJumpChargeParticle(const Vector2& position) {
 void BlockTextureManager::GoldBlockEffectUpdate() {
 
 }
-void BlockTextureManager::GoldBlockEffectDraw() {
-
+void BlockTextureManager::GoldBlockEffectDraw(const Camera& camera) {
+	if (!isDrawGoldBlockEffect_) {
+		return;
+	}
+	goldBlockEffect_->Draw(camera);
+	isDrawGoldBlockEffect_ = false;
 }
 
 void BlockTextureManager::UpdateChargeCompleteEffect(const Vector2& position) {
@@ -510,4 +521,17 @@ void BlockTextureManager::DrawChargeCompleteEffect(const Camera& camera) {
 	}
 	chargeCompleteEffect_->Draw(camera);
 	isDrawChargeCompleteEffect_ = false;
+}
+
+void BlockTextureManager::UpdateGoldWaveEffectEffect(const Vector2& position) {
+	static uint32_t count;
+	count++;
+	if (count >= goldWaveEffectEnd) {
+		count = 0;
+	}
+	goldBlockEffect_->position_ = position;
+	goldBlockEffect_->SetScale(1.0f + (float(count) / float(goldWaveEffectEnd)));
+	float c = (float(goldWaveEffectEnd - count) / float(goldWaveEffectEnd)) * 0.8f;
+	goldBlockEffect_->SetColor({ 1.0f,1.0f,1.0f,c });
+	isDrawGoldBlockEffect_ = true;
 }
