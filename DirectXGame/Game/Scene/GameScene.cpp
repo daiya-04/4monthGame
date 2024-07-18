@@ -262,9 +262,13 @@ void GameScene::Update() {
 
 				if (menu_ == kOption) {
 					menu_ = kBack;
+					menuSprites_[kBack]->SetPosition({ 940.0f,160.0f });
+					BoundingInit(menuSprites_[kBack]->GetPosition());
 				}
 				else if (menu_ == kStageSelect) {
 					menu_ = kOption;
+					menuSprites_[kOption]->SetPosition({ 940.0f,360.0f });
+					BoundingInit(menuSprites_[kOption]->GetPosition());
 				}
 
 				moveSE_->Play();
@@ -275,9 +279,13 @@ void GameScene::Update() {
 
 				if (menu_ == kBack) {
 					menu_ = kOption;
+					menuSprites_[kOption]->SetPosition({ 940.0f,360.0f });
+					BoundingInit(menuSprites_[kOption]->GetPosition());
 				}
 				else if (menu_ == kOption) {
 					menu_ = kStageSelect;
+					menuSprites_[kStageSelect]->SetPosition({ 940.0f,560.0f });
+					BoundingInit(menuSprites_[kStageSelect]->GetPosition());
 				}
 
 				moveSE_->Play();
@@ -310,19 +318,22 @@ void GameScene::Update() {
 			{
 			default:
 			case GameScene::kBack:
-				menuSprites_[kBack]->SetPosition({ 940.0f,160.0f });
+				//menuSprites_[kBack]->SetPosition({ 940.0f,160.0f });
+				BoundingUpdate(menuSprites_[kBack].get());
 				menuSprites_[kOption]->SetPosition({ 1040.0f,360.0f });
 				menuSprites_[kStageSelect]->SetPosition({ 1040.0f,560.0f });
 				break;
 			case GameScene::kOption:
 				menuSprites_[kBack]->SetPosition({ 1040.0f,160.0f });
-				menuSprites_[kOption]->SetPosition({ 940.0f,360.0f });
+				//menuSprites_[kOption]->SetPosition({ 940.0f,360.0f });
+				BoundingUpdate(menuSprites_[kOption].get());
 				menuSprites_[kStageSelect]->SetPosition({ 1040.0f,560.0f });
 				break;
 			case GameScene::kStageSelect:
 				menuSprites_[kBack]->SetPosition({ 1040.0f,160.0f });
 				menuSprites_[kOption]->SetPosition({ 1040.0f,360.0f });
-				menuSprites_[kStageSelect]->SetPosition({ 940.0f,560.0f });
+				//menuSprites_[kStageSelect]->SetPosition({ 940.0f,560.0f });
+				BoundingUpdate(menuSprites_[kStageSelect].get());
 				break;
 			}
 
@@ -385,6 +396,8 @@ void GameScene::Update() {
 			if (Input::GetInstance()->TriggerButton(Input::Button::START)) {
 				isOpenMenu_ = true;
 				selectSE_->Play();
+				menuSprites_[kBack]->SetPosition({ 940.0f,160.0f });
+				BoundingInit(menuSprites_[kBack]->GetPosition());
 			}
 
 			stage_->Update();
@@ -475,6 +488,8 @@ void GameScene::Update() {
 		}
 
 	}
+
+	score_.AddScoreEffectUpdate();
 
 }
 
@@ -816,4 +831,29 @@ void GameScene::AppryMode() {
 	else {
 		stage_->ChangeMagma2Snow();
 	}
+}
+
+void GameScene::BoundingInit(const Vector2& axisPos) {
+
+	workBounding_.axisPos_ = axisPos;
+	workBounding_.velocity_.x = 1.5f;
+	workBounding_.accel_ = {};
+	workBounding_.addPos_ = {};
+
+}
+
+void GameScene::BoundingUpdate(Sprite* sprite) {
+
+	workBounding_.accel_.x += -0.01f;
+
+	workBounding_.velocity_.x += workBounding_.accel_.x;
+
+	workBounding_.addPos_ += workBounding_.velocity_;
+
+	if (workBounding_.addPos_.x < 0) {
+		BoundingInit(workBounding_.axisPos_);
+	}
+
+	sprite->SetPosition(workBounding_.axisPos_ + workBounding_.addPos_);
+
 }

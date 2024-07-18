@@ -42,9 +42,9 @@ void Magma::Update() {
 #endif // _DEBUG
 
 	//採掘中にマグマライン上昇
-	if (player_->GetIsMine()) {
+	/*if (player_->GetIsMine()) {
 
-	}
+	}*/
 
 	//硬直時間中は動かない
 	if (freezeTime_ > 0) {
@@ -76,7 +76,7 @@ void Magma::Update() {
 
 	//マグマに当たったらスタートに戻る
 	if (player_->GetPosition(Player::kLeftBottom).y >= currentMagmaLine_) {
-		player_->DamageUpdate();
+		player_->Restart();
 	}
 	
 	//採掘中と帰還中でストーカー速度を変更

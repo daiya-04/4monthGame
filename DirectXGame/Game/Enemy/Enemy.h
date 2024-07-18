@@ -15,10 +15,19 @@ class BaseEnemy
 {
 public:
 
+	enum class Type {
+		kNormal, //通常敵
+		kNeedle, //トゲ
+	};
+
 	BaseEnemy();
 	~BaseEnemy() = default;
 
-	static const int32_t kEnemyHalfSize_ = 32;
+	static const int32_t kEnemySmallHalfSize_ = 16;
+
+	static const int32_t kEnemyMiddleHalfSize_ = 32;
+
+	static const int32_t kEnemyLargeHalfSize_ = 48;
 
 	virtual void Initialize(const Vector2& position) = 0;
 
@@ -34,35 +43,37 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; }
 
-	void SetPosition(const Vector2& position) {
+	virtual void SetPosition(const Vector2& position) {
 		position_ = position;
 		//4頂点の座標を更新
-		leftTop_ = { position_.x - kEnemyHalfSize_, position_.y - kEnemyHalfSize_ };
-		rightTop_ = { position_.x + kEnemyHalfSize_, position_.y - kEnemyHalfSize_ };
-		leftBottom_ = { position_.x - kEnemyHalfSize_, position_.y + kEnemyHalfSize_ };
-		rightBottom_ = { position_.x + kEnemyHalfSize_, position_.y + kEnemyHalfSize_ };
+		leftTop_ = { position_.x - kEnemyMiddleHalfSize_, position_.y - kEnemyMiddleHalfSize_ };
+		rightTop_ = { position_.x + kEnemyMiddleHalfSize_, position_.y - kEnemyMiddleHalfSize_ };
+		leftBottom_ = { position_.x - kEnemyMiddleHalfSize_, position_.y + kEnemyMiddleHalfSize_ };
+		rightBottom_ = { position_.x + kEnemyMiddleHalfSize_, position_.y + kEnemyMiddleHalfSize_ };
 		//当たり判定更新
-		collision_.min = { position_.x - kEnemyHalfSize_, position_.y - kEnemyHalfSize_ };
-		collision_.max = { position_.x + kEnemyHalfSize_, position_.y + kEnemyHalfSize_ };
+		collision_.min = { position_.x - kEnemyMiddleHalfSize_, position_.y - kEnemyMiddleHalfSize_ };
+		collision_.max = { position_.x + kEnemyMiddleHalfSize_, position_.y + kEnemyMiddleHalfSize_ };
 
 	}
 
-	void SetTmpPosition(const Vector2& position) {
+	virtual void SetTmpPosition(const Vector2& position) {
 		tmpPosition_ = position;
 		//4頂点の座標を更新
-		leftTop_ = { tmpPosition_.x - kEnemyHalfSize_, tmpPosition_.y - kEnemyHalfSize_ };
-		rightTop_ = { tmpPosition_.x + kEnemyHalfSize_ - 1, tmpPosition_.y - kEnemyHalfSize_ };
-		leftBottom_ = { tmpPosition_.x - kEnemyHalfSize_, tmpPosition_.y + kEnemyHalfSize_ - 1 };
-		rightBottom_ = { tmpPosition_.x + kEnemyHalfSize_ - 1, tmpPosition_.y + kEnemyHalfSize_ - 1 };
+		leftTop_ = { tmpPosition_.x - kEnemyMiddleHalfSize_, tmpPosition_.y - kEnemyMiddleHalfSize_ };
+		rightTop_ = { tmpPosition_.x + kEnemyMiddleHalfSize_ - 1, tmpPosition_.y - kEnemyMiddleHalfSize_ };
+		leftBottom_ = { tmpPosition_.x - kEnemyMiddleHalfSize_, tmpPosition_.y + kEnemyMiddleHalfSize_ - 1 };
+		rightBottom_ = { tmpPosition_.x + kEnemyMiddleHalfSize_ - 1, tmpPosition_.y + kEnemyMiddleHalfSize_ - 1 };
 		//当たり判定更新
-		collision_.min = { tmpPosition_.x - kEnemyHalfSize_, tmpPosition_.y - kEnemyHalfSize_ };
-		collision_.max = { tmpPosition_.x + kEnemyHalfSize_ - 1, tmpPosition_.y + kEnemyHalfSize_ - 1 };
+		collision_.min = { tmpPosition_.x - kEnemyMiddleHalfSize_, tmpPosition_.y - kEnemyMiddleHalfSize_ };
+		collision_.max = { tmpPosition_.x + kEnemyMiddleHalfSize_ - 1, tmpPosition_.y + kEnemyMiddleHalfSize_ - 1 };
 
 	}
+
+	Type GetType() const { return type_; }
 
 protected:
 
-	void CheckCollision();
+	virtual void CheckCollision();
 
 protected:
 
@@ -70,6 +81,8 @@ protected:
 	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight>* blocksPtr_ = nullptr;
 
 	Player* player_ = nullptr;
+
+	Type type_ = Type::kNormal;
 
 	Vector2 velocity_{};
 
@@ -117,6 +130,12 @@ protected:
 
 	uint32_t enemyTexture_;
 
+	///-----SE----------------------------------------
+
+	Audio* crushSE_;
+
+	///------------------------------------------------
+
 };
 
 class NormalEnemy : public BaseEnemy 
@@ -130,5 +149,27 @@ public:
 	void Draw(const Camera& camera) override;
 
 private:
+
+};
+
+class NeedleEnemy : public BaseEnemy
+{
+public:
+
+	void Initialize(const Vector2& position) override;
+
+	void Update() override;
+
+	void Draw(const Camera& camera) override;
+
+protected:
+
+	void CheckCollision() override;
+
+private:
+
+	bool isStartFall_ = false;
+
+	int32_t startFallCount_ = 60;
 
 };

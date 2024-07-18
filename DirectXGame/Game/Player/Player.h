@@ -121,6 +121,9 @@ public:
 	/// </summary>
 	void Debug();
 
+	//個々での四角形当たり判定
+	void CheckCollisionSquare(const AABB2D& collision);
+
 	void SetPosition(const Vector2& position) { 
 		position_ = position;
 		//4頂点の座標を更新
@@ -254,24 +257,28 @@ public:
 	void AddBlueRock(int32_t addNum = 1) { 
 		rockParameter_.rocks_[BringRocks::kBlue] += addNum;
 		rockParameter_.rocks_[BringRocks::kBlue] = std::clamp(rockParameter_.rocks_[BringRocks::kBlue], 0, 999);
+		AddRockEffectInit(BringRocks::kBlue);
 	}
 
 	//採掘速度の岩を加算
 	void AddGreenRock(int32_t addNum = 1){ 
 		rockParameter_.rocks_[BringRocks::kGreen] += addNum;
 		rockParameter_.rocks_[BringRocks::kGreen] = std::clamp(rockParameter_.rocks_[BringRocks::kGreen], 0, 999);
+		AddRockEffectInit(BringRocks::kGreen);
 	}
 
 	//採掘ダメージ量の岩を加算
 	void AddRedRock(int32_t addNum = 1) { 
 		rockParameter_.rocks_[BringRocks::kRed] += addNum;
 		rockParameter_.rocks_[BringRocks::kRed] = std::clamp(rockParameter_.rocks_[BringRocks::kRed], 0, 999);
+		AddRockEffectInit(BringRocks::kRed);
 	}
 
 	//岩カウント加算
 	void AddRockCount(int32_t addNum = 1) { 
 		rockParameter_.rocks_[BringRocks::kRock] += addNum;
 		rockParameter_.rocks_[BringRocks::kRock] = std::clamp(rockParameter_.rocks_[BringRocks::kRock], 0, 999);
+		AddRockEffectInit(BringRocks::kRock);
 	}
 
 	//速度強化
@@ -305,8 +312,8 @@ public:
 
 	Characters GetCurrentCharacter() const { return currentCharacters_; }
 
-	//岩落とし処理
-	void DamageUpdate();
+	//死亡処理
+	void Restart();
 
 	void HealUpdate();
 
@@ -319,6 +326,12 @@ public:
 	int32_t GetDigCount() const { return digCount_; }
 
 	void ResetDigCount() { digCount_ = 0; }
+
+	void Stun();
+
+	//岩獲得時のUI演出用
+	void AddRockEffectInit(BringRocks::RockType rockType);
+	void AddRockEffectUpdate();
 
 private:
 
@@ -482,6 +495,11 @@ private:
 	//フェード開始フラグ
 	bool isStartFade_ = false;
 
+	//スタンタイマー
+	int32_t stunTimer_ = 0;
+	//無敵時間
+	int32_t invincibleTimer_ = 0;
+
 	//死亡フラグ
 	bool isDead_ = false;
 	//再スタートまでのタイマー
@@ -512,13 +530,23 @@ private:
 	//最大桁数
 	static const int32_t kMaxDigits_ = 3;
 
-	//UI関連
+	///UI関連
 	std::array<std::array<std::unique_ptr<Sprite>, kMaxDigits_>, BringRocks::RockType::kMaxType> numbers_;
 	std::array<std::unique_ptr<Sprite>, BringRocks::RockType::kMaxType> rocksUI_;
 	std::unique_ptr<Sprite> bag_;
 
 	uint32_t numberTexture_;
 	uint32_t bagTexture_;
+
+	struct WorkAddScoreEffect {
+		float velocity_{};
+		float accel_{};
+		float addScale{};
+	};
+
+	std::array<WorkAddScoreEffect, BringRocks::RockType::kMaxType> workAddScoreEffects_;
+
+	///
 
 	const std::string dataName = "Player";
 
