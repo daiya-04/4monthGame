@@ -121,6 +121,9 @@ public:
 	/// </summary>
 	void Debug();
 
+	//個々での四角形当たり判定
+	void CheckCollisionSquare(const AABB2D& collision);
+
 	void SetPosition(const Vector2& position) { 
 		position_ = position;
 		//4頂点の座標を更新
@@ -305,8 +308,8 @@ public:
 
 	Characters GetCurrentCharacter() const { return currentCharacters_; }
 
-	//岩落とし処理
-	void DamageUpdate();
+	//死亡処理
+	void Restart();
 
 	void HealUpdate();
 

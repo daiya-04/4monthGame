@@ -19,7 +19,7 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; }
 
-	void AddEnemy(const Vector2& position);
+	void AddEnemy(const Vector2& position, const BaseEnemy::Type& type = BaseEnemy::Type::kNormal);
 
 	void Update();
 

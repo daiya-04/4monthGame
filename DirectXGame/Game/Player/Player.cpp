@@ -17,7 +17,7 @@ Player::Player()
 	textureRun_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueRun.png");
 	textureBreakUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakUp.png");
 	textureBreakDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakDown.png");
-	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreak.png");
+	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakIdle.png");
 	textureWallJump_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueWallKick.png");
 	texture_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeIdle.png");
 	textureUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookUp.png");
@@ -25,7 +25,7 @@ Player::Player()
 	textureRun_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeRun.png");
 	textureBreakUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakUp.png");
 	textureBreakDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakDown.png");
-	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreak.png");
+	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakIdle.png");
 	textureWallJump_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeWallKick.png");
 	numberTexture_ = TextureManager::GetInstance()->Load("UI/number.png");
 	bagTexture_ = TextureManager::GetInstance()->Load("UI/bag.png");
@@ -1187,7 +1187,7 @@ void Player::UpdatePosition() {
 
 }
 
-void Player::DamageUpdate() {
+void Player::Restart() {
 
 	if (!isDead_) {
 
@@ -1626,6 +1626,276 @@ void Player::CheckCollision() {
 			}
 
 		}		
+
+	}
+
+}
+
+void Player::CheckCollisionSquare(const AABB2D& collision) {
+
+	//当たり判定チェック
+	if (IsCollision(collision, collision_)) {
+
+		//左上が当たっていた
+		if (IsCollision(collision, leftTop_)) {
+
+			//プレイヤーが右側から侵入したなら右に押し戻し
+			if (preLeftTop_.y < collision.max.y - 1) {
+
+				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_, tmpPosition_.y });
+
+				switch (moveType_)
+				{
+				default:
+				case Player::kNormal:
+
+					velocity_.x = 0;
+					wallJumpVelocity_.x = 0.0f;
+
+					//落下に入った時に壁キックを可能にする
+					if (velocity_.y > 2.5f) {
+
+						parameters_[currentCharacters_]->wallJump_.canWallJump = true;
+
+					}
+
+					break;
+				case Player::kLine:
+
+					velocity_ = { 0.0f,0.0f };
+
+					break;
+				}
+
+			}
+			else {
+
+				if (preLeftTop_.x > collision.max.x - 1) {
+
+
+
+				}
+				else {
+
+					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ });
+
+					switch (moveType_)
+					{
+					default:
+					case Player::kNormal:
+
+						if (parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
+							parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
+							parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+							parameters_[currentCharacters_]->chargeJump_.flyTimer = parameters_[currentCharacters_]->chargeJump_.maxFlyTime;
+						}
+
+						velocity_.y = 0;
+
+						break;
+					case Player::kLine:
+
+						velocity_ = { 0.0f,0.0f };
+
+						break;
+					}
+
+				}
+
+			}
+
+		}
+		//右上が当たっていた
+		if (IsCollision(collision, rightTop_)) {
+
+			//プレイヤーが左側から侵入したなら左に押し戻し
+			if (preRightTop_.y < collision.max.y - 1) {
+
+				SetTmpPosition({ collision.min.x - kPlayerHalfSizeX_, tmpPosition_.y });
+
+				switch (moveType_)
+				{
+				default:
+				case Player::kNormal:
+
+					velocity_.x = 0;
+					wallJumpVelocity_.x = 0.0f;
+
+					//落下に入った時に壁キックを可能にする
+					if (velocity_.y > 2.5f) {
+
+						parameters_[currentCharacters_]->wallJump_.canWallJump = true;
+
+					}
+
+					break;
+				case Player::kLine:
+
+					velocity_ = { 0.0f,0.0f };
+
+					break;
+				}
+
+			}
+			else {
+
+				if (preRightTop_.x < collision.min.x) {
+
+
+
+				}
+				else {
+
+					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ });
+
+					switch (moveType_)
+					{
+					default:
+					case Player::kNormal:
+
+						if (parameters_[currentCharacters_]->chargeJump_.isChargeJumping) {
+							parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
+							parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+							parameters_[currentCharacters_]->chargeJump_.flyTimer = parameters_[currentCharacters_]->chargeJump_.maxFlyTime;
+						}
+
+						velocity_.y = 0;
+
+						break;
+					case Player::kLine:
+
+						velocity_ = { 0.0f,0.0f };
+
+						break;
+					}
+
+				}
+
+			}
+
+		}
+
+		//左下が当たっていた
+		if (IsCollision(collision, leftBottom_)) {
+
+			//プレイヤーが右側から侵入したなら右に押し戻し
+			if (preLeftBottom_.y > collision.min.y) {
+
+				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_, tmpPosition_.y });
+
+				switch (moveType_)
+				{
+				default:
+				case Player::kNormal:
+
+					velocity_.x = 0;
+					wallJumpVelocity_.x = 0.0f;
+
+					//落下に入った時に壁キックを可能にする
+					if (velocity_.y > 2.5f) {
+
+						parameters_[currentCharacters_]->wallJump_.canWallJump = true;
+
+					}
+
+					break;
+				case Player::kLine:
+
+					velocity_ = { 0.0f,0.0f };
+
+					break;
+				}
+
+			}
+			else {
+
+				SetTmpPosition({ tmpPosition_.x,collision.min.y - kPlayerHalfSizeY_ });
+
+				switch (moveType_)
+				{
+				default:
+				case Player::kNormal:
+
+					velocity_.y = 0;
+
+					//着地した瞬間
+					if (!parameters_[currentCharacters_]->Jump_.canJump) {
+						SetCanJump(true);
+					}
+
+					break;
+				case Player::kLine:
+
+					velocity_ = { 0.0f,0.0f };
+
+					break;
+				}
+
+			}
+
+		}
+
+		//右下が当たっていた
+		if (IsCollision(collision, rightBottom_)) {
+
+			//プレイヤーが左側から侵入したなら左に押し戻し
+			if (preRightBottom_.y > collision.min.y) {
+
+				SetTmpPosition({ collision.min.x - kPlayerHalfSizeX_, tmpPosition_.y });
+
+				switch (moveType_)
+				{
+				default:
+				case Player::kNormal:
+
+					velocity_.x = 0;
+					wallJumpVelocity_.x = 0.0f;
+
+					//落下に入った時に壁キックを可能にする
+					if (velocity_.y > 2.5f) {
+
+						parameters_[currentCharacters_]->wallJump_.canWallJump = true;
+
+					}
+
+					break;
+				case Player::kLine:
+
+					velocity_ = { 0.0f,0.0f };
+
+					break;
+				}
+
+			}
+			else {
+
+
+
+				SetTmpPosition({ tmpPosition_.x,collision.min.y - kPlayerHalfSizeY_ });
+
+				switch (moveType_)
+				{
+				default:
+				case Player::kNormal:
+
+					velocity_.y = 0;
+
+					//着地した瞬間
+					if (!parameters_[currentCharacters_]->Jump_.canJump) {
+						SetCanJump(true);
+					}
+
+					break;
+				case Player::kLine:
+
+					velocity_ = { 0.0f,0.0f };
+
+					break;
+				}
+
+			}
+
+		}
 
 	}
 

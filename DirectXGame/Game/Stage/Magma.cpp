@@ -76,7 +76,7 @@ void Magma::Update() {
 
 	//マグマに当たったらスタートに戻る
 	if (player_->GetPosition(Player::kLeftBottom).y >= currentMagmaLine_) {
-		player_->DamageUpdate();
+		player_->Restart();
 	}
 	
 	//採掘中と帰還中でストーカー速度を変更
