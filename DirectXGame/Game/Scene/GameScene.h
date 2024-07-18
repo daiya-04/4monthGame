@@ -74,6 +74,10 @@ public:
 	//スコアゲージ更新
 	void UpdateScoreGage();
 
+	void BoundingInit(const Vector2& axisPos);
+
+	void BoundingUpdate(Sprite* sprite);
+
 private:
 	ID3D12GraphicsCommandList* commandList_;
 	
@@ -163,6 +167,15 @@ private:
 	uint32_t clearBGTex_;
 	uint32_t clearTex_;
 	uint32_t numTex_;
+
+	struct WorkBounding {
+		Vector2 velocity_{};
+		Vector2 accel_{};
+		Vector2 axisPos_{};
+		Vector2 addPos_{};
+	};
+
+	WorkBounding workBounding_;
 
 ///-------------------------------------------
 
