@@ -182,7 +182,7 @@ BlockTextureManager::BlockTextureManager() {
 
 	hitEffects_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 256));
 	hitEffects_->SetScale({ 1.0f, 1.0f });
-	hitEffects_->SetSize({ float(BaseBlock::kBlockSize_)*0.25f,float(BaseBlock::kBlockSize_)*10.0f });
+	hitEffects_->SetSize({ float(BaseBlock::kBlockSize_)*0.5f,float(BaseBlock::kBlockSize_)*30.0f });
 
 	//wallkick
 	wallKickEffects_.reset(Object2dInstancing::Create(TextureManager::Load("wallKickEffect.png"), Vector2{ 1.0f,1.0f }, 8));
@@ -414,7 +414,7 @@ void BlockTextureManager::CreateJumpChargeParticle(const Vector2& position, int3
 void BlockTextureManager::CreateHitEffect(const Vector2& position, int32_t type) {
 	std::unique_ptr<HitEffect> particle;
 	particle.reset(new HitEffect);
-	particle->Initialize(position);
+	particle->Initialize(position,type);
 	hitEffectDatas_.push_back(std::move(particle));
 }
 

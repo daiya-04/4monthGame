@@ -4,7 +4,7 @@
 
 class HitEffect {
 public:
-	void Initialize(const Vector2& postition);
+	void Initialize(const Vector2& postition,int32_t type);
 	void Update();
 	void Draw();
 	bool GetIsAlive() { return isAlive_; };
