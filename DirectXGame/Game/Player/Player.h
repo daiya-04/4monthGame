@@ -446,6 +446,7 @@ private:
 	std::array<uint32_t, kMaxPlayer> textureUp_;
 	std::array<uint32_t, kMaxPlayer> textureDown_;
 	std::array<uint32_t, kMaxPlayer> textureRun_;
+	std::array<uint32_t, kMaxPlayer> textureBreakRun_;
 	std::array<uint32_t, kMaxPlayer> textureBreakUp_;
 	std::array<uint32_t, kMaxPlayer> textureBreakDown_;
 	std::array<uint32_t, kMaxPlayer> textureBreak_;
@@ -486,6 +487,9 @@ private:
 
 	//フェード開始フラグ
 	bool isStartFade_ = false;
+
+	//画像を上に上げるフラグ
+	bool isUpImage_ = false;
 
 	//スタンタイマー
 	int32_t stunTimer_ = 0;
