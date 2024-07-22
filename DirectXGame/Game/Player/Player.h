@@ -257,24 +257,28 @@ public:
 	void AddBlueRock(int32_t addNum = 1) { 
 		rockParameter_.rocks_[BringRocks::kBlue] += addNum;
 		rockParameter_.rocks_[BringRocks::kBlue] = std::clamp(rockParameter_.rocks_[BringRocks::kBlue], 0, 999);
+		AddRockEffectInit(BringRocks::kBlue);
 	}
 
 	//採掘速度の岩を加算
 	void AddGreenRock(int32_t addNum = 1){ 
 		rockParameter_.rocks_[BringRocks::kGreen] += addNum;
 		rockParameter_.rocks_[BringRocks::kGreen] = std::clamp(rockParameter_.rocks_[BringRocks::kGreen], 0, 999);
+		AddRockEffectInit(BringRocks::kGreen);
 	}
 
 	//採掘ダメージ量の岩を加算
 	void AddRedRock(int32_t addNum = 1) { 
 		rockParameter_.rocks_[BringRocks::kRed] += addNum;
 		rockParameter_.rocks_[BringRocks::kRed] = std::clamp(rockParameter_.rocks_[BringRocks::kRed], 0, 999);
+		AddRockEffectInit(BringRocks::kRed);
 	}
 
 	//岩カウント加算
 	void AddRockCount(int32_t addNum = 1) { 
 		rockParameter_.rocks_[BringRocks::kRock] += addNum;
 		rockParameter_.rocks_[BringRocks::kRock] = std::clamp(rockParameter_.rocks_[BringRocks::kRock], 0, 999);
+		AddRockEffectInit(BringRocks::kRock);
 	}
 
 	//速度強化
@@ -324,6 +328,10 @@ public:
 	void ResetDigCount() { digCount_ = 0; }
 
 	void Stun();
+
+	//岩獲得時のUI演出用
+	void AddRockEffectInit(BringRocks::RockType rockType);
+	void AddRockEffectUpdate();
 
 private:
 
@@ -526,13 +534,23 @@ private:
 	//最大桁数
 	static const int32_t kMaxDigits_ = 3;
 
-	//UI関連
+	///UI関連
 	std::array<std::array<std::unique_ptr<Sprite>, kMaxDigits_>, BringRocks::RockType::kMaxType> numbers_;
 	std::array<std::unique_ptr<Sprite>, BringRocks::RockType::kMaxType> rocksUI_;
 	std::unique_ptr<Sprite> bag_;
 
 	uint32_t numberTexture_;
 	uint32_t bagTexture_;
+
+	struct WorkAddScoreEffect {
+		float velocity_{};
+		float accel_{};
+		float addScale{};
+	};
+
+	std::array<WorkAddScoreEffect, BringRocks::RockType::kMaxType> workAddScoreEffects_;
+
+	///
 
 	const std::string dataName = "Player";
 
