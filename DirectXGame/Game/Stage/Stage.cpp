@@ -802,6 +802,10 @@ void Stage::Load(uint32_t stageNumber) {
 			else if (type == Block::kDownMagma) {
 				map_[y][x]->SetDurability(5.0f);
 			}
+			else if (type == Block::kNeedleBlock) {
+				EnemyManager::GetInstance()->AddEnemy(map_[y][x]->GetPosition(), BaseEnemy::Type::kNeedle);
+				map_[y][x]->ChangeType(Block::kNone);
+			}
 			else {
 				map_[y][x]->SetDurability(float(y / 5) + 3.0f);
 			}

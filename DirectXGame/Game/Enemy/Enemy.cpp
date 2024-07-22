@@ -314,6 +314,11 @@ void NeedleEnemy::Initialize(const Vector2& position) {
 
 	isMoveLeft_ = false;
 
+	enemyTexture_ = TextureManager::GetInstance()->Load("blocks/needle.png");
+	object_->SetTextureHandle(enemyTexture_);
+	object_->SetTextureArea({ 0.0f,0.0f }, { 32.0f,32.0f });
+	object_->SetSize({ 96.0f,96.0f });
+	type_ = Type::kNeedle;
 
 }
 
@@ -385,6 +390,18 @@ void NeedleEnemy::Draw(const Camera& camera) {
 
 void NeedleEnemy::CheckCollision() {
 
+	if (keeper_) {
+
+		//キーパーが破壊されていない場合、必ず止まっているのでreturnする
+		if (!keeper_->GetIsBreak()) {
+			isStartFall_ = false;
+			return;
+		}
+
+	}
+
+	isStartFall_ = true;
+
 	//ブロックとの当たり判定
 	if (blocksPtr_) {
 
@@ -414,6 +431,8 @@ void NeedleEnemy::CheckCollision() {
 
 					//当たり判定チェック
 					if (IsCollision((*blocksPtr_)[y][x]->GetCollision(), collision_)) {
+
+						keeper_ = (*blocksPtr_)[y][x].get();
 
 						//崩れるブロックに触れたら崩壊開始
 						/*if ((*blocksPtr_)[y][x]->GetType() == Block::kCollapseBlock && !(*blocksPtr_)[y][x]->GetIsStartCollapse()) {
@@ -545,7 +564,7 @@ void NeedleEnemy::CheckCollision() {
 				}
 				else {
 
-					player_->CheckCollisionSquare(collision_);
+					
 
 				}
 

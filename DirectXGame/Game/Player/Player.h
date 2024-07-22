@@ -15,6 +15,8 @@
 #include "AudioManager.h"
 #include "Block/Block.h"
 
+class BaseEnemy;
+
 class Player
 {
 public:
@@ -381,6 +383,9 @@ private:
 
 	//ブロックの配列ポインタ
 	std::array<std::array<std::shared_ptr<Block>, kMaxStageWidth>, kMaxStageHeight>* blocksPtr_ = nullptr;
+
+	//敵ポインタ
+	std::list<std::shared_ptr<BaseEnemy>>* enemiesPtr_ = nullptr;
 
 	//当たり判定
 	AABB2D collision_{};

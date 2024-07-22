@@ -241,7 +241,7 @@ void Block::Initialize(const Vector2& position, BlockType type) {
 
 void Block::Update() {
 
-	if (type_ == kNone) {
+	if (type_ == kNone || type_ == kNeedleBlock) {
 		isBreak_ = true;
 	}
 

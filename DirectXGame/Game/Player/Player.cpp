@@ -7,6 +7,8 @@
 #include "Easing.h"
 #include "RandomEngine/RandomEngine.h"
 #include "Stage/Stage.h"
+#include "Enemy/EnemyManager.h"
+#include "Enemy/Enemy.h"
 
 Player::Player()
 {
@@ -78,6 +80,8 @@ void Player::Initialize() {
 	input_ = Input::GetInstance();
 
 	scoreManager_ = ScoreManager::GetInstance();
+
+	enemiesPtr_ = &EnemyManager::GetInstance()->GetEnemies();
 
 	position_ = Stage::kBasePosition;
 	birdsEyePosition_ = position_;
@@ -1149,6 +1153,10 @@ void Player::UpdatePosition() {
 		leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
 		rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
 
+		//当たり判定更新
+		collision_.min = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+		collision_.max = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeY_ - 1 };
+
 		//移動速度が0.0fじゃなければ定期的にSEを鳴らす
 		if (playSETimer_ <= 0) {
 
@@ -1647,6 +1655,18 @@ void Player::CheckCollision() {
 
 	}
 
+	if (enemiesPtr_) {
+
+		for (auto& enemy : *enemiesPtr_) {
+
+			if (enemy->GetType() == BaseEnemy::Type::kNeedle) {
+				CheckCollisionSquare(enemy->GetCollision());
+			}
+
+		}
+
+	}
+
 }
 
 void Player::CheckCollisionSquare(const AABB2D& collision) {
@@ -1658,9 +1678,9 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 		if (IsCollision(collision, leftTop_)) {
 
 			//プレイヤーが右側から侵入したなら右に押し戻し
-			if (preLeftTop_.y < collision.max.y - 1) {
+			if (preLeftTop_.y < collision.max.y) {
 
-				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_, tmpPosition_.y });
+				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_ + 1.0f, tmpPosition_.y });
 
 				switch (moveType_)
 				{
@@ -1695,7 +1715,7 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 				}
 				else {
 
-					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ });
+					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ + 1.0f });
 
 					switch (moveType_)
 					{
@@ -1764,7 +1784,7 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 				}
 				else {
 
-					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ });
+					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ + 1.0f });
 
 					switch (moveType_)
 					{
@@ -1799,7 +1819,7 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 			//プレイヤーが右側から侵入したなら右に押し戻し
 			if (preLeftBottom_.y > collision.min.y) {
 
-				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_, tmpPosition_.y });
+				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_ + 1.0f, tmpPosition_.y });
 
 				switch (moveType_)
 				{
@@ -1916,6 +1936,23 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 		}
 
 	}
+
+	//position_ = tmpPosition_;
+
+	//if (isUpImage_) {
+	//	object_->position_ = position_ + Vector2{ 0.0f, -float(kPlayerHalfSizeY_) * 0.5f };
+	//}
+	//else {
+	//	object_->position_ = position_;
+	//}
+
+	//object_->position_.x += RandomEngine::GetRandom(float(-stunTimer_) * 0.1f, float(stunTimer_) * 0.1f);
+
+	////4頂点の座標を更新
+	//leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeX_ };
+	//rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
+	//leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
+	//rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
 
 }
 
