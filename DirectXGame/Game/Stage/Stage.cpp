@@ -689,6 +689,29 @@ void Stage::RespawnBlock(Block::BlockType type) {
 
 			}
 
+			int32_t startY = int32_t(map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->GetPosition().y) / Block::kBlockSize_ - 1;
+			startY = std::clamp(startY, 0, kMaxStageHeight - 1);
+			int32_t endY = int32_t(map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->GetPosition().y) / Block::kBlockSize_ + 1;
+			endY = std::clamp(endY, 0, kMaxStageHeight - 1);
+			int32_t startX = int32_t(map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->GetPosition().x) / Block::kBlockSize_ - 1;
+			startX = std::clamp(startX, 0, kMaxStageWidth - 1);
+			int32_t endX = int32_t(map_[respawnBlocks_[i][1]][respawnBlocks_[i][0]]->GetPosition().x) / Block::kBlockSize_ + 1;
+			endX = std::clamp(endX, 0, kMaxStageWidth - 1);
+
+			for (int32_t y = startY; y <= endY; y++) {
+
+				for (int32_t x = startX; x <= endX; x++) {
+
+					//自分と同じブロックは判定しない
+					if (y == respawnBlocks_[i][1] && x == respawnBlocks_[i][0]) {
+						continue;
+					}
+
+
+
+				}
+
+			}
 			if (isContinue) {
 				continue;
 			}

@@ -1506,6 +1506,7 @@ void Player::CheckCollision() {
 									//着地した瞬間
 									if (!parameters_[currentCharacters_]->Jump_.canJump) {
 										SetCanJump(true);
+										parameters_[currentCharacters_]->wallJump_.canWallJump = false;
 									}
 
 									break;
@@ -1568,6 +1569,7 @@ void Player::CheckCollision() {
 									//着地した瞬間
 									if (!parameters_[currentCharacters_]->Jump_.canJump) {
 										SetCanJump(true);
+										parameters_[currentCharacters_]->wallJump_.canWallJump = false;
 									}
 
 									break;
