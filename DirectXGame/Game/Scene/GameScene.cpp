@@ -20,6 +20,9 @@ GameScene::~GameScene() {
 
 void GameScene::Init(){
 
+	//ゲームシーンでインスタンスを持っておく
+	EnemyManager::GetInstance();
+
 	BlockTextureManager::GetInstance()->LoadAllBlockTexture();
 
 	scoreManager_ = ScoreManager::GetInstance();

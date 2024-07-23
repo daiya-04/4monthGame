@@ -7,6 +7,8 @@
 #include "Easing.h"
 #include "RandomEngine/RandomEngine.h"
 #include "Stage/Stage.h"
+#include "Enemy/EnemyManager.h"
+#include "Enemy/Enemy.h"
 
 Player::Player()
 {
@@ -15,6 +17,7 @@ Player::Player()
 	textureUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookUp.png");
 	textureDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueLookDown.png");
 	textureRun_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueRun.png");
+	textureBreakRun_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakRun.png");
 	textureBreakUp_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakUp.png");
 	textureBreakDown_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakDown.png");
 	textureBreak_[kRightPlayer] = TextureManager::GetInstance()->Load("player/playerBlueBreakIdle.png");
@@ -23,6 +26,7 @@ Player::Player()
 	textureUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookUp.png");
 	textureDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeLookDown.png");
 	textureRun_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeRun.png");
+	textureBreakRun_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakRun.png");
 	textureBreakUp_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakUp.png");
 	textureBreakDown_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakDown.png");
 	textureBreak_[kLeftPlayer] = TextureManager::GetInstance()->Load("player/playerOrangeBreakIdle.png");
@@ -76,6 +80,8 @@ void Player::Initialize() {
 	input_ = Input::GetInstance();
 
 	scoreManager_ = ScoreManager::GetInstance();
+
+	enemiesPtr_ = &EnemyManager::GetInstance()->GetEnemies();
 
 	position_ = Stage::kBasePosition;
 	birdsEyePosition_ = position_;
@@ -156,6 +162,7 @@ void Player::SetOnBase() {
 	isOut_ = false;
 	isHome_ = true;
 	isStartFade_ = false;
+	isUpImage_ = false;
 	position_ = Stage::kBasePosition;
 	birdsEyePosition_ = position_;
 	isDead_ = false;
@@ -729,49 +736,47 @@ void Player::Dig() {
 		}
 
 		//地面にいる状態且つクールタイムが終わったら穴掘り可能
-		if (parameters_[currentCharacters_]->Jump_.canJump && input_->PushTrigger(Input::Trigger::Right) &&
-			parameters_[currentCharacters_]->dig_.digCount <= 0) {
+		if (parameters_[currentCharacters_]->Jump_.canJump && input_->PushTrigger(Input::Trigger::Right)) {
 
-			parameters_[currentCharacters_]->dig_.isDig = true;
+			if (parameters_[currentCharacters_]->dig_.digCount <= 0) {
+				parameters_[currentCharacters_]->dig_.isDig = true;
+				//穴掘りクールタイムを設定
+				parameters_[currentCharacters_]->dig_.digCount = parameters_[currentCharacters_]->dig_.digInterval;
+			}
+			else {
+				parameters_[currentCharacters_]->dig_.isDig = false;
+				parameters_[currentCharacters_]->dig_.digPosition = { -10000.0f,-10000.0f };
+			}
 
-			//穴掘りクールタイムを設定
-			parameters_[currentCharacters_]->dig_.digCount = parameters_[currentCharacters_]->dig_.digInterval;
+			if (input_->TriggerLStick(Input::Stick::Right) || input_->TriggerLStick(Input::Stick::Left) ||
+				input_->TriggerLStick(Input::Stick::Up) || input_->TriggerLStick(Input::Stick::Down)) {
+				animationTime_ = 0;
+				currentAnimationNum_ = 0;
+			}
 
 			//上下左右どこを掘るか決める(左右優先)
 			if (input_->TiltLStick(Input::Stick::Right)) {
-				animationTime_ = 0;
-				currentAnimationNum_ = 0;
-				object_->SetTextureHandle(textureBreak_[currentCharacters_]);
+				object_->SetTextureHandle(textureBreakRun_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x + Block::kBlockSize_, position_.y };
 			}
 			else if (input_->TiltLStick(Input::Stick::Left)) {
-				animationTime_ = 0;
-				currentAnimationNum_ = 0;
-				object_->SetTextureHandle(textureBreak_[currentCharacters_]);
+				object_->SetTextureHandle(textureBreakRun_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x - Block::kBlockSize_, position_.y };
 			}
 			else if (input_->TiltLStick(Input::Stick::Up)) {
-				animationTime_ = 0;
-				currentAnimationNum_ = 0;
 				object_->SetTextureHandle(textureBreakUp_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x, position_.y - Block::kBlockSize_ };
 			}
 			else if (input_->TiltLStick(Input::Stick::Down)) {
-				animationTime_ = 0;
-				currentAnimationNum_ = 0;
 				object_->SetTextureHandle(textureBreakDown_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x, position_.y + Block::kBlockSize_ };
 			}
 			//入力が無ければどっちを向いてるかで決める
 			else if (isFacingLeft_) {
-				animationTime_ = 0;
-				currentAnimationNum_ = 0;
 				object_->SetTextureHandle(textureBreak_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x - Block::kBlockSize_, position_.y };
 			}
 			else {
-				animationTime_ = 0;
-				currentAnimationNum_ = 0;
 				object_->SetTextureHandle(textureBreak_[currentCharacters_]);
 				parameters_[currentCharacters_]->dig_.digPosition = { position_.x + Block::kBlockSize_, position_.y };
 			}
@@ -1149,7 +1154,12 @@ void Player::UpdatePosition() {
 
 		position_ = tmpPosition_;
 
-		object_->position_ = position_;
+		if (isUpImage_) {
+			object_->position_ = position_ + Vector2{ 0.0f, -float(kPlayerHalfSizeY_) * 0.5f };
+		}
+		else {
+			object_->position_ = position_;
+		}
 
 		object_->position_.x += RandomEngine::GetRandom(float(-stunTimer_) * 0.1f, float(stunTimer_) * 0.1f);
 
@@ -1158,6 +1168,10 @@ void Player::UpdatePosition() {
 		rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
 		leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
 		rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
+
+		//当たり判定更新
+		collision_.min = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
+		collision_.max = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeY_ - 1 };
 
 		//移動速度が0.0fじゃなければ定期的にSEを鳴らす
 		if (playSETimer_ <= 0) {
@@ -1262,6 +1276,8 @@ void Player::Stun() {
 }
 
 void Player::CheckCollision() {
+
+	isUpImage_ = false;
 
 	parameters_[currentCharacters_]->wallJump_.canWallJump = false;
 
@@ -1637,6 +1653,14 @@ void Player::CheckCollision() {
 						}
 					}
 
+					if (parameters_[currentCharacters_]->Jump_.canJump && input_->TiltLStick(Input::Stick::Up) && !input_->TiltLStick(Input::Stick::Right) && !input_->TiltLStick(Input::Stick::Left) &&
+						input_->PushTrigger(Input::Trigger::Right) && IsCollision((*blocksPtr_)[y][x]->GetCollision(), position_ - Vector2{ 0.0f, float(Block::kBlockSize_) })) {
+
+						//画像を上げるフラグ立て
+						isUpImage_ = true;
+
+					}
+
 				}
 				else {
 
@@ -1647,6 +1671,18 @@ void Player::CheckCollision() {
 			}
 
 		}		
+
+	}
+
+	if (enemiesPtr_) {
+
+		for (auto& enemy : *enemiesPtr_) {
+
+			if (enemy->GetType() == BaseEnemy::Type::kNeedle) {
+				CheckCollisionSquare(enemy->GetCollision());
+			}
+
+		}
 
 	}
 
@@ -1661,9 +1697,9 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 		if (IsCollision(collision, leftTop_)) {
 
 			//プレイヤーが右側から侵入したなら右に押し戻し
-			if (preLeftTop_.y < collision.max.y - 1) {
+			if (preLeftTop_.y < collision.max.y) {
 
-				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_, tmpPosition_.y });
+				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_ + 1.0f, tmpPosition_.y });
 
 				switch (moveType_)
 				{
@@ -1698,7 +1734,7 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 				}
 				else {
 
-					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ });
+					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ + 1.0f });
 
 					switch (moveType_)
 					{
@@ -1767,7 +1803,7 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 				}
 				else {
 
-					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ });
+					SetTmpPosition({ tmpPosition_.x,collision.max.y + kPlayerHalfSizeY_ + 1.0f });
 
 					switch (moveType_)
 					{
@@ -1802,7 +1838,7 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 			//プレイヤーが右側から侵入したなら右に押し戻し
 			if (preLeftBottom_.y > collision.min.y) {
 
-				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_, tmpPosition_.y });
+				SetTmpPosition({ collision.max.x + kPlayerHalfSizeX_ + 1.0f, tmpPosition_.y });
 
 				switch (moveType_)
 				{
@@ -1919,6 +1955,23 @@ void Player::CheckCollisionSquare(const AABB2D& collision) {
 		}
 
 	}
+
+	//position_ = tmpPosition_;
+
+	//if (isUpImage_) {
+	//	object_->position_ = position_ + Vector2{ 0.0f, -float(kPlayerHalfSizeY_) * 0.5f };
+	//}
+	//else {
+	//	object_->position_ = position_;
+	//}
+
+	//object_->position_.x += RandomEngine::GetRandom(float(-stunTimer_) * 0.1f, float(stunTimer_) * 0.1f);
+
+	////4頂点の座標を更新
+	//leftTop_ = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeX_ };
+	//rightTop_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y - kPlayerHalfSizeX_ };
+	//leftBottom_ = { position_.x - kPlayerHalfSizeX_, position_.y + kPlayerHalfSizeX_ - 1 };
+	//rightBottom_ = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeX_ - 1 };
 
 }
 

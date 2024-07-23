@@ -172,4 +172,7 @@ private:
 
 	int32_t startFallCount_ = 60;
 
+	//トゲを止めているブロック
+	Block* keeper_ = nullptr;
+
 };

@@ -55,6 +55,10 @@ public:
 		kCollapseBlock,
 		//敵追加ブロック
 		kEnemyBlock,
+		//トゲブロック(敵と同じ扱いをする)
+		kNeedleBlock,
+		//
+
 		//ブロックの最大種類
 		kMaxBlock
 
