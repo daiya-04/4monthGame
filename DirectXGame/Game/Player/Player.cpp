@@ -315,6 +315,8 @@ void Player::Update() {
 	collision_.min = { position_.x - kPlayerHalfSizeX_, position_.y - kPlayerHalfSizeY_ };
 	collision_.max = { position_.x + kPlayerHalfSizeX_ - 1, position_.y + kPlayerHalfSizeY_ - 1 };
 
+	//effect更新
+	BlockTextureManager::GetInstance()->UpdateJumpChargeParticle(position_);
 }
 
 void Player::UpdateUI() {
@@ -653,6 +655,14 @@ void Player::ChargeJump() {
 		//最大値になるまでカウント
 		if (parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
 			parameters_[currentCharacters_]->chargeJump_.chargeTimer++;
+			if (parameters_[currentCharacters_]->chargeJump_.chargeTimer > 6) {
+			//チャージ中エフェクトの呼び出し
+			BlockTextureManager::GetInstance()->CreateJumpChargeParticle(position_, 0);
+			}
+		}
+		else {
+			//完了エフェクト
+			//BlockTextureManager::GetInstance()->UpdateChargeCompleteEffect(position_);
 		}
 
 	}
@@ -661,7 +671,13 @@ void Player::ChargeJump() {
 		parameters_[currentCharacters_]->chargeJump_.chargeTimer = 0;
 
 	}
-
+	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
+		//完了エフェクト
+		BlockTextureManager::GetInstance()->UpdateChargeCompleteEffect(position_);
+		//BlockTextureManager::GetInstance()->SetPlayerTextureSize({ kPlayerImageSize_, kPlayerImageSize_ });
+		//BlockTextureManager::GetInstance()->SetPlayerTextureHandle(object_->GetTextureHandle());
+		//BlockTextureManager::GetInstance()->SetPlayerTextureArea({ 160.0f * currentAnimationNum_,0.0f }, { 160.0f,160.0f });
+	}
 }
 
 void Player::WallJump() {
@@ -1633,7 +1649,10 @@ void Player::CheckCollision() {
 							parameters_[currentCharacters_]->dig_.digCount = parameters_[currentCharacters_]->dig_.digInterval;
 
 						}
-
+						else {
+							//壊せないブロックは火花出す
+							(*blocksPtr_)[y][x]->UnBreak();
+						}
 					}
 
 					if (parameters_[currentCharacters_]->Jump_.canJump && input_->TiltLStick(Input::Stick::Up) && !input_->TiltLStick(Input::Stick::Right) && !input_->TiltLStick(Input::Stick::Left) &&

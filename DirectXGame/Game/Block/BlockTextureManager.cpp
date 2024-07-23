@@ -6,6 +6,8 @@
 #include "SandParticle.h"
 #include "GemGetParticle.h"
 #include "WallKickEffect.h"
+#include "hitEffect.h"
+#include "JumpChargeParticle.h"
 #include "DirectXCommon.h"
 BlockTextureManager* BlockTextureManager::GetInstance() {
 	static BlockTextureManager instance;
@@ -56,19 +58,21 @@ void BlockTextureManager::LoadAllBlockTexture() {
 		}
 		else if (index == Block::kDownMagma) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[5]);
-			objects_[index - 1]->SetMaskTextureHandle(TextureManager::Load("blocks/maskTest.png"));
+			objects_[index - 1]->SetMaskTextureHandle(TextureManager::Load("blocks/iceMask.png"));
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[5]);
 		}
 		else if (index == Block::kUnbreakable || index == Block::kFlagBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[6]);
-			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[6]);
+			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/fire.png"));//ここ火花に差し替える
 		}
 		else if (index == Block::kGoldBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[7]);
+			objects_[index - 1]->SetMaskTextureHandle(TextureManager::Load("blocks/rockMask.png"));
 			breakParticles_[index - 1]->SetTextureHandle(blockTextures_[7]);
 		}
 		else if (index == Block::kIceBlock) {
 			objects_[index - 1]->SetTextureHandle(blockTextures_[8]);
+			objects_[index - 1]->SetMaskTextureHandle(TextureManager::Load("blocks/iceMask.png"));
 			breakParticles_[index - 1]->SetTextureHandle(TextureManager::Load("blocks/iceParticle.png"));
 		}
 		else {
@@ -130,6 +134,10 @@ void BlockTextureManager::LoadAllBlockTexture() {
 	//wallKick
 	wallKickEffectDatas_.clear();
 
+	jumpChargeParticleDatas_.clear();
+
+	hitEffectDatas_.clear();
+
 	ClearObject();
 }
 
@@ -139,10 +147,11 @@ BlockTextureManager::BlockTextureManager() {
 		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 512));
 		object->SetSize({ float(BaseBlock::kBlockSize_),float(BaseBlock::kBlockSize_) });
 		objects_.push_back(std::move(object));
-		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 128));
+		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 512));
 		int32_t size = 4;
+		
 		if (index == 2 || index == 3 || index == 5 || index == 6 || index == 7){
-			size = 1;
+			size = 2;
 		}
 		if (index == 4) {
 			size = 2;
@@ -172,9 +181,25 @@ BlockTextureManager::BlockTextureManager() {
 	constantCamera_->ChangeDrawingRange({ 1280.0f,720.0f });
 	constantCamera_->UpdateMatrix();
 
+	hitEffects_.reset(Object2dInstancing::Create(TextureManager::Load("goldStar.png"), Vector2{ 0,0 }, 256));
+	hitEffects_->SetScale({ 1.0f, 1.0f });
+	hitEffects_->SetSize({ float(BaseBlock::kBlockSize_)*0.5f,float(BaseBlock::kBlockSize_)*30.0f });
+
 	//wallkick
 	wallKickEffects_.reset(Object2dInstancing::Create(TextureManager::Load("wallKickEffect.png"), Vector2{ 1.0f,1.0f }, 8));
 	wallKickEffects_->SetSize({ float(BaseBlock::kBlockSize_),float(BaseBlock::kBlockSize_) });
+
+	//chargejump
+	jumpChargeParticles_.reset(Object2dInstancing::Create(TextureManager::Load("circle.png"), Vector2{ 1.0f,1.0f }, 8));
+	jumpChargeParticles_->SetSize({ float(BaseBlock::kBlockSize_/6),float(BaseBlock::kBlockSize_/6) });
+
+	//chargeComplete
+	chargeCompleteEffect_.reset(Object2d::Create(TextureManager::Load("circle.png"), { 0,0 }, 1.0f));
+	chargeCompleteEffect_->SetSize({12.0f,12.0f});
+
+	//goldWave
+	goldBlockEffect_.reset(Object2d::Create(TextureManager::Load("goldEffect.png"), { 0,0 }, 1.0f));
+	goldBlockEffect_->SetSize({float(Block::kBlockSize_),float(Block::kBlockSize_) });
 }
 
 void BlockTextureManager::ClearObject() {
@@ -188,6 +213,8 @@ void BlockTextureManager::ClearObject() {
 	starParticlesUI_->ClearUseCount();
 
 	wallKickEffects_->ClearUseCount();
+	jumpChargeParticles_->ClearUseCount();
+	hitEffects_->ClearUseCount();
 }
 
 void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type, float disolveValue) {
@@ -195,15 +222,17 @@ void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& t
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
+	Vector2 size = { float(BaseBlock::kBlockSize_), float(BaseBlock::kBlockSize_) };
 	objects_[bType-1]->AppendObject(position,0,texBase,texSize, disolveValue);
 }
 
-void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type,const Vector4& color, float disolveValue) {
+void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type, const Vector4& color, float disolveValue) {
 	BaseBlock::BlockType bType = BaseBlock::BlockType(type);
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	objects_[bType - 1]->AppendObject(position,0, texBase, texSize,color, disolveValue);
+	Vector2 size = {float(BaseBlock::kBlockSize_), float(BaseBlock::kBlockSize_)};
+	objects_[bType - 1]->AppendObject(position, size, 0, texBase, texSize, color, disolveValue);
 }
 
 void BlockTextureManager::DrawAll(const Camera& camera) {
@@ -233,22 +262,22 @@ void BlockTextureManager::AppendParticle(const Vector2& position, float rotate,c
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	breakParticles_[bType - 1]->AppendObject(position,rotate, uvBase, Vector2{ 32.0f,32.0f },0);
+	breakParticles_[bType - 1]->AppendObject(position, breakParticles_[bType - 1]->GetSize(), rotate, uvBase, Vector2{32.0f,32.0f}, Vector4{1.0f,1.0f,1.0f,1.0f}, 0);
 }
 
 void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vector4& color) {
 	
-	starParticles_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f },color,0);
+	starParticles_->AppendObject(position, starParticles_->GetSize(), 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendStarParticleUI(const Vector2& position, const Vector4& color) {
 
-	starParticlesUI_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f }, color,0);
+	starParticlesUI_->AppendObject(position, starParticlesUI_->GetSize(), 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vector4& color) {
 
-	sandParticles_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f }, color,0);
+	sandParticles_->AppendObject(position, sandParticles_->GetSize() , 0, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f }, color, 0);
 }
 
 void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t type, const Vector4& color) {
@@ -263,7 +292,7 @@ void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t typ
 		tBase = { 96,0 };
 	}
 
-	gemParticles_->AppendObject(position,0, tBase, Vector2{32.0f,32.0f}, color,0);
+	gemParticles_->AppendObject(position, gemParticles_->GetSize(), 0, tBase, Vector2{32.0f,32.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t type, const Vector4& color) {
@@ -278,9 +307,20 @@ void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t
 		tSize = { -32.0f,32.0f };
 	}
 
-	wallKickEffects_->AppendObject(position,0, tBase,tSize, color,0);
+	wallKickEffects_->AppendObject(position, wallKickEffects_->GetSize(), 0, tBase, tSize, color, 0);
 }
 
+//描画オブジェクト追加
+void BlockTextureManager::AppendHitEffect(const Vector2& position, float rotate, const Vector4& color) {
+	hitEffects_->AppendObject(position, hitEffects_->GetSize(), rotate, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
+}
+
+void BlockTextureManager::AppendJumpChargeParticle(const Vector2& position,float rotate, uint32_t type, const Vector4& color) {
+	Vector2 tBase = { 0,0 };
+	Vector2 tSize = { 128,128 };
+
+	jumpChargeParticles_->AppendObject(position, jumpChargeParticles_->GetSize(), rotate, tBase, tSize, color, 0);
+}
 void BlockTextureManager::DrawParticle(const Camera& camera) {
 	for (std::unique_ptr<BlockBreakParticle>& data : breakParticleDatas_) {
 		data->Draw();
@@ -305,6 +345,23 @@ void BlockTextureManager::DrawParticle(const Camera& camera) {
 		data->Draw();
 	}
 	wallKickEffects_->Draw(camera);
+
+	for (std::unique_ptr<JumpChargeParticle>& data : jumpChargeParticleDatas_) {
+		data->Draw();
+	}
+	jumpChargeParticles_->Draw(camera);
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	GoldBlockEffectDraw(camera);
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	for (std::unique_ptr<HitEffect>& data : hitEffectDatas_) {
+		data->Draw();
+	}
+	//hitEffects_->Draw(camera);
+}
+
+void BlockTextureManager::DrawHitEffect(const Camera& camera) {
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	hitEffects_->Draw(camera);
 }
 
 void BlockTextureManager::DrawParticleUI() {
@@ -345,6 +402,23 @@ void BlockTextureManager::CreateWallKickEffect(const Vector2& position, int32_t 
 	particle.reset(new WallKickEffect);
 	particle->Initialize(position, type);
 	wallKickEffectDatas_.push_back(std::move(particle));
+}
+
+void BlockTextureManager::CreateJumpChargeParticle(const Vector2& position, int32_t type) {
+	JumpChargeParticle::response--;
+	if (JumpChargeParticle::response < 0) {
+		std::unique_ptr<JumpChargeParticle> particle;
+		particle.reset(new JumpChargeParticle);
+		particle->Initialize(position, type);
+		jumpChargeParticleDatas_.push_back(std::move(particle));
+	}
+}
+
+void BlockTextureManager::CreateHitEffect(const Vector2& position, int32_t type) {
+	std::unique_ptr<HitEffect> particle;
+	particle.reset(new HitEffect);
+	particle->Initialize(position,type);
+	hitEffectDatas_.push_back(std::move(particle));
 }
 
 void BlockTextureManager::CreateStarParticleUI(const Vector2& position, int32_t type) {
@@ -434,11 +508,73 @@ void BlockTextureManager::UpdateParticle(const Camera& camera) {
 	for (std::unique_ptr<WallKickEffect>& data : wallKickEffectDatas_) {
 		data->Update();
 	}
+
+	//hitEffect
+	hitEffectDatas_.remove_if([](std::unique_ptr<HitEffect>& bullet) {
+		if (!bullet->GetIsAlive()) {
+			return true;
+		}
+		return false;
+		});
+	for (std::unique_ptr<HitEffect>& data : hitEffectDatas_) {
+		data->Update();
+	}
+}
+
+void BlockTextureManager::UpdateJumpChargeParticle(const Vector2& position) {
+	//JumpChargeParticle
+	jumpChargeParticleDatas_.remove_if([](std::unique_ptr<JumpChargeParticle>& bullet) {
+		if (!bullet->GetIsAlive()) {
+			return true;
+		}
+		return false;
+		});
+	for (std::unique_ptr<JumpChargeParticle>& data : jumpChargeParticleDatas_) {
+		data->Update(position);
+	}
 }
 
 void BlockTextureManager::GoldBlockEffectUpdate() {
 
 }
-void BlockTextureManager::GoldBlockEffectDraw() {
+void BlockTextureManager::GoldBlockEffectDraw(const Camera& camera) {
+	if (!isDrawGoldBlockEffect_) {
+		return;
+	}
+	goldBlockEffect_->Draw(camera);
+	isDrawGoldBlockEffect_ = false;
+}
 
+void BlockTextureManager::UpdateChargeCompleteEffect(const Vector2& position) {
+	chargeCompleteTime++;
+	if (chargeCompleteTime>=chargeCompleteEnd) {
+		chargeCompleteTime = 0;
+	}
+	chargeCompleteEffect_->position_ = position;
+	chargeCompleteEffect_->SetScale(1.1f+( float(chargeCompleteTime) / float(chargeCompleteEnd)) * 8.2f);
+	float c = (float(chargeCompleteEnd - chargeCompleteTime) / float(chargeCompleteEnd)) * 0.8f;
+	chargeCompleteEffect_->SetColor({1000.0f,1000.0f,1000.0f,c});
+	isDrawChargeCompleteEffect_ = true;
+}
+
+void BlockTextureManager::DrawChargeCompleteEffect(const Camera& camera) {
+	if (!isDrawChargeCompleteEffect_) {
+		chargeCompleteTime = 0;
+		return;
+	}
+	chargeCompleteEffect_->Draw(camera);
+	isDrawChargeCompleteEffect_ = false;
+}
+
+void BlockTextureManager::UpdateGoldWaveEffectEffect(const Vector2& position) {
+	static uint32_t count;
+	count++;
+	if (count >= goldWaveEffectEnd) {
+		count = 0;
+	}
+	goldBlockEffect_->position_ = position;
+	goldBlockEffect_->SetScale(1.0f + (float(count) / float(goldWaveEffectEnd)));
+	float c = (float(goldWaveEffectEnd - count) / float(goldWaveEffectEnd)) * 0.8f;
+	goldBlockEffect_->SetColor({ 1.0f,1.0f,1.0f,c });
+	isDrawGoldBlockEffect_ = true;
 }

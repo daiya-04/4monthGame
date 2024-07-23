@@ -50,24 +50,6 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		output.color = output.color + float32_t4(0.2f, 0.2f, 0.22f, 0.2f);
 	}
 
-	///outline
-	if (gTextureNextScene.Sample(gSampler, input.texcoord).a==0.0f) {
-		float32_t2 transformdR = input.texcoord;
-		float32_t2 transformdL = input.texcoord;
-		float32_t2 transformdU = input.texcoord;
-		float32_t2 transformdD = input.texcoord;
-		transformdR.x += rcp(1280.0f);
-		transformdL.x -= rcp(1280.0f);
-		transformdU.y -= rcp(720.0f);
-		transformdD.y += rcp(720.0f);
-		if (gTextureNextScene.Sample(gSampler, transformdR).a != 0.0f ||
-			gTextureNextScene.Sample(gSampler, transformdL).a != 0.0f ||
-			gTextureNextScene.Sample(gSampler, transformdU).a != 0.0f ||
-			gTextureNextScene.Sample(gSampler, transformdD).a != 0.0f ) {
-			//output.color = output.color +  float32_t4(0.2f, 0.2f, 0.2f, 0.1f);
-		}
-	}
-
 	output.color.a = 1.0f;
 	return output;
 }

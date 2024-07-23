@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "Object2dInstancing.h"
+#include "Object2d.h"
 #include "Camera.h"
 #include <list>
 #include "Vec4.h"
@@ -12,7 +13,8 @@ class StarParticle;
 class SandParticle;
 class GemGetParticle;
 class WallKickEffect;
-
+class JumpChargeParticle;
+class HitEffect;
 /// <summary>
 /// ブロックに使うテクスチャ一括管理
 /// </summary>
@@ -69,10 +71,18 @@ public:
 	void AppendWallKickEffect(const Vector2& position, uint32_t type, const Vector4& color);
 
 	//描画オブジェクト追加
+	void AppendJumpChargeParticle(const Vector2& position,float rotate, uint32_t type, const Vector4& color);
+
+	//描画オブジェクト追加
+	void AppendHitEffect(const Vector2& position, float rotate, const Vector4& color);
+
+	//描画オブジェクト追加
 	void AppendStarParticleUI(const Vector2& position, const Vector4& color);
 
 	//全オブジェクト描画
 	void DrawParticle(const Camera& camera);
+
+	void DrawHitEffect(const Camera& camera);
 
 	void DrawParticleUI();
 
@@ -83,14 +93,30 @@ public:
 	void CreateSandParticle(const Vector2& position, int32_t type);
 	void CreateGemParticle(const Vector2& position, int32_t type);
 	void CreateWallKickEffect(const Vector2& position, int32_t type);
-
+	void CreateJumpChargeParticle(const Vector2& position, int32_t type);
 	void CreateStarParticleUI(const Vector2& position,int32_t type);
-
+	void CreateHitEffect(const Vector2& position, int32_t type);
 	void UpdateParticle(const Camera& camera);
+
+	void UpdateJumpChargeParticle(const Vector2& position);
+
+	void UpdateGoldWaveEffectEffect(const Vector2& position);
+
+	void UpdateChargeCompleteEffect(const Vector2& position);
+	void DrawChargeCompleteEffect(const Camera& camera);
+	void SetPlayerTextureHandle(uint32_t handle){
+		chargeCompleteEffect_->SetTextureHandle(handle);
+	}
+	void SetPlayerTextureArea(const Vector2& base, const Vector2& size) {
+		chargeCompleteEffect_->SetTextureArea(base,size);
+	};
+	void SetPlayerTextureSize(const Vector2& size) {
+		chargeCompleteEffect_->SetSize(size);
+	}
 
 	//黄金ブロックのエフェクト
 	void GoldBlockEffectUpdate();
-	void GoldBlockEffectDraw();
+	void GoldBlockEffectDraw(const Camera& camera);
 	//void SetGoldBlockEffectPosition(const Vector2& pos) { goldBlockEffect_->position_ = pos; };
 	void SetIsResetGoldBlockEffect(bool is) { isResetGoldBlockEffect_ = is; };
 	//指定の番号にテクスチャ変更
@@ -121,6 +147,13 @@ private:
 
 	std::list<std::unique_ptr<WallKickEffect>> wallKickEffectDatas_;
 	std::unique_ptr<Object2dInstancing> wallKickEffects_;
+
+	std::list<std::unique_ptr<JumpChargeParticle>> jumpChargeParticleDatas_;
+	std::unique_ptr<Object2dInstancing> jumpChargeParticles_;
+
+	std::list<std::unique_ptr<HitEffect>> hitEffectDatas_;
+	std::unique_ptr<Object2dInstancing> hitEffects_;
+
 private:
 
 	BlockTextureManager();
@@ -133,10 +166,16 @@ private:
 	std::unique_ptr<Object2dInstancing> starParticlesUI_;
 
 	//黄金ブロックのエフェクト
-	//std::unique_ptr<Object2d> goldBlockEffect_;
-	bool isDrawGoldBlockEffect_;
+	std::unique_ptr<Object2d> goldBlockEffect_;
+	bool isDrawGoldBlockEffect_=false;
 	bool isResetGoldBlockEffect_;
+	static const uint32_t goldWaveEffectEnd = 30;
 
+	//タメ完了エフェクト
+	bool isDrawChargeCompleteEffect_=false;
+	uint32_t chargeCompleteTime=0;
+	static const uint32_t chargeCompleteEnd=12;
+	std::unique_ptr<Object2d> chargeCompleteEffect_;
 };
 
 

@@ -41,6 +41,7 @@ public:
 	//VertexShaderに送るパラメータ
 	struct InstancingForVSData {
 		Matrix4x4 worldMat_;
+		Vector2 size_;
 		Vector2 texcoord_[4];
 		Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 		float disolveValue_ = 0;
@@ -50,6 +51,10 @@ public:
 	struct InstancingCPUData {
 		//座標
 		Vector2 position_{};
+
+		//サイズ
+		Vector2 size_{1.0f,1.0f};
+
 		//テクスチャ左上座標
 		Vector2 texBase_{0.0f,0.0f};
 		//テクスチャサイズ
@@ -149,6 +154,8 @@ public:
 
 	uint32_t GetTextureHandle() { return textureHandle_; };
 
+	Vector2 GetSize() { return size_; };
+
 	void SetTextureArea(const Vector2& texBase, const Vector2& texSize);
 
 	//使用数をクリア(0に)する
@@ -180,6 +187,22 @@ public:
 		}
 		InstancingCPUData data;
 		data.position_ = position;
+		data.texBase_ = texBase + Vector2({ 0.0f,0.5f });
+		data.texSize_ = texSize - Vector2({ 1.0f,1.0f });
+		data.color_ = color;
+		data.rotate_ = rotate;
+		data.disolveValue_ = disolveValue;
+		instancingCPUData_.push_back(data);
+		instanceCount_++;
+	};
+	//描画オブジェクトを追加する
+	void AppendObject(const Vector2& position, const Vector2& size, float rotate, const Vector2& texBase, const Vector2& texSize, const Vector4& color, float disolveValue) {
+		if (instanceCount_ >= instanceMax_) {
+			return;
+		}
+		InstancingCPUData data;
+		data.position_ = position;
+		data.size_ = size;
 		data.texBase_ = texBase + Vector2({ 0.0f,0.5f });
 		data.texSize_ = texSize - Vector2({ 1.0f,1.0f });
 		data.color_ = color;

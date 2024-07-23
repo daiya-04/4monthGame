@@ -115,6 +115,10 @@ public:
 
 	void SetTextureArea(const Vector2& texBase, const Vector2& texSize);
 
+	uint32_t GetTextureHandle() {
+		return textureHandle_;
+	}
+
 private:
 
 	void TransferVertex();
