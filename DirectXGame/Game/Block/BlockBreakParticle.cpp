@@ -28,6 +28,8 @@ void BlockBreakParticle::Initialize(const Vector2& postition, uint32_t blockType
 	velocity_ *= 4.0f;
 	aliveTime_ = 40;
 	isAlive_ = true;
+	color_ = {1.0f,1.0f,1.0f,1.0f};
+	aliveMax_ = aliveTime_;
 }
 
 //方向ベクトルから回転角を出す(下向き基準)
@@ -76,6 +78,8 @@ void BlockBreakParticle::Initialize(const Vector2& postition, const Vector2& vel
 		aliveTime_ = 30;
 	}
 	isAlive_ = true;
+	color_ = { 1.0f,1.0f,1.0f,1.0f };
+	aliveMax_ = aliveTime_;
 }
 
 void BlockBreakParticle::Update() {
@@ -93,9 +97,10 @@ void BlockBreakParticle::Update() {
 	if (aliveTime_<=0) {
 		isAlive_ = false;
 	}
+	color_.w = float(aliveTime_) / float(aliveMax_);
 }
 
 
 void BlockBreakParticle::Draw() {
-	BlockTextureManager::GetInstance()->AppendParticle(position_, rotate_, texBase_, blockType_);
+	BlockTextureManager::GetInstance()->AppendParticle(position_, rotate_, texBase_, blockType_,color_);
 }

@@ -10,6 +10,7 @@ public:
 	bool GetIsAlive() { return isAlive_; };
 private:
 	Vector2 position_{};
+	Vector2 size_{};
 	//生存時間
 	uint32_t aliveTime_ = 0;
 	uint32_t aliveMax_ = 0;
