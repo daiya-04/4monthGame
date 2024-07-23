@@ -319,7 +319,8 @@ void Object2dInstancing::Draw(const Camera& camera) {
 	
 	for (uint32_t index = 0; index < instanceCount_;index++) {
 		instancingForVSMap_[index].worldMat_ = MakeAffineMatrix({1.0f,1.0f,1.0f}, {0.0f,0.0f,instancingCPUData_[index].rotate_}, {instancingCPUData_[index].position_.x,instancingCPUData_[index].position_.y,0.0f});
-		
+		instancingForVSMap_[index].size_ = instancingCPUData_[index].size_;
+
 		float uvLeft = instancingCPUData_[index].texBase_.x / (float)resourceDesc_.Width;
 		float uvRight = (instancingCPUData_[index].texBase_.x + instancingCPUData_[index].texSize_.x) / (float)resourceDesc_.Width;
 		float uvTop = instancingCPUData_[index].texBase_.y / (float)resourceDesc_.Height;
@@ -396,10 +397,10 @@ void Object2dInstancing::SetTextureArea(const Vector2& texBase, const Vector2& t
 
 void Object2dInstancing::TransferVertex() {
 
-	float left = (0.0f - anchorpoint_.x) * size_.x;
-	float right = (1.0f - anchorpoint_.x) * size_.x;
-	float top = (0.0f - anchorpoint_.y) * size_.y;
-	float bottom = (1.0f - anchorpoint_.y) * size_.y;
+	float left = (0.0f - anchorpoint_.x) ;
+	float right = (1.0f - anchorpoint_.x) ;
+	float top = (0.0f - anchorpoint_.y) ;
+	float bottom = (1.0f - anchorpoint_.y) ;
 	/*
 	float uvLeft = texBase_.x / (float)resourceDesc_.Width;
 	float uvRight = (texBase_.x + texSize_.x) / (float)resourceDesc_.Width;

@@ -222,15 +222,17 @@ void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& t
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
+	Vector2 size = { float(BaseBlock::kBlockSize_), float(BaseBlock::kBlockSize_) };
 	objects_[bType-1]->AppendObject(position,0,texBase,texSize, disolveValue);
 }
 
-void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type,const Vector4& color, float disolveValue) {
+void BlockTextureManager::AppendObject(const Vector2& position, const Vector2& texBase, const Vector2& texSize, uint32_t type, const Vector4& color, float disolveValue) {
 	BaseBlock::BlockType bType = BaseBlock::BlockType(type);
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	objects_[bType - 1]->AppendObject(position,0, texBase, texSize,color, disolveValue);
+	Vector2 size = {float(BaseBlock::kBlockSize_), float(BaseBlock::kBlockSize_)};
+	objects_[bType - 1]->AppendObject(position, size, 0, texBase, texSize, color, disolveValue);
 }
 
 void BlockTextureManager::DrawAll(const Camera& camera) {
@@ -260,22 +262,22 @@ void BlockTextureManager::AppendParticle(const Vector2& position, float rotate,c
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	breakParticles_[bType - 1]->AppendObject(position,rotate, uvBase, Vector2{ 32.0f,32.0f },0);
+	breakParticles_[bType - 1]->AppendObject(position, breakParticles_[bType - 1]->GetSize(), rotate, uvBase, Vector2{32.0f,32.0f}, Vector4{1.0f,1.0f,1.0f,1.0f}, 0);
 }
 
 void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vector4& color) {
 	
-	starParticles_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f },color,0);
+	starParticles_->AppendObject(position, starParticles_->GetSize(), 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendStarParticleUI(const Vector2& position, const Vector4& color) {
 
-	starParticlesUI_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f }, color,0);
+	starParticlesUI_->AppendObject(position, starParticlesUI_->GetSize(), 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vector4& color) {
 
-	sandParticles_->AppendObject(position,0, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f }, color,0);
+	sandParticles_->AppendObject(position, sandParticles_->GetSize() , 0, Vector2{ 0,0 }, Vector2{ 16.0f,16.0f }, color, 0);
 }
 
 void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t type, const Vector4& color) {
@@ -290,7 +292,7 @@ void BlockTextureManager::AppendGemParticle(const Vector2& position,uint32_t typ
 		tBase = { 96,0 };
 	}
 
-	gemParticles_->AppendObject(position,0, tBase, Vector2{32.0f,32.0f}, color,0);
+	gemParticles_->AppendObject(position, gemParticles_->GetSize(), 0, tBase, Vector2{32.0f,32.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t type, const Vector4& color) {
@@ -305,19 +307,19 @@ void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t
 		tSize = { -32.0f,32.0f };
 	}
 
-	wallKickEffects_->AppendObject(position,0, tBase,tSize, color,0);
+	wallKickEffects_->AppendObject(position, wallKickEffects_->GetSize(), 0, tBase, tSize, color, 0);
 }
 
 //描画オブジェクト追加
 void BlockTextureManager::AppendHitEffect(const Vector2& position, float rotate, const Vector4& color) {
-	hitEffects_->AppendObject(position, rotate, Vector2{ 0,0 }, Vector2{ 64.0f,64.0f }, color, 0);
+	hitEffects_->AppendObject(position, hitEffects_->GetSize(), rotate, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendJumpChargeParticle(const Vector2& position,float rotate, uint32_t type, const Vector4& color) {
 	Vector2 tBase = { 0,0 };
 	Vector2 tSize = { 128,128 };
 
-	jumpChargeParticles_->AppendObject(position, rotate, tBase, tSize, color, 0);
+	jumpChargeParticles_->AppendObject(position, jumpChargeParticles_->GetSize(), rotate, tBase, tSize, color, 0);
 }
 void BlockTextureManager::DrawParticle(const Camera& camera) {
 	for (std::unique_ptr<BlockBreakParticle>& data : breakParticleDatas_) {

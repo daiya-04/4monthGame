@@ -2,6 +2,7 @@
 
 struct InstancingGPU {
 	float32_t4x4 world;
+	float32_t2 size;
 	float32_t2 texcoord[4];
 	float32_t4 color;
 	float32_t disolveValue_;
@@ -32,7 +33,9 @@ static const float32_t2 kMaskTexcoords[kNumVertex]={
 
 VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_InstanceID,uint32_t vertexId : SV_VertexID) {
 	VertexShaderOutput output;
-	output.position = mul(input.position, mul(gInstancing[instanceId].world, mul(gCamera.view, gCamera.projection)));
+	float32_t4 pos =  input.position;
+	pos.xy = pos.xy * gInstancing[instanceId].size;
+	output.position = mul(pos, mul(gInstancing[instanceId].world, mul(gCamera.view, gCamera.projection)));
 	output.texcoord = gInstancing[instanceId].texcoord[vertexId];
 	output.maskTexcoord = kMaskTexcoords[vertexId];
 	//output.normal = normalize(mul(input.normal, (float32_t3x3)gTransformationMatrix.World));
