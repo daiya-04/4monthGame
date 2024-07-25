@@ -271,9 +271,9 @@ void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vecto
 	starParticles_->AppendObject(position, starParticles_->GetSize(), 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
-void BlockTextureManager::AppendStarParticleUI(const Vector2& position, const Vector4& color) {
+void BlockTextureManager::AppendStarParticleUI(const Vector2& position, const Vector2& size, const Vector4& color) {
 
-	starParticlesUI_->AppendObject(position, starParticlesUI_->GetSize(), 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
+	starParticlesUI_->AppendObject(position, size, 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vector4& color) {

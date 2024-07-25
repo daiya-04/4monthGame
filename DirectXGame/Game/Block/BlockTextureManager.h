@@ -77,7 +77,7 @@ public:
 	void AppendHitEffect(const Vector2& position,const Vector2& size, float rotate, const Vector4& color);
 
 	//描画オブジェクト追加
-	void AppendStarParticleUI(const Vector2& position, const Vector4& color);
+	void AppendStarParticleUI(const Vector2& position,const Vector2& size, const Vector4& color);
 
 	//全オブジェクト描画
 	void DrawParticle(const Camera& camera);

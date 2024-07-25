@@ -39,6 +39,9 @@ void StarParticle::Initialize(const Vector2& postition, int32_t type) {
 	default:
 		break;
 	}
+	float rndsize = RandomEngine::GetRandom(0.3f, 1.3f);
+	size_.x = 96.9f * rndsize;
+	size_.y = 96.9f * rndsize;
 }
 
 void StarParticle::Update() {
@@ -55,5 +58,5 @@ void StarParticle::Draw() {
 }
 
 void StarParticle::DrawUI() {
-	BlockTextureManager::GetInstance()->AppendStarParticleUI(position_, color_);
+	BlockTextureManager::GetInstance()->AppendStarParticleUI(position_, size_, color_);
 }
