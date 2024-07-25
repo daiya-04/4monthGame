@@ -91,8 +91,6 @@ protected:
 
 	Vector2 velocity_{};
 
-	std::unique_ptr<Object2d> object_;
-
 	AABB2D collision_{};
 
 	//右に移動するか左に移動するか

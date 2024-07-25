@@ -2,7 +2,6 @@
 #include "Object2dInstancing.h"
 BaseEnemy::BaseEnemy() {
 	enemyTexture_ = TextureManager::GetInstance()->Load("enemy/enemy.png");
-	object_.reset(Object2d::Create(enemyTexture_, {}));
 	crushSE_ = AudioManager::GetInstance()->Load("SE/crush.mp3");
 }
 
@@ -209,7 +208,6 @@ void BaseEnemy::SetDrawData(Object2dInstancing* func) {
 void NormalEnemy::Initialize(const Vector2& position) {
 
 	position_ = position;
-	object_->position_ = position_;
 	
 	tmpPosition_ = position_;
 	prePosition_ = position_;
@@ -280,8 +278,7 @@ void NormalEnemy::Update() {
 
 	position_ = tmpPosition_;
 
-	object_->position_ = position_;
-
+	
 	//4頂点の座標を更新
 	leftTop_ = { position_.x - kEnemyMiddleHalfSize_, position_.y - kEnemyMiddleHalfSize_ };
 	rightTop_ = { position_.x + kEnemyMiddleHalfSize_ - 1, position_.y - kEnemyMiddleHalfSize_ };
@@ -292,15 +289,12 @@ void NormalEnemy::Update() {
 
 void NormalEnemy::Draw(const Camera& camera) {
 
-	object_->Draw(camera);
-
 }
 
 void NeedleEnemy::Initialize(const Vector2& position) {
 
 	position_ = position;
-	object_->position_ = position_;
-
+	
 	tmpPosition_ = position_;
 	prePosition_ = position_;
 
@@ -322,9 +316,6 @@ void NeedleEnemy::Initialize(const Vector2& position) {
 	isMoveLeft_ = false;
 
 	enemyTexture_ = TextureManager::GetInstance()->Load("blocks/needle.png");
-	object_->SetTextureHandle(enemyTexture_);
-	object_->SetTextureArea({ 0.0f,0.0f }, { 32.0f,32.0f });
-	object_->SetSize({ 96.0f,96.0f });
 	type_ = Type::kNeedle;
 
 	texSize_ = { 32.0f,32.0f };
@@ -380,8 +371,7 @@ void NeedleEnemy::Update() {
 
 	position_ = tmpPosition_;
 
-	object_->position_ = position_;
-
+	
 	//4頂点の座標を更新
 	leftTop_ = { position_.x - kEnemyLargeHalfSize_, position_.y - kEnemyLargeHalfSize_ };
 	rightTop_ = { position_.x + kEnemyLargeHalfSize_ - 1, position_.y - kEnemyLargeHalfSize_ };
@@ -391,8 +381,6 @@ void NeedleEnemy::Update() {
 }
 
 void NeedleEnemy::Draw(const Camera& camera) {
-
-	object_->Draw(camera);
 
 }
 
