@@ -1,5 +1,5 @@
 #include "Enemy.h"
-
+#include "Object2dInstancing.h"
 BaseEnemy::BaseEnemy() {
 	enemyTexture_ = TextureManager::GetInstance()->Load("enemy/enemy.png");
 	object_.reset(Object2d::Create(enemyTexture_, {}));
@@ -199,6 +199,13 @@ void BaseEnemy::CheckCollision() {
 
 }
 
+void BaseEnemy::SetDrawData(Object2dInstancing* func) {
+	Vector2 size;
+	size.x = rightTop_.x - leftTop_.x;
+	size.y = rightBottom_.y - rightTop_.y;
+	func->AppendObject(position_,size, 0, { 0.0f,0.0f }, texSize_, {1.0f,1.0f,1.0f,1.0f}, 0);
+}
+
 void NormalEnemy::Initialize(const Vector2& position) {
 
 	position_ = position;
@@ -224,7 +231,7 @@ void NormalEnemy::Initialize(const Vector2& position) {
 
 	isMoveLeft_ = false;
 
-
+	texSize_ = {64.0f,64.0f};
 }
 
 void NormalEnemy::Update() {
@@ -320,6 +327,7 @@ void NeedleEnemy::Initialize(const Vector2& position) {
 	object_->SetSize({ 96.0f,96.0f });
 	type_ = Type::kNeedle;
 
+	texSize_ = { 32.0f,32.0f };
 }
 
 void NeedleEnemy::Update() {

@@ -1,5 +1,6 @@
 #pragma once
 #include "Object2d.h"
+#include "Object2dInstancing.h"
 #include "Vec2.h"
 #include "Camera.h"
 #include "TextureManager.h"
@@ -18,6 +19,7 @@ public:
 	enum class Type {
 		kNormal, //通常敵
 		kNeedle, //トゲ
+		kCount,
 	};
 
 	BaseEnemy();
@@ -70,6 +72,9 @@ public:
 	}
 
 	Type GetType() const { return type_; }
+
+	//描画用オブジェクトにパラメータを入れ込む
+	void SetDrawData(Object2dInstancing* func);
 
 protected:
 
@@ -129,6 +134,9 @@ protected:
 	Vector2 preRightBottom_{};
 
 	uint32_t enemyTexture_;
+
+	//テクスチャサイズ
+	Vector2 texSize_{};
 
 	///-----SE----------------------------------------
 
