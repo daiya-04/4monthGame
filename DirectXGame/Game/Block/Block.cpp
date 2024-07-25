@@ -106,6 +106,12 @@ void BaseBlock::Break(float power, bool isPlayer) {
 		Vector2 velocity = player_->GetPosition() - center;
 		//Vector2 velocity = {0,0};
 		Vector2 pos = closestPoint;
+
+		//位置調性
+		if (std::fabsf(velocity.x) > std::fabsf(velocity.y)) {
+			pos.y -=17.0f;
+		}
+
 		velocity = velocity.Normalize();
 		velocity *= 2.0f;
 		for (int i = 0; i < createNum; i++) {
@@ -143,6 +149,10 @@ void BaseBlock::UnBreak() {
 	Vector2 velocity = player_->GetPosition() - center;
 	//Vector2 velocity = {0,0};
 	Vector2 pos = closestPoint;
+	//位置調性
+	if (std::fabsf(velocity.x) > std::fabsf(velocity.y)) {
+		pos.y -= 17.0f;
+	}
 	velocity = velocity.Normalize() * 0.3f;
 	for (int i = 0; i < createNum; i++) {
 		BlockTextureManager::GetInstance()->CreateParticle(pos, velocity, kUnbreakable);
