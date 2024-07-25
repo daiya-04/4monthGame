@@ -354,7 +354,9 @@ void Block::Update() {
 
 	if (type_ == kGoldBlock) {
 		BlockTextureManager::GetInstance()->CreateStarParticle(position_,0);
-		BlockTextureManager::GetInstance()->UpdateGoldWaveEffectEffect(position_);
+		if (durability_ == defaultDurability_) {
+			BlockTextureManager::GetInstance()->UpdateGoldWaveEffectEffect(position_);
+		}
 	}
 
 	if (!isBreak_ && type_ != kNone) {
