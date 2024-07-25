@@ -202,7 +202,13 @@ void BaseEnemy::SetDrawData(Object2dInstancing* func) {
 	Vector2 size;
 	size.x = rightTop_.x - leftTop_.x;
 	size.y = rightBottom_.y - rightTop_.y;
-	func->AppendObject(position_,size, 0, { 0.0f,0.0f }, texSize_, {1.0f,1.0f,1.0f,1.0f}, 0);
+	Vector2 texBase = {0,0};
+	Vector2 texSize = texSize_;
+	if (isMoveLeft_) {
+		texBase.x = texSize.x;
+		texSize.x =-1.0f * texSize.x;
+	}
+	func->AppendObject(position_,size, 0, texBase, texSize, {1.0f,1.0f,1.0f,1.0f}, 0);
 }
 
 void NormalEnemy::Initialize(const Vector2& position) {
