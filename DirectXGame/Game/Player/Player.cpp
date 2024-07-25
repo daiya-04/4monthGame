@@ -365,10 +365,6 @@ void Player::DrawUI() {
 
 	}
 
-	/*if (isDead_) {
-		deadSprite_->Draw();
-	}*/
-
 }
 
 /// <summary>
@@ -381,34 +377,6 @@ void Player::Move() {
 	if (currentCharacters_ < kLeftPlayer || currentCharacters_ > kRightPlayer) {
 		return;
 	}
-
-	//モード切替
-	//if (input_->TriggerButton(Input::Button::X)) {
-
-	//	//速度をリセットしてモード切替
-	//	if (moveType_ == kNormal) {
-
-	//		//地面についている時のみ可能にする
-	//		if (parameters_[currentCharacters_]->Jump_.canJump) {
-	//			parameters_[currentCharacters_]->Jump_.canJump = false;
-	//			velocity_ = { 0.0f,0.0f };
-	//			wallJumpVelocity_ = { 0.0f,0.0f };
-	//			moveType_ = kLine;
-	//		}
-
-	//	}
-	//	else {
-
-	//		//止まっている時のみ可能にする
-	//		if (fabsf(velocity_.x) < 0.001f && fabsf(velocity_.y) < 0.001f) {
-	//			velocity_ = { 0.0f,0.0f };
-	//			wallJumpVelocity_ = { 0.0f,0.0f };
-	//			moveType_ = kNormal;
-	//		}
-
-	//	}
-
-	//}
 
 	switch (moveType_)
 	{
@@ -470,17 +438,6 @@ void Player::Move() {
 			}
 
 		}
-
-		//スティック入力で上方向のみの入力の場合且つ横移動の値が小さい場合チャージジャンプをできるようにする
-		/*if (parameters_[currentCharacters_]->Jump_.canJump && input_->TiltLStick(Input::Stick::Up) &&
-			fabsf(input_->GetLX()) < fabsf(input_->GetLY())) {
-
-			parameters_[currentCharacters_]->chargeJump_.isCharge = true;
-
-		}
-		else {
-			parameters_[currentCharacters_]->chargeJump_.isCharge = false;
-		}*/
 
 		//入力方向に応じて画像変更
 		if (parameters_[currentCharacters_]->dig_.digCount <= int32_t(parameters_[currentCharacters_]->dig_.digInterval * 0.5f)) {
@@ -570,13 +527,8 @@ void Player::Jump() {
 		}
 
 		//通常ジャンプ
-		/*if (parameters_[currentCharacters_]->Jump_.canJump && input_->TriggerButton(Input::Button::A) && !parameters_[currentCharacters_]->chargeJump_.isCharge) {
-			velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
-			parameters_[currentCharacters_]->Jump_.canJump = false;
-		}*/
-		//溜めジャンプが可能なときに必要な溜めの時間まで行かなかったら通常ジャンプの処理に切り替え
-		if (parameters_[currentCharacters_]->Jump_.canJump && input_->ReleaseButton(Input::Button::A)/* && parameters_[currentCharacters_]->chargeJump_.isCharge*/ &&
-			parameters_[currentCharacters_]->chargeJump_.chargeTimer < parameters_[currentCharacters_]->chargeJump_.maxChargeTime) {
+		if (parameters_[currentCharacters_]->Jump_.canJump && input_->TriggerButton(Input::Button::A) &&
+			!input_->TiltLStick(Input::Stick::Down)) {
 			velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 			parameters_[currentCharacters_]->Jump_.canJump = false;
 			jumpSE_->Play();
