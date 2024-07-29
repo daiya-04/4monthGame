@@ -56,7 +56,7 @@ public:
 	void DrawCold(const Camera& camera);
 
 	//描画オブジェクト追加
-	void AppendParticle(const Vector2& position,float rotate,const Vector2& uvBase, uint32_t type);
+	void AppendParticle(const Vector2& position,float rotate,const Vector2& uvBase, uint32_t type, const Vector4& color);
 
 	//描画オブジェクト追加
 	void AppendStarParticle(const Vector2& position,const Vector4& color);
@@ -74,10 +74,10 @@ public:
 	void AppendJumpChargeParticle(const Vector2& position,float rotate, uint32_t type, const Vector4& color);
 
 	//描画オブジェクト追加
-	void AppendHitEffect(const Vector2& position, float rotate, const Vector4& color);
+	void AppendHitEffect(const Vector2& position,const Vector2& size, float rotate, const Vector4& color);
 
 	//描画オブジェクト追加
-	void AppendStarParticleUI(const Vector2& position, const Vector4& color);
+	void AppendStarParticleUI(const Vector2& position,const Vector2& size, const Vector4& color);
 
 	//全オブジェクト描画
 	void DrawParticle(const Camera& camera);

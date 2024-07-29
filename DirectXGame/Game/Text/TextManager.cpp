@@ -57,7 +57,7 @@ void TextManager::AppendChar(const Vector2& position,const std::wstring& str) {
     }
     Vector4 col = {1.0f,1.0f,1.0f,1.0f};
     
-    drawObject_->AppendObject(position,0, kCharStride_ * texturePosition_, { kCharStride_ ,kCharStride_ },col,0);
+    drawObject_->AppendObject(position, { float(kTextStride_),float(kTextStride_) },0, kCharStride_ * texturePosition_, { kCharStride_ ,kCharStride_ },col,0);
 }
 
 void TextManager::LoadFontOffset() {

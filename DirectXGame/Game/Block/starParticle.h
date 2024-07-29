@@ -19,6 +19,7 @@ public:
 	bool GetIsAlive() { return isAlive_; };
 private:
 	Vector2 position_{};
+	Vector2 size_{};
 	Vector2 velocity_{};
 	Vector2 accelerate_{};
 	uint32_t blockType_ = 0;

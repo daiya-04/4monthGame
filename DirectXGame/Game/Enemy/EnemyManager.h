@@ -44,4 +44,7 @@ private:
 	EnemyManager(const EnemyManager&) = delete;
 	const EnemyManager& operator=(const EnemyManager&) = delete;
 
+	//uint32_t textureHandles[uint32_t(BaseEnemy::Type::kCount)];
+	std::array<std::unique_ptr<Object2dInstancing>, uint32_t(BaseEnemy::Type::kCount)> enemyObjects_;
+	void CreateInstances();
 };

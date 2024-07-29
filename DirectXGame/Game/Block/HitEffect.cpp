@@ -1,5 +1,6 @@
 #include "HitEffect.h"
 #include "RandomEngine/RandomEngine.h"
+#include "Block.h"
 void HitEffect::Initialize(const Vector2& postition,int32_t type) {
 	position_ = postition;
 	position_.y += RandomEngine::GetRandom(-4.0f, 4.0f);
@@ -22,6 +23,10 @@ void HitEffect::Initialize(const Vector2& postition,int32_t type) {
 	if (type == 9) {
 		color_ = { 1.0f,1.0f,0.2f,1.0f };
 	}
+
+	size_ = { float(BaseBlock::kBlockSize_) * 0.25f, float(BaseBlock::kBlockSize_) * 30.0f };
+	size_.x *= RandomEngine::GetRandom(0.5f,0.9f);
+	size_.y *= RandomEngine::GetRandom(0.3f, 1.5f);
 }
 
 void HitEffect::Update() {
@@ -34,5 +39,5 @@ void HitEffect::Update() {
 
 
 void HitEffect::Draw() {
-	BlockTextureManager::GetInstance()->AppendHitEffect(position_,rotate_, color_);
+	BlockTextureManager::GetInstance()->AppendHitEffect(position_,size_,rotate_, color_);
 }

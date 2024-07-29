@@ -9,6 +9,7 @@
 #include "hitEffect.h"
 #include "JumpChargeParticle.h"
 #include "DirectXCommon.h"
+#include "RandomEngine/RandomEngine.h"
 BlockTextureManager* BlockTextureManager::GetInstance() {
 	static BlockTextureManager instance;
 	return &instance;
@@ -257,12 +258,12 @@ void BlockTextureManager::DrawCold(const Camera& camera) {
 	}
 }
 
-void BlockTextureManager::AppendParticle(const Vector2& position, float rotate,const Vector2& uvBase, uint32_t type) {
+void BlockTextureManager::AppendParticle(const Vector2& position, float rotate,const Vector2& uvBase, uint32_t type, const Vector4& color) {
 	BaseBlock::BlockType bType = BaseBlock::BlockType(type);
 	if (bType == BaseBlock::BlockType::kNone) {
 		return;
 	}
-	breakParticles_[bType - 1]->AppendObject(position, breakParticles_[bType - 1]->GetSize(), rotate, uvBase, Vector2{32.0f,32.0f}, Vector4{1.0f,1.0f,1.0f,1.0f}, 0);
+	breakParticles_[bType - 1]->AppendObject(position, breakParticles_[bType - 1]->GetSize(), rotate, uvBase, Vector2{32.0f,32.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vector4& color) {
@@ -270,9 +271,9 @@ void BlockTextureManager::AppendStarParticle(const Vector2& position,const Vecto
 	starParticles_->AppendObject(position, starParticles_->GetSize(), 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
-void BlockTextureManager::AppendStarParticleUI(const Vector2& position, const Vector4& color) {
+void BlockTextureManager::AppendStarParticleUI(const Vector2& position, const Vector2& size, const Vector4& color) {
 
-	starParticlesUI_->AppendObject(position, starParticlesUI_->GetSize(), 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
+	starParticlesUI_->AppendObject(position, size, 0, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendSandParticle(const Vector2& position, const Vector4& color) {
@@ -311,8 +312,11 @@ void BlockTextureManager::AppendWallKickEffect(const Vector2& position, uint32_t
 }
 
 //描画オブジェクト追加
-void BlockTextureManager::AppendHitEffect(const Vector2& position, float rotate, const Vector4& color) {
-	hitEffects_->AppendObject(position, hitEffects_->GetSize(), rotate, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
+void BlockTextureManager::AppendHitEffect(const Vector2& position,const Vector2& size, float rotate, const Vector4& color) {
+	//Vector2 size = { float(BaseBlock::kBlockSize_) * 0.25f, float(BaseBlock::kBlockSize_) * 30.0f };
+	//size.x *= RandomEngine::GetRandom(1.0f,2.0f);
+	//size.y *= RandomEngine::GetRandom(0.7f, 1.5f);
+	hitEffects_->AppendObject(position, size, rotate, Vector2{0,0}, Vector2{64.0f,64.0f}, color, 0);
 }
 
 void BlockTextureManager::AppendJumpChargeParticle(const Vector2& position,float rotate, uint32_t type, const Vector4& color) {
