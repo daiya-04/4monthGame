@@ -393,7 +393,7 @@ void Player::Move() {
 			velocity_.x += parameters_[currentCharacters_]->speed_;
 
 			//ボタンを押していたら最大速度を変更
-			if (input_->PushButton(Input::Button::A) && 
+			if (input_->TiltLStick(Input::Stick::Down) &&
 				parameters_[currentCharacters_]->chargeJump_.chargeTimer >= parameters_[currentCharacters_]->chargeJump_.maxChargeTime / 2) {
 				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxChargeMoveSpeed_;
 			}
@@ -413,7 +413,7 @@ void Player::Move() {
 			velocity_.x -= parameters_[currentCharacters_]->speed_;
 
 			//ボタンを押していたら最大速度を変更
-			if (input_->PushButton(Input::Button::A) &&
+			if (input_->TiltLStick(Input::Stick::Down) &&
 				parameters_[currentCharacters_]->chargeJump_.chargeTimer >= parameters_[currentCharacters_]->chargeJump_.maxChargeTime / 2) {
 				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxChargeMoveSpeed_;
 			}
@@ -579,7 +579,7 @@ void Player::ChargeJump() {
 
 	//チャージ完了した状態でボタンを離した時に溜めジャンプ発動
 	if (parameters_[currentCharacters_]->chargeJump_.chargeTimer == parameters_[currentCharacters_]->chargeJump_.maxChargeTime &&
-		input_->ReleaseButton(Input::Button::A)) {
+		input_->TriggerButton(Input::Button::A)) {
 
 		//速度設定
 		velocity_.x = 0.0f;
@@ -600,8 +600,8 @@ void Player::ChargeJump() {
 		object_->SetColor({ 1.0f,0.5f,0.0f,1.0f });
 	}
 
-	//ジャンプボタンを押している間チャージカウント増加
-	if (/*parameters_[currentCharacters_]->chargeJump_.isCharge && */input_->PushButton(Input::Button::A) && 
+	//下ボタンを押している間チャージカウント増加
+	if (/*parameters_[currentCharacters_]->chargeJump_.isCharge && */input_->TiltLStick(Input::Stick::Down) && 
 		!parameters_[currentCharacters_]->wallJump_.canWallJump && parameters_[currentCharacters_]->Jump_.canJump) {
 
 		//最大値になるまでカウント
