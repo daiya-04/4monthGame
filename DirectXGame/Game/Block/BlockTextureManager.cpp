@@ -151,7 +151,7 @@ BlockTextureManager::BlockTextureManager() {
 		object.reset(Object2dInstancing::Create(0, Vector2{ 0,0 }, 512));
 		int32_t size = 4;
 		
-		if (index == 2 || index == 3 || index == 5 || index == 6 || index == 7){
+		if (index == 2 || index == 3 || index == 5 || index == 6 || index == 7 || index == 12){
 			size = 2;
 		}
 		if (index == 4) {
