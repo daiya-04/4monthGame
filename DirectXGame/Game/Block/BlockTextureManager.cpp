@@ -198,6 +198,12 @@ BlockTextureManager::BlockTextureManager() {
 	chargeCompleteEffect_.reset(Object2d::Create(TextureManager::Load("circle.png"), { 0,0 }, 1.0f));
 	chargeCompleteEffect_->SetSize({12.0f,12.0f});
 
+	//chargeUI
+	chargeCompleteUI_.reset(Object2d::Create(TextureManager::Load("AButton.png"), { 0,0 }, 1.0f));
+	chargeCompleteUI_->SetSize({ 12.0f,12.0f });
+	chargeCompleteUIBack_.reset(Object2d::Create(TextureManager::Load("circle.png"), { 0,0 }, 1.0f));
+
+
 	//goldWave
 	goldBlockEffect_.reset(Object2d::Create(TextureManager::Load("goldEffect.png"), { 0,0 }, 1.0f));
 	goldBlockEffect_->SetSize({float(Block::kBlockSize_),float(Block::kBlockSize_) });
@@ -555,9 +561,13 @@ void BlockTextureManager::UpdateChargeCompleteEffect(const Vector2& position) {
 		chargeCompleteTime = 0;
 	}
 	chargeCompleteEffect_->position_ = position;
+	chargeCompleteUI_->position_ = position + Vector2{0,-60.0f};
+	chargeCompleteUIBack_->position_ = position + Vector2{ 0,-60.0f };
 	chargeCompleteEffect_->SetScale(1.1f+( float(chargeCompleteTime) / float(chargeCompleteEnd)) * 8.2f);
+	chargeCompleteUIBack_->SetScale(1.0f + (float(chargeCompleteTime) / float(chargeCompleteEnd)) * 0.2f);
 	float c = (float(chargeCompleteEnd - chargeCompleteTime) / float(chargeCompleteEnd)) * 0.8f;
 	chargeCompleteEffect_->SetColor({1000.0f,1000.0f,1000.0f,c});
+	chargeCompleteUIBack_->SetColor({ 1.0f,1.0f,0.0f,(float(chargeCompleteEnd - chargeCompleteTime) / float(chargeCompleteEnd)) });
 	isDrawChargeCompleteEffect_ = true;
 }
 
@@ -567,7 +577,20 @@ void BlockTextureManager::DrawChargeCompleteEffect(const Camera& camera) {
 		return;
 	}
 	chargeCompleteEffect_->Draw(camera);
+	//isDrawChargeCompleteEffect_ = false;
+}
+
+void BlockTextureManager::DrawChargeCompleteUI(const Camera& camera) {
+	if (!isDrawChargeCompleteEffect_) {
+		return;
+	}
+	Object2d::preDraw(DirectXCommon::GetInstance()->GetCommandList());
+	chargeCompleteUI_->SetSize({48.0f,48.0f});
+	chargeCompleteUIBack_->SetSize({ 48.0f,48.0f });
+	chargeCompleteUIBack_->Draw(camera);
+	chargeCompleteUI_->Draw(camera);
 	isDrawChargeCompleteEffect_ = false;
+	Object2dInstancing::preDraw(DirectXCommon::GetInstance()->GetCommandList());
 }
 
 void BlockTextureManager::UpdateGoldWaveEffectEffect(const Vector2& position) {

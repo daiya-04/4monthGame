@@ -104,6 +104,7 @@ public:
 
 	void UpdateChargeCompleteEffect(const Vector2& position);
 	void DrawChargeCompleteEffect(const Camera& camera);
+	void DrawChargeCompleteUI(const Camera& camera);
 	void SetPlayerTextureHandle(uint32_t handle){
 		chargeCompleteEffect_->SetTextureHandle(handle);
 	}
@@ -176,6 +177,9 @@ private:
 	uint32_t chargeCompleteTime=0;
 	static const uint32_t chargeCompleteEnd=12;
 	std::unique_ptr<Object2d> chargeCompleteEffect_;
+
+	std::unique_ptr<Object2d> chargeCompleteUI_;
+	std::unique_ptr<Object2d> chargeCompleteUIBack_;
 };
 
 

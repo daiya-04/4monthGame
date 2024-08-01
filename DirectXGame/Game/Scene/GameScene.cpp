@@ -603,6 +603,7 @@ void GameScene::DrawObject(){
 	environmentEffectsManager_->Draw(commandList_);
 	//ヒットエフェクト
 	BlockTextureManager::GetInstance()->DrawHitEffect(*camera_.get());
+	BlockTextureManager::GetInstance()->DrawChargeCompleteUI(*camera_.get());
 }
 
 void GameScene::DrawParticle(){
