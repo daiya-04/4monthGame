@@ -17,6 +17,11 @@ void BaseBlock::Break(float power, bool isPlayer) {
 		return;
 	}
 
+	//プレイヤー以外なら黄金破壊を阻止
+	if (!isPlayer && type_ == kGoldBlock) {
+		return;
+	}
+
 	//耐久値を減少
 	durability_ -= power;
 
@@ -76,6 +81,12 @@ void BaseBlock::Break(float power, bool isPlayer) {
 			//敵が敵の出現ブロックを壊したら出現するようにする
 			if (type_ == kEnemyBlock) {
 				EnemyManager::GetInstance()->AddEnemy(position_);
+			}
+			else if (type_ == kDownMagma) {
+				//ラインを1000下げる
+				magma_->baseMagmaLine_ += 1000.0f;
+				magma_->easingT_ = 0.0f;
+				EnvironmentEffectsManager::GetInstance()->MagmaDown(position_);
 			}
 
 		}
@@ -165,7 +176,9 @@ void BaseBlock::UnBreak() {
 
 }
 
-void BaseBlock::IceBreak(int32_t breakCoolTime) {
+void BaseBlock::IceBreak(int32_t breakCoolTime, bool scoreFlag) {
+
+	isAddScore_ = scoreFlag;
 
 	//氷ブロックはスコア対象外
 	if (type_ == kIceBlock) {
@@ -180,26 +193,26 @@ void BaseBlock::IceBreak(int32_t breakCoolTime) {
 
 			if (pLeft_ && pLeft_->GetType() == kIceBlock) {
 				pLeft_->SetDirection(kLeft);
-				pLeft_->IceBreak(breakCoolTime + iceBreakInterval_);
+				pLeft_->IceBreak(breakCoolTime + iceBreakInterval_, scoreFlag);
 			}
 
 			break;
 		case kRight:
 			if (pRight_ && pRight_->GetType() == kIceBlock) {
 				pRight_->SetDirection(kRight);
-				pRight_->IceBreak(breakCoolTime + iceBreakInterval_);
+				pRight_->IceBreak(breakCoolTime + iceBreakInterval_, scoreFlag);
 			}
 			break;
 		case kUp:
 			if (pUp_ && pUp_->GetType() == kIceBlock) {
 				pUp_->SetDirection(kUp);
-				pUp_->IceBreak(breakCoolTime + iceBreakInterval_);
+				pUp_->IceBreak(breakCoolTime + iceBreakInterval_, scoreFlag);
 			}
 			break;
 		case kDown:
 			if (pDown_ && pDown_->GetType() == kIceBlock) {
 				pDown_->SetDirection(kDown);
-				pDown_->IceBreak(breakCoolTime + iceBreakInterval_);
+				pDown_->IceBreak(breakCoolTime + iceBreakInterval_, scoreFlag);
 			}
 			break;
 		}
@@ -296,7 +309,15 @@ void Block::Update() {
 
 		if (isStartBreak_ && --iceBreakCoolTimer_ <= 0) {
 			durability_ = 0.0f;
-			score_->AddScore(100);
+
+			if (isAddScore_) {
+				score_->AddScore(100);
+			}
+			//敵によって破壊された場合は加算無し、フラグを戻す
+			else {
+				isAddScore_ = true;
+			}
+
 			isBreak_ = true;
 			int createNum = int(RandomEngine::GetRandom(8.0f, 12.0f));
 			for (int i = 0; i < createNum; i++) {

@@ -393,7 +393,7 @@ void Player::Move() {
 			velocity_.x += parameters_[currentCharacters_]->speed_;
 
 			//ボタンを押していたら最大速度を変更
-			if (input_->TiltLStick(Input::Stick::Down) &&
+			if (input_->PushTrigger(Input::Trigger::Left) &&
 				parameters_[currentCharacters_]->chargeJump_.chargeTimer >= parameters_[currentCharacters_]->chargeJump_.maxChargeTime / 2) {
 				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxChargeMoveSpeed_;
 			}
@@ -413,7 +413,7 @@ void Player::Move() {
 			velocity_.x -= parameters_[currentCharacters_]->speed_;
 
 			//ボタンを押していたら最大速度を変更
-			if (input_->TiltLStick(Input::Stick::Down) &&
+			if (input_->PushTrigger(Input::Trigger::Left) &&
 				parameters_[currentCharacters_]->chargeJump_.chargeTimer >= parameters_[currentCharacters_]->chargeJump_.maxChargeTime / 2) {
 				parameters_[currentCharacters_]->maxMoveSpeed_ = parameters_[currentCharacters_]->maxChargeMoveSpeed_;
 			}
@@ -601,7 +601,7 @@ void Player::ChargeJump() {
 	}
 
 	//下ボタンを押している間チャージカウント増加
-	if (/*parameters_[currentCharacters_]->chargeJump_.isCharge && */input_->TiltLStick(Input::Stick::Down) && 
+	if (/*parameters_[currentCharacters_]->chargeJump_.isCharge && */input_->PushTrigger(Input::Trigger::Left) && 
 		!parameters_[currentCharacters_]->wallJump_.canWallJump && parameters_[currentCharacters_]->Jump_.canJump) {
 
 		//最大値になるまでカウント
@@ -1174,6 +1174,8 @@ void Player::UpdatePosition() {
 void Player::Restart() {
 
 	if (!isDead_) {
+
+		object_->SetTextureHandle(texture_[currentCharacters_]);
 
 		//死に場所記録
 		deadPosition_ = position_;

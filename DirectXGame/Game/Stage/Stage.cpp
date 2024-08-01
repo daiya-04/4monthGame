@@ -602,8 +602,37 @@ void Stage::CreateIceBlock() {
 
 			}
 
+			bool isContinue = false;
+
+			//再生成されるブロックは書き換えない
+			for (int32_t i = 0; i < respawnBlocks_.size(); i++) {
+
+				if (y == respawnBlocks_[i][1] && x == respawnBlocks_[i][0]) {
+					isContinue = true;
+				}
+
+			}
+
+			if (isContinue) {
+				continue;
+			}
+
 			//ブロックが無い且つプレイヤーと当たらない部分に氷ブロックを生成
 			if (map_[y][x]->GetIsBreak() && !IsCollision(map_[y][x]->GetCollision(), player_->GetCollision())) {
+
+				//敵と被ったら復活させない
+				for (auto& enemy : EnemyManager::GetInstance()->GetEnemies()) {
+
+					if (IsCollision(map_[y][x]->GetCollision(), enemy->GetCollision())) {
+						isContinue = true;
+						break;
+					}
+
+				}
+
+				if (isContinue) {
+					continue;
+				}
 
 				map_[y][x]->ChangeType(Block::BlockType::kIceBlock);
 				map_[y][x]->SetColor();

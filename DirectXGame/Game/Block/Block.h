@@ -179,7 +179,7 @@ public:
 
 	void Reset();
 
-	void IceBreak(int32_t breakCoolTime = 0);
+	void IceBreak(int32_t breakCoolTime = 0, bool scoreFlag = true);
 
 	//氷ブロックを溶かす処理(スコア加算無し)
 	void MeltIce();
@@ -235,6 +235,9 @@ protected:
 
 	//破壊されたかどうか
 	bool isBreak_ = false;
+
+	//スコア加算するか
+	bool isAddScore_ = true;
 
 	//崩壊フラグ
 	bool isStartCollapse_ = false;
