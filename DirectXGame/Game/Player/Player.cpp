@@ -527,8 +527,7 @@ void Player::Jump() {
 		}
 
 		//通常ジャンプ
-		if (parameters_[currentCharacters_]->Jump_.canJump && input_->TriggerButton(Input::Button::A) &&
-			!input_->TiltLStick(Input::Stick::Down)) {
+		if (parameters_[currentCharacters_]->Jump_.canJump && input_->TriggerButton(Input::Button::A)) {
 			velocity_.y += parameters_[currentCharacters_]->Jump_.jumpVelocity;
 			parameters_[currentCharacters_]->Jump_.canJump = false;
 			jumpSE_->Play();
