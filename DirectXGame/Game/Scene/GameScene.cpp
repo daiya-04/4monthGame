@@ -812,7 +812,9 @@ void GameScene::ChangeMode() {
 			magmaBGM_->SetUniqueVolume(1.0f);
 			coldBGM_->SetUniqueVolume(0.0f);
 		}
+		//灼熱から切り替わった瞬間に氷追加
 		else {
+			stage_->CreateIceBlock();
 			//テクスチャをマグマに変更
 			BlockTextureManager::GetInstance()->ChangeTexture(Block::kDownMagma, 4);
 			//極寒BGMに切り替え

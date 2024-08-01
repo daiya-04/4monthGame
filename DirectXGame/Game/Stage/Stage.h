@@ -96,6 +96,9 @@ public:
 	//氷ブロックを溶かす
 	void BreakIceBlock();
 
+	//マップの空いてるマスに氷を追加する
+	void CreateIceBlock();
+
 private:
 
 	//実体生成
@@ -103,9 +106,6 @@ private:
 
 	//ブロック切り替え
 	void SwitchBlock();
-
-	//マップの空いてるマスに氷を追加する
-	void CreateIceBlock();
 
 	//壊せないブロック以外の破壊(デバッグ)
 	void BreakAllBlock();

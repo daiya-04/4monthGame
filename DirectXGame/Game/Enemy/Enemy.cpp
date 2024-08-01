@@ -53,7 +53,15 @@ void BaseEnemy::CheckCollision() {
 
 								//ブロック破壊
 								if (Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType()) && (*blocksPtr_)[y][x]->GetType() != Block::kGoldBlock) {
-									(*blocksPtr_)[y][x]->Break(999, false);
+
+									if ((*blocksPtr_)[y][x]->GetType() == Block::kIceBlock) {
+										(*blocksPtr_)[y][x]->SetDirection(Block::kLeft);
+										(*blocksPtr_)[y][x]->IceBreak(0, false);
+									}
+									else {
+										(*blocksPtr_)[y][x]->Break(999, false);
+									}
+
 								}
 
 							}
@@ -85,7 +93,15 @@ void BaseEnemy::CheckCollision() {
 
 								//ブロック破壊
 								if (Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType()) && (*blocksPtr_)[y][x]->GetType() != Block::kGoldBlock) {
-									(*blocksPtr_)[y][x]->Break(999, false);
+
+									if ((*blocksPtr_)[y][x]->GetType() == Block::kIceBlock) {
+										(*blocksPtr_)[y][x]->SetDirection(Block::kRight);
+										(*blocksPtr_)[y][x]->IceBreak(0, false);
+									}
+									else {
+										(*blocksPtr_)[y][x]->Break(999, false);
+									}
+
 								}
 
 							}
@@ -118,7 +134,15 @@ void BaseEnemy::CheckCollision() {
 
 								//ブロック破壊
 								if (Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType()) && (*blocksPtr_)[y][x]->GetType() != Block::kGoldBlock) {
-									(*blocksPtr_)[y][x]->Break(999, false);
+
+									if ((*blocksPtr_)[y][x]->GetType() == Block::kIceBlock) {
+										(*blocksPtr_)[y][x]->SetDirection(Block::kLeft);
+										(*blocksPtr_)[y][x]->IceBreak(0, false);
+									}
+									else {
+										(*blocksPtr_)[y][x]->Break(999, false);
+									}
+
 								}
 
 							}
@@ -142,7 +166,15 @@ void BaseEnemy::CheckCollision() {
 
 								//ブロック破壊
 								if (Block::CheckCanBreak((*blocksPtr_)[y][x]->GetType()) && (*blocksPtr_)[y][x]->GetType() != Block::kGoldBlock) {
-									(*blocksPtr_)[y][x]->Break(999, false);
+									
+									if ((*blocksPtr_)[y][x]->GetType() == Block::kIceBlock) {
+										(*blocksPtr_)[y][x]->SetDirection(Block::kRight);
+										(*blocksPtr_)[y][x]->IceBreak(0, false);
+									}
+									else {
+										(*blocksPtr_)[y][x]->Break(999, false);
+									}
+									
 								}
 
 							}
