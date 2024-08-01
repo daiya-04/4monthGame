@@ -383,7 +383,18 @@ void NeedleEnemy::Update() {
 	rightTop_ = { position_.x + kEnemyLargeHalfSize_ - 1, position_.y - kEnemyLargeHalfSize_ };
 	leftBottom_ = { position_.x - kEnemyLargeHalfSize_, position_.y + kEnemyLargeHalfSize_ - 1 };
 	rightBottom_ = { position_.x + kEnemyLargeHalfSize_ - 1, position_.y + kEnemyLargeHalfSize_ - 1 };
-
+	//当たり判定
+	AABB2D collision = collision_;
+	collision.min.x -= 1.0f;
+	collision.min.y -= 1.0f;
+	collision.max.x += 1.0f;
+	collision.max.y += 1.0f;
+	if (player_->GetPrePosition() != player_->GetPosition() && IsCollision(collision, player_->GetCollision())) {
+		Vector2 velocity = player_->GetPosition() - position_;
+		Vector2 pos = position_ + velocity * 0.7f;
+		velocity = velocity.Normalize();
+		BlockTextureManager::GetInstance()->CreateSandParticle(pos, 0);
+	}
 }
 
 void NeedleEnemy::Draw(const Camera& camera) {
