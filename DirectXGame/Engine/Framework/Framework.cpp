@@ -10,6 +10,7 @@
 #include "Object2d.h"
 #include "Object2dInstancing.h"
 #include "Particle.h"
+#include "GPUParticle.h"
 #include "GlobalVariables.h"
 #include "Audio.h"
 
@@ -35,6 +36,7 @@ void DSFramework::Init(){
 	Object2d::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
 	Object2dInstancing::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), WinApp::kClientWidth, WinApp::kClientHeight);
 	Particle::StaticInitialize(DirectXCommon::GetInstance()->GetDevice(), DirectXCommon::GetInstance()->GetCommandList());
+	GPUParticle::StaticInit();
 
 	GlobalVariables::GetInstance()->LoadFiles();
 

@@ -279,6 +279,9 @@
     <ClCompile Include="Game\Enemy\EnemyManager.cpp">
       <Filter>Game\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3d\Particle\GPUParticle.cpp">
+      <Filter>Engine\3d\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Base\DirectXCommon.h">
@@ -487,6 +490,9 @@
     </ClInclude>
     <ClInclude Include="Game\Enemy\EnemyManager.h">
       <Filter>Game\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3d\Particle\GPUParticle.h">
+      <Filter>Engine\3d\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

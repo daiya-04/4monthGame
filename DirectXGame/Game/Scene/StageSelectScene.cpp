@@ -99,8 +99,7 @@ void StageSelectScene::Init() {
 	///
 
 	steam_ = std::make_unique<Steam>();
-	steam_->Init({ 640.0f,360.0f }, { 1280.0f,360.0f });
-	steam_->SetEmitCount(6);
+	steam_->Init({ 640.0f,553.0f }, { 2560.0f,100.0f });
 
 	score_.Init(scorePos_, { 64.0f,64.0f });
 	score_.SetSpace(36.0f);
@@ -167,7 +166,7 @@ void StageSelectScene::Update() {
 	ButtonEffectUpdate();
 	BoundingUpdate(uis_["ToTitle"].get());
 
-	steam_->SetCenter({ 640.0f + camera_.translation_.x,360.0f });
+	
 	steam_->Update();
 
 	player_[Blue]->SetTextureArea({160.0f * animationNum_,160.0f}, {160.0f,160.0f});
@@ -180,7 +179,7 @@ void StageSelectScene::DrawBackGround() {
 
 	backGround_->Draw();
 
-	Particle::preDraw();
+	GPUParticle::preDraw();
 	steam_->Draw(camera_);
 
 	Sprite::preDraw(DirectXCommon::GetInstance()->GetCommandList());
@@ -298,6 +297,8 @@ void StageSelectScene::RootInit() {
 
 	LArrowPos_ = uis_["LArrow"]->GetPosition();
 	RArrowPos_ = uis_["RArrow"]->GetPosition();
+
+	steam_->SetEmiiterPos({ saunaRooms_[stageNumber_ - 1]->position_.x, 553.0f });
 
 }
 

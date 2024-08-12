@@ -80,11 +80,11 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	scene_->DrawNotSetPipeline();
 
-	postEffect_->PreDrawScene(commandList);
+	//postEffect_->PreDrawScene(commandList);
 
 	
 
-	postEffect_->PostDrawScene(commandList);
+	//postEffect_->PostDrawScene(commandList);
 
 	DirectXCommon::GetInstance()->preDraw();
 
@@ -111,7 +111,7 @@ void SceneManager::Draw(ID3D12GraphicsCommandList* commandList){
 
 	Particle::postDraw();
 
-	postEffect_->Draw(commandList);
+	//postEffect_->Draw(commandList);
 
 	///UI
 	Sprite::preDraw(commandList);
