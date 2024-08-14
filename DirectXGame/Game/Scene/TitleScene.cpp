@@ -63,8 +63,7 @@ void TitleScene::Init() {
 	titleBGM_->Play();
 
 	steam_ = std::make_unique<Steam>();
-	steam_->Init({ 640.0f,360.0f }, { 640.0f,360.0f });
-	steam_->SetEmitCount(2);
+	steam_->Init({ 640.0f,650.0f }, { 1280.0f,140.0f });
 
 	FloatingGimmickInit();
 	ButtonEffectInit();
@@ -131,7 +130,7 @@ void TitleScene::DrawBackGround() {
 
 	backGround_->Draw();
 
-	Particle::preDraw();
+	GPUParticle::preDraw();
 	steam_->Draw(camera_);
 
 }

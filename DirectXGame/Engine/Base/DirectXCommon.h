@@ -15,7 +15,7 @@ private:
 
 private:
 
-	uint32_t kSrvHeapDescriptorNum = 512;
+	uint32_t kSrvHeapDescriptorNum = 100000;
 
 	ComPtr<ID3D12Device> device_;
 	ComPtr<IDXGIFactory7> dxgiFactory_;
@@ -61,7 +61,9 @@ public:
 	//描画後処理
 	void postDraw();
 
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index);
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr<ID3D12DescriptorHeap> descriptorHeap, UINT descriptorSize, UINT index);
 
 	ID3D12Device* GetDevice() const { return device_.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
