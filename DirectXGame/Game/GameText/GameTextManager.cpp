@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <locale>
+//#include <locale>
 void GameTextManager::Initialize() {
 	for (size_t i = 0; i < 9;i++) {
 		nineSliceTextureBox_[i].reset(Sprite::Create(TextureManager::GetInstance()->Load("textBox.png"), Vector2{ 0,0 }, 9));

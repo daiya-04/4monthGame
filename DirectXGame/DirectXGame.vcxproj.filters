@@ -507,4 +507,7 @@
     <ClInclude Include="Game\EnvironmentEffects\Snow\SnowEffectDrawer.h" />
     <ClInclude Include="Game\EnvironmentEffects\Snow\SnowObstacle.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TextData\text2.text" />
+  </ItemGroup>
 </Project>
