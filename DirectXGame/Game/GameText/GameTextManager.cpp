@@ -9,8 +9,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-//#include <locale>
+#include <locale>
 void GameTextManager::Initialize() {
+	//std::locale::global(std::locale(""));
 	for (size_t i = 0; i < 9;i++) {
 		nineSliceTextureBox_[i].reset(Sprite::Create(TextureManager::GetInstance()->Load("textBox.png"), Vector2{ 0,0 }, 9));
 		nineSliceTextureBox_[i]->SetAnchorpoint({0.0f,0.0f});
@@ -120,6 +121,7 @@ void GameTextManager::AppryGlobalVariables() {
 }
 
 void GameTextManager::InitializeStage(uint32_t stageNum) {
+	std::locale::global(std::locale(""));
 	phase_ = OPEN;
 	parametric_ = 0.0f;
 	mainText_->Initialize();
