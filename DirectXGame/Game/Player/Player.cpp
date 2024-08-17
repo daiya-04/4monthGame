@@ -1223,6 +1223,15 @@ void Player::Stun() {
 	if (stunTimer_ <= 0 && invincibleTimer_ <= 0) {
 		stunTimer_ = 90;
 		velocity_ = { 0.0f,0.0f };
+
+		//チャージジャンプを強制停止
+		parameters_[currentCharacters_]->chargeJump_.isChargeJumping = false;
+		parameters_[currentCharacters_]->chargeJump_.canBreak = false;
+		//チャージ中のカウントもリセット
+		parameters_[currentCharacters_]->chargeJump_.chargeTimer = 0;
+		//色を通常色に戻す
+		object_->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
 		object_->SetTextureHandle(texture_[currentCharacters_]);
 	}
 

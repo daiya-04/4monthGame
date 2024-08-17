@@ -257,6 +257,16 @@ void BaseBlock::Reset() {
 	isShining_ = false;
 	brightValue_ = 0.0f;
 
+	//敵ブロックの場合は点滅を常にしている
+	if (type_ == kEnemyBlock) {
+		shiningProbability_ = 1.0f;
+		shiningValue_ = 0.05f;
+	}
+	else {
+		shiningProbability_ = 0.0006f;
+		shiningValue_ = 0.02f;
+	}
+
 }
 
 Block::Block(const Vector2& position, BlockType type)
@@ -352,7 +362,7 @@ void Block::Update() {
 	collision_.max = { position_.x + kBlockHalfSize_ - 1, position_.y + kBlockHalfSize_ - 1 };
 
 	//確率でブロックを光らせる
-	if (!isShining_ && brightValue_ <= 0.0f && RandomEngine::GetRandom(0.0f, 1.0f) <= kShiningProbability_) {
+	if (!isShining_ && brightValue_ <= 0.0f && RandomEngine::GetRandom(0.0f, 1.0f) <= shiningProbability_) {
 		isShining_ = true;
 	}
 

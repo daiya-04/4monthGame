@@ -24,9 +24,6 @@ public:
 
 	const float kTextureBlockSize_ = 32.0f;
 
-	//光る確率
-	static inline const float kShiningProbability_ = 0.0006f;
-
 	enum BlockType : uint32_t {
 
 		//空白ブロック
@@ -155,10 +152,24 @@ public:
 
 	//ブロックが再生する時の関数(再び当たり判定を持つ)
 	void Repair() { 
+		
 		durability_ = defaultDurability_;
 		isBreak_ = false;
 		isStartBreak_ = false;
 		iceBreakCoolTimer_ = 0;
+		isShining_ = false;
+		brightValue_ = 0.0f;
+
+		//敵ブロックの場合は点滅を常にしている
+		if (type_ == kEnemyBlock) {
+			shiningProbability_ = 1.0f;
+			shiningValue_ = 0.05f;
+		}
+		else {
+			shiningProbability_ = 0.0006f;
+			shiningValue_ = 0.02f;
+		}
+
 	}
 
 	//ブロックの耐久値設定
@@ -271,6 +282,9 @@ protected:
 	float brightLimit_ = 1.0f;
 
 	float shiningValue_ = 0.02f;
+
+	//光る確率
+	float shiningProbability_ = 0.0006f;
 
 	///-------------------------------------------------------------------------
 
